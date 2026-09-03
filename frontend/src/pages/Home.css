@@ -1,0 +1,4144 @@
+/* =====================================================
+   GLOBAL PAGE BACKGROUND
+   ===================================================== */
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+
+  /* BLUE THEME — OTHER PAGES */
+  background:
+    linear-gradient(
+      135deg,
+      #eaf6ff 0%,
+      #d7ecff 50%,
+      #c5e3ff 100%
+    );
+
+  background-attachment: fixed;
+
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
+}
+
+
+/* =====================================================
+   MAIN
+   ===================================================== */
+
+main {
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+
+  position: relative;
+
+  background: transparent;
+
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
+}
+
+
+/* =====================================================
+   HOME PAGE
+   ===================================================== */
+
+.home-page {
+  width: 100%;
+  min-height: 100vh;
+
+  position: relative;
+
+  /*
+    IMPORTANT:
+    Home image અહીંથી directly background તરીકે નહીં મૂકાય.
+    Fixed image layer ::before દ્વારા આવશે.
+  */
+
+  background: transparent;
+
+  overflow: visible;
+
+  isolation: isolate;
+}
+
+
+/* =====================================================
+   HOME PAGE — FIXED GITA IMAGE
+   ===================================================== */
+
+.home-page::before {
+  content: "";
+
+  position: fixed;
+
+  /*
+    Navbar ની નીચે થી image શરૂ થશે.
+    Desktop navbar ≈ 74px
+  */
+  top: 74px;
+  left: 0;
+
+  width: 100%;
+  height: calc(100vh - 74px);
+
+  background-image:
+    linear-gradient(
+      135deg,
+      rgba(239, 249, 255, 0.18) 0%,
+      rgba(220, 239, 255, 0.20) 50%,
+      rgba(201, 231, 255, 0.24) 100%
+    ),
+    url("/images/gita-background.png");
+
+  /*
+    FULL IMAGE AREA
+    crop નહીં થાય
+  */
+  background-size: 100% 100%;
+
+  background-position: center top;
+
+  background-repeat: no-repeat;
+
+  /*
+    IMPORTANT
+    image content ની પાછળ રહેશે
+  */
+  z-index: -1;
+
+  pointer-events: none;
+}
+
+
+/* =====================================================
+   HERO
+   ===================================================== */
+
+.hero {
+  width: 100%;
+  min-height: 100vh;
+
+  padding: 70px 20px 80px;
+
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  text-align: center;
+
+  position: relative;
+
+  /*
+    Hero પોતાનું image/background નહીં રાખે.
+  */
+  background: transparent !important;
+  background-image: none !important;
+
+  isolation: isolate;
+
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
+}
+
+
+/* =====================================================
+   REMOVE OLD HERO IMAGE
+   ===================================================== */
+
+.hero::before,
+.hero::after {
+  display: none !important;
+  content: none !important;
+
+  background: none !important;
+  background-image: none !important;
+}
+
+
+/* =====================================================
+   HERO TITLE
+   ===================================================== */
+
+.subtitle {
+  margin: 0 0 12px;
+
+  color: #1565c0;
+
+  font-size: 21px;
+  font-weight: 700;
+
+  letter-spacing: 1px;
+
+  text-shadow:
+    0 2px 8px rgba(21, 101, 192, 0.15);
+}
+
+
+/* =====================================================
+   HERO MAIN TITLE
+   ===================================================== */
+
+.hero h1 {
+  margin: 0;
+
+  color: #0b3d91;
+
+  font-size: 54px;
+  font-weight: 800;
+
+  letter-spacing: 1px;
+
+  text-shadow:
+    0 4px 12px rgba(13, 71, 161, 0.15);
+}
+
+
+/* =====================================================
+   DESCRIPTION
+   ===================================================== */
+
+.description {
+  max-width: 760px;
+
+  margin: 20px auto 30px;
+
+  color: #315b7d;
+
+  font-size: 18px;
+  line-height: 1.9;
+}
+
+
+/* =====================================================
+   DARK THEME — GLOBAL BLUE
+   ===================================================== */
+
+html[data-theme="dark"],
+body[data-theme="dark"],
+html.dark,
+body.dark {
+  background:
+    linear-gradient(
+      135deg,
+      #061426 0%,
+      #08243d 50%,
+      #0a3152 100%
+    );
+
+  color: #e8f4ff;
+}
+
+
+/* =====================================================
+   DARK THEME — HOME IMAGE
+   ===================================================== */
+
+html[data-theme="dark"] .home-page::before,
+body[data-theme="dark"] .home-page::before,
+html.dark .home-page::before,
+body.dark .home-page::before {
+  background-image:
+    linear-gradient(
+      135deg,
+      rgba(3, 13, 25, 0.58) 0%,
+      rgba(5, 22, 39, 0.52) 50%,
+      rgba(5, 31, 53, 0.58) 100%
+    ),
+    url("/images/gita-background.png");
+
+  background-size: 100% 100%;
+  background-position: center top;
+  background-repeat: no-repeat;
+}
+
+
+/* =====================================================
+   DARK THEME — HOME TEXT
+   ===================================================== */
+
+html[data-theme="dark"] .home-page .subtitle,
+body[data-theme="dark"] .home-page .subtitle,
+html.dark .home-page .subtitle,
+body.dark .home-page .subtitle {
+  color: #90caf9;
+}
+
+
+html[data-theme="dark"] .home-page .hero h1,
+body[data-theme="dark"] .home-page .hero h1,
+html.dark .home-page .hero h1,
+body.dark .home-page .hero h1 {
+  color: #e3f2fd;
+
+  text-shadow:
+    0 4px 14px rgba(0, 0, 0, 0.55);
+}
+
+
+html[data-theme="dark"] .home-page .description,
+body[data-theme="dark"] .home-page .description,
+html.dark .home-page .description,
+body.dark .home-page .description {
+  color: #d1e7f7;
+
+  text-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.45);
+}
+
+
+/* =====================================================
+   MOBILE
+   ===================================================== */
+
+@media (max-width: 768px) {
+
+  .home-page::before {
+    /*
+      Mobile navbar ≈ 62px
+    */
+    top: 62px;
+
+    height: calc(100vh - 62px);
+
+    background-size: 100% 100%;
+    background-position: center top;
+    background-repeat: no-repeat;
+  }
+
+
+  .hero {
+    min-height: 100vh;
+
+    padding:
+      50px 15px 60px;
+  }
+
+
+  .hero h1 {
+    font-size: 38px;
+  }
+
+
+  .subtitle {
+    font-size: 18px;
+  }
+
+
+  .description {
+    font-size: 16px;
+    line-height: 1.8;
+  }
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+   ===================================================== */
+
+@media (max-width: 480px) {
+
+  .home-page::before {
+    top: 62px;
+
+    height: calc(100vh - 62px);
+
+    background-size: 100% 100%;
+    background-position: center top;
+  }
+
+
+  .hero {
+    padding:
+      40px 12px 50px;
+  }
+
+
+  .hero h1 {
+    font-size: 32px;
+  }
+
+
+  .subtitle {
+    font-size: 16px;
+  }
+
+
+  .description {
+    font-size: 15px;
+  }
+}
+
+
+/* =====================================================
+   NO HORIZONTAL SCROLL
+   ===================================================== */
+
+html,
+body,
+#root {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+/* =====================================================
+   START / CONTINUE READING BUTTON
+===================================================== */
+
+.hero > button,
+.continue-reading-button {
+
+  margin-bottom: 28px;
+
+  padding: 15px 30px;
+
+  border: none;
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #42a5f5,
+      #1976d2,
+      #0d47a1
+    );
+
+  color: #ffffff;
+
+  font-size: 17px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 10px 20px rgba(13, 71, 161, 0.25),
+    0 5px 0 rgba(8, 55, 120, 0.25),
+    inset 0 1px 1px rgba(255, 255, 255, 0.35);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+.hero > button:hover,
+.continue-reading-button:hover {
+
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 16px 28px rgba(13, 71, 161, 0.3),
+    0 6px 0 rgba(8, 55, 120, 0.22),
+    inset 0 1px 1px rgba(255, 255, 255, 0.4);
+}
+
+
+.hero > button:active,
+.continue-reading-button:active {
+
+  transform: translateY(1px);
+
+  box-shadow:
+    0 5px 10px rgba(13, 71, 161, 0.25);
+}
+
+
+/* =====================================================
+   SEARCH BOX
+===================================================== */
+
+.home-search {
+
+  width: min(100%, 1050px);
+
+  margin: 10px auto 28px;
+
+  padding: 28px;
+
+  box-sizing: border-box;
+
+  position: relative;
+
+  border-radius: 24px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.97),
+      rgba(232, 246, 255, 0.94)
+    );
+
+  border: 1px solid rgba(120, 185, 235, 0.55);
+
+  box-shadow:
+    0 22px 40px rgba(21, 101, 160, 0.18),
+    0 8px 0 rgba(83, 153, 207, 0.18),
+    inset 0 1px 1px rgba(255, 255, 255, 0.95),
+    inset 0 -1px 1px rgba(80, 145, 200, 0.08);
+
+  transform: translateZ(0);
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    background 0.3s ease,
+    border-color 0.3s ease;
+}
+
+
+.home-search:hover {
+
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 28px 48px rgba(21, 101, 160, 0.22),
+    0 10px 0 rgba(83, 153, 207, 0.15),
+    inset 0 1px 1px rgba(255, 255, 255, 0.95);
+}
+
+
+/* =====================================================
+   SEARCH TOP HIGHLIGHT
+===================================================== */
+
+.home-search::before {
+
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 8%;
+
+  width: 84%;
+  height: 2px;
+
+  border-radius: 50%;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(33, 150, 243, 0.65),
+      transparent
+    );
+}
+
+
+/* =====================================================
+   SEARCH TITLE
+===================================================== */
+
+.search-title {
+
+  margin-bottom: 20px;
+
+  color: #0d47a1;
+
+  font-size: 24px;
+  font-weight: 800;
+
+  text-align: center;
+
+  text-shadow:
+    0 2px 6px rgba(13, 71, 161, 0.12);
+}
+
+
+/* =====================================================
+   SEARCH FIELDS
+===================================================== */
+
+.search-fields {
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  gap: 12px;
+
+  flex-wrap: wrap;
+}
+
+
+/* =====================================================
+   SEARCH INPUT
+===================================================== */
+
+.search-fields input {
+
+  width: 190px;
+  height: 50px;
+
+  padding: 0 16px;
+
+  box-sizing: border-box;
+
+  border-radius: 12px;
+
+  border: 1px solid #a8cde9;
+
+  outline: none;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #f1f9ff
+    );
+
+  color: #163f60;
+
+  font-size: 15px;
+
+  box-shadow:
+    inset 0 3px 6px rgba(52, 113, 160, 0.08),
+    0 4px 8px rgba(33, 100, 160, 0.08);
+
+  transition:
+    border 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease,
+    background 0.3s ease,
+    color 0.3s ease;
+}
+
+
+.search-fields input:hover {
+
+  transform: translateY(-1px);
+
+  border-color: #64b5f6;
+}
+
+
+.search-fields input:focus {
+
+  border-color: #1976d2;
+
+  box-shadow:
+    0 0 0 3px rgba(33, 150, 243, 0.12),
+    inset 0 3px 6px rgba(52, 113, 160, 0.08),
+    0 5px 10px rgba(33, 100, 160, 0.12);
+}
+
+
+.search-fields input::placeholder {
+  color: #7898ae;
+}
+
+
+/* =====================================================
+   NUMBER INPUT
+===================================================== */
+
+.search-fields input[type="number"]::-webkit-inner-spin-button,
+.search-fields input[type="number"]::-webkit-outer-spin-button {
+  opacity: 0.7;
+}
+
+
+/* =====================================================
+   SEARCH BUTTON
+===================================================== */
+
+.search-button {
+
+  height: 50px;
+
+  padding: 0 24px;
+
+  border: none;
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #42a5f5,
+      #1976d2,
+      #0d47a1
+    );
+
+  color: white;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 8px 16px rgba(13, 71, 161, 0.24),
+    0 4px 0 rgba(8, 55, 120, 0.25),
+    inset 0 1px 1px rgba(255, 255, 255, 0.4);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+.search-button:hover {
+
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 13px 22px rgba(13, 71, 161, 0.3),
+    0 5px 0 rgba(8, 55, 120, 0.2),
+    inset 0 1px 1px rgba(255, 255, 255, 0.45);
+}
+
+
+.search-button:active {
+
+  transform: translateY(1px);
+
+  box-shadow:
+    0 5px 10px rgba(13, 71, 161, 0.22);
+}
+
+
+.search-button:disabled {
+
+  opacity: 0.6;
+
+  cursor: not-allowed;
+
+  transform: none;
+}
+
+
+/* =====================================================
+   SEARCH MESSAGE
+===================================================== */
+
+.search-message {
+
+  margin-top: 20px;
+
+  padding: 13px 16px;
+
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #f5fbff,
+      #e7f4ff
+    );
+
+  border: 1px solid #b9daf2;
+
+  color: #18547d;
+
+  font-size: 15px;
+
+  box-shadow:
+    inset 0 2px 5px rgba(60, 120, 165, 0.06),
+    0 4px 10px rgba(40, 100, 150, 0.08);
+}
+
+
+/* =====================================================
+   SEARCH RESULTS
+===================================================== */
+
+.search-results {
+
+  margin-top: 25px;
+
+  text-align: left;
+}
+
+
+.search-results > h3 {
+
+  margin: 0 0 18px;
+
+  color: #0d47a1;
+
+  text-align: center;
+
+  font-size: 20px;
+}
+
+
+.search-result-card {
+
+  margin-bottom: 14px;
+
+  padding: 20px;
+
+  border-radius: 16px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #f1f9ff
+    );
+
+  border: 1px solid #c4dff3;
+
+  box-shadow:
+    0 8px 16px rgba(40, 110, 165, 0.1),
+    0 3px 0 rgba(100, 165, 210, 0.12);
+
+  cursor: pointer;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+.search-result-card:hover {
+
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 14px 24px rgba(40, 110, 165, 0.15),
+    0 4px 0 rgba(100, 165, 210, 0.12);
+}
+
+
+.result-chapter {
+
+  color: #1976d2;
+
+  font-size: 14px;
+
+  font-weight: 700;
+}
+
+
+.search-result-card h4 {
+
+  margin: 7px 0;
+
+  color: #123f68;
+
+  font-size: 18px;
+}
+
+
+.search-result-card p {
+
+  margin: 8px 0;
+
+  color: #42627b;
+
+  line-height: 1.7;
+}
+
+
+.search-result-card span {
+
+  color: #0d47a1;
+
+  font-weight: 700;
+}
+
+
+/* =====================================================
+   TODAY'S SHLOK
+===================================================== */
+
+.today-shlok {
+
+  width: min(100%, 1050px);
+
+  margin: 0 auto 45px;
+
+  padding: 30px;
+
+  box-sizing: border-box;
+
+  position: relative;
+
+  border-radius: 26px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.98),
+      rgba(226, 244, 255, 0.96)
+    );
+
+  border: 1px solid rgba(105, 175, 225, 0.55);
+
+  box-shadow:
+    0 25px 45px rgba(21, 101, 160, 0.18),
+    0 9px 0 rgba(83, 153, 207, 0.18),
+    inset 0 1px 1px rgba(255, 255, 255, 0.95);
+
+  text-align: left;
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    background 0.3s ease,
+    border-color 0.3s ease;
+}
+
+
+.today-shlok:hover {
+
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 30px 52px rgba(21, 101, 160, 0.22),
+    0 10px 0 rgba(83, 153, 207, 0.14),
+    inset 0 1px 1px rgba(255, 255, 255, 0.95);
+}
+
+
+/* =====================================================
+   TODAY TOP LINE
+===================================================== */
+
+.today-shlok::before {
+
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 8%;
+
+  width: 84%;
+  height: 3px;
+
+  border-radius: 50%;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      #42a5f5,
+      #1976d2,
+      transparent
+    );
+}
+
+
+/* =====================================================
+   TODAY HEADER
+===================================================== */
+
+.today-shlok-header {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 16px;
+
+  margin-bottom: 22px;
+}
+
+
+.today-shlok-icon {
+
+  width: 55px;
+  height: 55px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #d8efff
+    );
+
+  border: 1px solid #b4d9f2;
+
+  font-size: 27px;
+
+  box-shadow:
+    0 8px 15px rgba(33, 100, 160, 0.15),
+    inset 0 2px 4px rgba(255, 255, 255, 0.9);
+}
+
+
+.today-shlok-header h2 {
+
+  margin: 0;
+
+  color: #0d47a1;
+
+  font-size: 28px;
+
+  font-weight: 800;
+}
+
+
+.today-shlok-header p {
+
+  margin: 5px 0 0;
+
+  color: #52718b;
+
+  font-size: 14px;
+
+  line-height: 1.6;
+}
+
+
+/* =====================================================
+   TODAY META
+===================================================== */
+
+.today-shlok-meta {
+
+  display: flex;
+
+  gap: 10px;
+
+  flex-wrap: wrap;
+
+  margin-bottom: 22px;
+}
+
+
+.today-shlok-meta span {
+
+  padding: 8px 14px;
+
+  border-radius: 20px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #eef8ff,
+      #d9edff
+    );
+
+  border: 1px solid #b9daf2;
+
+  color: #0d47a1;
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  box-shadow:
+    0 4px 8px rgba(40, 110, 165, 0.08),
+    inset 0 1px 1px rgba(255, 255, 255, 0.8);
+}
+
+
+/* =====================================================
+   TODAY SANSKRIT
+===================================================== */
+
+.today-sanskrit {
+
+  padding: 25px;
+
+  border-radius: 17px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #f9fdff,
+      #eaf6ff
+    );
+
+  border: 1px solid #c4e0f3;
+
+  border-left: 5px solid #1976d2;
+
+  color: #173f61;
+
+  font-size: 22px;
+
+  line-height: 2;
+
+  text-align: center;
+
+  box-shadow:
+    inset 0 3px 8px rgba(50, 110, 155, 0.06),
+    0 5px 12px rgba(40, 110, 165, 0.08);
+}
+
+
+/* =====================================================
+   TODAY TRANSLATION / MESSAGE
+===================================================== */
+
+.today-translation,
+.today-message {
+
+  margin-top: 18px;
+
+  padding: 20px;
+
+  border-radius: 15px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #f1f9ff
+    );
+
+  border: 1px solid #c9e1f2;
+
+  box-shadow:
+    0 6px 14px rgba(40, 110, 165, 0.08),
+    inset 0 1px 1px rgba(255, 255, 255, 0.9);
+}
+
+
+.today-translation h3,
+.today-message h3 {
+
+  margin-top: 0;
+
+  color: #0d47a1;
+
+  font-size: 19px;
+}
+
+
+.today-translation div,
+.today-message div {
+
+  color: #42627b;
+
+  line-height: 1.8;
+
+  font-size: 16px;
+}
+
+
+/* =====================================================
+   TODAY BUTTON
+===================================================== */
+
+.today-shlok-button {
+
+  display: block;
+
+  margin: 24px auto 0;
+
+  padding: 13px 24px;
+
+  border: none;
+
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #42a5f5,
+      #1976d2,
+      #0d47a1
+    );
+
+  color: white;
+
+  font-size: 15px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 8px 16px rgba(13, 71, 161, 0.23),
+    0 4px 0 rgba(8, 55, 120, 0.22),
+    inset 0 1px 1px rgba(255, 255, 255, 0.4);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+.today-shlok-button:hover {
+
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 13px 22px rgba(13, 71, 161, 0.28),
+    0 5px 0 rgba(8, 55, 120, 0.18),
+    inset 0 1px 1px rgba(255, 255, 255, 0.45);
+}
+
+
+/* =====================================================
+   WELCOME / GITA WHY
+===================================================== */
+
+.welcome {
+
+  width: min(100%, 900px);
+
+  margin: 0 auto 45px;
+
+  padding: 45px 30px;
+
+  box-sizing: border-box;
+
+  position: relative;
+
+  text-align: center;
+
+  border-radius: 26px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.98),
+      rgba(224, 243, 255, 0.96)
+    );
+
+  border: 1px solid rgba(105, 175, 225, 0.55);
+
+  box-shadow:
+    0 24px 42px rgba(21, 101, 160, 0.18),
+    0 9px 0 rgba(83, 153, 207, 0.17),
+    inset 0 1px 1px rgba(255, 255, 255, 0.95);
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    background 0.3s ease,
+    border-color 0.3s ease;
+}
+
+
+.welcome:hover {
+
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 30px 50px rgba(21, 101, 160, 0.22),
+    0 10px 0 rgba(83, 153, 207, 0.13),
+    inset 0 1px 1px rgba(255, 255, 255, 0.95);
+}
+
+
+/* =====================================================
+   WELCOME TOP LINE
+===================================================== */
+
+.welcome::before {
+
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 10%;
+
+  width: 80%;
+  height: 3px;
+
+  border-radius: 50%;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      #42a5f5,
+      #1976d2,
+      transparent
+    );
+}
+
+
+/* =====================================================
+   WELCOME TITLE
+===================================================== */
+
+.welcome h2 {
+
+  margin: 0 0 18px;
+
+  color: #0d47a1;
+
+  font-size: 31px;
+
+  font-weight: 800;
+
+  text-shadow:
+    0 3px 8px rgba(13, 71, 161, 0.12);
+}
+
+
+.welcome p {
+
+  margin: 0 auto;
+
+  max-width: 720px;
+
+  color: #42627b;
+
+  font-size: 17px;
+
+  line-height: 1.9;
+}
+
+
+/* =====================================================
+   SECTION SPACING
+===================================================== */
+
+.home-search {
+  order: 10;
+}
+
+.today-shlok {
+  order: 20;
+}
+
+.welcome {
+  order: 30;
+}
+
+
+/* =====================================================
+   DARK THEME
+===================================================== */
+
+html.dark,
+body.dark,
+#root.dark,
+html[data-theme="dark"],
+body[data-theme="dark"],
+#root[data-theme="dark"] {
+
+  background:
+    radial-gradient(
+      circle at 15% 10%,
+      rgba(30, 80, 130, 0.25),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 85% 80%,
+      rgba(20, 100, 180, 0.18),
+      transparent 35%
+    ),
+    linear-gradient(
+      135deg,
+      #071a2d 0%,
+      #0b2944 50%,
+      #0e3557 100%
+    );
+
+  color: #e8f4ff;
+}
+
+
+/* =====================================================
+   DARK MAIN
+===================================================== */
+
+html.dark main,
+body.dark main,
+#root.dark main,
+html[data-theme="dark"] main,
+body[data-theme="dark"] main,
+#root[data-theme="dark"] main {
+
+  background:
+    radial-gradient(
+      circle at 15% 10%,
+      rgba(30, 80, 130, 0.25),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 85% 80%,
+      rgba(20, 100, 180, 0.18),
+      transparent 35%
+    ),
+    linear-gradient(
+      135deg,
+      #071a2d 0%,
+      #0b2944 50%,
+      #0e3557 100%
+    );
+
+  color: #e8f4ff;
+}
+
+
+/* =====================================================
+   DARK HERO
+===================================================== */
+
+html.dark .hero,
+body.dark .hero,
+#root.dark .hero,
+html[data-theme="dark"] .hero,
+body[data-theme="dark"] .hero,
+#root[data-theme="dark"] .hero {
+
+  background:
+    radial-gradient(
+      circle at 15% 10%,
+      rgba(30, 80, 130, 0.30),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 85% 80%,
+      rgba(20, 100, 180, 0.22),
+      transparent 38%
+    ),
+    linear-gradient(
+      135deg,
+      #071a2d 0%,
+      #0b2944 50%,
+      #0e3557 100%
+    );
+
+  color: #e8f4ff;
+}
+
+
+/* =====================================================
+   DARK HERO IMAGE
+===================================================== */
+
+html.dark .hero::before,
+body.dark .hero::before,
+#root.dark .hero::before,
+html[data-theme="dark"] .hero::before,
+body[data-theme="dark"] .hero::before,
+#root[data-theme="dark"] .hero::before {
+
+  opacity: 0.20;
+
+  filter:
+    saturate(0.75)
+    contrast(0.95)
+    brightness(0.65);
+}
+
+
+/* =====================================================
+   DARK HERO OVERLAY
+===================================================== */
+
+html.dark .hero::after,
+body.dark .hero::after,
+#root.dark .hero::after,
+html[data-theme="dark"] .hero::after,
+body[data-theme="dark"] .hero::after,
+#root[data-theme="dark"] .hero::after {
+
+  background:
+    radial-gradient(
+      ellipse at center,
+      transparent 10%,
+      rgba(7, 26, 45, 0.25) 42%,
+      rgba(7, 26, 45, 0.62) 72%,
+      rgba(7, 26, 45, 0.92) 100%
+    );
+}
+
+
+/* =====================================================
+   DARK HERO TEXT
+===================================================== */
+
+html.dark .subtitle,
+body.dark .subtitle,
+#root.dark .subtitle,
+html[data-theme="dark"] .subtitle,
+body[data-theme="dark"] .subtitle,
+#root[data-theme="dark"] .subtitle {
+
+  color: #64b5f6;
+}
+
+
+html.dark .hero h1,
+body.dark .hero h1,
+#root.dark .hero h1,
+html[data-theme="dark"] .hero h1,
+body[data-theme="dark"] .hero h1,
+#root[data-theme="dark"] .hero h1 {
+
+  color: #90caf9;
+}
+
+
+html.dark .description,
+body.dark .description,
+#root.dark .description,
+html[data-theme="dark"] .description,
+body[data-theme="dark"] .description,
+#root[data-theme="dark"] .description {
+
+  color: #b7d3e8;
+}
+
+
+/* =====================================================
+   DARK SEARCH BOX
+===================================================== */
+
+html.dark .home-search,
+body.dark .home-search,
+#root.dark .home-search,
+html[data-theme="dark"] .home-search,
+body[data-theme="dark"] .home-search,
+#root[data-theme="dark"] .home-search {
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(18, 51, 78, 0.98),
+      rgba(11, 39, 63, 0.98)
+    );
+
+  border-color: rgba(100, 181, 246, 0.35);
+
+  box-shadow:
+    0 22px 40px rgba(0, 0, 0, 0.35),
+    0 8px 0 rgba(0, 0, 0, 0.2),
+    inset 0 1px 1px rgba(255, 255, 255, 0.08);
+}
+
+
+html.dark .search-title,
+body.dark .search-title,
+#root.dark .search-title,
+html[data-theme="dark"] .search-title,
+body[data-theme="dark"] .search-title,
+#root[data-theme="dark"] .search-title {
+
+  color: #90caf9;
+}
+
+
+/* =====================================================
+   DARK INPUTS
+===================================================== */
+
+html.dark .search-fields input,
+body.dark .search-fields input,
+#root.dark .search-fields input,
+html[data-theme="dark"] .search-fields input,
+body[data-theme="dark"] .search-fields input,
+#root[data-theme="dark"] .search-fields input {
+
+  background:
+    linear-gradient(
+      145deg,
+      #102f49,
+      #0b253b
+    );
+
+  border-color: #315d7d;
+
+  color: #e8f4ff;
+
+  box-shadow:
+    inset 0 3px 6px rgba(0, 0, 0, 0.25),
+    0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+
+html.dark .search-fields input::placeholder,
+body.dark .search-fields input::placeholder,
+#root.dark .search-fields input::placeholder,
+html[data-theme="dark"] .search-fields input::placeholder,
+body[data-theme="dark"] .search-fields input::placeholder,
+#root[data-theme="dark"] .search-fields input::placeholder {
+
+  color: #8fb0c8;
+}
+
+
+html.dark .search-fields input:focus,
+body.dark .search-fields input:focus,
+#root.dark .search-fields input:focus,
+html[data-theme="dark"] .search-fields input:focus,
+body[data-theme="dark"] .search-fields input:focus,
+#root[data-theme="dark"] .search-fields input:focus {
+
+  border-color: #42a5f5;
+
+  box-shadow:
+    0 0 0 3px rgba(66, 165, 245, 0.18),
+    inset 0 3px 6px rgba(0, 0, 0, 0.2),
+    0 5px 10px rgba(0, 0, 0, 0.25);
+}
+
+
+/* =====================================================
+   DARK SEARCH MESSAGE
+===================================================== */
+
+html.dark .search-message,
+body.dark .search-message,
+#root.dark .search-message,
+html[data-theme="dark"] .search-message,
+body[data-theme="dark"] .search-message,
+#root[data-theme="dark"] .search-message {
+
+  background:
+    linear-gradient(
+      145deg,
+      #12324d,
+      #0d2940
+    );
+
+  border-color: #315d7d;
+
+  color: #b9d8ed;
+}
+
+
+/* =====================================================
+   DARK SEARCH RESULTS
+===================================================== */
+
+html.dark .search-results > h3,
+body.dark .search-results > h3,
+#root.dark .search-results > h3,
+html[data-theme="dark"] .search-results > h3,
+body[data-theme="dark"] .search-results > h3,
+#root[data-theme="dark"] .search-results > h3 {
+
+  color: #90caf9;
+}
+
+
+html.dark .search-result-card,
+body.dark .search-result-card,
+#root.dark .search-result-card,
+html[data-theme="dark"] .search-result-card,
+body[data-theme="dark"] .search-result-card,
+#root[data-theme="dark"] .search-result-card {
+
+  background:
+    linear-gradient(
+      145deg,
+      #12344f,
+      #0e2b43
+    );
+
+  border-color: #315d7d;
+
+  box-shadow:
+    0 8px 16px rgba(0, 0, 0, 0.28),
+    0 3px 0 rgba(0, 0, 0, 0.2);
+}
+
+
+html.dark .result-chapter,
+body.dark .result-chapter,
+#root.dark .result-chapter,
+html[data-theme="dark"] .result-chapter,
+body[data-theme="dark"] .result-chapter,
+#root[data-theme="dark"] .result-chapter {
+
+  color: #64b5f6;
+}
+
+
+html.dark .search-result-card h4,
+body.dark .search-result-card h4,
+#root.dark .search-result-card h4,
+html[data-theme="dark"] .search-result-card h4,
+body[data-theme="dark"] .search-result-card h4,
+#root[data-theme="dark"] .search-result-card h4 {
+
+  color: #d9edff;
+}
+
+
+html.dark .search-result-card p,
+body.dark .search-result-card p,
+#root.dark .search-result-card p,
+html[data-theme="dark"] .search-result-card p,
+body[data-theme="dark"] .search-result-card p,
+#root[data-theme="dark"] .search-result-card p {
+
+  color: #a9c6da;
+}
+
+
+html.dark .search-result-card span,
+body.dark .search-result-card span,
+#root.dark .search-result-card span,
+html[data-theme="dark"] .search-result-card span,
+body[data-theme="dark"] .search-result-card span,
+#root[data-theme="dark"] .search-result-card span {
+
+  color: #90caf9;
+}
+
+
+/* =====================================================
+   DARK TODAY SHLOK
+===================================================== */
+
+html.dark .today-shlok,
+body.dark .today-shlok,
+#root.dark .today-shlok,
+html[data-theme="dark"] .today-shlok,
+body[data-theme="dark"] .today-shlok,
+#root[data-theme="dark"] .today-shlok {
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(18, 53, 80, 0.98),
+      rgba(11, 39, 62, 0.98)
+    );
+
+  border-color: rgba(100, 181, 246, 0.35);
+
+  box-shadow:
+    0 25px 45px rgba(0, 0, 0, 0.35),
+    0 9px 0 rgba(0, 0, 0, 0.2),
+    inset 0 1px 1px rgba(255, 255, 255, 0.08);
+}
+
+
+html.dark .today-shlok-header h2,
+body.dark .today-shlok-header h2,
+#root.dark .today-shlok-header h2,
+html[data-theme="dark"] .today-shlok-header h2,
+body[data-theme="dark"] .today-shlok-header h2,
+#root[data-theme="dark"] .today-shlok-header h2 {
+
+  color: #90caf9;
+}
+
+
+html.dark .today-shlok-header p,
+body.dark .today-shlok-header p,
+#root.dark .today-shlok-header p,
+html[data-theme="dark"] .today-shlok-header p,
+body[data-theme="dark"] .today-shlok-header p,
+#root[data-theme="dark"] .today-shlok-header p {
+
+  color: #9ebbd0;
+}
+
+
+/* =====================================================
+   DARK TODAY ICON
+===================================================== */
+
+html.dark .today-shlok-icon,
+body.dark .today-shlok-icon,
+#root.dark .today-shlok-icon,
+html[data-theme="dark"] .today-shlok-icon,
+body[data-theme="dark"] .today-shlok-icon,
+#root[data-theme="dark"] .today-shlok-icon {
+
+  background:
+    linear-gradient(
+      145deg,
+      #19415f,
+      #102f49
+    );
+
+  border-color: #315d7d;
+
+  box-shadow:
+    0 8px 15px rgba(0, 0, 0, 0.25),
+    inset 0 2px 4px rgba(255, 255, 255, 0.08);
+}
+
+
+/* =====================================================
+   DARK TODAY META
+===================================================== */
+
+html.dark .today-shlok-meta span,
+body.dark .today-shlok-meta span,
+#root.dark .today-shlok-meta span,
+html[data-theme="dark"] .today-shlok-meta span,
+body[data-theme="dark"] .today-shlok-meta span,
+#root[data-theme="dark"] .today-shlok-meta span {
+
+  background:
+    linear-gradient(
+      145deg,
+      #163d5b,
+      #102f48
+    );
+
+  border-color: #315d7d;
+
+  color: #9dd3ff;
+
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.18),
+    inset 0 1px 1px rgba(255, 255, 255, 0.06);
+}
+
+
+/* =====================================================
+   DARK SANSKRIT
+===================================================== */
+
+html.dark .today-sanskrit,
+body.dark .today-sanskrit,
+#root.dark .today-sanskrit,
+html[data-theme="dark"] .today-sanskrit,
+body[data-theme="dark"] .today-sanskrit,
+#root[data-theme="dark"] .today-sanskrit {
+
+  background:
+    linear-gradient(
+      145deg,
+      #102f49,
+      #0b263d
+    );
+
+  border-color: #315d7d;
+
+  border-left-color: #42a5f5;
+
+  color: #d9edff;
+
+  box-shadow:
+    inset 0 3px 8px rgba(0, 0, 0, 0.2),
+    0 5px 12px rgba(0, 0, 0, 0.2);
+}
+
+
+/* =====================================================
+   DARK TRANSLATION / MESSAGE
+===================================================== */
+
+html.dark .today-translation,
+html.dark .today-message,
+body.dark .today-translation,
+body.dark .today-message,
+#root.dark .today-translation,
+#root.dark .today-message,
+html[data-theme="dark"] .today-translation,
+html[data-theme="dark"] .today-message,
+body[data-theme="dark"] .today-translation,
+body[data-theme="dark"] .today-message,
+#root[data-theme="dark"] .today-translation,
+#root[data-theme="dark"] .today-message {
+
+  background:
+    linear-gradient(
+      145deg,
+      #12344f,
+      #0d2b43
+    );
+
+  border-color: #315d7d;
+
+  box-shadow:
+    0 6px 14px rgba(0, 0, 0, 0.2),
+    inset 0 1px 1px rgba(255, 255, 255, 0.06);
+}
+
+
+html.dark .today-translation h3,
+html.dark .today-message h3,
+body.dark .today-translation h3,
+body.dark .today-message h3,
+#root.dark .today-translation h3,
+#root.dark .today-message h3,
+html[data-theme="dark"] .today-translation h3,
+html[data-theme="dark"] .today-message h3,
+body[data-theme="dark"] .today-translation h3,
+body[data-theme="dark"] .today-message h3,
+#root[data-theme="dark"] .today-translation h3,
+#root[data-theme="dark"] .today-message h3 {
+
+  color: #90caf9;
+}
+
+
+html.dark .today-translation div,
+html.dark .today-message div,
+body.dark .today-translation div,
+body.dark .today-message div,
+#root.dark .today-translation div,
+#root.dark .today-message div,
+html[data-theme="dark"] .today-translation div,
+html[data-theme="dark"] .today-message div,
+body[data-theme="dark"] .today-translation div,
+body[data-theme="dark"] .today-message div,
+#root[data-theme="dark"] .today-translation div,
+#root[data-theme="dark"] .today-message div {
+
+  color: #aec8da;
+}
+
+
+/* =====================================================
+   DARK WELCOME
+===================================================== */
+
+html.dark .welcome,
+body.dark .welcome,
+#root.dark .welcome,
+html[data-theme="dark"] .welcome,
+body[data-theme="dark"] .welcome,
+#root[data-theme="dark"] .welcome {
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(18, 53, 80, 0.98),
+      rgba(11, 39, 62, 0.98)
+    );
+
+  border-color: rgba(100, 181, 246, 0.35);
+
+  box-shadow:
+    0 24px 42px rgba(0, 0, 0, 0.35),
+    0 9px 0 rgba(0, 0, 0, 0.2),
+    inset 0 1px 1px rgba(255, 255, 255, 0.08);
+}
+
+
+html.dark .welcome h2,
+body.dark .welcome h2,
+#root.dark .welcome h2,
+html[data-theme="dark"] .welcome h2,
+body[data-theme="dark"] .welcome h2,
+#root[data-theme="dark"] .welcome h2 {
+
+  color: #90caf9;
+}
+
+
+html.dark .welcome p,
+body.dark .welcome p,
+#root.dark .welcome p,
+html[data-theme="dark"] .welcome p,
+body[data-theme="dark"] .welcome p,
+#root[data-theme="dark"] .welcome p {
+
+  color: #aec8da;
+}
+
+
+/* =====================================================
+   MOBILE / TABLET
+===================================================== */
+
+@media (max-width: 768px) {
+
+  .hero {
+
+    padding:
+      50px 15px 60px;
+  }
+
+
+  .hero::before {
+
+    inset: -15%;
+
+    background-position: center;
+
+    opacity: 0.14;
+
+    -webkit-mask-image:
+      radial-gradient(
+        ellipse at center,
+        black 20%,
+        rgba(0, 0, 0, 0.7) 52%,
+        transparent 88%
+      );
+
+    mask-image:
+      radial-gradient(
+        ellipse at center,
+        black 20%,
+        rgba(0, 0, 0, 0.7) 52%,
+        transparent 88%
+      );
+  }
+
+
+  .hero h1 {
+
+    font-size: 42px;
+  }
+
+
+  .subtitle {
+
+    font-size: 18px;
+  }
+
+
+  .description {
+
+    font-size: 16px;
+
+    line-height: 1.8;
+  }
+
+
+  .home-search {
+
+    padding: 22px 16px;
+
+    border-radius: 20px;
+
+    margin-bottom: 24px;
+  }
+
+
+  .search-fields {
+
+    flex-direction: column;
+
+    width: 100%;
+  }
+
+
+  .search-fields input,
+  .search-button {
+
+    width: 100%;
+
+    max-width: 100%;
+  }
+
+
+  .today-shlok {
+
+    padding: 22px 16px;
+
+    border-radius: 21px;
+
+    margin-bottom: 35px;
+  }
+
+
+  .today-shlok-header h2 {
+
+    font-size: 24px;
+  }
+
+
+  .today-sanskrit {
+
+    padding: 20px 14px;
+
+    font-size: 19px;
+
+    line-height: 1.9;
+  }
+
+
+  .welcome {
+
+    padding: 35px 20px;
+
+    border-radius: 21px;
+
+    margin-bottom: 35px;
+  }
+
+
+  .welcome h2 {
+
+    font-size: 26px;
+  }
+
+
+  .welcome p {
+
+    font-size: 16px;
+  }
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (max-width: 480px) {
+
+  .hero {
+
+    padding:
+      40px 12px 50px;
+  }
+
+
+  .hero::before {
+
+    inset: -20%;
+
+    opacity: 0.11;
+  }
+
+
+  .hero h1 {
+
+    font-size: 35px;
+  }
+
+
+  .subtitle {
+
+    font-size: 16px;
+
+    letter-spacing: 0.5px;
+  }
+
+
+  .description {
+
+    font-size: 15px;
+  }
+
+
+  .hero > button,
+  .continue-reading-button {
+
+    width: 100%;
+
+    padding:
+      13px 18px;
+
+    font-size: 15px;
+  }
+
+
+  .search-title {
+
+    font-size: 21px;
+  }
+
+
+  .today-shlok-header {
+
+    align-items: flex-start;
+
+    gap: 12px;
+  }
+
+
+  .today-shlok-icon {
+
+    width: 45px;
+    height: 45px;
+
+    font-size: 22px;
+  }
+
+
+  .today-shlok-header h2 {
+
+    font-size: 22px;
+  }
+
+
+  .today-shlok-header p {
+
+    font-size: 13px;
+  }
+
+
+  .today-shlok-meta {
+
+    flex-direction: column;
+
+    align-items: flex-start;
+  }
+
+
+  .today-sanskrit {
+
+    font-size: 17px;
+
+    padding: 18px 12px;
+  }
+
+
+  .today-translation,
+  .today-message {
+
+    padding: 16px;
+  }
+
+
+  .welcome {
+
+    padding:
+      30px 17px;
+
+    margin-bottom: 30px;
+  }
+
+
+  .welcome h2 {
+
+    font-size: 23px;
+  }
+}
+
+/* =====================================================
+   GLOBAL PAGE BACKGROUND
+===================================================== */
+
+html,
+body,
+#root {
+  width: 100%;
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+
+  background:
+    linear-gradient(
+      135deg,
+      #eff9ff 0%,
+      #dcefff 50%,
+      #c9e7ff 100%
+    );
+
+  background-attachment: fixed;
+
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
+}
+
+
+/* =====================================================
+   HOME PAGE
+===================================================== */
+
+main {
+  width: 100%;
+  min-height: 100vh;
+
+  margin: 0;
+  padding: 0;
+
+  box-sizing: border-box;
+
+  position: relative;
+  overflow: hidden;
+
+  background:
+    linear-gradient(
+      135deg,
+      #eff9ff 0%,
+      #dcefff 50%,
+      #c9e7ff 100%
+    );
+
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
+}
+
+
+/* =====================================================
+   HERO SECTION
+===================================================== */
+
+.hero {
+  width: 100%;
+  min-height: 100vh;
+  padding: 70px 20px 80px;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+
+  position: relative;
+  isolation: isolate;
+
+  background-image:
+    linear-gradient(
+      135deg,
+      rgba(239, 249, 255, 0.08) 0%,
+      rgba(220, 239, 255, 0.12) 50%,
+      rgba(201, 231, 255, 0.16) 100%
+    ),
+    url("/images/gita-background.png");
+
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
+}
+
+
+/* =====================================================
+   BHAGAVAD GITA BACKGROUND IMAGE
+   Image location:
+   public/images/gita-background.png
+===================================================== */
+
+
+/* =====================================================
+   HERO TITLE
+===================================================== */
+
+.subtitle {
+  margin: 0 0 12px;
+
+  color: #1565c0;
+
+  font-size: 21px;
+  font-weight: 700;
+
+  letter-spacing: 1px;
+
+  text-shadow:
+    0 2px 8px rgba(21, 101, 192, 0.15);
+}
+
+
+.hero h1 {
+  margin: 0;
+
+  color: #0b3d91;
+
+  font-size: 54px;
+  font-weight: 800;
+
+  letter-spacing: 1px;
+
+  text-shadow:
+    0 4px 12px rgba(13, 71, 161, 0.15);
+}
+
+
+.description {
+  max-width: 760px;
+
+  margin: 20px auto 30px;
+
+  color: #315b7d;
+
+  font-size: 18px;
+  line-height: 1.9;
+}
+
+
+/* =====================================================
+   START / CONTINUE READING BUTTON
+===================================================== */
+
+.hero > button,
+.continue-reading-button {
+
+  margin-bottom: 28px;
+
+  padding: 15px 30px;
+
+  border: none;
+
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #42a5f5,
+      #1976d2,
+      #0d47a1
+    );
+
+  color: #ffffff;
+
+  font-size: 17px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 10px 20px rgba(13, 71, 161, 0.25),
+    0 5px 0 rgba(8, 55, 120, 0.25),
+    inset 0 1px 1px rgba(255, 255, 255, 0.35);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+.hero > button:hover,
+.continue-reading-button:hover {
+
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 16px 28px rgba(13, 71, 161, 0.3),
+    0 6px 0 rgba(8, 55, 120, 0.22),
+    inset 0 1px 1px rgba(255, 255, 255, 0.4);
+}
+
+
+.hero > button:active,
+.continue-reading-button:active {
+
+  transform: translateY(1px);
+
+  box-shadow:
+    0 5px 10px rgba(13, 71, 161, 0.25);
+}
+
+
+/* =====================================================
+   SEARCH BOX
+===================================================== */
+
+.home-search {
+
+  width: min(100%, 1050px);
+
+  margin: 10px auto 28px;
+
+  padding: 28px;
+
+  box-sizing: border-box;
+
+  position: relative;
+
+  border-radius: 24px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.97),
+      rgba(232, 246, 255, 0.94)
+    );
+
+  border: 1px solid rgba(120, 185, 235, 0.55);
+
+  box-shadow:
+    0 22px 40px rgba(21, 101, 160, 0.18),
+    0 8px 0 rgba(83, 153, 207, 0.18),
+    inset 0 1px 1px rgba(255, 255, 255, 0.95),
+    inset 0 -1px 1px rgba(80, 145, 200, 0.08);
+
+  transform: translateZ(0);
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    background 0.3s ease,
+    border-color 0.3s ease;
+}
+
+
+.home-search:hover {
+
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 28px 48px rgba(21, 101, 160, 0.22),
+    0 10px 0 rgba(83, 153, 207, 0.15),
+    inset 0 1px 1px rgba(255, 255, 255, 0.95);
+}
+
+
+/* =====================================================
+   SEARCH TOP HIGHLIGHT
+===================================================== */
+
+.home-search::before {
+
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 8%;
+
+  width: 84%;
+  height: 2px;
+
+  border-radius: 50%;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(33, 150, 243, 0.65),
+      transparent
+    );
+}
+
+
+/* =====================================================
+   SEARCH TITLE
+===================================================== */
+
+.search-title {
+
+  margin-bottom: 20px;
+
+  color: #0d47a1;
+
+  font-size: 24px;
+
+  font-weight: 800;
+
+  text-align: center;
+
+  text-shadow:
+    0 2px 6px rgba(13, 71, 161, 0.12);
+}
+
+
+/* =====================================================
+   SEARCH FIELDS
+===================================================== */
+
+.search-fields {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 12px;
+
+  flex-wrap: wrap;
+}
+
+
+/* =====================================================
+   SEARCH INPUT
+===================================================== */
+
+.search-fields input {
+
+  width: 190px;
+  height: 50px;
+
+  padding: 0 16px;
+
+  box-sizing: border-box;
+
+  border-radius: 12px;
+
+  border: 1px solid #a8cde9;
+
+  outline: none;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #f1f9ff
+    );
+
+  color: #163f60;
+
+  font-size: 15px;
+
+  box-shadow:
+    inset 0 3px 6px rgba(52, 113, 160, 0.08),
+    0 4px 8px rgba(33, 100, 160, 0.08);
+
+  transition:
+    border 0.25s ease,
+    box-shadow 0.25s ease,
+    transform 0.25s ease,
+    background 0.3s ease,
+    color 0.3s ease;
+}
+
+
+.search-fields input:hover {
+
+  transform: translateY(-1px);
+
+  border-color: #64b5f6;
+}
+
+
+.search-fields input:focus {
+
+  border-color: #1976d2;
+
+  box-shadow:
+    0 0 0 3px rgba(33, 150, 243, 0.12),
+    inset 0 3px 6px rgba(52, 113, 160, 0.08),
+    0 5px 10px rgba(33, 100, 160, 0.12);
+}
+
+
+.search-fields input::placeholder {
+  color: #7898ae;
+}
+
+
+/* =====================================================
+   NUMBER INPUT
+===================================================== */
+
+.search-fields input[type="number"]::-webkit-inner-spin-button,
+.search-fields input[type="number"]::-webkit-outer-spin-button {
+
+  opacity: 0.7;
+}
+
+
+/* =====================================================
+   SEARCH BUTTON
+===================================================== */
+
+.search-button {
+
+  height: 50px;
+
+  padding: 0 24px;
+
+  border: none;
+
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #42a5f5,
+      #1976d2,
+      #0d47a1
+    );
+
+  color: white;
+
+  font-size: 16px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 8px 16px rgba(13, 71, 161, 0.24),
+    0 4px 0 rgba(8, 55, 120, 0.25),
+    inset 0 1px 1px rgba(255, 255, 255, 0.4);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+.search-button:hover {
+
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 13px 22px rgba(13, 71, 161, 0.3),
+    0 5px 0 rgba(8, 55, 120, 0.2),
+    inset 0 1px 1px rgba(255, 255, 255, 0.45);
+}
+
+
+.search-button:active {
+
+  transform: translateY(1px);
+
+  box-shadow:
+    0 5px 10px rgba(13, 71, 161, 0.22);
+}
+
+
+.search-button:disabled {
+
+  opacity: 0.6;
+
+  cursor: not-allowed;
+
+  transform: none;
+}
+
+
+/* =====================================================
+   SEARCH MESSAGE
+===================================================== */
+
+.search-message {
+
+  margin-top: 20px;
+
+  padding: 13px 16px;
+
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #f5fbff,
+      #e7f4ff
+    );
+
+  border: 1px solid #b9daf2;
+
+  color: #18547d;
+
+  font-size: 15px;
+
+  box-shadow:
+    inset 0 2px 5px rgba(60, 120, 165, 0.06),
+    0 4px 10px rgba(40, 100, 150, 0.08);
+}
+
+
+/* =====================================================
+   SEARCH RESULTS
+===================================================== */
+
+.search-results {
+
+  margin-top: 25px;
+
+  text-align: left;
+}
+
+
+.search-results > h3 {
+
+  margin: 0 0 18px;
+
+  color: #0d47a1;
+
+  text-align: center;
+
+  font-size: 20px;
+}
+
+
+.search-result-card {
+
+  margin-bottom: 14px;
+
+  padding: 20px;
+
+  border-radius: 16px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #f1f9ff
+    );
+
+  border: 1px solid #c4dff3;
+
+  box-shadow:
+    0 8px 16px rgba(40, 110, 165, 0.1),
+    0 3px 0 rgba(100, 165, 210, 0.12);
+
+  cursor: pointer;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+.search-result-card:hover {
+
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 14px 24px rgba(40, 110, 165, 0.15),
+    0 4px 0 rgba(100, 165, 210, 0.12);
+}
+
+
+.result-chapter {
+
+  color: #1976d2;
+
+  font-size: 14px;
+
+  font-weight: 700;
+}
+
+
+.search-result-card h4 {
+
+  margin: 7px 0;
+
+  color: #123f68;
+
+  font-size: 18px;
+}
+
+
+.search-result-card p {
+
+  margin: 8px 0;
+
+  color: #42627b;
+
+  line-height: 1.7;
+}
+
+
+.search-result-card span {
+
+  color: #0d47a1;
+
+  font-weight: 700;
+}
+
+
+/* =====================================================
+   TODAY'S SHLOK
+===================================================== */
+
+.today-shlok {
+
+  width: min(100%, 1050px);
+
+  margin: 0 auto 45px;
+
+  padding: 30px;
+
+  box-sizing: border-box;
+
+  position: relative;
+
+  border-radius: 26px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.98),
+      rgba(226, 244, 255, 0.96)
+    );
+
+  border: 1px solid rgba(105, 175, 225, 0.55);
+
+  box-shadow:
+    0 25px 45px rgba(21, 101, 160, 0.18),
+    0 9px 0 rgba(83, 153, 207, 0.18),
+    inset 0 1px 1px rgba(255, 255, 255, 0.95);
+
+  text-align: left;
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    background 0.3s ease,
+    border-color 0.3s ease;
+}
+
+
+.today-shlok:hover {
+
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 30px 52px rgba(21, 101, 160, 0.22),
+    0 10px 0 rgba(83, 153, 207, 0.14),
+    inset 0 1px 1px rgba(255, 255, 255, 0.95);
+}
+
+
+/* =====================================================
+   TODAY TOP LINE
+===================================================== */
+
+.today-shlok::before {
+
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 8%;
+
+  width: 84%;
+  height: 3px;
+
+  border-radius: 50%;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      #42a5f5,
+      #1976d2,
+      transparent
+    );
+}
+
+
+/* =====================================================
+   TODAY HEADER
+===================================================== */
+
+.today-shlok-header {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 16px;
+
+  margin-bottom: 22px;
+}
+
+
+.today-shlok-icon {
+
+  width: 55px;
+  height: 55px;
+
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #d8efff
+    );
+
+  border: 1px solid #b4d9f2;
+
+  font-size: 27px;
+
+  box-shadow:
+    0 8px 15px rgba(33, 100, 160, 0.15),
+    inset 0 2px 4px rgba(255, 255, 255, 0.9);
+}
+
+
+.today-shlok-header h2 {
+
+  margin: 0;
+
+  color: #0d47a1;
+
+  font-size: 28px;
+
+  font-weight: 800;
+}
+
+
+.today-shlok-header p {
+
+  margin: 5px 0 0;
+
+  color: #52718b;
+
+  font-size: 14px;
+
+  line-height: 1.6;
+}
+
+
+/* =====================================================
+   TODAY META
+===================================================== */
+
+.today-shlok-meta {
+
+  display: flex;
+
+  gap: 10px;
+
+  flex-wrap: wrap;
+
+  margin-bottom: 22px;
+}
+
+
+.today-shlok-meta span {
+
+  padding: 8px 14px;
+
+  border-radius: 20px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #eef8ff,
+      #d9edff
+    );
+
+  border: 1px solid #b9daf2;
+
+  color: #0d47a1;
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  box-shadow:
+    0 4px 8px rgba(40, 110, 165, 0.08),
+    inset 0 1px 1px rgba(255, 255, 255, 0.8);
+}
+
+
+/* =====================================================
+   TODAY SANSKRIT
+===================================================== */
+
+.today-sanskrit {
+
+  padding: 25px;
+
+  border-radius: 17px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #f9fdff,
+      #eaf6ff
+    );
+
+  border: 1px solid #c4e0f3;
+
+  border-left: 5px solid #1976d2;
+
+  color: #173f61;
+
+  font-size: 22px;
+
+  line-height: 2;
+
+  text-align: center;
+
+  box-shadow:
+    inset 0 3px 8px rgba(50, 110, 155, 0.06),
+    0 5px 12px rgba(40, 110, 165, 0.08);
+}
+
+
+/* =====================================================
+   TODAY TRANSLATION / MESSAGE
+===================================================== */
+
+.today-translation,
+.today-message {
+
+  margin-top: 18px;
+
+  padding: 20px;
+
+  border-radius: 15px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #f1f9ff
+    );
+
+  border: 1px solid #c9e1f2;
+
+  box-shadow:
+    0 6px 14px rgba(40, 110, 165, 0.08),
+    inset 0 1px 1px rgba(255, 255, 255, 0.9);
+}
+
+
+.today-translation h3,
+.today-message h3 {
+
+  margin-top: 0;
+
+  color: #0d47a1;
+
+  font-size: 19px;
+}
+
+
+.today-translation div,
+.today-message div {
+
+  color: #42627b;
+
+  line-height: 1.8;
+
+  font-size: 16px;
+}
+
+
+/* =====================================================
+   TODAY BUTTON
+===================================================== */
+
+.today-shlok-button {
+
+  display: block;
+
+  margin: 24px auto 0;
+
+  padding: 13px 24px;
+
+  border: none;
+
+  border-radius: 12px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #42a5f5,
+      #1976d2,
+      #0d47a1
+    );
+
+  color: white;
+
+  font-size: 15px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 8px 16px rgba(13, 71, 161, 0.23),
+    0 4px 0 rgba(8, 55, 120, 0.22),
+    inset 0 1px 1px rgba(255, 255, 255, 0.4);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+.today-shlok-button:hover {
+
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 13px 22px rgba(13, 71, 161, 0.28),
+    0 5px 0 rgba(8, 55, 120, 0.18),
+    inset 0 1px 1px rgba(255, 255, 255, 0.45);
+}
+
+
+/* =====================================================
+   WELCOME / GITA WHY
+===================================================== */
+
+.welcome {
+
+  width: min(100%, 900px);
+
+  margin: 0 auto 45px;
+
+  padding: 45px 30px;
+
+  box-sizing: border-box;
+
+  position: relative;
+
+  text-align: center;
+
+  border-radius: 26px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.98),
+      rgba(224, 243, 255, 0.96)
+    );
+
+  border: 1px solid rgba(105, 175, 225, 0.55);
+
+  box-shadow:
+    0 24px 42px rgba(21, 101, 160, 0.18),
+    0 9px 0 rgba(83, 153, 207, 0.17),
+    inset 0 1px 1px rgba(255, 255, 255, 0.95);
+
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    background 0.3s ease,
+    border-color 0.3s ease;
+}
+
+
+.welcome:hover {
+
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 30px 50px rgba(21, 101, 160, 0.22),
+    0 10px 0 rgba(83, 153, 207, 0.13),
+    inset 0 1px 1px rgba(255, 255, 255, 0.95);
+}
+
+
+/* =====================================================
+   WELCOME TOP LINE
+===================================================== */
+
+.welcome::before {
+
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: 10%;
+
+  width: 80%;
+  height: 3px;
+
+  border-radius: 50%;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      #42a5f5,
+      #1976d2,
+      transparent
+    );
+}
+
+
+/* =====================================================
+   WELCOME TITLE
+===================================================== */
+
+.welcome h2 {
+
+  margin: 0 0 18px;
+
+  color: #0d47a1;
+
+  font-size: 31px;
+
+  font-weight: 800;
+
+  text-shadow:
+    0 3px 8px rgba(13, 71, 161, 0.12);
+}
+
+
+.welcome p {
+
+  margin: 0 auto;
+
+  max-width: 720px;
+
+  color: #42627b;
+
+  font-size: 17px;
+
+  line-height: 1.9;
+}
+
+
+/* =====================================================
+   SECTION SPACING
+===================================================== */
+
+.home-search {
+  order: 10;
+}
+
+.today-shlok {
+  order: 20;
+}
+
+.welcome {
+  order: 30;
+}
+
+
+/* =====================================================
+   DARK THEME
+===================================================== */
+
+html.dark,
+body.dark,
+#root.dark,
+html[data-theme="dark"],
+body[data-theme="dark"],
+#root[data-theme="dark"] {
+
+  background:
+    linear-gradient(
+      135deg,
+      #071a2d 0%,
+      #0b2944 50%,
+      #0e3557 100%
+    );
+
+  color: #e8f4ff;
+}
+
+
+/* =====================================================
+   DARK MAIN
+===================================================== */
+
+html.dark main,
+body.dark main,
+#root.dark main,
+html[data-theme="dark"] main,
+body[data-theme="dark"] main,
+#root[data-theme="dark"] main {
+
+  background:
+    linear-gradient(
+      135deg,
+      #071a2d 0%,
+      #0b2944 50%,
+      #0e3557 100%
+    );
+
+  color: #e8f4ff;
+}
+
+
+/* =====================================================
+   DARK HERO
+===================================================== */
+
+html.dark .hero,
+body.dark .hero,
+#root.dark .hero,
+html[data-theme="dark"] .hero,
+body[data-theme="dark"] .hero,
+#root[data-theme="dark"] .hero {
+
+  background:
+    linear-gradient(
+      135deg,
+      #071a2d 0%,
+      #0b2944 50%,
+      #0e3557 100%
+    );
+
+  color: #e8f4ff;
+}
+
+
+/* =====================================================
+   DARK HERO IMAGE
+===================================================== */
+
+html.dark .hero::before,
+body.dark .hero::before,
+#root.dark .hero::before,
+html[data-theme="dark"] .hero::before,
+body[data-theme="dark"] .hero::before,
+#root[data-theme="dark"] .hero::before {
+
+  opacity: 0.22;
+
+  filter:
+    saturate(0.75)
+    contrast(1)
+    brightness(0.62);
+}
+
+
+/* =====================================================
+   DARK HERO OVERLAY
+===================================================== */
+
+html.dark .hero::after,
+body.dark .hero::after,
+#root.dark .hero::after,
+html[data-theme="dark"] .hero::after,
+body[data-theme="dark"] .hero::after,
+#root[data-theme="dark"] .hero::after {
+
+  background:
+    radial-gradient(
+      ellipse at center,
+      rgba(7, 26, 45, 0.05) 10%,
+      rgba(7, 26, 45, 0.25) 42%,
+      rgba(7, 26, 45, 0.62) 72%,
+      rgba(7, 26, 45, 0.92) 100%
+    );
+}
+
+
+/* =====================================================
+   DARK HERO TEXT
+===================================================== */
+
+html.dark .subtitle,
+body.dark .subtitle,
+#root.dark .subtitle,
+html[data-theme="dark"] .subtitle,
+body[data-theme="dark"] .subtitle,
+#root[data-theme="dark"] .subtitle {
+
+  color: #64b5f6;
+}
+
+
+html.dark .hero h1,
+body.dark .hero h1,
+#root.dark .hero h1,
+html[data-theme="dark"] .hero h1,
+body[data-theme="dark"] .hero h1,
+#root[data-theme="dark"] .hero h1 {
+
+  color: #90caf9;
+}
+
+
+html.dark .description,
+body.dark .description,
+#root.dark .description,
+html[data-theme="dark"] .description,
+body[data-theme="dark"] .description,
+#root[data-theme="dark"] .description {
+
+  color: #b7d3e8;
+}
+
+
+/* =====================================================
+   DARK SEARCH BOX
+===================================================== */
+
+html.dark .home-search,
+body.dark .home-search,
+#root.dark .home-search,
+html[data-theme="dark"] .home-search,
+body[data-theme="dark"] .home-search,
+#root[data-theme="dark"] .home-search {
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(18, 51, 78, 0.98),
+      rgba(11, 39, 63, 0.98)
+    );
+
+  border-color: rgba(100, 181, 246, 0.35);
+
+  box-shadow:
+    0 22px 40px rgba(0, 0, 0, 0.35),
+    0 8px 0 rgba(0, 0, 0, 0.2),
+    inset 0 1px 1px rgba(255, 255, 255, 0.08);
+}
+
+
+html.dark .search-title,
+body.dark .search-title,
+#root.dark .search-title,
+html[data-theme="dark"] .search-title,
+body[data-theme="dark"] .search-title,
+#root[data-theme="dark"] .search-title {
+
+  color: #90caf9;
+}
+
+
+/* =====================================================
+   DARK INPUTS
+===================================================== */
+
+html.dark .search-fields input,
+body.dark .search-fields input,
+#root.dark .search-fields input,
+html[data-theme="dark"] .search-fields input,
+body[data-theme="dark"] .search-fields input,
+#root[data-theme="dark"] .search-fields input {
+
+  background:
+    linear-gradient(
+      145deg,
+      #102f49,
+      #0b253b
+    );
+
+  border-color: #315d7d;
+
+  color: #e8f4ff;
+
+  box-shadow:
+    inset 0 3px 6px rgba(0, 0, 0, 0.25),
+    0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+
+html.dark .search-fields input::placeholder,
+body.dark .search-fields input::placeholder,
+#root.dark .search-fields input::placeholder,
+html[data-theme="dark"] .search-fields input::placeholder,
+body[data-theme="dark"] .search-fields input::placeholder,
+#root[data-theme="dark"] .search-fields input::placeholder {
+
+  color: #8fb0c8;
+}
+
+
+html.dark .search-fields input:focus,
+body.dark .search-fields input:focus,
+#root.dark .search-fields input:focus,
+html[data-theme="dark"] .search-fields input:focus,
+body[data-theme="dark"] .search-fields input:focus,
+#root[data-theme="dark"] .search-fields input:focus {
+
+  border-color: #42a5f5;
+
+  box-shadow:
+    0 0 0 3px rgba(66, 165, 245, 0.18),
+    inset 0 3px 6px rgba(0, 0, 0, 0.2),
+    0 5px 10px rgba(0, 0, 0, 0.25);
+}
+
+
+/* =====================================================
+   DARK SEARCH MESSAGE
+===================================================== */
+
+html.dark .search-message,
+body.dark .search-message,
+#root.dark .search-message,
+html[data-theme="dark"] .search-message,
+body[data-theme="dark"] .search-message,
+#root[data-theme="dark"] .search-message {
+
+  background:
+    linear-gradient(
+      145deg,
+      #12324d,
+      #0d2940
+    );
+
+  border-color: #315d7d;
+
+  color: #b9d8ed;
+}
+
+
+/* =====================================================
+   DARK SEARCH RESULTS
+===================================================== */
+
+html.dark .search-results > h3,
+body.dark .search-results > h3,
+#root.dark .search-results > h3,
+html[data-theme="dark"] .search-results > h3,
+body[data-theme="dark"] .search-results > h3,
+#root[data-theme="dark"] .search-results > h3 {
+
+  color: #90caf9;
+}
+
+
+html.dark .search-result-card,
+body.dark .search-result-card,
+#root.dark .search-result-card,
+html[data-theme="dark"] .search-result-card,
+body[data-theme="dark"] .search-result-card,
+#root[data-theme="dark"] .search-result-card {
+
+  background:
+    linear-gradient(
+      145deg,
+      #12344f,
+      #0e2b43
+    );
+
+  border-color: #315d7d;
+
+  box-shadow:
+    0 8px 16px rgba(0, 0, 0, 0.28),
+    0 3px 0 rgba(0, 0, 0, 0.2);
+}
+
+
+html.dark .result-chapter,
+body.dark .result-chapter,
+#root.dark .result-chapter,
+html[data-theme="dark"] .result-chapter,
+body[data-theme="dark"] .result-chapter,
+#root[data-theme="dark"] .result-chapter {
+
+  color: #64b5f6;
+}
+
+
+html.dark .search-result-card h4,
+body.dark .search-result-card h4,
+#root.dark .search-result-card h4,
+html[data-theme="dark"] .search-result-card h4,
+body[data-theme="dark"] .search-result-card h4,
+#root[data-theme="dark"] .search-result-card h4 {
+
+  color: #d9edff;
+}
+
+
+html.dark .search-result-card p,
+body.dark .search-result-card p,
+#root.dark .search-result-card p,
+html[data-theme="dark"] .search-result-card p,
+body[data-theme="dark"] .search-result-card p,
+#root[data-theme="dark"] .search-result-card p {
+
+  color: #a9c6da;
+}
+
+
+html.dark .search-result-card span,
+body.dark .search-result-card span,
+#root.dark .search-result-card span,
+html[data-theme="dark"] .search-result-card span,
+body[data-theme="dark"] .search-result-card span,
+#root[data-theme="dark"] .search-result-card span {
+
+  color: #90caf9;
+}
+
+
+/* =====================================================
+   DARK TODAY SHLOK
+===================================================== */
+
+html.dark .today-shlok,
+body.dark .today-shlok,
+#root.dark .today-shlok,
+html[data-theme="dark"] .today-shlok,
+body[data-theme="dark"] .today-shlok,
+#root[data-theme="dark"] .today-shlok {
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(18, 53, 80, 0.98),
+      rgba(11, 39, 62, 0.98)
+    );
+
+  border-color: rgba(100, 181, 246, 0.35);
+
+  box-shadow:
+    0 25px 45px rgba(0, 0, 0, 0.35),
+    0 9px 0 rgba(0, 0, 0, 0.2),
+    inset 0 1px 1px rgba(255, 255, 255, 0.08);
+}
+
+
+html.dark .today-shlok-header h2,
+body.dark .today-shlok-header h2,
+#root.dark .today-shlok-header h2,
+html[data-theme="dark"] .today-shlok-header h2,
+body[data-theme="dark"] .today-shlok-header h2,
+#root[data-theme="dark"] .today-shlok-header h2 {
+
+  color: #90caf9;
+}
+
+
+html.dark .today-shlok-header p,
+body.dark .today-shlok-header p,
+#root.dark .today-shlok-header p,
+html[data-theme="dark"] .today-shlok-header p,
+body[data-theme="dark"] .today-shlok-header p,
+#root[data-theme="dark"] .today-shlok-header p {
+
+  color: #9ebbd0;
+}
+
+
+/* =====================================================
+   DARK TODAY ICON
+===================================================== */
+
+html.dark .today-shlok-icon,
+body.dark .today-shlok-icon,
+#root.dark .today-shlok-icon,
+html[data-theme="dark"] .today-shlok-icon,
+body[data-theme="dark"] .today-shlok-icon,
+#root[data-theme="dark"] .today-shlok-icon {
+
+  background:
+    linear-gradient(
+      145deg,
+      #19415f,
+      #102f49
+    );
+
+  border-color: #315d7d;
+
+  box-shadow:
+    0 8px 15px rgba(0, 0, 0, 0.25),
+    inset 0 2px 4px rgba(255, 255, 255, 0.08);
+}
+
+
+/* =====================================================
+   DARK TODAY META
+===================================================== */
+
+html.dark .today-shlok-meta span,
+body.dark .today-shlok-meta span,
+#root.dark .today-shlok-meta span,
+html[data-theme="dark"] .today-shlok-meta span,
+body[data-theme="dark"] .today-shlok-meta span,
+#root[data-theme="dark"] .today-shlok-meta span {
+
+  background:
+    linear-gradient(
+      145deg,
+      #163d5b,
+      #102f48
+    );
+
+  border-color: #315d7d;
+
+  color: #9dd3ff;
+
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.18),
+    inset 0 1px 1px rgba(255, 255, 255, 0.06);
+}
+
+
+/* =====================================================
+   DARK SANSKRIT
+===================================================== */
+
+html.dark .today-sanskrit,
+body.dark .today-sanskrit,
+#root.dark .today-sanskrit,
+html[data-theme="dark"] .today-sanskrit,
+body[data-theme="dark"] .today-sanskrit,
+#root[data-theme="dark"] .today-sanskrit {
+
+  background:
+    linear-gradient(
+      145deg,
+      #102f49,
+      #0b263d
+    );
+
+  border-color: #315d7d;
+
+  border-left-color: #42a5f5;
+
+  color: #d9edff;
+
+  box-shadow:
+    inset 0 3px 8px rgba(0, 0, 0, 0.2),
+    0 5px 12px rgba(0, 0, 0, 0.2);
+}
+
+
+/* =====================================================
+   DARK TRANSLATION / MESSAGE
+===================================================== */
+
+html.dark .today-translation,
+html.dark .today-message,
+body.dark .today-translation,
+body.dark .today-message,
+#root.dark .today-translation,
+#root.dark .today-message,
+html[data-theme="dark"] .today-translation,
+html[data-theme="dark"] .today-message,
+body[data-theme="dark"] .today-translation,
+body[data-theme="dark"] .today-message,
+#root[data-theme="dark"] .today-translation,
+#root[data-theme="dark"] .today-message {
+
+  background:
+    linear-gradient(
+      145deg,
+      #12344f,
+      #0d2b43
+    );
+
+  border-color: #315d7d;
+
+  box-shadow:
+    0 6px 14px rgba(0, 0, 0, 0.2),
+    inset 0 1px 1px rgba(255, 255, 255, 0.06);
+}
+
+
+html.dark .today-translation h3,
+html.dark .today-message h3,
+body.dark .today-translation h3,
+body.dark .today-message h3,
+#root.dark .today-translation h3,
+#root.dark .today-message h3,
+html[data-theme="dark"] .today-translation h3,
+html[data-theme="dark"] .today-message h3,
+body[data-theme="dark"] .today-translation h3,
+body[data-theme="dark"] .today-message h3,
+#root[data-theme="dark"] .today-translation h3,
+#root[data-theme="dark"] .today-message h3 {
+
+  color: #90caf9;
+}
+
+
+html.dark .today-translation div,
+html.dark .today-message div,
+body.dark .today-translation div,
+body.dark .today-message div,
+#root.dark .today-translation div,
+#root.dark .today-message div,
+html[data-theme="dark"] .today-translation div,
+html[data-theme="dark"] .today-message div,
+body[data-theme="dark"] .today-translation div,
+body[data-theme="dark"] .today-message div,
+#root[data-theme="dark"] .today-translation div,
+#root[data-theme="dark"] .today-message div {
+
+  color: #aec8da;
+}
+
+
+/* =====================================================
+   DARK WELCOME
+===================================================== */
+
+html.dark .welcome,
+body.dark .welcome,
+#root.dark .welcome,
+html[data-theme="dark"] .welcome,
+body[data-theme="dark"] .welcome,
+#root[data-theme="dark"] .welcome {
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(18, 53, 80, 0.98),
+      rgba(11, 39, 62, 0.98)
+    );
+
+  border-color: rgba(100, 181, 246, 0.35);
+
+  box-shadow:
+    0 24px 42px rgba(0, 0, 0, 0.35),
+    0 9px 0 rgba(0, 0, 0, 0.2),
+    inset 0 1px 1px rgba(255, 255, 255, 0.08);
+}
+
+
+html.dark .welcome h2,
+body.dark .welcome h2,
+#root.dark .welcome h2,
+html[data-theme="dark"] .welcome h2,
+body[data-theme="dark"] .welcome h2,
+#root[data-theme="dark"] .welcome h2 {
+
+  color: #90caf9;
+}
+
+
+html.dark .welcome p,
+body.dark .welcome p,
+#root.dark .welcome p,
+html[data-theme="dark"] .welcome p,
+body[data-theme="dark"] .welcome p,
+#root[data-theme="dark"] .welcome p {
+
+  color: #aec8da;
+}
+
+
+/* =====================================================
+   MOBILE / TABLET
+===================================================== */
+
+@media (max-width: 768px) {
+
+  .hero {
+
+    padding:
+      50px 15px 60px;
+  }
+
+
+  .hero::before {
+
+    inset: -15%;
+
+    background-position: center;
+
+    opacity: 0.15;
+
+    -webkit-mask-image:
+      radial-gradient(
+        ellipse at center,
+        black 20%,
+        rgba(0, 0, 0, 0.7) 52%,
+        transparent 88%
+      );
+
+    mask-image:
+      radial-gradient(
+        ellipse at center,
+        black 20%,
+        rgba(0, 0, 0, 0.7) 52%,
+        transparent 88%
+      );
+  }
+
+
+  .hero h1 {
+
+    font-size: 42px;
+  }
+
+
+  .subtitle {
+
+    font-size: 18px;
+  }
+
+
+  .description {
+
+    font-size: 16px;
+
+    line-height: 1.8;
+  }
+
+
+  .home-search {
+
+    padding: 22px 16px;
+
+    border-radius: 20px;
+
+    margin-bottom: 24px;
+  }
+
+
+  .search-fields {
+
+    flex-direction: column;
+
+    width: 100%;
+  }
+
+
+  .search-fields input,
+  .search-button {
+
+    width: 100%;
+
+    max-width: 100%;
+  }
+
+
+  .today-shlok {
+
+    padding: 22px 16px;
+
+    border-radius: 21px;
+
+    margin-bottom: 35px;
+  }
+
+
+  .today-shlok-header h2 {
+
+    font-size: 24px;
+  }
+
+
+  .today-sanskrit {
+
+    padding: 20px 14px;
+
+    font-size: 19px;
+
+    line-height: 1.9;
+  }
+
+
+  .welcome {
+
+    padding: 35px 20px;
+
+    border-radius: 21px;
+
+    margin-bottom: 35px;
+  }
+
+
+  .welcome h2 {
+
+    font-size: 26px;
+  }
+
+
+  .welcome p {
+
+    font-size: 16px;
+  }
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (max-width: 480px) {
+
+  .hero {
+
+    padding:
+      40px 12px 50px;
+  }
+
+
+  .hero::before {
+
+    inset: -20%;
+
+    opacity: 0.12;
+  }
+
+
+  .hero h1 {
+
+    font-size: 35px;
+  }
+
+
+  .subtitle {
+
+    font-size: 16px;
+
+    letter-spacing: 0.5px;
+  }
+
+
+  .description {
+
+    font-size: 15px;
+  }
+
+
+  .hero > button,
+  .continue-reading-button {
+
+    width: 100%;
+
+    padding:
+      13px 18px;
+
+    font-size: 15px;
+  }
+
+
+  .search-title {
+
+    font-size: 21px;
+  }
+
+
+  .today-shlok-header {
+
+    align-items: flex-start;
+
+    gap: 12px;
+  }
+
+
+  .today-shlok-icon {
+
+    width: 45px;
+
+    height: 45px;
+
+    font-size: 22px;
+  }
+
+
+  .today-shlok-header h2 {
+
+    font-size: 22px;
+  }
+
+
+  .today-shlok-header p {
+
+    font-size: 13px;
+  }
+
+
+  .today-shlok-meta {
+
+    flex-direction: column;
+
+    align-items: flex-start;
+  }
+
+
+  .today-sanskrit {
+
+    font-size: 17px;
+
+    padding: 18px 12px;
+  }
+
+
+  .today-translation,
+  .today-message {
+
+    padding: 16px;
+  }
+
+
+  .welcome {
+
+    padding:
+      30px 17px;
+
+    margin-bottom: 30px;
+  }
+
+
+  .welcome h2 {
+
+    font-size: 23px;
+  }
+}
+
