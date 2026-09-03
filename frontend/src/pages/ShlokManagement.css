@@ -1,0 +1,3951 @@
+/* =========================================================
+   SHLOK MANAGEMENT - PREMIUM BLUE UI
+   ========================================================= */
+
+:root {
+  --sm-blue-900: #071a3d;
+  --sm-blue-800: #0b2a63;
+  --sm-blue-700: #0d47a1;
+  --sm-blue-600: #1565c0;
+  --sm-blue-500: #1976d2;
+  --sm-blue-400: #42a5f5;
+  --sm-blue-300: #64b5f6;
+  --sm-blue-100: #e3f2fd;
+
+  --sm-white: #ffffff;
+  --sm-text: #10233f;
+  --sm-muted: #64748b;
+  --sm-border: #d8e5f5;
+  --sm-bg: #f4f8fd;
+
+  --sm-success: #087f5b;
+  --sm-success-bg: #e8f8f2;
+
+  --sm-danger: #d62839;
+  --sm-danger-bg: #fff0f1;
+
+  --sm-shadow:
+    0 18px 45px rgba(8, 54, 110, 0.12);
+
+  --sm-shadow-hover:
+    0 25px 60px rgba(8, 54, 110, 0.20);
+}
+
+
+/* =========================================================
+   PAGE
+   ========================================================= */
+
+.shlok-management-page {
+  min-height: 100vh;
+  width: 100%;
+
+  padding: 35px 20px 70px;
+
+  background:
+    radial-gradient(
+      circle at 10% 10%,
+      rgba(33, 150, 243, 0.13),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 90% 20%,
+      rgba(21, 101, 192, 0.10),
+      transparent 30%
+    ),
+    linear-gradient(
+      135deg,
+      #f7fbff 0%,
+      #edf5ff 50%,
+      #f8fbff 100%
+    );
+
+  color: var(--sm-text);
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   CONTAINER
+   ========================================================= */
+
+.shlok-management-container {
+  width: min(1250px, 100%);
+  margin: 0 auto;
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.shlok-management-header {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 25px;
+
+  width: 100%;
+
+  padding: 30px 34px;
+  margin-bottom: 25px;
+
+  border-radius: 24px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #0b2a63 0%,
+      #0d47a1 55%,
+      #1976d2 100%
+    );
+
+  box-shadow:
+    0 20px 45px rgba(13, 71, 161, 0.28);
+
+  overflow: hidden;
+
+  box-sizing: border-box;
+}
+
+
+.shlok-management-header::before {
+  content: "";
+
+  position: absolute;
+
+  width: 250px;
+  height: 250px;
+
+  right: -90px;
+  top: -120px;
+
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.08);
+}
+
+
+.shlok-management-header::after {
+  content: "";
+
+  position: absolute;
+
+  width: 180px;
+  height: 180px;
+
+  left: -80px;
+  bottom: -110px;
+
+  border-radius: 50%;
+
+  background: rgba(255, 255, 255, 0.06);
+}
+
+
+.shlok-management-header > div {
+  position: relative;
+  z-index: 2;
+}
+
+
+.shlok-management-header h1 {
+  margin: 0;
+
+  font-size: clamp(25px, 3vw, 36px);
+
+  font-weight: 800;
+
+  letter-spacing: -0.5px;
+
+  color: #ffffff;
+}
+
+
+.shlok-management-header p {
+  margin: 8px 0 0;
+
+  font-size: 15px;
+
+  line-height: 1.6;
+
+  color: rgba(255, 255, 255, 0.82);
+}
+
+
+/* =========================================================
+   BACK ADMIN BUTTON
+   ========================================================= */
+
+.back-admin-btn {
+  position: relative;
+  z-index: 3;
+
+  padding: 13px 20px;
+
+  border:
+    1px solid rgba(255, 255, 255, 0.30);
+
+  border-radius: 13px;
+
+  color: #ffffff;
+
+  background:
+    rgba(255, 255, 255, 0.12);
+
+  backdrop-filter: blur(12px);
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 6px 0 rgba(4, 28, 66, 0.25),
+    0 12px 25px rgba(0, 0, 0, 0.12);
+
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+.back-admin-btn::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: -120%;
+
+  width: 70%;
+  height: 100%;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.45),
+      transparent
+    );
+
+  transform: skewX(-25deg);
+
+  transition: left 0.65s ease;
+}
+
+
+.back-admin-btn:hover {
+  transform: translateY(-3px);
+
+  background:
+    rgba(255, 255, 255, 0.20);
+
+  box-shadow:
+    0 8px 0 rgba(4, 28, 66, 0.25),
+    0 16px 30px rgba(0, 0, 0, 0.16);
+}
+
+
+.back-admin-btn:hover::before {
+  left: 130%;
+}
+
+
+.back-admin-btn:active {
+  transform: translateY(1px);
+
+  box-shadow:
+    0 3px 0 rgba(4, 28, 66, 0.25),
+    0 7px 15px rgba(0, 0, 0, 0.12);
+}
+
+
+/* =========================================================
+   SUCCESS / ERROR
+   ========================================================= */
+
+.success-message,
+.error-message {
+  width: 100%;
+
+  padding: 15px 18px;
+
+  margin-bottom: 22px;
+
+  border-radius: 14px;
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  animation:
+    smMessageIn 0.35s ease;
+
+  box-sizing: border-box;
+}
+
+
+.success-message {
+  color: var(--sm-success);
+
+  background:
+    var(--sm-success-bg);
+
+  border:
+    1px solid #b9ead9;
+
+  box-shadow:
+    0 8px 25px rgba(8, 127, 91, 0.08);
+}
+
+
+.error-message {
+  color: var(--sm-danger);
+
+  background:
+    var(--sm-danger-bg);
+
+  border:
+    1px solid #ffd0d5;
+
+  box-shadow:
+    0 8px 25px rgba(214, 40, 57, 0.08);
+}
+
+
+@keyframes smMessageIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* =========================================================
+   FORM + LIST
+   ========================================================= */
+
+.shlok-form-section,
+.shlok-list-section {
+  position: relative;
+
+  width: 100%;
+
+  margin: 0 auto 30px;
+
+  padding: 30px;
+
+  background:
+    rgba(255, 255, 255, 0.96);
+
+  border:
+    1px solid var(--sm-border);
+
+  border-radius: 24px;
+
+  box-shadow:
+    var(--sm-shadow);
+
+  backdrop-filter: blur(10px);
+
+  box-sizing: border-box;
+}
+
+
+.shlok-form-section::before,
+.shlok-list-section::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+
+  left: 25px;
+  right: 25px;
+
+  height: 3px;
+
+  border-radius:
+    0 0 10px 10px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #0d47a1,
+      #42a5f5,
+      #0d47a1
+    );
+}
+
+
+/* =========================================================
+   SECTION TITLE
+   ========================================================= */
+
+.section-title {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  margin-bottom: 25px;
+}
+
+
+.section-title h2 {
+  margin: 0;
+
+  font-size: 23px;
+
+  font-weight: 800;
+
+  color: var(--sm-blue-900);
+}
+
+
+.section-title p {
+  margin: 7px 0 0;
+
+  font-size: 14px;
+
+  color: var(--sm-muted);
+}
+
+
+/* =========================================================
+   FORM
+   ========================================================= */
+
+.shlok-form {
+  width: 100%;
+}
+
+
+/* =========================================================
+   FORM ROW
+   ========================================================= */
+
+.form-row {
+  display: grid;
+
+  grid-template-columns:
+    minmax(0, 1.15fr)
+    minmax(180px, 0.75fr);
+
+  gap: 20px;
+
+  width: 100%;
+
+  margin-bottom: 20px;
+
+  align-items: start;
+}
+
+
+.form-row .form-group {
+  min-width: 0;
+  width: 100%;
+}
+
+
+/* =========================================================
+   FORM GROUP
+   ========================================================= */
+
+.form-group {
+  width: 100%;
+
+  margin-bottom: 20px;
+
+  min-width: 0;
+}
+
+
+.form-group label {
+  display: block;
+
+  margin-bottom: 9px;
+
+  font-size: 14px;
+
+  font-weight: 750;
+
+  color: #19385f;
+}
+
+
+/* =========================================================
+   INPUT + SELECT
+   ========================================================= */
+
+.form-group input,
+.form-group select {
+  display: block;
+
+  width: 100%;
+
+  height: 50px;
+
+  min-height: 50px;
+
+  padding: 13px 15px;
+
+  border:
+    1px solid #cbdcf0;
+
+  border-radius: 12px;
+
+  outline: none;
+
+  background: #fbfdff;
+
+  color: #172b4d;
+
+  font-size: 14px;
+
+  font-weight: 550;
+
+  box-sizing: border-box;
+
+  box-shadow:
+    inset 0 1px 2px
+    rgba(13, 71, 161, 0.03);
+
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease,
+    transform 0.25s ease;
+}
+
+
+.form-group input::placeholder {
+  color: #9aaac0;
+}
+
+
+.form-group input:hover,
+.form-group select:hover {
+  border-color: #90caf9;
+
+  background: #ffffff;
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 5px 14px
+    rgba(13, 71, 161, 0.07);
+}
+
+
+.form-group input:focus,
+.form-group select:focus {
+  border-color: #1976d2;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 0 0 4px
+    rgba(25, 118, 210, 0.10),
+    0 8px 20px
+    rgba(13, 71, 161, 0.08);
+}
+
+
+/* =========================================================
+   RICH EDITOR
+   ========================================================= */
+
+.rich-editor {
+  width: 100%;
+
+  overflow: hidden;
+
+  border:
+    1px solid #cbdcf0;
+
+  border-radius: 15px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 7px 20px
+    rgba(13, 71, 161, 0.06);
+
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+
+  box-sizing: border-box;
+}
+
+
+.rich-editor:focus-within {
+  border-color: #1976d2;
+
+  box-shadow:
+    0 0 0 4px
+    rgba(25, 118, 210, 0.08),
+    0 12px 28px
+    rgba(13, 71, 161, 0.10);
+}
+
+
+/* =========================================================
+   TOOLBAR
+   ========================================================= */
+
+.rich-toolbar {
+  display: flex;
+
+  align-items: center;
+
+  flex-wrap: nowrap;
+
+  gap: 7px;
+
+  width: 100%;
+
+  padding: 10px;
+
+  background:
+    linear-gradient(
+      180deg,
+      #f7fbff,
+      #edf5ff
+    );
+
+  border-bottom:
+    1px solid #dce8f5;
+
+  overflow-x: auto;
+
+  box-sizing: border-box;
+}
+
+
+.rich-toolbar::-webkit-scrollbar {
+  height: 4px;
+}
+
+
+.rich-toolbar::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #1565c0,
+      #42a5f5
+    );
+}
+
+
+.toolbar-group {
+  display: flex;
+
+  align-items: center;
+
+  flex-shrink: 0;
+
+  gap: 5px;
+}
+
+
+.toolbar-divider {
+  width: 1px;
+
+  height: 27px;
+
+  flex-shrink: 0;
+
+  background: #c9d9eb;
+
+  margin: 0 3px;
+}
+
+
+/* =========================================================
+   TOOLBAR BUTTON
+   ========================================================= */
+
+.toolbar-button,
+.toolbar-color-button {
+  position: relative;
+
+  width: 36px;
+  height: 36px;
+
+  min-width: 36px;
+  min-height: 36px;
+
+  display: inline-flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border:
+    1px solid #d1e1f1;
+
+  border-radius: 9px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #edf6ff
+    );
+
+  color: #164c87;
+
+  font-size: 15px;
+
+  font-weight: 800;
+
+  cursor: pointer;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 4px 0 #c2d7eb,
+    0 7px 14px
+    rgba(13, 71, 161, 0.08);
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+.toolbar-button::before,
+.toolbar-color-button::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: -120%;
+
+  width: 65%;
+  height: 100%;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.85),
+      transparent
+    );
+
+  transform: skewX(-25deg);
+
+  transition:
+    left 0.55s ease;
+
+  pointer-events: none;
+}
+
+
+.toolbar-button:hover,
+.toolbar-color-button:hover {
+  transform: translateY(-3px);
+
+  border-color: #64b5f6;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #e5f2ff
+    );
+
+  box-shadow:
+    0 6px 0 #b6cee5,
+    0 10px 18px
+    rgba(13, 71, 161, 0.15);
+}
+
+
+.toolbar-button:hover::before,
+.toolbar-color-button:hover::before {
+  left: 130%;
+}
+
+
+.toolbar-button:active,
+.toolbar-color-button:active {
+  transform:
+    translateY(1px)
+    scale(0.96);
+
+  box-shadow:
+    0 2px 0 #c2d7eb,
+    0 4px 9px
+    rgba(13, 71, 161, 0.10);
+}
+
+
+/* =========================================================
+   COLOR BUTTON
+   ========================================================= */
+
+.toolbar-color-button {
+  overflow: hidden;
+}
+
+
+.toolbar-color-button input {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  opacity: 0;
+
+  cursor: pointer;
+}
+
+
+/* =========================================================
+   EDITOR AREA
+   ========================================================= */
+
+.rich-editor-area {
+  min-height: 190px;
+
+  width: 100%;
+
+  padding: 18px;
+
+  outline: none;
+
+  color: #172b4d;
+
+  font-size: 17px;
+
+  line-height: 2;
+
+  font-family:
+    "Noto Sans Gujarati",
+    "Noto Sans Devanagari",
+    Arial,
+    sans-serif;
+
+  box-sizing: border-box;
+}
+
+
+.rich-editor-area:empty::before {
+  content: attr(data-placeholder);
+
+  color: #9aaac0;
+
+  pointer-events: none;
+}
+
+
+.rich-editor-area:focus {
+  background: #ffffff;
+}
+
+
+.rich-editor-area p {
+  margin: 0 0 10px;
+}
+
+
+.rich-editor-area ul {
+  padding-left: 25px;
+}
+
+
+.rich-editor-area strong {
+  color: #0d47a1;
+}
+
+
+/* =========================================================
+   WORD WISE
+   ========================================================= */
+
+.word-wise-section {
+  width: 100%;
+
+  margin: 30px 0;
+
+  padding: 25px;
+
+  border:
+    1px solid #cfe1f5;
+
+  border-radius: 20px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #f8fbff,
+      #edf6ff
+    );
+
+  box-shadow:
+    inset 0 1px 0
+    rgba(255, 255, 255, 0.9),
+    0 12px 30px
+    rgba(13, 71, 161, 0.07);
+
+  box-sizing: border-box;
+}
+
+
+.word-wise-section-header {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  margin-bottom: 18px;
+}
+
+
+.word-wise-title-area {
+  display: flex;
+
+  align-items: center;
+
+  gap: 14px;
+}
+
+
+.word-wise-icon {
+  width: 48px;
+  height: 48px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      135deg,
+      #0d47a1,
+      #42a5f5
+    );
+
+  color: #ffffff;
+
+  font-size: 21px;
+
+  box-shadow:
+    0 10px 22px
+    rgba(13, 71, 161, 0.22);
+}
+
+
+.word-wise-title-area h3 {
+  margin: 0;
+
+  color: #0b2a63;
+
+  font-size: 18px;
+
+  font-weight: 800;
+}
+
+
+.word-wise-title-area p {
+  margin: 5px 0 0;
+
+  color: #71829a;
+
+  font-size: 13px;
+
+  line-height: 1.5;
+}
+
+
+.word-wise-info {
+  margin-bottom: 14px;
+
+  padding: 13px 15px;
+
+  border-radius: 12px;
+
+  color: #28517d;
+
+  background: #eaf4ff;
+
+  border:
+    1px solid #cfe5fb;
+
+  font-size: 13px;
+
+  line-height: 1.6;
+}
+
+
+.word-detection-message {
+  margin-bottom: 15px;
+
+  padding: 11px 14px;
+
+  border-radius: 10px;
+
+  color: #075e45;
+
+  background: #e8f8f2;
+
+  border:
+    1px solid #bce8da;
+
+  font-size: 13px;
+
+  font-weight: 650;
+}
+
+
+.word-empty-box {
+  padding: 40px 25px;
+
+  text-align: center;
+
+  border:
+    2px dashed #b9d3ee;
+
+  border-radius: 17px;
+
+  background:
+    rgba(255, 255, 255, 0.65);
+}
+
+
+.word-empty-icon {
+  width: 60px;
+  height: 60px;
+
+  margin: 0 auto 13px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #e3f2fd;
+
+  font-size: 25px;
+}
+
+
+.word-empty-box h3 {
+  margin: 0 0 7px;
+
+  color: #244568;
+
+  font-size: 16px;
+}
+
+
+.word-empty-box p {
+  max-width: 500px;
+
+  margin: 0 auto;
+
+  color: #77889e;
+
+  font-size: 13px;
+
+  line-height: 1.7;
+}
+
+
+/* =========================================================
+   WORD MEANING LIST
+   ========================================================= */
+
+.word-meaning-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 12px;
+}
+
+
+.word-meaning-row {
+  display: grid;
+
+  grid-template-columns:
+    42px
+    minmax(150px, 1fr)
+    42px
+    minmax(150px, 1fr)
+    auto;
+
+  align-items: center;
+
+  gap: 12px;
+
+  padding: 13px;
+
+  border:
+    1px solid #d6e5f4;
+
+  border-radius: 14px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 5px 16px
+    rgba(13, 71, 161, 0.05);
+
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+.word-meaning-row:hover {
+  transform: translateY(-2px);
+
+  border-color: #a8c9e9;
+
+  box-shadow:
+    0 10px 24px
+    rgba(13, 71, 161, 0.10);
+}
+
+
+.word-number {
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 10px;
+
+  background: #e3f2fd;
+
+  color: #0d47a1;
+
+  font-weight: 800;
+}
+
+
+.word-input-group {
+  min-width: 0;
+}
+
+
+.word-input-group label {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: #66809d;
+
+  font-size: 11px;
+
+  font-weight: 750;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.3px;
+}
+
+
+.word-input-group input {
+  width: 100%;
+
+  min-height: 43px;
+
+  padding: 10px 12px;
+
+  border:
+    1px solid #d3e2f0;
+
+  border-radius: 10px;
+
+  outline: none;
+
+  color: #173555;
+
+  background: #fafdff;
+
+  font-size: 14px;
+
+  box-sizing: border-box;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+.word-input-group input:focus {
+  border-color: #1976d2;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(25, 118, 210, 0.09);
+}
+
+
+/* =========================================================
+   WORD ARROW
+   ========================================================= */
+
+.word-arrow {
+  width: 38px;
+  height: 38px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background:
+    linear-gradient(
+      135deg,
+      #0d47a1,
+      #42a5f5
+    );
+
+  color: #ffffff;
+
+  font-size: 20px;
+
+  font-weight: 900;
+
+  box-shadow:
+    0 6px 0 #08366f,
+    0 10px 18px
+    rgba(13, 71, 161, 0.20);
+}
+
+
+/* =========================================================
+   WORD ACTIONS
+   ========================================================= */
+
+.word-row-actions {
+  display: flex;
+
+  align-items: center;
+
+  gap: 6px;
+}
+
+
+.word-move-btn,
+.word-delete-btn {
+  position: relative;
+
+  width: 35px;
+  height: 35px;
+
+  border-radius: 9px;
+
+  border:
+    1px solid #d4e3f1;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #edf6ff
+    );
+
+  cursor: pointer;
+
+  font-size: 15px;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 4px 0 #c5d8e9,
+    0 6px 12px
+    rgba(13, 71, 161, 0.08);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+
+.word-move-btn::before,
+.word-delete-btn::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: -130%;
+
+  width: 70%;
+  height: 100%;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.85),
+      transparent
+    );
+
+  transform: skewX(-25deg);
+
+  transition: left 0.55s ease;
+}
+
+
+.word-move-btn {
+  color: #0d47a1;
+}
+
+
+.word-move-btn:hover:not(:disabled) {
+  transform: translateY(-3px);
+
+  background: #eaf4ff;
+
+  box-shadow:
+    0 6px 0 #b8cee2,
+    0 10px 18px
+    rgba(13, 71, 161, 0.12);
+}
+
+
+.word-move-btn:hover:not(:disabled)::before,
+.word-delete-btn:hover::before {
+  left: 130%;
+}
+
+
+.word-move-btn:disabled {
+  opacity: 0.35;
+
+  cursor: not-allowed;
+}
+
+
+.word-delete-btn {
+  color: #d62839;
+
+  border-color: #f0cdd1;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #fff3f4
+    );
+
+  box-shadow:
+    0 4px 0 #e8c5ca,
+    0 6px 12px
+    rgba(214, 40, 57, 0.08);
+}
+
+
+.word-delete-btn:hover {
+  transform: translateY(-3px);
+
+  background: #fff0f1;
+
+  box-shadow:
+    0 6px 0 #e3b8be,
+    0 10px 18px
+    rgba(214, 40, 57, 0.12);
+}
+
+
+.word-move-btn:active,
+.word-delete-btn:active {
+  transform:
+    translateY(1px)
+    scale(0.96);
+}
+
+
+/* =========================================================
+   ADD WORD
+   ========================================================= */
+
+.add-word-bottom-btn {
+  position: relative;
+
+  width: 100%;
+
+  margin-top: 15px;
+
+  padding: 13px 18px;
+
+  border:
+    1px solid #90caf9;
+
+  border-radius: 12px;
+
+  color: #0d47a1;
+
+  background:
+    linear-gradient(
+      135deg,
+      #eef7ff,
+      #e1f0ff
+    );
+
+  font-size: 14px;
+
+  font-weight: 750;
+
+  cursor: pointer;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 5px 0 #c2dbf1,
+    0 9px 18px
+    rgba(13, 71, 161, 0.08);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background 0.25s ease;
+}
+
+
+.add-word-bottom-btn::after {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: -120%;
+
+  width: 70%;
+  height: 100%;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.85),
+      transparent
+    );
+
+  transform: skewX(-20deg);
+
+  transition: left 0.6s ease;
+}
+
+
+.add-word-bottom-btn:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 7px 0 #b5d0e9,
+    0 13px 25px
+    rgba(13, 71, 161, 0.13);
+}
+
+
+.add-word-bottom-btn:hover::after {
+  left: 130%;
+}
+
+
+.add-word-bottom-btn:active {
+  transform:
+    translateY(1px)
+    scale(0.98);
+}
+
+
+.word-translation-help {
+  display: block;
+
+  margin-top: 12px;
+
+  color: #8292a7;
+
+  font-size: 11px;
+
+  line-height: 1.6;
+}
+
+
+/* =========================================================
+   FORM ACTIONS
+   ========================================================= */
+
+.form-actions {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  gap: 14px;
+
+  margin-top: 25px;
+}
+
+
+.save-shlok-btn {
+  position: relative;
+
+  min-width: 175px;
+
+  padding: 14px 24px;
+
+  border: none;
+
+  border-radius: 13px;
+
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      135deg,
+      #0b2a63,
+      #0d47a1,
+      #1976d2
+    );
+
+  font-size: 14px;
+
+  font-weight: 800;
+
+  cursor: pointer;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 6px 0 #082f6b,
+    0 12px 25px
+    rgba(13, 71, 161, 0.28);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+.save-shlok-btn::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: -120%;
+
+  width: 70%;
+  height: 100%;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.50),
+      transparent
+    );
+
+  transform: skewX(-25deg);
+
+  transition: left 0.65s ease;
+}
+
+
+.save-shlok-btn:hover:not(:disabled) {
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 8px 0 #082f6b,
+    0 18px 35px
+    rgba(13, 71, 161, 0.34);
+}
+
+
+.save-shlok-btn:hover::before {
+  left: 130%;
+}
+
+
+.save-shlok-btn:active:not(:disabled) {
+  transform:
+    translateY(1px)
+    scale(0.98);
+}
+
+
+.save-shlok-btn:disabled {
+  opacity: 0.65;
+
+  cursor: not-allowed;
+}
+
+
+.cancel-edit-btn {
+  position: relative;
+
+  padding: 13px 20px;
+
+  border:
+    1px solid #ccd9e7;
+
+  border-radius: 12px;
+
+  color: #50647c;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #f1f6fb
+    );
+
+  font-size: 14px;
+
+  font-weight: 750;
+
+  cursor: pointer;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 5px 0 #c5d3e0,
+    0 9px 18px
+    rgba(30, 55, 85, 0.08);
+
+  transition:
+    transform 0.25s ease,
+    background 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+.cancel-edit-btn:hover {
+  transform: translateY(-3px);
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #eef4fa
+    );
+
+  box-shadow:
+    0 7px 0 #bccbd9,
+    0 13px 23px
+    rgba(30, 55, 85, 0.12);
+}
+
+
+/* =========================================================
+   REFRESH
+   ========================================================= */
+
+.refresh-btn {
+  position: relative;
+
+  padding: 11px 18px;
+
+  border:
+    1px solid #b8d6f3;
+
+  border-radius: 11px;
+
+  color: #0d47a1;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #edf7ff
+    );
+
+  font-size: 13px;
+
+  font-weight: 750;
+
+  cursor: pointer;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 4px 0 #c1d8ed,
+    0 8px 17px
+    rgba(13, 71, 161, 0.08);
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+
+.refresh-btn:hover {
+  transform: translateY(-3px);
+
+  background: #e0f0ff;
+
+  box-shadow:
+    0 6px 0 #b5cee5,
+    0 12px 22px
+    rgba(13, 71, 161, 0.12);
+}
+
+
+.refresh-btn:active {
+  transform:
+    translateY(1px)
+    scale(0.97);
+}
+
+
+/* =========================================================
+   LOADING / EMPTY
+   ========================================================= */
+
+.loading-box,
+.empty-box {
+  padding: 50px 25px;
+
+  text-align: center;
+
+  border-radius: 16px;
+
+  border:
+    1px dashed #bfd6ee;
+
+  background: #f8fbff;
+
+  color: #68809d;
+
+  font-size: 15px;
+
+  font-weight: 650;
+}
+
+
+.loading-box {
+  animation:
+    smPulse 1.4s infinite ease-in-out;
+}
+
+
+@keyframes smPulse {
+  0%,
+  100% {
+    opacity: 0.6;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+
+/* =========================================================
+   SHLOK NUMBER GRID
+   ========================================================= */
+
+.shlok-number-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(10, minmax(0, 1fr));
+
+  gap: 10px;
+
+  width: 100%;
+}
+
+
+/* =========================================================
+   SHLOK ITEM
+   ========================================================= */
+
+.shlok-item {
+  min-width: 0;
+
+  border-radius: 12px;
+
+  background: #ffffff;
+
+  border:
+    1px solid #d6e5f3;
+
+  box-shadow:
+    0 5px 14px
+    rgba(13, 71, 161, 0.07);
+
+  overflow: hidden;
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+
+/* =========================================================
+   IMPORTANT:
+   EXPANDED ITEM MUST NOT BECOME HUGE BLUE BOX
+   ========================================================= */
+
+.shlok-item.expanded {
+  grid-column: 1 / -1;
+
+  border-color: #64b5f6;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 14px 35px
+    rgba(13, 71, 161, 0.14);
+
+  overflow: hidden;
+}
+
+
+/* =========================================================
+   SHLOK NUMBER BUTTON
+   SMALL PREMIUM SQUARE
+   ========================================================= */
+
+.shlok-number-box {
+  position: relative;
+
+  width: 100%;
+
+  aspect-ratio: 1 / 1;
+
+  min-height: 72px;
+
+  max-height: 105px;
+
+  display: flex;
+
+  flex-direction: column;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 6px;
+
+  border: none;
+
+  outline: none;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff 0%,
+      #eef7ff 45%,
+      #dceeff 100%
+    );
+
+  color: #123c69;
+
+  cursor: pointer;
+
+  overflow: hidden;
+
+  box-sizing: border-box;
+
+  box-shadow:
+    inset 0 -3px 0
+    rgba(13, 71, 161, 0.06);
+
+  transition:
+    transform 0.25s ease,
+    background 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+
+/* TOP SHINE */
+
+.shlok-number-box::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: -130%;
+
+  width: 70%;
+  height: 100%;
+
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.85),
+      transparent
+    );
+
+  transform: skewX(-25deg);
+
+  transition:
+    left 0.65s ease;
+
+  z-index: 3;
+
+  pointer-events: none;
+}
+
+
+/* DECORATIVE CIRCLE */
+
+.shlok-number-box::after {
+  content: "";
+
+  position: absolute;
+
+  width: 55px;
+  height: 55px;
+
+  right: -25px;
+  top: -25px;
+
+  border-radius: 50%;
+
+  background:
+    rgba(66, 165, 245, 0.13);
+
+  box-shadow:
+    -45px 65px 0
+    rgba(13, 71, 161, 0.045);
+
+  pointer-events: none;
+}
+
+
+/* LABEL */
+
+.shlok-number-box span {
+  position: relative;
+
+  z-index: 4;
+
+  color: #69829c;
+
+  font-size: 8px;
+
+  font-weight: 800;
+
+  text-transform: uppercase;
+
+  letter-spacing: 0.5px;
+
+  line-height: 1;
+}
+
+
+/* NUMBER */
+
+.shlok-number-box strong {
+  position: relative;
+
+  z-index: 4;
+
+  margin: 4px 0;
+
+  font-size: 21px;
+
+  line-height: 1;
+
+  color: #0d47a1;
+
+  font-weight: 900;
+
+  text-shadow:
+    0 1px 0 #ffffff;
+}
+
+
+/* OPEN/CLOSE */
+
+.shlok-number-box small {
+  position: relative;
+
+  z-index: 4;
+
+  color: #72869d;
+
+  font-size: 7px;
+
+  font-weight: 750;
+
+  line-height: 1;
+}
+
+
+/* HOVER */
+
+.shlok-number-box:hover {
+  background:
+    linear-gradient(
+      145deg,
+      #f7fcff,
+      #dceeff 60%,
+      #cce6ff
+    );
+
+  transform:
+    translateY(-2px)
+    scale(1.025);
+
+  box-shadow:
+    inset 0 -4px 0
+    rgba(13, 71, 161, 0.10),
+    0 8px 18px
+    rgba(13, 71, 161, 0.16);
+}
+
+
+.shlok-number-box:hover::before {
+  left: 130%;
+}
+
+
+/* ACTIVE */
+
+.shlok-number-box:active {
+  transform:
+    translateY(2px)
+    scale(0.97);
+
+  box-shadow:
+    inset 0 -1px 0
+    rgba(13, 71, 161, 0.10);
+}
+
+
+/* FOCUS */
+
+.shlok-number-box:focus-visible {
+  box-shadow:
+    0 0 0 3px
+    rgba(25, 118, 210, 0.22),
+    0 8px 20px
+    rgba(13, 71, 161, 0.14);
+}
+
+
+/* =========================================================
+   WHEN EXPANDED:
+   BUTTON STAYS A SMALL HORIZONTAL HEADER
+   ========================================================= */
+
+.shlok-item.expanded > .shlok-number-box {
+  width: 100%;
+
+  height: 42px;
+
+  min-height: 42px;
+
+  max-height: 42px;
+
+  aspect-ratio: auto;
+
+  flex-direction: row;
+
+  justify-content: flex-start;
+
+  gap: 9px;
+
+  padding: 0 15px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #0b2a63,
+      #0d47a1,
+      #1976d2
+    );
+
+  color: #ffffff;
+
+  border-radius: 0;
+
+  box-shadow:
+    inset 0 -1px 0
+    rgba(255, 255, 255, 0.12);
+}
+
+
+/* Expanded button text */
+
+.shlok-item.expanded
+  > .shlok-number-box
+  span {
+  color: rgba(255, 255, 255, 0.75);
+
+  font-size: 9px;
+}
+
+
+.shlok-item.expanded
+  > .shlok-number-box
+  strong {
+  color: #ffffff;
+
+  margin: 0;
+
+  font-size: 16px;
+
+  text-shadow: none;
+}
+
+
+.shlok-item.expanded
+  > .shlok-number-box
+  small {
+  margin-left: auto;
+
+  color: rgba(255, 255, 255, 0.85);
+
+  font-size: 8px;
+}
+
+
+/* Expanded shine */
+
+.shlok-item.expanded
+  > .shlok-number-box::before {
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.20),
+      transparent
+    );
+}
+
+
+/* =========================================================
+   DETAIL PANEL
+   THIS IS THE MAIN FIX
+   ========================================================= */
+
+.shlok-detail-panel {
+  display: block;
+
+  width: 100%;
+
+  padding: 18px;
+
+  margin: 0;
+
+  background:
+    linear-gradient(
+      180deg,
+      #fafdff 0%,
+      #f2f8ff 100%
+    );
+
+  border-top:
+    1px solid #d7e7f6;
+
+  box-sizing: border-box;
+
+  animation:
+    detailOpen 0.28s ease;
+
+  overflow: visible;
+}
+
+
+@keyframes detailOpen {
+  from {
+    opacity: 0;
+
+    transform:
+      translateY(-5px);
+  }
+
+  to {
+    opacity: 1;
+
+    transform:
+      translateY(0);
+  }
+}
+
+
+/* =========================================================
+   DETAIL HEADER
+   ========================================================= */
+
+.shlok-detail-header {
+  display: flex;
+
+  align-items: flex-start;
+
+  justify-content: space-between;
+
+  gap: 18px;
+
+  padding-bottom: 15px;
+
+  margin-bottom: 15px;
+
+  border-bottom:
+    1px solid #dce8f4;
+}
+
+
+.detail-label {
+  display: inline-block;
+
+  margin-bottom: 4px;
+
+  padding: 4px 9px;
+
+  border-radius: 20px;
+
+  background: #e3f2fd;
+
+  color: #0d47a1;
+
+  font-size: 10px;
+
+  font-weight: 800;
+}
+
+
+.shlok-detail-header h3 {
+  margin: 2px 0;
+
+  color: #0b2a63;
+
+  font-size: 21px;
+
+  font-weight: 850;
+}
+
+
+.shlok-detail-header p {
+  margin: 5px 0 0;
+
+  color: #687e98;
+
+  font-size: 12px;
+}
+
+
+/* =========================================================
+   ACTIONS
+   ========================================================= */
+
+.shlok-actions {
+  display: flex;
+
+  gap: 8px;
+
+  flex-shrink: 0;
+}
+
+
+.edit-shlok-btn,
+.delete-shlok-btn {
+  position: relative;
+
+  padding: 9px 13px;
+
+  border-radius: 9px;
+
+  font-size: 12px;
+
+  font-weight: 750;
+
+  cursor: pointer;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 4px 0
+    rgba(0, 0, 0, 0.10),
+    0 7px 15px
+    rgba(13, 71, 161, 0.07);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+
+.edit-shlok-btn {
+  border:
+    1px solid #a8cff1;
+
+  color: #0d47a1;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #eaf5ff
+    );
+}
+
+
+.edit-shlok-btn:hover {
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 6px 0 #b8cee2,
+    0 11px 20px
+    rgba(13, 71, 161, 0.13);
+}
+
+
+.delete-shlok-btn {
+  border:
+    1px solid #f2c7cc;
+
+  color: #c62839;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #fff2f3
+    );
+}
+
+
+.delete-shlok-btn:hover {
+  transform: translateY(-3px);
+
+  background: #ffe8ea;
+
+  box-shadow:
+    0 6px 0 #e4b9be,
+    0 11px 20px
+    rgba(198, 40, 57, 0.12);
+}
+
+
+.edit-shlok-btn:active,
+.delete-shlok-btn:active {
+  transform:
+    translateY(1px)
+    scale(0.97);
+}
+
+
+/* =========================================================
+   DETAIL CONTENT
+   ========================================================= */
+
+.detail-content {
+  width: 100%;
+
+  margin-bottom: 14px;
+
+  padding: 16px;
+
+  border-radius: 13px;
+
+  background: #ffffff;
+
+  border:
+    1px solid #dbe8f4;
+
+  box-shadow:
+    0 6px 18px
+    rgba(13, 71, 161, 0.05);
+
+  box-sizing: border-box;
+}
+
+
+.detail-content:last-child {
+  margin-bottom: 0;
+}
+
+
+.detail-content h4 {
+  margin: 0 0 11px;
+
+  padding-bottom: 8px;
+
+  border-bottom:
+    1px solid #e4edf6;
+
+  color: #0d47a1;
+
+  font-size: 14px;
+
+  font-weight: 800;
+}
+
+
+/* =========================================================
+   SANSKRIT DETAIL
+   ========================================================= */
+
+.sanskrit-detail {
+  background:
+    linear-gradient(
+      145deg,
+      #fafdff,
+      #eef7ff
+    );
+}
+
+
+.admin-sanskrit-text {
+  color: #17385f;
+
+  font-family:
+    "Noto Sans Devanagari",
+    "Noto Sans",
+    serif;
+
+  font-size: 17px;
+
+  line-height: 1.9;
+
+  text-align: center;
+
+  overflow-wrap: anywhere;
+}
+
+
+.admin-sanskrit-text p {
+  margin: 0 0 8px;
+}
+
+
+/* =========================================================
+   SAVED WORD MEANINGS
+   ========================================================= */
+
+.saved-word-meaning-list {
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 7px;
+}
+
+
+.saved-word-meaning-row {
+  display: grid;
+
+  grid-template-columns:
+    30px
+    minmax(120px, 1fr)
+    30px
+    minmax(150px, 1.4fr);
+
+  align-items: center;
+
+  gap: 8px;
+
+  padding: 8px 10px;
+
+  border:
+    1px solid #e0ebf5;
+
+  border-radius: 9px;
+
+  background: #fbfdff;
+}
+
+
+.saved-word-number {
+  width: 25px;
+  height: 25px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border-radius: 7px;
+
+  background: #e3f2fd;
+
+  color: #0d47a1;
+
+  font-size: 10px;
+
+  font-weight: 800;
+}
+
+
+.saved-sanskrit-word {
+  color: #174a7c;
+
+  font-family:
+    "Noto Sans Devanagari",
+    serif;
+
+  font-size: 15px;
+
+  font-weight: 750;
+}
+
+
+.saved-word-arrow {
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  color: #1976d2;
+
+  font-size: 16px;
+
+  font-weight: 900;
+}
+
+
+.saved-gujarati-meaning {
+  color: #34516f;
+
+  font-family:
+    "Noto Sans Gujarati",
+    "Noto Sans",
+    sans-serif;
+
+  font-size: 13px;
+}
+
+
+/* =========================================================
+   TRANSLATION / MESSAGE
+   ========================================================= */
+
+.translation-detail {
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #f1f8ff
+    );
+}
+
+
+.message-detail {
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #eef7ff
+    );
+}
+
+
+.admin-translation-text,
+.admin-message-text {
+  color: #334e6f;
+
+  font-family:
+    "Noto Sans Gujarati",
+    "Noto Sans",
+    sans-serif;
+
+  font-size: 14px;
+
+  line-height: 1.8;
+
+  overflow-wrap: anywhere;
+}
+
+
+.admin-translation-text p,
+.admin-message-text p {
+  margin-top: 0;
+}
+
+
+.admin-translation-text strong,
+.admin-message-text strong {
+  color: #0d47a1;
+}
+
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+.shlok-management-page::-webkit-scrollbar {
+  width: 9px;
+}
+
+
+.shlok-management-page::-webkit-scrollbar-track {
+  background: #edf4fb;
+}
+
+
+.shlok-management-page::-webkit-scrollbar-thumb {
+  border-radius: 20px;
+
+  background:
+    linear-gradient(
+      #1565c0,
+      #42a5f5
+    );
+}
+
+
+/* =========================================================
+   LARGE TABLET
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+  .shlok-number-grid {
+    grid-template-columns:
+      repeat(8, minmax(0, 1fr));
+  }
+
+}
+
+
+/* =========================================================
+   TABLET
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+  .shlok-management-page {
+    padding: 25px 15px 50px;
+  }
+
+
+  .shlok-management-header {
+    padding: 25px;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+  }
+
+
+  .back-admin-btn {
+    width: 100%;
+  }
+
+
+  .form-row {
+    grid-template-columns:
+      1fr 1fr;
+
+    gap: 15px;
+  }
+
+
+  .word-meaning-row {
+    grid-template-columns:
+      38px
+      1fr
+      38px
+      1fr;
+  }
+
+
+  .word-row-actions {
+    grid-column:
+      2 / -1;
+
+    justify-content: flex-end;
+  }
+
+
+  .shlok-number-grid {
+    grid-template-columns:
+      repeat(6, minmax(0, 1fr));
+
+    gap: 9px;
+  }
+
+
+  .shlok-number-box {
+    min-height: 68px;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+  .shlok-management-page {
+    padding: 15px 10px 40px;
+  }
+
+
+  .shlok-management-header {
+    padding: 22px 18px;
+
+    border-radius: 18px;
+  }
+
+
+  .shlok-management-header h1 {
+    font-size: 24px;
+  }
+
+
+  .shlok-management-header p {
+    font-size: 13px;
+  }
+
+
+  .shlok-form-section,
+  .shlok-list-section {
+    padding: 20px 15px;
+
+    border-radius: 18px;
+  }
+
+
+  .section-title {
+    align-items: flex-start;
+
+    flex-direction: column;
+  }
+
+
+  .section-title h2 {
+    font-size: 20px;
+  }
+
+
+  .refresh-btn {
+    width: 100%;
+  }
+
+
+  /* FORM */
+
+  .form-row {
+    grid-template-columns:
+      1fr;
+
+    gap: 0;
+  }
+
+
+  /* TOOLBAR */
+
+  .rich-toolbar {
+    gap: 5px;
+
+    padding: 8px;
+  }
+
+
+  .toolbar-button,
+  .toolbar-color-button {
+    width: 32px;
+    height: 32px;
+
+    min-width: 32px;
+    min-height: 32px;
+
+    font-size: 13px;
+  }
+
+
+  .toolbar-divider {
+    display: none;
+  }
+
+
+  .rich-editor-area {
+    min-height: 160px;
+
+    padding: 14px;
+
+    font-size: 15px;
+  }
+
+
+  /* WORD SECTION */
+
+  .word-wise-section {
+    padding: 17px;
+
+    border-radius: 16px;
+  }
+
+
+  .word-wise-title-area {
+    align-items: flex-start;
+  }
+
+
+  .word-wise-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+
+  .word-wise-title-area h3 {
+    font-size: 16px;
+  }
+
+
+  .word-wise-title-area p {
+    font-size: 12px;
+  }
+
+
+  .word-meaning-row {
+    grid-template-columns:
+      35px
+      1fr;
+
+    gap: 10px;
+  }
+
+
+  .word-arrow {
+    display: none;
+  }
+
+
+  .word-input-group {
+    grid-column: 2;
+  }
+
+
+  .word-row-actions {
+    grid-column: 2;
+
+    justify-content: flex-start;
+  }
+
+
+  /* FORM BUTTONS */
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+
+  .save-shlok-btn,
+  .cancel-edit-btn {
+    width: 100%;
+  }
+
+
+  /* =====================================================
+     MOBILE SHLOK GRID
+     ===================================================== */
+
+  .shlok-number-grid {
+    grid-template-columns:
+      repeat(4, minmax(0, 1fr));
+
+    gap: 8px;
+  }
+
+
+  .shlok-number-box {
+    min-height: 64px;
+
+    max-height: 82px;
+
+    aspect-ratio: 1 / 1;
+
+    padding: 5px;
+  }
+
+
+  .shlok-number-box strong {
+    font-size: 18px;
+  }
+
+
+  .shlok-number-box span {
+    font-size: 7px;
+  }
+
+
+  .shlok-number-box small {
+    font-size: 6px;
+  }
+
+
+  /* =====================================================
+     EXPANDED BUTTON ON MOBILE
+     ===================================================== */
+
+  .shlok-item.expanded
+    > .shlok-number-box {
+    height: 38px;
+
+    min-height: 38px;
+
+    max-height: 38px;
+
+    padding: 0 11px;
+  }
+
+
+  .shlok-item.expanded
+    > .shlok-number-box
+    strong {
+    font-size: 14px;
+  }
+
+
+  /* =====================================================
+     DETAIL
+     ===================================================== */
+
+  .shlok-detail-panel {
+    padding: 12px;
+  }
+
+
+  .shlok-detail-header {
+    flex-direction: column;
+
+    gap: 12px;
+  }
+
+
+  .shlok-actions {
+    width: 100%;
+  }
+
+
+  .edit-shlok-btn,
+  .delete-shlok-btn {
+    flex: 1;
+  }
+
+
+  .detail-content {
+    padding: 13px;
+  }
+
+
+  .admin-sanskrit-text {
+    font-size: 15px;
+
+    line-height: 1.8;
+  }
+
+
+  .saved-word-meaning-row {
+    grid-template-columns:
+      30px
+      1fr;
+  }
+
+
+  .saved-word-arrow {
+    display: none;
+  }
+
+
+  .saved-gujarati-meaning {
+    grid-column: 2;
+
+    padding-top: 4px;
+  }
+
+}
+
+
+/* =========================================================
+   VERY SMALL DEVICES
+   ========================================================= */
+
+@media (max-width: 380px) {
+
+  .shlok-number-grid {
+    grid-template-columns:
+      repeat(3, minmax(0, 1fr));
+  }
+
+
+  .shlok-management-header h1 {
+    font-size: 21px;
+  }
+
+
+  .section-title h2 {
+    font-size: 18px;
+  }
+
+
+  .shlok-number-box strong {
+    font-size: 17px;
+  }
+
+
+  .shlok-number-box {
+    min-height: 62px;
+  }
+
+}
+
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+
+    animation-iteration-count: 1 !important;
+
+    transition-duration: 0.01ms !important;
+  }
+
+}
+
+
+/* =========================================================
+   DARK MODE
+   ThemeContext.jsx compatible
+   Uses: html[data-theme="dark"]
+   ========================================================= */
+
+html[data-theme="dark"] .shlok-management-page {
+  background:
+    radial-gradient(
+      circle at 10% 10%,
+      rgba(33, 150, 243, 0.10),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 90% 20%,
+      rgba(21, 101, 192, 0.08),
+      transparent 30%
+    ),
+    linear-gradient(
+      135deg,
+      #07111f 0%,
+      #0b1728 50%,
+      #07111f 100%
+    );
+
+  color: #e8f1ff;
+}
+
+
+/* =========================================================
+   DARK FORM + LIST
+   ========================================================= */
+
+html[data-theme="dark"] .shlok-form-section,
+html[data-theme="dark"] .shlok-list-section {
+  background: rgba(15, 28, 45, 0.97);
+
+  border-color: #263c57;
+
+  box-shadow:
+    0 18px 45px rgba(0, 0, 0, 0.35);
+}
+
+
+/* =========================================================
+   DARK SECTION TITLE
+   ========================================================= */
+
+html[data-theme="dark"] .section-title h2 {
+  color: #eaf3ff;
+}
+
+html[data-theme="dark"] .section-title p {
+  color: #9aacc3;
+}
+
+
+/* =========================================================
+   DARK FORM LABEL
+   ========================================================= */
+
+html[data-theme="dark"] .form-group label {
+  color: #c8d9ee;
+}
+
+
+/* =========================================================
+   DARK INPUT + SELECT
+   ========================================================= */
+
+html[data-theme="dark"] .form-group input,
+html[data-theme="dark"] .form-group select {
+  background: #0c1b2d;
+
+  color: #e8f1ff;
+
+  border-color: #304863;
+
+  box-shadow:
+    inset 0 1px 2px
+    rgba(0, 0, 0, 0.20);
+}
+
+
+html[data-theme="dark"] .form-group input::placeholder {
+  color: #70839b;
+}
+
+
+html[data-theme="dark"] .form-group input:hover,
+html[data-theme="dark"] .form-group select:hover {
+  background: #102238;
+
+  border-color: #4d7dab;
+
+  box-shadow:
+    0 5px 14px
+    rgba(0, 0, 0, 0.25);
+}
+
+
+html[data-theme="dark"] .form-group input:focus,
+html[data-theme="dark"] .form-group select:focus {
+  background: #102238;
+
+  border-color: #42a5f5;
+
+  box-shadow:
+    0 0 0 4px
+    rgba(66, 165, 245, 0.13),
+    0 8px 20px
+    rgba(0, 0, 0, 0.25);
+}
+
+
+/* =========================================================
+   DARK RICH EDITOR
+   ========================================================= */
+
+html[data-theme="dark"] .rich-editor {
+  background: #0c1b2d;
+
+  border-color: #304863;
+
+  box-shadow:
+    0 7px 20px
+    rgba(0, 0, 0, 0.25);
+}
+
+
+html[data-theme="dark"] .rich-editor:focus-within {
+  border-color: #42a5f5;
+
+  box-shadow:
+    0 0 0 4px
+    rgba(66, 165, 245, 0.12),
+    0 12px 28px
+    rgba(0, 0, 0, 0.30);
+}
+
+
+/* =========================================================
+   DARK TOOLBAR
+   ========================================================= */
+
+html[data-theme="dark"] .rich-toolbar {
+  background:
+    linear-gradient(
+      180deg,
+      #13243a,
+      #0d1d30
+    );
+
+  border-bottom-color: #263c57;
+}
+
+
+html[data-theme="dark"] .toolbar-divider {
+  background: #344b65;
+}
+
+
+/* =========================================================
+   DARK TOOLBAR BUTTON
+   ========================================================= */
+
+html[data-theme="dark"] .toolbar-button,
+html[data-theme="dark"] .toolbar-color-button {
+  background:
+    linear-gradient(
+      145deg,
+      #172a42,
+      #102238
+    );
+
+  color: #9ed4ff;
+
+  border-color: #34516f;
+
+  box-shadow:
+    0 4px 0 #0a1726,
+    0 7px 14px
+    rgba(0, 0, 0, 0.25);
+}
+
+
+html[data-theme="dark"] .toolbar-button:hover,
+html[data-theme="dark"] .toolbar-color-button:hover {
+  background:
+    linear-gradient(
+      145deg,
+      #1d3552,
+      #142b44
+    );
+
+  border-color: #5b9bd0;
+
+  box-shadow:
+    0 6px 0 #0a1726,
+    0 10px 18px
+    rgba(0, 0, 0, 0.35);
+}
+
+
+html[data-theme="dark"] .toolbar-button:active,
+html[data-theme="dark"] .toolbar-color-button:active {
+  box-shadow:
+    0 2px 0 #0a1726,
+    0 4px 9px
+    rgba(0, 0, 0, 0.25);
+}
+
+
+/* =========================================================
+   DARK EDITOR AREA
+   ========================================================= */
+
+html[data-theme="dark"] .rich-editor-area {
+  background: #0c1b2d;
+
+  color: #e5efff;
+}
+
+
+html[data-theme="dark"] .rich-editor-area:focus {
+  background: #0e2035;
+}
+
+
+html[data-theme="dark"] .rich-editor-area strong {
+  color: #64b5f6;
+}
+
+
+html[data-theme="dark"] .rich-editor-area:empty::before {
+  color: #667b94;
+}
+
+
+/* =========================================================
+   DARK WORD WISE SECTION
+   ========================================================= */
+
+html[data-theme="dark"] .word-wise-section {
+  background:
+    linear-gradient(
+      145deg,
+      #13263d,
+      #0d1d30
+    );
+
+  border-color: #304a67;
+
+  box-shadow:
+    inset 0 1px 0
+    rgba(255, 255, 255, 0.03),
+    0 12px 30px
+    rgba(0, 0, 0, 0.25);
+}
+
+
+html[data-theme="dark"] .word-wise-title-area h3 {
+  color: #e7f2ff;
+}
+
+
+html[data-theme="dark"] .word-wise-title-area p {
+  color: #91a5bd;
+}
+
+
+html[data-theme="dark"] .word-wise-info {
+  color: #b7d5f2;
+
+  background: #102943;
+
+  border-color: #294b6d;
+}
+
+
+html[data-theme="dark"] .word-detection-message {
+  color: #78e1bd;
+
+  background: #102e28;
+
+  border-color: #245847;
+}
+
+
+/* =========================================================
+   DARK WORD EMPTY
+   ========================================================= */
+
+html[data-theme="dark"] .word-empty-box {
+  background: rgba(10, 24, 40, 0.65);
+
+  border-color: #365471;
+}
+
+
+html[data-theme="dark"] .word-empty-icon {
+  background: #173653;
+}
+
+
+html[data-theme="dark"] .word-empty-box h3 {
+  color: #cfe2f7;
+}
+
+
+html[data-theme="dark"] .word-empty-box p {
+  color: #879bb3;
+}
+
+
+/* =========================================================
+   DARK WORD MEANING ROW
+   ========================================================= */
+
+html[data-theme="dark"] .word-meaning-row {
+  background: #0e2035;
+
+  border-color: #2b435e;
+
+  box-shadow:
+    0 5px 16px
+    rgba(0, 0, 0, 0.20);
+}
+
+
+html[data-theme="dark"] .word-meaning-row:hover {
+  background: #122943;
+
+  border-color: #41698e;
+
+  box-shadow:
+    0 10px 24px
+    rgba(0, 0, 0, 0.30);
+}
+
+
+html[data-theme="dark"] .word-number {
+  background: #173653;
+
+  color: #73c2ff;
+}
+
+
+html[data-theme="dark"] .word-input-group label {
+  color: #8197b0;
+}
+
+
+html[data-theme="dark"] .word-input-group input {
+  background: #0b1b2c;
+
+  color: #e2edfa;
+
+  border-color: #2f4863;
+}
+
+
+html[data-theme="dark"] .word-input-group input:focus {
+  border-color: #42a5f5;
+
+  box-shadow:
+    0 0 0 3px
+    rgba(66, 165, 245, 0.12);
+}
+
+
+/* =========================================================
+   DARK WORD ARROW
+   ========================================================= */
+
+html[data-theme="dark"] .word-arrow {
+  background:
+    linear-gradient(
+      135deg,
+      #1565c0,
+      #42a5f5
+    );
+
+  box-shadow:
+    0 6px 0 #062f61,
+    0 10px 18px
+    rgba(0, 0, 0, 0.30);
+}
+
+
+/* =========================================================
+   DARK WORD ACTIONS
+   ========================================================= */
+
+html[data-theme="dark"] .word-move-btn,
+html[data-theme="dark"] .word-delete-btn {
+  background:
+    linear-gradient(
+      145deg,
+      #172a42,
+      #102238
+    );
+
+  border-color: #34516f;
+
+  box-shadow:
+    0 4px 0 #0a1726,
+    0 6px 12px
+    rgba(0, 0, 0, 0.25);
+}
+
+
+html[data-theme="dark"] .word-move-btn {
+  color: #72c5ff;
+}
+
+
+html[data-theme="dark"] .word-delete-btn {
+  color: #ff8791;
+
+  border-color: #5c3037;
+
+  background:
+    linear-gradient(
+      145deg,
+      #1c252f,
+      #25191d
+    );
+}
+
+
+html[data-theme="dark"] .word-move-btn:hover:not(:disabled) {
+  background: #183653;
+
+  box-shadow:
+    0 6px 0 #0a1726,
+    0 10px 18px
+    rgba(0, 0, 0, 0.30);
+}
+
+
+html[data-theme="dark"] .word-delete-btn:hover {
+  background: #3a2025;
+
+  box-shadow:
+    0 6px 0 #0a1726,
+    0 10px 18px
+    rgba(0, 0, 0, 0.30);
+}
+
+
+/* =========================================================
+   DARK ADD WORD
+   ========================================================= */
+
+html[data-theme="dark"] .add-word-bottom-btn {
+  background:
+    linear-gradient(
+      135deg,
+      #122b45,
+      #10243a
+    );
+
+  color: #80caff;
+
+  border-color: #3d6b91;
+
+  box-shadow:
+    0 5px 0 #091725,
+    0 9px 18px
+    rgba(0, 0, 0, 0.25);
+}
+
+
+html[data-theme="dark"] .add-word-bottom-btn:hover {
+  background:
+    linear-gradient(
+      135deg,
+      #183653,
+      #142b44
+    );
+}
+
+
+html[data-theme="dark"] .word-translation-help {
+  color: #71859d;
+}
+
+
+/* =========================================================
+   DARK CANCEL BUTTON
+   ========================================================= */
+
+html[data-theme="dark"] .cancel-edit-btn {
+  background:
+    linear-gradient(
+      145deg,
+      #172a40,
+      #102136
+    );
+
+  color: #b8c9dc;
+
+  border-color: #344b64;
+
+  box-shadow:
+    0 5px 0 #0a1725,
+    0 9px 18px
+    rgba(0, 0, 0, 0.25);
+}
+
+
+html[data-theme="dark"] .cancel-edit-btn:hover {
+  background:
+    linear-gradient(
+      145deg,
+      #1c334d,
+      #142940
+    );
+}
+
+
+/* =========================================================
+   DARK REFRESH
+   ========================================================= */
+
+html[data-theme="dark"] .refresh-btn {
+  background:
+    linear-gradient(
+      145deg,
+      #172d46,
+      #10243a
+    );
+
+  color: #82caff;
+
+  border-color: #3b6284;
+
+  box-shadow:
+    0 4px 0 #0a1726,
+    0 8px 17px
+    rgba(0, 0, 0, 0.25);
+}
+
+
+html[data-theme="dark"] .refresh-btn:hover {
+  background: #183653;
+}
+
+
+/* =========================================================
+   DARK LOADING / EMPTY
+   ========================================================= */
+
+html[data-theme="dark"] .loading-box,
+html[data-theme="dark"] .empty-box {
+  background: #0c1c2e;
+
+  border-color: #34516d;
+
+  color: #91a7bf;
+}
+
+
+/* =========================================================
+   DARK SHLOK ITEM
+   ========================================================= */
+
+html[data-theme="dark"] .shlok-item {
+  background: #0d1e31;
+
+  border-color: #29435f;
+
+  box-shadow:
+    0 5px 14px
+    rgba(0, 0, 0, 0.25);
+}
+
+
+html[data-theme="dark"] .shlok-item.expanded {
+  background: #0e2035;
+
+  border-color: #4380b5;
+
+  box-shadow:
+    0 14px 35px
+    rgba(0, 0, 0, 0.35);
+}
+
+
+/* =========================================================
+   DARK SHLOK NUMBER BUTTON
+   ========================================================= */
+
+html[data-theme="dark"] .shlok-number-box {
+  background:
+    linear-gradient(
+      145deg,
+      #172c45 0%,
+      #12263d 45%,
+      #0e2034 100%
+    );
+
+  color: #c9ddf2;
+
+  box-shadow:
+    inset 0 -3px 0
+    rgba(0, 0, 0, 0.20);
+}
+
+
+html[data-theme="dark"] .shlok-number-box span {
+  color: #8da3ba;
+}
+
+
+html[data-theme="dark"] .shlok-number-box strong {
+  color: #73c2ff;
+
+  text-shadow:
+    0 1px 0 #07111f;
+}
+
+
+html[data-theme="dark"] .shlok-number-box small {
+  color: #8197ae;
+}
+
+
+html[data-theme="dark"] .shlok-number-box::after {
+  background:
+    rgba(66, 165, 245, 0.08);
+
+  box-shadow:
+    -45px 65px 0
+    rgba(66, 165, 245, 0.025);
+}
+
+
+html[data-theme="dark"] .shlok-number-box:hover {
+  background:
+    linear-gradient(
+      145deg,
+      #1b3552,
+      #16304b 60%,
+      #122942
+    );
+
+  box-shadow:
+    inset 0 -4px 0
+    rgba(0, 0, 0, 0.25),
+    0 8px 18px
+    rgba(0, 0, 0, 0.35);
+}
+
+
+/* =========================================================
+   DARK EXPANDED HEADER
+   ========================================================= */
+
+html[data-theme="dark"] .shlok-item.expanded
+  > .shlok-number-box {
+  background:
+    linear-gradient(
+      90deg,
+      #071a3d,
+      #0d47a1,
+      #1976d2
+    );
+
+  color: #ffffff;
+}
+
+
+html[data-theme="dark"] .shlok-item.expanded
+  > .shlok-number-box
+  span {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+
+html[data-theme="dark"] .shlok-item.expanded
+  > .shlok-number-box
+  strong {
+  color: #ffffff;
+}
+
+
+html[data-theme="dark"] .shlok-item.expanded
+  > .shlok-number-box
+  small {
+  color: rgba(255, 255, 255, 0.82);
+}
+
+
+/* =========================================================
+   DARK DETAIL PANEL
+   ========================================================= */
+
+html[data-theme="dark"] .shlok-detail-panel {
+  background:
+    linear-gradient(
+      180deg,
+      #102237 0%,
+      #0c1c2e 100%
+    );
+
+  border-top-color: #29435f;
+}
+
+
+/* =========================================================
+   DARK DETAIL HEADER
+   ========================================================= */
+
+html[data-theme="dark"] .shlok-detail-header {
+  border-bottom-color: #2a4059;
+}
+
+
+html[data-theme="dark"] .detail-label {
+  background: #173653;
+
+  color: #72c5ff;
+}
+
+
+html[data-theme="dark"] .shlok-detail-header h3 {
+  color: #e6f1ff;
+}
+
+
+html[data-theme="dark"] .shlok-detail-header p {
+  color: #8ea3bb;
+}
+
+
+/* =========================================================
+   DARK DETAIL CONTENT
+   ========================================================= */
+
+html[data-theme="dark"] .detail-content {
+  background: #102237;
+
+  border-color: #2b435d;
+
+  box-shadow:
+    0 6px 18px
+    rgba(0, 0, 0, 0.20);
+}
+
+
+html[data-theme="dark"] .detail-content h4 {
+  color: #72c5ff;
+
+  border-bottom-color: #2a4059;
+}
+
+
+/* =========================================================
+   DARK SANSKRIT DETAIL
+   ========================================================= */
+
+html[data-theme="dark"] .sanskrit-detail {
+  background:
+    linear-gradient(
+      145deg,
+      #122940,
+      #0f2135
+    );
+}
+
+
+html[data-theme="dark"] .admin-sanskrit-text {
+  color: #d9e9fb;
+}
+
+
+/* =========================================================
+   DARK SAVED WORD MEANINGS
+   ========================================================= */
+
+html[data-theme="dark"] .saved-word-meaning-row {
+  background: #0c1c2e;
+
+  border-color: #29425c;
+}
+
+
+html[data-theme="dark"] .saved-word-number {
+  background: #173653;
+
+  color: #72c5ff;
+}
+
+
+html[data-theme="dark"] .saved-sanskrit-word {
+  color: #9dd5ff;
+}
+
+
+html[data-theme="dark"] .saved-word-arrow {
+  color: #64b5f6;
+}
+
+
+html[data-theme="dark"] .saved-gujarati-meaning {
+  color: #b3c6db;
+}
+
+
+/* =========================================================
+   DARK TRANSLATION / MESSAGE
+   ========================================================= */
+
+html[data-theme="dark"] .translation-detail,
+html[data-theme="dark"] .message-detail {
+  background:
+    linear-gradient(
+      145deg,
+      #12273e,
+      #0e2034
+    );
+}
+
+
+html[data-theme="dark"] .admin-translation-text,
+html[data-theme="dark"] .admin-message-text {
+  color: #b8c9dc;
+}
+
+
+html[data-theme="dark"] .admin-translation-text strong,
+html[data-theme="dark"] .admin-message-text strong {
+  color: #72c5ff;
+}
+
+
+/* =========================================================
+   DARK SUCCESS / ERROR
+   ========================================================= */
+
+html[data-theme="dark"] .success-message {
+  background: #102f28;
+
+  color: #67d8b2;
+
+  border-color: #245a4a;
+
+  box-shadow:
+    0 8px 25px
+    rgba(0, 0, 0, 0.20);
+}
+
+
+html[data-theme="dark"] .error-message {
+  background: #321a1f;
+
+  color: #ff8b96;
+
+  border-color: #663039;
+
+  box-shadow:
+    0 8px 25px
+    rgba(0, 0, 0, 0.20);
+}
+
+
+/* =========================================================
+   DARK SCROLLBAR
+   ========================================================= */
+
+html[data-theme="dark"] .shlok-management-page::-webkit-scrollbar-track {
+  background: #091625;
+}
+
+
+html[data-theme="dark"] .shlok-management-page::-webkit-scrollbar-thumb {
+  background:
+    linear-gradient(
+      #1565c0,
+      #42a5f5
+    );
+}

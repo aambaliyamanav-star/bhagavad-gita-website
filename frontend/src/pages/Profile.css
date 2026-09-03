@@ -1,0 +1,1797 @@
+/* =====================================================
+   PROFILE PAGE
+   BLUE DEVOTIONAL THEME
+===================================================== */
+
+.profile-page {
+  min-height: calc(100vh - 70px);
+  width: 100%;
+  padding: 50px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+
+  background:
+    radial-gradient(
+      circle at 15% 20%,
+      rgba(37, 99, 235, 0.18),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 85% 80%,
+      rgba(14, 165, 233, 0.16),
+      transparent 35%
+    ),
+    linear-gradient(
+      135deg,
+      #eff6ff,
+      #dbeafe,
+      #f8fbff
+    );
+
+  box-sizing: border-box;
+}
+
+
+/* =====================================================
+   PROFILE CARD
+===================================================== */
+
+.profile-card {
+  width: 100%;
+  max-width: 650px;
+
+  padding: 38px 42px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.98),
+      rgba(239, 246, 255, 0.96)
+    );
+
+  border: 1px solid rgba(37, 99, 235, 0.28);
+
+  border-radius: 28px;
+
+  box-shadow:
+    0 25px 60px rgba(30, 64, 175, 0.18),
+    0 8px 22px rgba(37, 99, 235, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+
+  position: relative;
+  overflow: hidden;
+
+  animation: profileCardAppear 0.7s ease;
+}
+
+
+.profile-card::before {
+  content: "";
+  position: absolute;
+
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 5px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #1d4ed8,
+      #2563eb,
+      #38bdf8,
+      #2563eb,
+      #1d4ed8
+    );
+}
+
+
+.profile-card::after {
+  content: "";
+
+  position: absolute;
+
+  width: 180px;
+  height: 180px;
+
+  top: -100px;
+  right: -80px;
+
+  border-radius: 50%;
+
+  background: rgba(59, 130, 246, 0.12);
+
+  filter: blur(5px);
+
+  pointer-events: none;
+}
+
+
+/* =====================================================
+   PROFILE AVATAR
+===================================================== */
+
+.profile-avatar {
+  width: 92px;
+  height: 92px;
+
+  margin: 5px auto 18px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  font-size: 42px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #2563eb,
+      #1d4ed8
+    );
+
+  border: 5px solid #ffffff;
+
+  box-shadow:
+    0 10px 25px rgba(29, 78, 216, 0.30),
+    0 0 0 5px rgba(37, 99, 235, 0.12);
+
+  animation: avatarFloat 3s ease-in-out infinite;
+}
+
+
+/* =====================================================
+   TITLE
+===================================================== */
+
+.profile-card > h1 {
+  margin: 0;
+
+  text-align: center;
+
+  font-size: 30px;
+  font-weight: 800;
+
+  color: #173b8f;
+
+  letter-spacing: 0.3px;
+}
+
+
+.profile-subtitle {
+  margin: 7px 0 25px;
+
+  text-align: center;
+
+  font-size: 15px;
+  font-weight: 600;
+
+  color: #64748b;
+}
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+.profile-message {
+  width: 100%;
+
+  margin-bottom: 22px;
+  padding: 13px 16px;
+
+  border-radius: 12px;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  text-align: center;
+
+  box-sizing: border-box;
+
+  animation: messageAppear 0.35s ease;
+}
+
+
+.profile-message.success {
+  color: #075985;
+
+  background:
+    linear-gradient(
+      135deg,
+      #e0f2fe,
+      #dbeafe
+    );
+
+  border: 1px solid #7dd3fc;
+
+  box-shadow:
+    0 5px 15px rgba(14, 165, 233, 0.12);
+}
+
+
+.profile-message.error {
+  color: #991b1b;
+
+  background:
+    linear-gradient(
+      135deg,
+      #fef2f2,
+      #fee2e2
+    );
+
+  border: 1px solid #fecaca;
+}
+
+
+/* =====================================================
+   PROFILE INFORMATION
+===================================================== */
+
+.profile-info {
+  width: 100%;
+
+  margin-bottom: 25px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #eff6ff
+    );
+
+  border: 1px solid #bfdbfe;
+
+  border-radius: 18px;
+
+  padding: 8px 20px;
+
+  box-sizing: border-box;
+
+  box-shadow:
+    0 8px 22px rgba(30, 64, 175, 0.08);
+}
+
+
+/* =====================================================
+   PROFILE ROW
+===================================================== */
+
+.profile-row {
+  min-height: 58px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  border-bottom: 1px solid #dbeafe;
+
+  color: #475569;
+
+  font-size: 15px;
+}
+
+
+.profile-row:last-child {
+  border-bottom: none;
+}
+
+
+.profile-row > span:first-child {
+  font-weight: 600;
+  color: #64748b;
+}
+
+
+.profile-row strong {
+  color: #1e40af;
+
+  font-weight: 700;
+
+  text-align: right;
+
+  word-break: break-word;
+}
+
+
+/* =====================================================
+   ROLE
+===================================================== */
+
+.profile-role {
+  padding: 6px 12px;
+
+  border-radius: 20px;
+
+  font-size: 13px;
+
+  font-weight: 700;
+}
+
+
+.admin-profile-role {
+  color: #1e40af;
+
+  background: #dbeafe;
+
+  border: 1px solid #93c5fd;
+}
+
+
+.user-profile-role {
+  color: #0369a1;
+
+  background: #e0f2fe;
+
+  border: 1px solid #7dd3fc;
+}
+
+
+/* =====================================================
+   BUTTON COMMON
+===================================================== */
+
+.profile-edit-btn,
+.profile-admin-btn,
+.profile-logout-btn,
+.profile-save-btn,
+.profile-cancel-btn,
+.profile-otp-btn,
+.profile-verify-btn,
+.register-secondary,
+.register-back {
+  border: none;
+
+  cursor: pointer;
+
+  font-family: inherit;
+
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    background 0.22s ease;
+}
+
+
+/* =====================================================
+   PREMIUM EDIT PROFILE BUTTON
+===================================================== */
+
+.profile-edit-btn {
+  width: 100%;
+
+  padding: 15px 20px;
+
+  margin-bottom: 12px;
+
+  position: relative;
+
+  overflow: hidden;
+
+  border-radius: 14px;
+
+  color: #ffffff;
+
+  font-size: 16px;
+  font-weight: 800;
+
+  letter-spacing: 0.2px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #3b82f6 0%,
+      #2563eb 45%,
+      #1d4ed8 100%
+    );
+
+  border: 1px solid #1e40af;
+
+  box-shadow:
+    0 7px 0 #173b8f,
+    0 13px 25px rgba(29, 78, 216, 0.28),
+    inset 0 1px 1px rgba(255, 255, 255, 0.35),
+    inset 0 -3px 7px rgba(15, 23, 42, 0.15);
+}
+
+
+/* shine */
+
+.profile-edit-btn::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: -120%;
+
+  width: 70%;
+  height: 100%;
+
+  background:
+    linear-gradient(
+      110deg,
+      transparent,
+      rgba(255, 255, 255, 0.35),
+      transparent
+    );
+
+  transform: skewX(-20deg);
+
+  transition: left 0.65s ease;
+}
+
+
+.profile-edit-btn:hover::before {
+  left: 140%;
+}
+
+
+.profile-edit-btn:hover {
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 10px 0 #173b8f,
+    0 20px 32px rgba(29, 78, 216, 0.34),
+    inset 0 1px 1px rgba(255, 255, 255, 0.4),
+    inset 0 -3px 7px rgba(15, 23, 42, 0.12);
+}
+
+
+.profile-edit-btn:active {
+  transform: translateY(4px);
+
+  box-shadow:
+    0 3px 0 #173b8f,
+    0 7px 15px rgba(29, 78, 216, 0.22),
+    inset 0 2px 5px rgba(15, 23, 42, 0.18);
+}
+
+
+/* =====================================================
+   ADMIN BUTTON
+===================================================== */
+
+.profile-admin-btn {
+  width: 100%;
+
+  padding: 13px 20px;
+
+  margin-bottom: 12px;
+
+  border-radius: 13px;
+
+  color: #1e40af;
+
+  font-size: 15px;
+  font-weight: 700;
+
+  background:
+    linear-gradient(
+      135deg,
+      #dbeafe,
+      #bfdbfe
+    );
+
+  border: 1px solid #93c5fd;
+
+  box-shadow:
+    0 6px 15px rgba(37, 99, 235, 0.12);
+}
+
+
+.profile-admin-btn:hover {
+  transform: translateY(-3px);
+
+  background:
+    linear-gradient(
+      135deg,
+      #bfdbfe,
+      #93c5fd
+    );
+
+  box-shadow:
+    0 10px 22px rgba(37, 99, 235, 0.20);
+}
+
+
+/* =====================================================
+   PREMIUM LOGOUT BUTTON
+===================================================== */
+
+.profile-logout-btn {
+  width: 100%;
+
+  padding: 14px 20px;
+
+  position: relative;
+
+  overflow: hidden;
+
+  border-radius: 14px;
+
+  color: #1e40af;
+
+  font-size: 15px;
+  font-weight: 800;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #eaf2ff
+    );
+
+  border: 1px solid #93c5fd;
+
+  box-shadow:
+    0 6px 0 #bfdbfe,
+    0 12px 22px rgba(30, 64, 175, 0.13),
+    inset 0 1px 1px rgba(255, 255, 255, 1),
+    inset 0 -3px 7px rgba(37, 99, 235, 0.07);
+}
+
+
+.profile-logout-btn::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: -120%;
+
+  width: 65%;
+  height: 100%;
+
+  background:
+    linear-gradient(
+      110deg,
+      transparent,
+      rgba(59, 130, 246, 0.15),
+      transparent
+    );
+
+  transform: skewX(-20deg);
+
+  transition: left 0.65s ease;
+}
+
+
+.profile-logout-btn:hover::before {
+  left: 140%;
+}
+
+
+.profile-logout-btn:hover {
+  transform: translateY(-4px);
+
+  color: #1d4ed8;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #dbeafe
+    );
+
+  box-shadow:
+    0 9px 0 #93c5fd,
+    0 18px 30px rgba(30, 64, 175, 0.18),
+    inset 0 1px 1px rgba(255, 255, 255, 1),
+    inset 0 -3px 7px rgba(37, 99, 235, 0.08);
+}
+
+
+.profile-logout-btn:active {
+  transform: translateY(4px);
+
+  box-shadow:
+    0 2px 0 #93c5fd,
+    0 6px 13px rgba(30, 64, 175, 0.12);
+}
+
+
+/* =====================================================
+   EDIT FORM
+===================================================== */
+
+.profile-edit-form {
+  width: 100%;
+
+  animation: formAppear 0.4s ease;
+}
+
+
+/* =====================================================
+   EDIT FIELD
+===================================================== */
+
+.profile-edit-field {
+  width: 100%;
+
+  margin-bottom: 18px;
+}
+
+
+.profile-edit-field label {
+  display: flex;
+  align-items: center;
+
+  gap: 8px;
+
+  margin-bottom: 8px;
+
+  color: #1e3a8a;
+
+  font-size: 14px;
+  font-weight: 700;
+}
+
+
+.profile-edit-field input {
+  width: 100%;
+
+  height: 48px;
+
+  padding: 0 15px;
+
+  box-sizing: border-box;
+
+  border-radius: 12px;
+
+  border: 1px solid #bfdbfe;
+
+  outline: none;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #f8fbff
+    );
+
+  color: #1e3a8a;
+
+  font-size: 15px;
+
+  box-shadow:
+    inset 0 2px 5px rgba(30, 64, 175, 0.04);
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.profile-edit-field input::placeholder {
+  color: #94a3b8;
+}
+
+
+.profile-edit-field input:focus {
+  border-color: #3b82f6;
+
+  transform: translateY(-1px);
+
+  box-shadow:
+    0 0 0 4px rgba(59, 130, 246, 0.12),
+    0 7px 18px rgba(37, 99, 235, 0.10);
+}
+
+
+/* =====================================================
+   OTP BUTTON
+===================================================== */
+
+.profile-otp-btn {
+  width: 100%;
+
+  margin-top: 9px;
+
+  padding: 11px 14px;
+
+  border-radius: 11px;
+
+  color: #1e40af;
+
+  background:
+    linear-gradient(
+      135deg,
+      #dbeafe,
+      #e0f2fe
+    );
+
+  border: 1px solid #93c5fd;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  box-shadow:
+    0 5px 13px rgba(37, 99, 235, 0.10);
+}
+
+
+.profile-otp-btn:hover {
+  transform: translateY(-2px);
+
+  background:
+    linear-gradient(
+      135deg,
+      #bfdbfe,
+      #dbeafe
+    );
+
+  box-shadow:
+    0 8px 18px rgba(37, 99, 235, 0.17);
+}
+
+
+/* =====================================================
+   OTP SUCCESS
+===================================================== */
+
+.otp-success-text {
+  margin-top: 9px;
+
+  padding: 9px 12px;
+
+  border-radius: 10px;
+
+  text-align: center;
+
+  color: #0369a1;
+
+  background: #e0f2fe;
+
+  border: 1px solid #7dd3fc;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+
+/* =====================================================
+   OTP BOX
+===================================================== */
+
+.profile-otp-box {
+  margin-top: 12px;
+
+  padding: 18px;
+
+  border-radius: 16px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #eff6ff,
+      #e0f2fe
+    );
+
+  border: 1px solid #93c5fd;
+
+  box-shadow:
+    0 8px 20px rgba(37, 99, 235, 0.10);
+
+  animation: otpBoxAppear 0.35s ease;
+}
+
+
+.profile-otp-box h3 {
+  margin: 0 0 7px;
+
+  color: #1e40af;
+
+  font-size: 16px;
+}
+
+
+.profile-otp-box p {
+  margin: 0 0 12px;
+
+  color: #64748b;
+
+  font-size: 13px;
+
+  line-height: 1.55;
+}
+
+
+.profile-otp-box p strong {
+  color: #1d4ed8;
+}
+
+
+/* OTP input */
+
+.profile-otp-box input {
+  width: 100%;
+
+  height: 46px;
+
+  padding: 0 14px;
+
+  box-sizing: border-box;
+
+  border-radius: 11px;
+
+  border: 1px solid #93c5fd;
+
+  outline: none;
+
+  background: #ffffff;
+
+  color: #1e3a8a;
+
+  font-size: 17px;
+
+  font-weight: 700;
+
+  letter-spacing: 4px;
+
+  text-align: center;
+}
+
+
+.profile-otp-box input:focus {
+  border-color: #2563eb;
+
+  box-shadow:
+    0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+
+/* =====================================================
+   VERIFY BUTTON
+===================================================== */
+
+.profile-verify-btn {
+  width: 100%;
+
+  margin-top: 10px;
+
+  padding: 11px;
+
+  border-radius: 11px;
+
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      135deg,
+      #2563eb,
+      #1d4ed8
+    );
+
+  font-size: 14px;
+  font-weight: 700;
+
+  box-shadow:
+    0 6px 15px rgba(37, 99, 235, 0.22);
+}
+
+
+.profile-verify-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 10px 21px rgba(37, 99, 235, 0.30);
+}
+
+
+/* =====================================================
+   FORGOT PASSWORD LINK
+===================================================== */
+
+.profile-forgot-password-link {
+  display: block;
+
+  margin-top: 9px;
+
+  padding: 0;
+
+  border: none;
+
+  background: transparent;
+
+  color: #2563eb;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  text-align: right;
+
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+
+.profile-forgot-password-link:hover {
+  color: #1d4ed8;
+
+  text-decoration: underline;
+
+  transform: translateX(-2px);
+}
+
+
+/* =====================================================
+   PREMIUM SAVE / CANCEL BUTTONS
+===================================================== */
+
+.profile-edit-actions {
+  display: flex;
+
+  gap: 12px;
+
+  margin-top: 8px;
+}
+
+
+.profile-save-btn,
+.profile-cancel-btn {
+  flex: 1;
+
+  padding: 14px 15px;
+
+  position: relative;
+
+  overflow: hidden;
+
+  border-radius: 14px;
+
+  font-size: 14px;
+  font-weight: 800;
+
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    background 0.22s ease;
+}
+
+
+/* =====================================================
+   PREMIUM SAVE BUTTON
+===================================================== */
+
+.profile-save-btn {
+  color: #ffffff;
+
+  background:
+    linear-gradient(
+      145deg,
+      #3b82f6,
+      #2563eb 50%,
+      #1d4ed8
+    );
+
+  border: 1px solid #1e40af;
+
+  box-shadow:
+    0 6px 0 #173b8f,
+    0 12px 22px rgba(37, 99, 235, 0.28),
+    inset 0 1px 1px rgba(255, 255, 255, 0.35),
+    inset 0 -3px 7px rgba(15, 23, 42, 0.15);
+}
+
+
+/* Save shine */
+
+.profile-save-btn::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: -120%;
+
+  width: 70%;
+  height: 100%;
+
+  background:
+    linear-gradient(
+      110deg,
+      transparent,
+      rgba(255, 255, 255, 0.38),
+      transparent
+    );
+
+  transform: skewX(-20deg);
+
+  transition: left 0.65s ease;
+}
+
+
+.profile-save-btn:hover::before {
+  left: 140%;
+}
+
+
+.profile-save-btn:hover:not(:disabled) {
+  transform: translateY(-4px);
+
+  box-shadow:
+    0 10px 0 #173b8f,
+    0 19px 30px rgba(37, 99, 235, 0.34),
+    inset 0 1px 1px rgba(255, 255, 255, 0.4),
+    inset 0 -3px 7px rgba(15, 23, 42, 0.12);
+}
+
+
+.profile-save-btn:active:not(:disabled) {
+  transform: translateY(4px);
+
+  box-shadow:
+    0 2px 0 #173b8f,
+    0 6px 13px rgba(37, 99, 235, 0.20);
+}
+
+
+/* =====================================================
+   PREMIUM CANCEL BUTTON
+===================================================== */
+
+.profile-cancel-btn {
+  color: #1e40af;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #eaf2ff
+    );
+
+  border: 1px solid #93c5fd;
+
+  box-shadow:
+    0 6px 0 #bfdbfe,
+    0 12px 21px rgba(30, 64, 175, 0.12),
+    inset 0 1px 1px rgba(255, 255, 255, 1),
+    inset 0 -3px 7px rgba(37, 99, 235, 0.07);
+}
+
+
+/* Cancel shine */
+
+.profile-cancel-btn::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  left: -120%;
+
+  width: 65%;
+  height: 100%;
+
+  background:
+    linear-gradient(
+      110deg,
+      transparent,
+      rgba(59, 130, 246, 0.15),
+      transparent
+    );
+
+  transform: skewX(-20deg);
+
+  transition: left 0.65s ease;
+}
+
+
+.profile-cancel-btn:hover::before {
+  left: 140%;
+}
+
+
+.profile-cancel-btn:hover:not(:disabled) {
+  transform: translateY(-4px);
+
+  color: #1d4ed8;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #dbeafe
+    );
+
+  box-shadow:
+    0 10px 0 #93c5fd,
+    0 18px 28px rgba(30, 64, 175, 0.18),
+    inset 0 1px 1px rgba(255, 255, 255, 1),
+    inset 0 -3px 7px rgba(37, 99, 235, 0.08);
+}
+
+
+.profile-cancel-btn:active:not(:disabled) {
+  transform: translateY(4px);
+
+  box-shadow:
+    0 2px 0 #93c5fd,
+    0 6px 13px rgba(30, 64, 175, 0.12);
+}
+
+
+/* =====================================================
+   DISABLED BUTTONS
+===================================================== */
+
+button:disabled {
+  cursor: not-allowed;
+
+  opacity: 0.55;
+
+  transform: none !important;
+
+  box-shadow: none !important;
+}
+
+
+/* =====================================================
+   LOADING PROFILE
+===================================================== */
+
+.profile-card > p {
+  text-align: center;
+
+  color: #2563eb;
+
+  font-size: 17px;
+
+  font-weight: 700;
+}
+
+
+/* =====================================================
+   DARK THEME
+   Uses existing data-theme="dark"
+===================================================== */
+
+[data-theme="dark"] .profile-page {
+  background:
+    radial-gradient(
+      circle at 15% 20%,
+      rgba(37, 99, 235, 0.18),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 85% 80%,
+      rgba(14, 165, 233, 0.14),
+      transparent 35%
+    ),
+    linear-gradient(
+      135deg,
+      #071a2d,
+      #0b2239,
+      #071827
+    );
+
+  color: #dbeafe;
+}
+
+
+/* =====================================================
+   DARK PROFILE CARD
+===================================================== */
+
+[data-theme="dark"] .profile-card {
+  background:
+    linear-gradient(
+      145deg,
+      #102b45,
+      #0d243b 50%,
+      #0a1d31 100%
+    );
+
+  border-color: rgba(96, 165, 250, 0.28);
+
+  box-shadow:
+    0 25px 60px rgba(0, 0, 0, 0.45),
+    0 8px 22px rgba(0, 0, 0, 0.30),
+    inset 0 1px 0 rgba(147, 197, 253, 0.10);
+}
+
+
+[data-theme="dark"] .profile-card::after {
+  background: rgba(59, 130, 246, 0.10);
+}
+
+
+/* =====================================================
+   DARK AVATAR
+===================================================== */
+
+[data-theme="dark"] .profile-avatar {
+  border-color: #183b5b;
+
+  box-shadow:
+    0 10px 25px rgba(0, 0, 0, 0.40),
+    0 0 0 5px rgba(59, 130, 246, 0.12);
+}
+
+
+/* =====================================================
+   DARK TITLE
+===================================================== */
+
+[data-theme="dark"] .profile-card > h1 {
+  color: #bfdbfe;
+}
+
+
+[data-theme="dark"] .profile-subtitle {
+  color: #94a3b8;
+}
+
+
+/* =====================================================
+   DARK MESSAGE
+===================================================== */
+
+[data-theme="dark"] .profile-message.success {
+  color: #7dd3fc;
+
+  background:
+    linear-gradient(
+      135deg,
+      #12344f,
+      #102d48
+    );
+
+  border-color: #256b91;
+
+  box-shadow:
+    0 5px 15px rgba(14, 165, 233, 0.10);
+}
+
+
+[data-theme="dark"] .profile-message.error {
+  color: #fca5a5;
+
+  background:
+    linear-gradient(
+      135deg,
+      #3a1c25,
+      #301923
+    );
+
+  border-color: #7f3342;
+}
+
+
+/* =====================================================
+   DARK PROFILE INFORMATION
+===================================================== */
+
+[data-theme="dark"] .profile-info {
+  background:
+    linear-gradient(
+      145deg,
+      #102c47,
+      #0d243b
+    );
+
+  border-color: #28547b;
+
+  box-shadow:
+    0 8px 22px rgba(0, 0, 0, 0.25);
+}
+
+
+/* =====================================================
+   DARK PROFILE ROW
+===================================================== */
+
+[data-theme="dark"] .profile-row {
+  border-bottom-color: #234562;
+
+  color: #cbd5e1;
+}
+
+
+[data-theme="dark"] .profile-row > span:first-child {
+  color: #94a3b8;
+}
+
+
+[data-theme="dark"] .profile-row strong {
+  color: #93c5fd;
+}
+
+
+/* =====================================================
+   DARK ROLE
+===================================================== */
+
+[data-theme="dark"] .admin-profile-role {
+  color: #bfdbfe;
+
+  background: #17385b;
+
+  border-color: #3b6ea1;
+}
+
+
+[data-theme="dark"] .user-profile-role {
+  color: #7dd3fc;
+
+  background: #123b54;
+
+  border-color: #287394;
+}
+
+
+/* =====================================================
+   DARK ADMIN BUTTON
+===================================================== */
+
+[data-theme="dark"] .profile-admin-btn {
+  color: #bfdbfe;
+
+  background:
+    linear-gradient(
+      135deg,
+      #173b61,
+      #12304f
+    );
+
+  border-color: #3b6ea1;
+
+  box-shadow:
+    0 6px 15px rgba(0, 0, 0, 0.22);
+}
+
+
+[data-theme="dark"] .profile-admin-btn:hover {
+  background:
+    linear-gradient(
+      135deg,
+      #1d4b78,
+      #174064
+    );
+
+  box-shadow:
+    0 10px 22px rgba(0, 0, 0, 0.30);
+}
+
+
+/* =====================================================
+   DARK LOGOUT BUTTON
+===================================================== */
+
+[data-theme="dark"] .profile-logout-btn {
+  color: #bfdbfe;
+
+  background:
+    linear-gradient(
+      145deg,
+      #173651,
+      #102b43
+    );
+
+  border-color: #3b6ea1;
+
+  box-shadow:
+    0 6px 0 #214b70,
+    0 12px 22px rgba(0, 0, 0, 0.25),
+    inset 0 1px 1px rgba(147, 197, 253, 0.08),
+    inset 0 -3px 7px rgba(0, 0, 0, 0.15);
+}
+
+
+[data-theme="dark"] .profile-logout-btn:hover {
+  color: #dbeafe;
+
+  background:
+    linear-gradient(
+      145deg,
+      #1c4567,
+      #153754
+    );
+
+  box-shadow:
+    0 9px 0 #285b85,
+    0 18px 30px rgba(0, 0, 0, 0.32),
+    inset 0 1px 1px rgba(147, 197, 253, 0.10),
+    inset 0 -3px 7px rgba(0, 0, 0, 0.12);
+}
+
+
+/* =====================================================
+   DARK EDIT FIELD
+===================================================== */
+
+[data-theme="dark"] .profile-edit-field label {
+  color: #bfdbfe;
+}
+
+
+[data-theme="dark"] .profile-edit-field input {
+  border-color: #315a7e;
+
+  background:
+    linear-gradient(
+      145deg,
+      #0f2b45,
+      #0c243b
+    );
+
+  color: #dbeafe;
+
+  box-shadow:
+    inset 0 2px 5px rgba(0, 0, 0, 0.20);
+}
+
+
+[data-theme="dark"] .profile-edit-field input::placeholder {
+  color: #71869b;
+}
+
+
+[data-theme="dark"] .profile-edit-field input:hover {
+  border-color: #477ba8;
+}
+
+
+[data-theme="dark"] .profile-edit-field input:focus {
+  border-color: #60a5fa;
+
+  background: #102d48;
+
+  box-shadow:
+    0 0 0 4px rgba(59, 130, 246, 0.14),
+    0 7px 18px rgba(0, 0, 0, 0.22);
+}
+
+
+/* =====================================================
+   DARK OTP BUTTON
+===================================================== */
+
+[data-theme="dark"] .profile-otp-btn {
+  color: #bfdbfe;
+
+  background:
+    linear-gradient(
+      135deg,
+      #173b5d,
+      #12314d
+    );
+
+  border-color: #3b6ea1;
+
+  box-shadow:
+    0 5px 13px rgba(0, 0, 0, 0.22);
+}
+
+
+[data-theme="dark"] .profile-otp-btn:hover {
+  background:
+    linear-gradient(
+      135deg,
+      #1d4a72,
+      #173b5d
+    );
+
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.30);
+}
+
+
+/* =====================================================
+   DARK OTP SUCCESS
+===================================================== */
+
+[data-theme="dark"] .otp-success-text {
+  color: #7dd3fc;
+
+  background: #123b54;
+
+  border-color: #287394;
+}
+
+
+/* =====================================================
+   DARK OTP BOX
+===================================================== */
+
+[data-theme="dark"] .profile-otp-box {
+  background:
+    linear-gradient(
+      145deg,
+      #122f4c,
+      #0f2942
+    );
+
+  border-color: #3b6ea1;
+
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.25);
+}
+
+
+[data-theme="dark"] .profile-otp-box h3 {
+  color: #bfdbfe;
+}
+
+
+[data-theme="dark"] .profile-otp-box p {
+  color: #94a3b8;
+}
+
+
+[data-theme="dark"] .profile-otp-box p strong {
+  color: #93c5fd;
+}
+
+
+/* =====================================================
+   DARK OTP INPUT
+===================================================== */
+
+[data-theme="dark"] .profile-otp-box input {
+  border-color: #3b6ea1;
+
+  background: #0b2136;
+
+  color: #dbeafe;
+}
+
+
+[data-theme="dark"] .profile-otp-box input:focus {
+  border-color: #60a5fa;
+
+  box-shadow:
+    0 0 0 4px rgba(37, 99, 235, 0.16);
+}
+
+
+/* =====================================================
+   DARK FORGOT PASSWORD
+===================================================== */
+
+[data-theme="dark"] .profile-forgot-password-link {
+  color: #60a5fa;
+}
+
+
+[data-theme="dark"] .profile-forgot-password-link:hover {
+  color: #93c5fd;
+}
+
+
+/* =====================================================
+   DARK CANCEL BUTTON
+===================================================== */
+
+[data-theme="dark"] .profile-cancel-btn {
+  color: #bfdbfe;
+
+  background:
+    linear-gradient(
+      145deg,
+      #173651,
+      #102b43
+    );
+
+  border-color: #3b6ea1;
+
+  box-shadow:
+    0 6px 0 #214b70,
+    0 12px 21px rgba(0, 0, 0, 0.25),
+    inset 0 1px 1px rgba(147, 197, 253, 0.08),
+    inset 0 -3px 7px rgba(0, 0, 0, 0.15);
+}
+
+
+[data-theme="dark"] .profile-cancel-btn:hover:not(:disabled) {
+  color: #dbeafe;
+
+  background:
+    linear-gradient(
+      145deg,
+      #1c4567,
+      #153754
+    );
+
+  box-shadow:
+    0 10px 0 #285b85,
+    0 18px 28px rgba(0, 0, 0, 0.30),
+    inset 0 1px 1px rgba(147, 197, 253, 0.10),
+    inset 0 -3px 7px rgba(0, 0, 0, 0.12);
+}
+
+
+/* =====================================================
+   DARK LOADING
+===================================================== */
+
+[data-theme="dark"] .profile-card > p {
+  color: #60a5fa;
+}
+
+
+/* =====================================================
+   DARK DISABLED BUTTONS
+===================================================== */
+
+[data-theme="dark"] button:disabled {
+  opacity: 0.45;
+}
+
+
+/* =====================================================
+   ANIMATIONS
+===================================================== */
+
+@keyframes profileCardAppear {
+  from {
+    opacity: 0;
+    transform: translateY(25px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+
+@keyframes avatarFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+
+@keyframes messageAppear {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+@keyframes formAppear {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+@keyframes otpBoxAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 700px) {
+
+  .profile-page {
+    padding: 30px 15px;
+  }
+
+  .profile-card {
+    padding: 32px 24px;
+
+    border-radius: 23px;
+  }
+
+  .profile-card > h1 {
+    font-size: 26px;
+  }
+
+  .profile-avatar {
+    width: 82px;
+    height: 82px;
+
+    font-size: 36px;
+  }
+
+  .profile-row {
+    min-height: 55px;
+
+    gap: 12px;
+
+    font-size: 14px;
+  }
+
+  .profile-row strong {
+    max-width: 58%;
+  }
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (max-width: 450px) {
+
+  .profile-page {
+    padding: 20px 10px;
+  }
+
+  .profile-card {
+    padding: 28px 17px;
+
+    border-radius: 20px;
+  }
+
+  .profile-card > h1 {
+    font-size: 23px;
+  }
+
+  .profile-subtitle {
+    font-size: 13px;
+
+    margin-bottom: 20px;
+  }
+
+  .profile-info {
+    padding: 5px 14px;
+  }
+
+  .profile-row {
+    min-height: 52px;
+
+    font-size: 13px;
+  }
+
+  .profile-row strong {
+    max-width: 55%;
+
+    font-size: 13px;
+  }
+
+  .profile-edit-actions {
+    flex-direction: column;
+  }
+
+  .profile-save-btn,
+  .profile-cancel-btn {
+    width: 100%;
+  }
+
+  .profile-otp-box {
+    padding: 15px;
+  }
+}

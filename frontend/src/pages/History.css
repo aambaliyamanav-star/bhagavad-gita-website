@@ -1,0 +1,803 @@
+/* =====================================================
+   HISTORY.CSS
+   Bhagavad Gita History Page
+   Blue Theme
+   Light + Dark Theme
+   3D Buttons + Hover + Shine
+   Floating OM Animation
+===================================================== */
+
+
+/* =====================================================
+   ROOT
+===================================================== */
+
+.history-page {
+  min-height: 100vh;
+
+  padding: 35px 20px;
+
+  box-sizing: border-box;
+
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(255, 193, 7, 0.08),
+      transparent 35%
+    ),
+    linear-gradient(
+      135deg,
+      #f5f9ff,
+      #edf4ff
+    );
+
+  color: #183153;
+
+  transition:
+    background 0.35s ease,
+    color 0.35s ease;
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+.history-header {
+  max-width: 1000px;
+
+  margin: 0 auto 30px;
+
+  padding: 30px 25px;
+
+  text-align: center;
+
+  border-radius: 25px;
+
+  background: rgba(255, 255, 255, 0.92);
+
+  border: 1px solid #d5e3f8;
+
+  box-shadow:
+    0 18px 40px rgba(34, 83, 140, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+
+  backdrop-filter: blur(12px);
+
+  transition:
+    background 0.35s ease,
+    border 0.35s ease,
+    box-shadow 0.35s ease;
+}
+
+
+/* =====================================================
+   OM
+===================================================== */
+
+.history-om {
+  width: 78px;
+  height: 78px;
+
+  margin: 0 auto 14px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle at 35% 25%,
+      #ffffff,
+      #eaf2fc 55%,
+      #d6e4f5
+    );
+
+  border: 1px solid #c7dbf2;
+
+  color: #2166ba;
+
+  font-size: 46px;
+
+  font-weight: 800;
+
+  text-shadow:
+    1px 3px 3px rgba(36, 91, 150, 0.20);
+
+  box-shadow:
+    8px 10px 20px rgba(42, 82, 126, 0.20),
+    -5px -5px 12px rgba(255, 255, 255, 0.95),
+    inset 5px 5px 10px rgba(255, 255, 255, 0.85),
+    inset -5px -6px 10px rgba(45, 85, 130, 0.14);
+
+  animation:
+    historyOmFloat 2.8s ease-in-out infinite;
+
+  transition:
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
+}
+
+
+/* =====================================================
+   OM HOVER
+===================================================== */
+
+.history-om:hover {
+  animation-play-state: paused;
+
+  transform:
+    translateY(-4px)
+    scale(1.04);
+
+  box-shadow:
+    10px 15px 25px rgba(42, 82, 126, 0.24),
+    -5px -5px 12px rgba(255, 255, 255, 0.95),
+    inset 5px 5px 10px rgba(255, 255, 255, 0.9),
+    inset -6px -7px 12px rgba(45, 85, 130, 0.16);
+}
+
+
+/* =====================================================
+   OM FLOATING ANIMATION
+===================================================== */
+
+@keyframes historyOmFloat {
+
+  0% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-9px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+
+}
+
+
+/* =====================================================
+   SACRED TITLE
+===================================================== */
+
+.history-sacred-title {
+  margin: 0 0 8px;
+
+  color: #8a6500;
+
+  font-size: 15px;
+
+  font-weight: 800;
+
+  letter-spacing: 0.5px;
+}
+
+
+/* =====================================================
+   MAIN TITLE
+===================================================== */
+
+.history-header h1 {
+  margin: 0 0 8px;
+
+  color: #175bb5;
+
+  font-size: 32px;
+
+  font-weight: 900;
+}
+
+
+/* =====================================================
+   HEADER DESCRIPTION
+===================================================== */
+
+.history-header > p:last-child {
+  margin: 0;
+
+  color: #58708d;
+
+  font-size: 15px;
+
+  font-weight: 600;
+
+  line-height: 1.6;
+}
+
+
+/* =====================================================
+   HISTORY OPTIONS
+===================================================== */
+
+.history-options {
+  max-width: 1000px;
+
+  margin: 0 auto;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 18px;
+}
+
+
+/* =====================================================
+   HISTORY OPTION CARD
+===================================================== */
+
+.history-option-card {
+  position: relative;
+
+  width: 100%;
+
+  min-height: 105px;
+
+  padding: 20px 24px;
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 20px;
+
+  text-align: left;
+
+  border-radius: 20px;
+
+  border: 1px solid #d1e0f3;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #edf4fd
+    );
+
+  color: #24466d;
+
+  cursor: pointer;
+
+  overflow: hidden;
+
+  box-shadow:
+    7px 9px 18px rgba(42, 82, 126, 0.14),
+    -4px -4px 10px rgba(255, 255, 255, 0.90);
+
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    border 0.22s ease,
+    background 0.22s ease;
+}
+
+
+/* =====================================================
+   BUTTON SHINE
+===================================================== */
+
+.history-option-card::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+
+  left: -130%;
+
+  width: 70%;
+
+  height: 100%;
+
+  background:
+    linear-gradient(
+      100deg,
+      transparent,
+      rgba(255, 255, 255, 0.60),
+      transparent
+    );
+
+  transform: skewX(-20deg);
+
+  transition: left 0.55s ease;
+}
+
+
+.history-option-card:hover::before {
+  left: 140%;
+}
+
+
+/* =====================================================
+   CARD HOVER
+===================================================== */
+
+.history-option-card:hover {
+  transform: translateY(-5px);
+
+  border-color: #8dbcf2;
+
+  box-shadow:
+    10px 14px 25px rgba(45, 91, 145, 0.20),
+    -5px -5px 12px rgba(255, 255, 255, 0.95);
+}
+
+
+/* =====================================================
+   CARD ACTIVE
+===================================================== */
+
+.history-option-card:active {
+  transform: translateY(2px);
+
+  box-shadow:
+    inset 5px 6px 10px rgba(42, 82, 126, 0.16);
+}
+
+
+/* =====================================================
+   OPTION ICON
+===================================================== */
+
+.history-option-icon {
+  flex-shrink: 0;
+
+  width: 62px;
+  height: 62px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 18px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #dfeafb
+    );
+
+  border: 1px solid #c9ddf5;
+
+  color: #2166ba;
+
+  font-size: 31px;
+
+  box-shadow:
+    5px 6px 12px rgba(42, 82, 126, 0.16),
+    -3px -3px 8px rgba(255, 255, 255, 0.95),
+    inset 0 1px 2px rgba(255, 255, 255, 0.90);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+/* =====================================================
+   ICON HOVER
+===================================================== */
+
+.history-option-card:hover .history-option-icon {
+  transform:
+    translateY(-3px)
+    rotate(-3deg);
+
+  box-shadow:
+    7px 10px 17px rgba(42, 82, 126, 0.20),
+    -3px -3px 9px rgba(255, 255, 255, 0.95);
+}
+
+
+/* =====================================================
+   OPTION CONTENT
+===================================================== */
+
+.history-option-content {
+  flex: 1;
+
+  min-width: 0;
+}
+
+
+.history-option-content h2 {
+  margin: 0 0 7px;
+
+  color: #1b5fb4;
+
+  font-size: 21px;
+
+  font-weight: 900;
+}
+
+
+.history-option-content p {
+  margin: 0;
+
+  color: #5a718c;
+
+  font-size: 14px;
+
+  font-weight: 600;
+
+  line-height: 1.6;
+}
+
+
+/* =====================================================
+   OPTION ARROW
+===================================================== */
+
+.history-option-arrow {
+  flex-shrink: 0;
+
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 13px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #317fe8,
+      #1764ca
+    );
+
+  color: #ffffff;
+
+  font-size: 24px;
+
+  font-weight: 900;
+
+  box-shadow:
+    5px 7px 13px rgba(29, 98, 201, 0.30),
+    inset 0 1px 2px rgba(255, 255, 255, 0.35);
+
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+
+/* =====================================================
+   ARROW HOVER
+===================================================== */
+
+.history-option-card:hover .history-option-arrow {
+  transform:
+    translateX(4px)
+    translateY(-2px);
+
+  box-shadow:
+    7px 10px 18px rgba(29, 98, 201, 0.38),
+    inset 0 1px 2px rgba(255, 255, 255, 0.40);
+}
+
+
+/* =====================================================
+   DARK THEME
+===================================================== */
+
+[data-theme="dark"] .history-page,
+.dark .history-page {
+  background:
+    radial-gradient(
+      circle at top left,
+      rgba(255, 193, 7, 0.07),
+      transparent 35%
+    ),
+    linear-gradient(
+      135deg,
+      #0c1624,
+      #111f31
+    );
+
+  color: #e7eef8;
+}
+
+
+/* =====================================================
+   DARK HEADER
+===================================================== */
+
+[data-theme="dark"] .history-header,
+.dark .history-header {
+  background:
+    linear-gradient(
+      145deg,
+      rgba(25, 43, 63, 0.97),
+      rgba(15, 30, 47, 0.97)
+    );
+
+  border-color: #2b4058;
+
+  box-shadow:
+    0 18px 45px rgba(0, 0, 0, 0.30),
+    inset 0 1px 0 rgba(255, 255, 255, 0.035);
+}
+
+
+/* =====================================================
+   DARK OM
+===================================================== */
+
+[data-theme="dark"] .history-om,
+.dark .history-om {
+  background:
+    radial-gradient(
+      circle at 35% 25%,
+      #31465e,
+      #20364d 58%,
+      #17293c
+    );
+
+  border-color: #36516d;
+
+  color: #82b9f4;
+
+  text-shadow:
+    1px 3px 3px rgba(0, 0, 0, 0.45);
+
+  box-shadow:
+    8px 10px 20px rgba(0, 0, 0, 0.38),
+    inset 5px 5px 10px rgba(255, 255, 255, 0.07),
+    inset -6px -7px 12px rgba(0, 0, 0, 0.42);
+}
+
+
+/* =====================================================
+   DARK SACRED TITLE
+===================================================== */
+
+[data-theme="dark"] .history-sacred-title,
+.dark .history-sacred-title {
+  color: #e2c65d;
+}
+
+
+/* =====================================================
+   DARK TITLE
+===================================================== */
+
+[data-theme="dark"] .history-header h1,
+.dark .history-header h1 {
+  color: #70aaf2;
+}
+
+
+/* =====================================================
+   DARK DESCRIPTION
+===================================================== */
+
+[data-theme="dark"] .history-header > p:last-child,
+.dark .history-header > p:last-child {
+  color: #9bb0c7;
+}
+
+
+/* =====================================================
+   DARK OPTION CARD
+===================================================== */
+
+[data-theme="dark"] .history-option-card,
+.dark .history-option-card {
+  background:
+    linear-gradient(
+      145deg,
+      #1e334b,
+      #17283d
+    );
+
+  border-color: #314a64;
+
+  color: #dbe7f4;
+
+  box-shadow:
+    7px 9px 18px rgba(0, 0, 0, 0.28),
+    inset 0 1px 2px rgba(255, 255, 255, 0.035);
+}
+
+
+/* =====================================================
+   DARK CARD HOVER
+===================================================== */
+
+[data-theme="dark"] .history-option-card:hover,
+.dark .history-option-card:hover {
+  border-color: #4c79a5;
+
+  box-shadow:
+    10px 14px 25px rgba(0, 0, 0, 0.35),
+    inset 0 1px 2px rgba(255, 255, 255, 0.045);
+}
+
+
+/* =====================================================
+   DARK ICON
+===================================================== */
+
+[data-theme="dark"] .history-option-icon,
+.dark .history-option-icon {
+  background:
+    linear-gradient(
+      145deg,
+      #29425e,
+      #1a2d43
+    );
+
+  border-color: #36516d;
+
+  color: #7cb4f5;
+
+  box-shadow:
+    5px 6px 12px rgba(0, 0, 0, 0.30),
+    inset 0 1px 2px rgba(255, 255, 255, 0.04);
+}
+
+
+/* =====================================================
+   DARK CONTENT
+===================================================== */
+
+[data-theme="dark"] .history-option-content h2,
+.dark .history-option-content h2 {
+  color: #75aff3;
+}
+
+
+[data-theme="dark"] .history-option-content p,
+.dark .history-option-content p {
+  color: #9bb0c7;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 768px) {
+
+  .history-page {
+    padding: 22px 13px;
+  }
+
+  .history-header {
+    padding: 25px 18px;
+
+    border-radius: 21px;
+
+    margin-bottom: 22px;
+  }
+
+  .history-om {
+    width: 70px;
+    height: 70px;
+
+    font-size: 41px;
+  }
+
+  .history-header h1 {
+    font-size: 27px;
+  }
+
+  .history-option-card {
+    min-height: 95px;
+
+    padding: 17px;
+
+    gap: 14px;
+
+    border-radius: 18px;
+  }
+
+  .history-option-icon {
+    width: 54px;
+    height: 54px;
+
+    font-size: 27px;
+
+    border-radius: 16px;
+  }
+
+  .history-option-content h2 {
+    font-size: 19px;
+  }
+
+  .history-option-content p {
+    font-size: 13px;
+  }
+
+  .history-option-arrow {
+    width: 38px;
+    height: 38px;
+
+    font-size: 21px;
+
+    border-radius: 11px;
+  }
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (max-width: 480px) {
+
+  .history-page {
+    padding: 17px 10px;
+  }
+
+  .history-header {
+    padding: 22px 14px;
+
+    border-radius: 19px;
+  }
+
+  .history-om {
+    width: 64px;
+    height: 64px;
+
+    font-size: 37px;
+  }
+
+  .history-sacred-title {
+    font-size: 13px;
+  }
+
+  .history-header h1 {
+    font-size: 24px;
+  }
+
+  .history-header > p:last-child {
+    font-size: 13px;
+  }
+
+  .history-option-card {
+    min-height: 88px;
+
+    padding: 13px;
+
+    gap: 11px;
+  }
+
+  .history-option-icon {
+    width: 48px;
+    height: 48px;
+
+    font-size: 24px;
+
+    border-radius: 14px;
+  }
+
+  .history-option-content h2 {
+    font-size: 17px;
+
+    margin-bottom: 4px;
+  }
+
+  .history-option-content p {
+    font-size: 12px;
+
+    line-height: 1.5;
+  }
+
+  .history-option-arrow {
+    width: 34px;
+    height: 34px;
+
+    font-size: 19px;
+  }
+}

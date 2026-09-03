@@ -1,0 +1,1371 @@
+/* =====================================================
+   FAVOURITE PAGE
+   Blue Theme
+===================================================== */
+
+.favourite-page {
+
+  min-height: 100vh;
+
+  padding: 40px 20px 70px;
+
+  background: linear-gradient(
+    135deg,
+    #eef7ff,
+    #e4f2ff,
+    #f8fbff
+  );
+
+  color: #173f63;
+}
+
+
+/* =====================================================
+   HEADER BOX
+===================================================== */
+
+.favourite-header {
+
+  text-align: center;
+
+  max-width: 1050px;
+
+  margin: 0 auto 35px;
+
+  padding: 30px 25px;
+
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.97),
+    rgba(231, 244, 255, 0.96)
+  );
+
+  border: 1px solid #b9d8f0;
+
+  border-radius: 20px;
+
+  box-shadow:
+    0 10px 28px rgba(35, 91, 135, 0.12),
+    0 3px 0 rgba(170, 205, 230, 0.55);
+
+  box-sizing: border-box;
+}
+
+.favourite-om {
+
+  font-size: 58px;
+
+  line-height: 1;
+
+  margin-bottom: 10px;
+
+  color: #216da5;
+
+  text-shadow:
+    0 2px 4px rgba(35, 100, 150, 0.18);
+}
+
+.favourite-sacred-title {
+
+  margin: 0 0 10px;
+
+  font-size: 20px;
+
+  font-weight: 600;
+
+  color: #286d9f;
+}
+
+.favourite-header h1 {
+
+  margin: 8px 0;
+
+  font-size: 36px;
+
+  font-weight: 800;
+
+  color: #174a76;
+}
+
+.favourite-header p:last-child {
+
+  margin-top: 10px;
+
+  font-size: 16px;
+
+  color: #52718b;
+}
+
+
+/* =====================================================
+   TOP BAR
+===================================================== */
+
+.favourite-top-bar {
+
+  max-width: 1050px;
+
+  margin: 0 auto 25px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 20px;
+
+  padding: 18px 22px;
+
+  background: rgba(255, 255, 255, 0.92);
+
+  border: 1px solid #c4dced;
+
+  border-radius: 16px;
+
+  box-shadow:
+    0 8px 25px rgba(35, 91, 135, 0.08);
+}
+
+.favourite-count {
+
+  display: flex;
+
+  align-items: center;
+
+  gap: 10px;
+}
+
+.favourite-count strong {
+
+  font-size: 25px;
+
+  color: #287bb5;
+}
+
+.favourite-count span {
+
+  font-size: 16px;
+
+  font-weight: 600;
+
+  color: #365b75;
+}
+
+
+/* =====================================================
+   CLEAR ALL BUTTON
+===================================================== */
+
+.clear-favourite-btn {
+
+  border: none;
+
+  border-radius: 10px;
+
+  padding: 10px 16px;
+
+  background: linear-gradient(
+    145deg,
+    #eaf6ff,
+    #c9e6fa
+  );
+
+  color: #8b3340;
+
+  border: 1px solid #b8d7eb;
+
+  font-size: 14px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.clear-favourite-btn:hover {
+
+  background: linear-gradient(
+    145deg,
+    #f4fbff,
+    #d8edfc
+  );
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 6px 15px rgba(35, 100, 145, 0.18);
+}
+
+.clear-favourite-btn:active {
+
+  transform: translateY(0);
+}
+
+
+/* =====================================================
+   FAVOURITE LIST
+===================================================== */
+
+.favourite-list {
+
+  max-width: 1050px;
+
+  margin: 0 auto;
+
+  display: flex;
+
+  flex-direction: column;
+
+  gap: 24px;
+}
+
+
+/* =====================================================
+   FAVOURITE CARD
+===================================================== */
+
+.favourite-card {
+
+  background: rgba(255, 255, 255, 0.96);
+
+  border: 1px solid #c7deef;
+
+  border-radius: 20px;
+
+  padding: 25px;
+
+  box-shadow:
+    0 10px 30px rgba(35, 91, 135, 0.09);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.favourite-card:hover {
+
+  transform: translateY(-3px);
+
+  box-shadow:
+    0 15px 35px rgba(35, 91, 135, 0.15);
+}
+
+
+/* =====================================================
+   CARD HEADER
+===================================================== */
+
+.favourite-card-header {
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  gap: 15px;
+
+  margin-bottom: 12px;
+}
+
+.favourite-number {
+
+  display: inline-flex;
+
+  align-items: center;
+
+  padding: 7px 14px;
+
+  border-radius: 30px;
+
+  background: linear-gradient(
+    145deg,
+    #e7f4ff,
+    #cfe9fa
+  );
+
+  color: #21699d;
+
+  border: 1px solid #b8d8ed;
+
+  font-size: 15px;
+
+  font-weight: 800;
+}
+
+
+/* =====================================================
+   REMOVE FAVOURITE BUTTON
+===================================================== */
+
+.remove-favourite-btn {
+
+  width: 42px;
+
+  height: 42px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border: 1px solid #c5ddeb;
+
+  border-radius: 50%;
+
+  background: #eef8ff;
+
+  font-size: 20px;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.2s ease,
+    background 0.2s ease;
+}
+
+.remove-favourite-btn:hover {
+
+  background: #dcefff;
+
+  transform: scale(1.1);
+}
+
+.remove-favourite-btn:active {
+
+  transform: scale(0.95);
+}
+
+
+/* =====================================================
+   CHAPTER
+===================================================== */
+
+.favourite-chapter {
+
+  margin-bottom: 20px;
+
+  font-size: 15px;
+
+  font-weight: 700;
+
+  color: #3175a7;
+}
+
+
+/* =====================================================
+   CONTENT COMMON
+===================================================== */
+
+.favourite-sanskrit,
+.favourite-translation,
+.favourite-message {
+
+  margin-top: 18px;
+
+  padding: 18px;
+
+  border-radius: 14px;
+
+  line-height: 1.8;
+}
+
+
+/* =====================================================
+   SANSKRIT
+===================================================== */
+
+.favourite-sanskrit {
+
+  background: linear-gradient(
+    135deg,
+    #f1f9ff,
+    #e5f4ff
+  );
+
+  border-left: 4px solid #3988bb;
+
+  border-top: 1px solid #d0e7f5;
+
+  border-right: 1px solid #d0e7f5;
+
+  border-bottom: 1px solid #d0e7f5;
+}
+
+.favourite-sanskrit h3 {
+
+  margin: 0 0 12px;
+
+  font-size: 17px;
+
+  color: #236b9f;
+}
+
+.favourite-sanskrit div {
+
+  font-size: 20px;
+
+  font-weight: 600;
+
+  line-height: 2;
+
+  text-align: center;
+
+  color: #234c6b;
+}
+
+
+/* =====================================================
+   TRANSLATION
+===================================================== */
+
+.favourite-translation {
+
+  background: linear-gradient(
+    135deg,
+    #f4f9ff,
+    #edf5ff
+  );
+
+  border-left: 4px solid #6b8fc0;
+
+  border-top: 1px solid #d5e2f0;
+
+  border-right: 1px solid #d5e2f0;
+
+  border-bottom: 1px solid #d5e2f0;
+}
+
+.favourite-translation h3 {
+
+  margin: 0 0 10px;
+
+  font-size: 17px;
+
+  color: #496f9b;
+}
+
+.favourite-translation div {
+
+  font-size: 16px;
+
+  line-height: 1.9;
+
+  color: #3e5870;
+}
+
+
+/* =====================================================
+   MESSAGE
+===================================================== */
+
+.favourite-message {
+
+  background: linear-gradient(
+    135deg,
+    #eef9ff,
+    #e7f6ff
+  );
+
+  border-left: 4px solid #4f91b7;
+
+  border-top: 1px solid #cfe3ef;
+
+  border-right: 1px solid #cfe3ef;
+
+  border-bottom: 1px solid #cfe3ef;
+}
+
+.favourite-message h3 {
+
+  margin: 0 0 10px;
+
+  font-size: 17px;
+
+  color: #327394;
+}
+
+.favourite-message div {
+
+  font-size: 16px;
+
+  line-height: 1.9;
+
+  color: #36586b;
+}
+
+
+/* =====================================================
+   READ SHLOKA BUTTON
+===================================================== */
+
+.read-favourite-btn {
+
+  width: 100%;
+
+  margin-top: 22px;
+
+  padding: 13px 20px;
+
+  border: none;
+
+  border-radius: 12px;
+
+  background: linear-gradient(
+    135deg,
+    #3f8dcc,
+    #286ba5
+  );
+
+  color: white;
+
+  font-size: 15px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 4px 0 #205a8a,
+    0 6px 12px rgba(35, 91, 135, 0.16);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.read-favourite-btn:hover {
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 6px 0 #205a8a,
+    0 9px 20px rgba(35, 91, 135, 0.22);
+}
+
+.read-favourite-btn:active {
+
+  transform: translateY(2px);
+
+  box-shadow:
+    0 2px 0 #205a8a,
+    0 4px 8px rgba(35, 91, 135, 0.15);
+}
+
+
+/* =====================================================
+   EMPTY FAVOURITE CARD
+===================================================== */
+
+.favourite-empty-card {
+
+  max-width: 650px;
+
+  margin: 50px auto 0;
+
+  padding: 45px 30px;
+
+  text-align: center;
+
+  background: rgba(255, 255, 255, 0.96);
+
+  border: 1px solid #c7deef;
+
+  border-radius: 22px;
+
+  box-shadow:
+    0 12px 30px rgba(35, 91, 135, 0.10);
+}
+
+.favourite-empty-icon {
+
+  font-size: 65px;
+
+  margin-bottom: 15px;
+}
+
+.favourite-empty-card h2 {
+
+  margin: 10px 0;
+
+  font-size: 25px;
+
+  color: #245474;
+}
+
+.favourite-empty-card p {
+
+  margin: 10px auto 25px;
+
+  max-width: 500px;
+
+  font-size: 16px;
+
+  line-height: 1.7;
+
+  color: #5a7183;
+}
+
+
+/* =====================================================
+   BACK BUTTON
+===================================================== */
+
+.favourite-back-btn {
+
+  border: none;
+
+  border-radius: 12px;
+
+  padding: 13px 22px;
+
+  background: linear-gradient(
+    135deg,
+    #3f8dcc,
+    #286ba5
+  );
+
+  color: white;
+
+  font-size: 15px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 4px 0 #205a8a,
+    0 6px 12px rgba(35, 91, 135, 0.16);
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.favourite-back-btn:hover {
+
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 6px 0 #205a8a,
+    0 9px 20px rgba(35, 91, 135, 0.22);
+}
+
+.favourite-back-btn:active {
+
+  transform: translateY(2px);
+
+  box-shadow:
+    0 2px 0 #205a8a,
+    0 4px 8px rgba(35, 91, 135, 0.15);
+}
+
+
+/* =====================================================
+   MOBILE RESPONSIVE
+===================================================== */
+
+@media (max-width: 768px) {
+
+  .favourite-page {
+
+    padding: 30px 14px 50px;
+  }
+
+  .favourite-header {
+
+    padding: 25px 18px;
+
+    border-radius: 18px;
+  }
+
+  .favourite-om {
+
+    font-size: 48px;
+  }
+
+  .favourite-sacred-title {
+
+    font-size: 17px;
+  }
+
+  .favourite-header h1 {
+
+    font-size: 28px;
+  }
+
+  .favourite-header p:last-child {
+
+    font-size: 14px;
+  }
+
+  .favourite-top-bar {
+
+    padding: 15px;
+
+    flex-direction: column;
+
+    align-items: stretch;
+  }
+
+  .favourite-count {
+
+    justify-content: center;
+  }
+
+  .clear-favourite-btn {
+
+    width: 100%;
+  }
+
+  .favourite-card {
+
+    padding: 18px;
+
+    border-radius: 16px;
+  }
+
+  .favourite-card-header {
+
+    align-items: flex-start;
+  }
+
+  .favourite-sanskrit,
+  .favourite-translation,
+  .favourite-message {
+
+    padding: 14px;
+  }
+
+  .favourite-sanskrit div {
+
+    font-size: 17px;
+
+    line-height: 1.8;
+  }
+
+  .favourite-translation div,
+  .favourite-message div {
+
+    font-size: 15px;
+  }
+
+  .favourite-empty-card {
+
+    margin-top: 30px;
+
+    padding: 35px 20px;
+  }
+
+  .favourite-empty-icon {
+
+    font-size: 55px;
+  }
+
+  .favourite-empty-card h2 {
+
+    font-size: 21px;
+  }
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (max-width: 480px) {
+
+  .favourite-page {
+
+    padding: 25px 10px 40px;
+  }
+
+  .favourite-header {
+
+    padding: 22px 14px;
+
+    border-radius: 16px;
+  }
+
+  .favourite-header h1 {
+
+    font-size: 25px;
+  }
+
+  .favourite-card {
+
+    padding: 15px;
+  }
+
+  .favourite-number {
+
+    font-size: 13px;
+
+    padding: 6px 11px;
+  }
+
+  .remove-favourite-btn {
+
+    width: 38px;
+
+    height: 38px;
+
+    font-size: 18px;
+  }
+
+  .favourite-chapter {
+
+    font-size: 13px;
+  }
+
+  .read-favourite-btn {
+
+    font-size: 14px;
+
+    padding: 12px;
+  }
+}
+
+
+/* =====================================================
+   DARK MODE
+   IMPORTANT:
+   Theme system uses [data-theme="dark"]
+===================================================== */
+
+[data-theme="dark"] .favourite-page {
+
+  background:
+    radial-gradient(
+      circle at 15% 20%,
+      rgba(45, 125, 190, 0.14),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 85% 80%,
+      rgba(30, 95, 155, 0.12),
+      transparent 35%
+    ),
+    linear-gradient(
+      135deg,
+      #071b2d 0%,
+      #0a2439 48%,
+      #081d31 100%
+    ) !important;
+
+  color: #d9ecff !important;
+}
+
+
+/* =====================================================
+   DARK HEADER
+===================================================== */
+
+[data-theme="dark"] .favourite-header {
+
+  background:
+    linear-gradient(
+      145deg,
+      #102f49 0%,
+      #0d2941 48%,
+      #123653 100%
+    ) !important;
+
+  border: 1px solid #2c5f82 !important;
+
+  box-shadow:
+    0 14px 35px rgba(0, 0, 0, 0.38),
+    0 4px 0 rgba(30, 78, 110, 0.75),
+    inset 0 1px 0 rgba(110, 180, 230, 0.10) !important;
+}
+
+[data-theme="dark"] .favourite-om {
+
+  color: #71b8ed !important;
+
+  text-shadow:
+    0 3px 10px rgba(60, 155, 220, 0.35) !important;
+}
+
+[data-theme="dark"] .favourite-sacred-title {
+
+  color: #76b8e5 !important;
+}
+
+[data-theme="dark"] .favourite-header h1 {
+
+  color: #9bd1f5 !important;
+
+  text-shadow:
+    0 2px 8px rgba(50, 140, 205, 0.20) !important;
+}
+
+[data-theme="dark"] .favourite-header p:last-child {
+
+  color: #9abbd3 !important;
+}
+
+
+/* =====================================================
+   DARK TOP BAR
+===================================================== */
+
+[data-theme="dark"] .favourite-top-bar {
+
+  background:
+    linear-gradient(
+      145deg,
+      #102d45,
+      #0c263d
+    ) !important;
+
+  border: 1px solid #2a5978 !important;
+
+  box-shadow:
+    0 10px 28px rgba(0, 0, 0, 0.30),
+    inset 0 1px 0 rgba(100, 170, 215, 0.07) !important;
+}
+
+[data-theme="dark"] .favourite-count strong {
+
+  color: #65b2e8 !important;
+}
+
+[data-theme="dark"] .favourite-count span {
+
+  color: #a9c6db !important;
+}
+
+
+/* =====================================================
+   DARK CLEAR BUTTON
+===================================================== */
+
+[data-theme="dark"] .clear-favourite-btn {
+
+  background:
+    linear-gradient(
+      145deg,
+      #173a55,
+      #102f48
+    ) !important;
+
+  color: #f08b9b !important;
+
+  border: 1px solid #315f7d !important;
+
+  box-shadow:
+    0 5px 14px rgba(0, 0, 0, 0.22) !important;
+}
+
+[data-theme="dark"] .clear-favourite-btn:hover {
+
+  background:
+    linear-gradient(
+      145deg,
+      #1b4664,
+      #143751
+    ) !important;
+
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.30) !important;
+}
+
+
+/* =====================================================
+   DARK FAVOURITE CARD
+===================================================== */
+
+[data-theme="dark"] .favourite-card {
+
+  background:
+    linear-gradient(
+      145deg,
+      #102f48 0%,
+      #0d2941 52%,
+      #123550 100%
+    ) !important;
+
+  border: 1px solid #2b5e7e !important;
+
+  box-shadow:
+    0 14px 35px rgba(0, 0, 0, 0.36),
+    0 4px 12px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(100, 180, 230, 0.07) !important;
+}
+
+[data-theme="dark"] .favourite-card:hover {
+
+  box-shadow:
+    0 18px 42px rgba(0, 0, 0, 0.46),
+    0 5px 15px rgba(0, 0, 0, 0.22),
+    inset 0 1px 0 rgba(100, 180, 230, 0.09) !important;
+}
+
+
+/* =====================================================
+   DARK FAVOURITE NUMBER
+===================================================== */
+
+[data-theme="dark"] .favourite-number {
+
+  background:
+    linear-gradient(
+      145deg,
+      #194563,
+      #123650
+    ) !important;
+
+  color: #8bc9ef !important;
+
+  border: 1px solid #326987 !important;
+
+  box-shadow:
+    0 4px 10px rgba(0, 0, 0, 0.20) !important;
+}
+
+
+/* =====================================================
+   DARK REMOVE BUTTON
+===================================================== */
+
+[data-theme="dark"] .remove-favourite-btn {
+
+  background:
+    linear-gradient(
+      145deg,
+      #183b54,
+      #102f46
+    ) !important;
+
+  border: 1px solid #315e79 !important;
+
+  color: #ff8fa1 !important;
+
+  box-shadow:
+    0 5px 12px rgba(0, 0, 0, 0.20) !important;
+}
+
+[data-theme="dark"] .remove-favourite-btn:hover {
+
+  background:
+    linear-gradient(
+      145deg,
+      #204c68,
+      #163b55
+    ) !important;
+}
+
+
+/* =====================================================
+   DARK CHAPTER
+===================================================== */
+
+[data-theme="dark"] .favourite-chapter {
+
+  color: #72b5df !important;
+}
+
+
+/* =====================================================
+   DARK SANSKRIT BOX
+===================================================== */
+
+[data-theme="dark"] .favourite-sanskrit {
+
+  background:
+    linear-gradient(
+      135deg,
+      #123b55 0%,
+      #0d3048 50%,
+      #15415c 100%
+    ) !important;
+
+  border-left: 4px solid #4a9bc7 !important;
+
+  border-top: 1px solid #285d79 !important;
+
+  border-right: 1px solid #285d79 !important;
+
+  border-bottom: 1px solid #285d79 !important;
+
+  box-shadow:
+    0 7px 18px rgba(0, 0, 0, 0.20) !important;
+}
+
+[data-theme="dark"] .favourite-sanskrit h3 {
+
+  color: #75c0eb !important;
+}
+
+[data-theme="dark"] .favourite-sanskrit div {
+
+  color: #c7e8fa !important;
+}
+
+
+/* =====================================================
+   DARK TRANSLATION BOX
+===================================================== */
+
+[data-theme="dark"] .favourite-translation {
+
+  background:
+    linear-gradient(
+      135deg,
+      #142f48 0%,
+      #102a41 50%,
+      #163650 100%
+    ) !important;
+
+  border-left: 4px solid #628db5 !important;
+
+  border-top: 1px solid #2d506b !important;
+
+  border-right: 1px solid #2d506b !important;
+
+  border-bottom: 1px solid #2d506b !important;
+
+  box-shadow:
+    0 7px 18px rgba(0, 0, 0, 0.20) !important;
+}
+
+[data-theme="dark"] .favourite-translation h3 {
+
+  color: #8eb5d5 !important;
+}
+
+[data-theme="dark"] .favourite-translation div {
+
+  color: #bfd1df !important;
+}
+
+
+/* =====================================================
+   DARK MESSAGE BOX
+===================================================== */
+
+[data-theme="dark"] .favourite-message {
+
+  background:
+    linear-gradient(
+      135deg,
+      #12394f 0%,
+      #0e3046 50%,
+      #154057 100%
+    ) !important;
+
+  border-left: 4px solid #4d91b2 !important;
+
+  border-top: 1px solid #2b5b70 !important;
+
+  border-right: 1px solid #2b5b70 !important;
+
+  border-bottom: 1px solid #2b5b70 !important;
+
+  box-shadow:
+    0 7px 18px rgba(0, 0, 0, 0.20) !important;
+}
+
+[data-theme="dark"] .favourite-message h3 {
+
+  color: #72b8d8 !important;
+}
+
+[data-theme="dark"] .favourite-message div {
+
+  color: #bedbe8 !important;
+}
+
+
+/* =====================================================
+   DARK READ SHLOKA BUTTON
+===================================================== */
+
+[data-theme="dark"] .read-favourite-btn {
+
+  background:
+    linear-gradient(
+      135deg,
+      #3988c4,
+      #216796
+    ) !important;
+
+  color: #ffffff !important;
+
+  box-shadow:
+    0 4px 0 #174c72,
+    0 9px 20px rgba(0, 0, 0, 0.32) !important;
+}
+
+[data-theme="dark"] .read-favourite-btn:hover {
+
+  background:
+    linear-gradient(
+      135deg,
+      #4699d7,
+      #2878ad
+    ) !important;
+
+  box-shadow:
+    0 6px 0 #174c72,
+    0 12px 25px rgba(0, 0, 0, 0.40) !important;
+}
+
+[data-theme="dark"] .read-favourite-btn:active {
+
+  box-shadow:
+    0 2px 0 #174c72,
+    0 5px 12px rgba(0, 0, 0, 0.30) !important;
+}
+
+
+/* =====================================================
+   DARK EMPTY CARD
+===================================================== */
+
+[data-theme="dark"] .favourite-empty-card {
+
+  background:
+    linear-gradient(
+      145deg,
+      #102f48,
+      #0c293f,
+      #123550
+    ) !important;
+
+  border: 1px solid #2b5e7e !important;
+
+  box-shadow:
+    0 15px 38px rgba(0, 0, 0, 0.38),
+    0 5px 14px rgba(0, 0, 0, 0.20),
+    inset 0 1px 0 rgba(100, 180, 230, 0.07) !important;
+}
+
+[data-theme="dark"] .favourite-empty-card h2 {
+
+  color: #a0d1ee !important;
+}
+
+[data-theme="dark"] .favourite-empty-card p {
+
+  color: #9eb9cc !important;
+}
+
+
+/* =====================================================
+   DARK EMPTY ICON
+===================================================== */
+
+[data-theme="dark"] .favourite-empty-icon {
+
+  filter:
+    drop-shadow(
+      0 5px 10px rgba(0, 0, 0, 0.35)
+    );
+}
+
+
+/* =====================================================
+   DARK BACK BUTTON
+===================================================== */
+
+[data-theme="dark"] .favourite-back-btn {
+
+  background:
+    linear-gradient(
+      135deg,
+      #3988c4,
+      #216796
+    ) !important;
+
+  color: #ffffff !important;
+
+  box-shadow:
+    0 4px 0 #174c72,
+    0 9px 20px rgba(0, 0, 0, 0.30) !important;
+}
+
+[data-theme="dark"] .favourite-back-btn:hover {
+
+  background:
+    linear-gradient(
+      135deg,
+      #4699d7,
+      #2878ad
+    ) !important;
+
+  box-shadow:
+    0 6px 0 #174c72,
+    0 12px 24px rgba(0, 0, 0, 0.38) !important;
+}
+
+[data-theme="dark"] .favourite-back-btn:active {
+
+  box-shadow:
+    0 2px 0 #174c72,
+    0 5px 10px rgba(0, 0, 0, 0.28) !important;
+}
+
+
+/* =====================================================
+   DARK MODE - FORCE NO WHITE
+===================================================== */
+
+[data-theme="dark"] .favourite-page,
+[data-theme="dark"] .favourite-header,
+[data-theme="dark"] .favourite-top-bar,
+[data-theme="dark"] .favourite-card,
+[data-theme="dark"] .favourite-empty-card,
+[data-theme="dark"] .favourite-sanskrit,
+[data-theme="dark"] .favourite-translation,
+[data-theme="dark"] .favourite-message,
+[data-theme="dark"] .favourite-number,
+[data-theme="dark"] .remove-favourite-btn,
+[data-theme="dark"] .clear-favourite-btn {
+
+  color-scheme: dark;
+}
+
+
+/* =====================================================
+   RESPONSIVE DARK MODE
+===================================================== */
+
+@media (max-width: 768px) {
+
+  [data-theme="dark"] .favourite-header {
+
+    box-shadow:
+      0 12px 30px rgba(0, 0, 0, 0.38),
+      0 4px 0 rgba(30, 78, 110, 0.75),
+      inset 0 1px 0 rgba(110, 180, 230, 0.08) !important;
+  }
+
+  [data-theme="dark"] .favourite-card {
+
+    box-shadow:
+      0 12px 30px rgba(0, 0, 0, 0.36),
+      inset 0 1px 0 rgba(100, 180, 230, 0.07) !important;
+  }
+
+}
+
+
+@media (max-width: 480px) {
+
+  [data-theme="dark"] .favourite-card {
+
+    box-shadow:
+      0 10px 26px rgba(0, 0, 0, 0.36),
+      inset 0 1px 0 rgba(100, 180, 230, 0.07) !important;
+  }
+
+}
