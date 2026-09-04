@@ -3396,6 +3396,31 @@ body[data-theme="dark"] .hero::after,
     );
 }
 
+/* =====================================================
+   MOBILE — GITA BACKGROUND FIX
+   ===================================================== */
+
+@media (max-width: 768px) {
+
+  .home-page::before {
+    background-size: cover;
+    background-position: center top;
+  }
+
+  html[data-theme="dark"] .home-page::before,
+  body[data-theme="dark"] .home-page::before,
+  html.dark .home-page::before,
+  body.dark .home-page::before {
+    background-size: cover;
+    background-position: center top;
+  }
+
+  .hero {
+    background-size: cover;
+    background-position: center top;
+  }
+
+}
 
 /* =====================================================
    DARK HERO TEXT
