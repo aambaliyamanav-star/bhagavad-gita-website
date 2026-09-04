@@ -35,7 +35,7 @@ function Chapters() {
         setLoading(true);
 
         const response = await fetch(
-          "http://localhost:5000/api/shloks"
+          "https://bhagavad-gita-website.onrender.com/api/shloks"
         );
 
         const data = await response.json();

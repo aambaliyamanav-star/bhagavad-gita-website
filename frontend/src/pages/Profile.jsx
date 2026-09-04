@@ -67,7 +67,7 @@ function Profile() {
   // API URL
   // =====================================================
 
-  const API_URL = "http://localhost:5000/api/auth";
+  const API_URL = "https://bhagavad-gita-website.onrender.com/api/auth";
 
   // =====================================================
   // GET PROFILE

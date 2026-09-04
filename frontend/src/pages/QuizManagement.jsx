@@ -7,7 +7,7 @@ function QuizManagement() {
   // =====================================================
 
   const API_URL =
-    "http://localhost:5000/api/quiz";
+    "https://bhagavad-gita-website.onrender.com/api/quiz";
 
   // =====================================================
   // STATE

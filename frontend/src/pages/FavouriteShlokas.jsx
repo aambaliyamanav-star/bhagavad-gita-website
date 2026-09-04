@@ -25,7 +25,7 @@ function FavouriteShlokas() {
   // =====================================================
 
   const API_URL =
-    "http://localhost:5000/api/favorites";
+    "https://bhagavad-gita-website.onrender.com/api/favorites";
 
   // =====================================================
   // LOAD FAVOURITE SHLOKAS

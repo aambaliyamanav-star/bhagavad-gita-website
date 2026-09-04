@@ -24,7 +24,7 @@ function Admin() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/admin/users",
+        "https://bhagavad-gita-website.onrender.com/api/admin/users",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -93,7 +93,7 @@ function Admin() {
       setDeletingId(userId);
 
       const response = await fetch(
-        `http://localhost:5000/api/admin/users/${userId}`,
+        `https://bhagavad-gita-website.onrender.com/api/admin/users/${userId}`,
         {
           method: "DELETE",
           headers: {

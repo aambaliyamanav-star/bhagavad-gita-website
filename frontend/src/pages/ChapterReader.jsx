@@ -47,13 +47,13 @@ function ChapterReader() {
   // =====================================================
 
   const API_URL =
-    "http://localhost:5000/api/shloks";
+    "https://bhagavad-gita-website.onrender.com/api/shloks";
 
   const FAVORITE_API_URL =
-    "http://localhost:5000/api/favorites";
+    "https://bhagavad-gita-website.onrender.com/api/favorites";
 
   const CONTINUE_READING_API_URL =
-    "http://localhost:5000/api/continue-reading";
+    "https://bhagavad-gita-website.onrender.com/api/continue-reading";
 
   // =====================================================
   // CHAPTER NUMBER
