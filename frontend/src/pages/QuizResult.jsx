@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./QuizResult.css";
 
-const API_URL = "http://localhost:5000/api/quiz";
+const API_URL = "https://bhagavad-gita-website.onrender.com/api/quiz";
 
 function QuizResult() {
   // =====================================================

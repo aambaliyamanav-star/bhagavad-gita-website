@@ -40,7 +40,7 @@ function ForgotPassword() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/auth/forgot-password/send-otp",
+        "https://bhagavad-gita-website.onrender.com/api/auth/forgot-password/send-otp",
         {
           method: "POST",
 
@@ -112,7 +112,7 @@ function ForgotPassword() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/auth/forgot-password/verify-otp",
+        "https://bhagavad-gita-website.onrender.com/api/auth/forgot-password/verify-otp",
         {
           method: "POST",
 
@@ -197,7 +197,7 @@ function ForgotPassword() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/auth/forgot-password/reset-password",
+        "https://bhagavad-gita-website.onrender.com/api/auth/forgot-password/reset-password",
         {
           method: "POST",
 

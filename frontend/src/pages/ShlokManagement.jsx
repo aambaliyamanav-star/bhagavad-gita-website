@@ -453,7 +453,7 @@ function ShlokManagement() {
   ===================================================== */
 
   const API_URL =
-    "http://localhost:5000/api/shloks";
+    "https://bhagavad-gita-website.onrender.com/api/shloks";
 
   /* =====================================================
      CHAPTER NAMES

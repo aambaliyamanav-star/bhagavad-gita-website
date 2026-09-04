@@ -48,10 +48,10 @@ function Home() {
   // =====================================================
 
   const API_URL =
-    "http://localhost:5000/api/shloks";
+    "https://bhagavad-gita-website.onrender.com/api/shloks";
 
   const CONTINUE_READING_API_URL =
-    "http://localhost:5000/api/continue-reading";
+    "https://bhagavad-gita-website.onrender.com/api/continue-reading";
 
   // =====================================================
   // CHAPTER NAMES

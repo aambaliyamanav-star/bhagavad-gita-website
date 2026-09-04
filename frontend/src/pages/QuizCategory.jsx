@@ -10,7 +10,7 @@ function QuizCategory() {
   // API
   // =====================================================
 
-  const API_URL = "http://localhost:5000/api/quiz";
+  const API_URL = "https://bhagavad-gita-website.onrender.com/api/quiz";
 
   // =====================================================
   // CHAPTER NAMES
