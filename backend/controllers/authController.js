@@ -1,10 +1,67 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const nodemailer = require("nodemailer");
-const dns = require("dns");
 
-dns.setDefaultResultOrder("ipv4first");
+
+// =====================================================
+// BREVO EMAIL API
+// =====================================================
+
+const sendEmail = async ({
+  to,
+  subject,
+  html,
+}) => {
+  const response = await fetch(
+    "https://api.brevo.com/v3/smtp/email",
+    {
+      method: "POST",
+
+      headers: {
+        accept: "application/json",
+        "api-key":
+          process.env.BREVO_API_KEY,
+        "content-type":
+          "application/json",
+      },
+
+      body: JSON.stringify({
+        sender: {
+          name:
+            process.env.BREVO_SENDER_NAME ||
+            "Bhagavad Gita",
+
+          email:
+            process.env.BREVO_SENDER_EMAIL,
+        },
+
+        to: [
+          {
+            email: to,
+          },
+        ],
+
+        subject,
+
+        htmlContent: html,
+      }),
+    }
+  );
+
+  if (!response.ok) {
+    const errorText =
+      await response.text();
+
+    throw new Error(
+      `Brevo API Error ${response.status}: ${errorText}`
+    );
+  }
+
+  return response.json();
+};
+
+
+
 
 // =====================================================
 // TEMPORARY OTP STORAGE
@@ -16,23 +73,7 @@ const otpStore = new Map();
 // EMAIL TRANSPORTER
 // =====================================================
 
-const transporter = nodemailer.createTransport({
-  host: "smtp-relay.brevo.com",
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
 
-transporter.verify((error, success) => {
-  if (error) {
-    console.error("❌ Brevo SMTP Connection Failed:", error);
-  } else {
-    console.log("✅ Brevo SMTP Connection Successful");
-  }
-});
 
 // =====================================================
 // GENERATE 6 DIGIT OTP
@@ -53,14 +94,13 @@ const sendProfileEmailOTP = async (
   otp,
   type
 ) => {
-  await transporter.sendMail({
-    from:
-      `"Bhagavad Gita" <${process.env.EMAIL_USER}>`,
+await sendEmail({
+  to: user.email,
 
-    to: user.email,
+  subject:
+    "Bhagavad Gita - Profile Update OTP",
 
-    subject:
-      "Bhagavad Gita - Profile Update OTP",
+
 
     html: `
       <!DOCTYPE html>
@@ -377,15 +417,13 @@ const sendOTP = async (
     // SEND REGISTRATION OTP
     // =================================================
 
-    await transporter.sendMail({
-      from:
-        `"Bhagavad Gita" <${process.env.EMAIL_USER}>`,
+await sendEmail({
 
-      to:
-        cleanEmail,
+  to:
+    cleanEmail,
 
-      subject:
-        "Bhagavad Gita - Email Verification OTP",
+  subject:
+    "Bhagavad Gita - Email Verification OTP",
 
       html: `
         <!DOCTYPE html>
@@ -1971,16 +2009,13 @@ const sendForgotPasswordOTP = async (
     // SEND EMAIL
     // =================================================
 
-    await transporter.sendMail({
+await sendEmail({
 
-      from:
-        `"Bhagavad Gita" <${process.env.EMAIL_USER}>`,
+  to:
+    cleanEmail,
 
-      to:
-        cleanEmail,
-
-      subject:
-        "Bhagavad Gita - Password Reset OTP",
+  subject:
+    "Bhagavad Gita - Password Reset OTP",
 
       html: `
         <!DOCTYPE html>
