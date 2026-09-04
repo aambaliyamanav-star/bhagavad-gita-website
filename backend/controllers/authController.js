@@ -26,6 +26,14 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+transporter.verify((error, success) => {
+  if (error) {
+    console.error("❌ Brevo SMTP Connection Failed:", error);
+  } else {
+    console.log("✅ Brevo SMTP Connection Successful");
+  }
+});
+
 // =====================================================
 // GENERATE 6 DIGIT OTP
 // =====================================================
