@@ -54,6 +54,67 @@ const protect = async (req, res, next) => {
 };
 
 
+const optionalAuth = async (req, res, next) => {
+  try {
+    const authHeader =
+      req.headers.authorization;
+
+    // Login નથી → Anonymous user તરીકે ચાલુ રાખો
+    if (
+      !authHeader ||
+      !authHeader.startsWith("Bearer ")
+    ) {
+      req.user = null;
+      req.userId = null;
+
+      return next();
+    }
+
+    const token =
+      authHeader.split(" ")[1];
+
+    const decoded = jwt.verify(
+      token,
+      process.env.JWT_SECRET
+    );
+
+    req.userId =
+      decoded.userId;
+
+    const user =
+      await User.findById(
+        req.userId
+      );
+
+    // User મળ્યો નહીં → Anonymous
+    if (!user) {
+      req.user = null;
+      req.userId = null;
+
+      return next();
+    }
+
+    // Logged-in user
+    req.user = user;
+
+    next();
+
+  } catch (error) {
+    console.error(
+      "Optional Auth Error:",
+      error
+    );
+
+    // Invalid/expired token હોય તો પણ
+    // public Shlok 1–5 access બંધ ન થાય
+    req.user = null;
+    req.userId = null;
+
+    next();
+  }
+};
+
+
 const adminOnly = async (req, res, next) => {
   try {
     const user = await User.findById(req.userId);
@@ -89,5 +150,6 @@ const adminOnly = async (req, res, next) => {
 
 module.exports = {
   protect,
+  optionalAuth,
   adminOnly
 };

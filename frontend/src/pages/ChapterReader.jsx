@@ -151,126 +151,155 @@ function ChapterReader() {
       .trim();
   };
 
-  // =====================================================
-  // FETCH CHAPTER SHLOKAS
-  // =====================================================
+// =====================================================
+// FETCH CHAPTER SHLOKAS
+// =====================================================
 
-  useEffect(() => {
-    const fetchChapterShlokas =
-      async () => {
-        try {
-          setLoading(true);
-          setError("");
-          setActiveWordIndex(null);
+useEffect(() => {
+  const fetchChapterShlokas =
+    async () => {
+      try {
+        setLoading(true);
+        setError("");
+        setActiveWordIndex(null);
 
-          const response = await fetch(
-            `${API_URL}/chapter/${currentChapterNumber}`
+        const response = await fetch(
+          `${API_URL}/chapter/${currentChapterNumber}`
+        );
+
+        const data =
+          await response.json();
+
+        if (!response.ok) {
+          throw new Error(
+            data.message ||
+              "Shlokas load થઈ શક્યા નથી."
           );
+        }
 
-          const data =
-            await response.json();
+        const fetchedShlokas =
+          data.shlokas || [];
 
-          if (!response.ok) {
-            throw new Error(
-              data.message ||
-                "Shlokas load થઈ શક્યા નથી."
-            );
-          }
+        // =================================================
+        // SORT SHLOKAS
+        // =================================================
 
-          const fetchedShlokas =
-            data.shlokas || [];
+        fetchedShlokas.sort(
+          (a, b) =>
+            Number(a.shlokNumber) -
+            Number(b.shlokNumber)
+        );
 
-          // =================================================
-          // SORT SHLOKAS
-          // =================================================
+        setShlokas(fetchedShlokas);
 
-          fetchedShlokas.sort(
-            (a, b) =>
-              Number(a.shlokNumber) -
-              Number(b.shlokNumber)
-          );
+        // =================================================
+        // CHAPTER NAME
+        // =================================================
 
-          setShlokas(fetchedShlokas);
-
-          // =================================================
-          // CHAPTER NAME
-          // =================================================
-
-          if (
-            fetchedShlokas.length > 0
-          ) {
-            setChapterName(
-              fetchedShlokas[0]
-                .chapterName ||
-                chapterNames[
-                  currentChapterNumber
-                ] ||
-                `અધ્યાય ${currentChapterNumber}`
-            );
-          } else {
-            setChapterName(
+        if (
+          fetchedShlokas.length > 0
+        ) {
+          setChapterName(
+            fetchedShlokas[0]
+              .chapterName ||
               chapterNames[
                 currentChapterNumber
               ] ||
-                `અધ્યાય ${currentChapterNumber}`
+              `અધ્યાય ${currentChapterNumber}`
+          );
+        } else {
+          setChapterName(
+            chapterNames[
+              currentChapterNumber
+            ] ||
+              `અધ્યાય ${currentChapterNumber}`
+          );
+        }
+
+        // =================================================
+        // REQUESTED SHLOK
+        // =================================================
+
+        if (requestedShloka) {
+
+          // Anonymous user cannot open Shlok 6+
+          if (
+            !user &&
+            requestedShloka > 5
+          ) {
+            localStorage.setItem(
+              "pendingChapter",
+              String(
+                currentChapterNumber
+              )
             );
+
+            localStorage.setItem(
+              "pendingShloka",
+              String(
+                requestedShloka
+              )
+            );
+
+            navigate("/login");
+            return;
           }
 
-          // =================================================
-          // REQUESTED SHLOK
-          // =================================================
+          const shlokaIndex =
+            fetchedShlokas.findIndex(
+              (item) =>
+                Number(
+                  item.shlokNumber
+                ) === requestedShloka
+            );
 
-          if (requestedShloka) {
-            const shlokaIndex =
-              fetchedShlokas.findIndex(
-                (item) =>
-                  Number(
-                    item.shlokNumber
-                  ) === requestedShloka
-              );
-
-            if (shlokaIndex !== -1) {
-              setCurrentShloka(
-                shlokaIndex
-              );
-            } else {
-              setCurrentShloka(0);
-            }
+          if (shlokaIndex !== -1) {
+            setCurrentShloka(
+              shlokaIndex
+            );
           } else {
             setCurrentShloka(0);
           }
-        } catch (err) {
-          console.error(
-            "Fetch Chapter Shlokas Error:",
-            err
-          );
 
-          setError(
-            err.message ||
-              "Shlokas load કરવામાં error આવ્યો."
-          );
-
-          setShlokas([]);
-        } finally {
-          setLoading(false);
+        } else {
+          setCurrentShloka(0);
         }
-      };
 
-    if (
-      currentChapterNumber >= 1 &&
-      currentChapterNumber <= 18
-    ) {
-      fetchChapterShlokas();
-    } else {
-      setLoading(false);
-      setError(
-        "Invalid chapter number."
-      );
-    }
-  }, [
-    currentChapterNumber,
-    requestedShloka,
-  ]);
+      } catch (err) {
+        console.error(
+          "Fetch Chapter Shlokas Error:",
+          err
+        );
+
+        setError(
+          err.message ||
+            "Shlokas load કરવામાં error આવ્યો."
+        );
+
+        setShlokas([]);
+
+      } finally {
+        setLoading(false);
+      }
+    };
+
+  if (
+    currentChapterNumber >= 1 &&
+    currentChapterNumber <= 18
+  ) {
+    fetchChapterShlokas();
+  } else {
+    setLoading(false);
+    setError(
+      "Invalid chapter number."
+    );
+  }
+
+}, [
+  currentChapterNumber,
+  requestedShloka,
+  user,
+]);
 
   // =====================================================
   // LOAD FAVOURITES FROM BACKEND
@@ -559,7 +588,7 @@ function ChapterReader() {
   // SELECT SHLOK
   // =====================================================
 
- const selectShloka = (index) => {
+const selectShloka = (index) => {
   if (
     index < 0 ||
     index >= shlokas.length
@@ -567,13 +596,35 @@ function ChapterReader() {
     return;
   }
 
+  const selectedShlok =
+    shlokas[index];
+
+  // =====================================================
+  // LOGIN REQUIRED AFTER 5 SHLOKAS
+  // =====================================================
+
+if (
+  !user &&
+  Number(selectedShlok?.shlokNumber) > 5
+) {
+  localStorage.setItem(
+    "pendingChapter",
+    String(currentChapterNumber)
+  );
+
+  localStorage.setItem(
+    "pendingShloka",
+    String(selectedShlok.shlokNumber)
+  );
+
+  navigate("/login");
+  return;
+}
+
   setCurrentShloka(index);
   setActiveWordIndex(null);
 
   // Continue Reading
-  const selectedShlok =
-    shlokas[index];
-
   if (selectedShlok) {
     saveContinueReading(
       currentChapterNumber,
@@ -744,32 +795,49 @@ function ChapterReader() {
   // NEXT SHLOK
   // =====================================================
 
-  const nextShloka = () => {
+const nextShloka = () => {
+  if (
+    currentShloka <
+    shlokas.length - 1
+  ) {
+    const nextIndex =
+      currentShloka + 1;
+
+    const next =
+      shlokas[nextIndex];
+
+    // =====================================================
+    // LOGIN REQUIRED AFTER 5 SHLOKAS
+    // =====================================================
+
     if (
-      currentShloka <
-      shlokas.length - 1
+      !user &&
+      Number(next?.shlokNumber) > 5
     ) {
-      const nextIndex =
-        currentShloka + 1;
-
-      setCurrentShloka(
-        nextIndex
-      );
-
-      setActiveWordIndex(null);
-
-      // Continue Reading
-      const next =
-        shlokas[nextIndex];
-
-      if (next) {
-        saveContinueReading(
-          currentChapterNumber,
-          next.shlokNumber
-        );
-      }
+      navigate("/login");
+      return;
     }
-  };
+
+    setCurrentShloka(
+      nextIndex
+    );
+
+    setActiveWordIndex(null);
+
+    // Continue Reading
+    if (next) {
+      saveContinueReading(
+        currentChapterNumber,
+        next.shlokNumber
+      );
+    }
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  }
+};
 
   // =====================================================
   // PREVIOUS SHLOK

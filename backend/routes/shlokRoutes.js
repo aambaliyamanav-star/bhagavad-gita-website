@@ -9,6 +9,11 @@ const {
   deleteShlok,
 } = require("../controllers/shlokController");
 
+const {
+  protect,
+  optionalAuth,
+} = require("../middleware/authMiddleware");
+
 const router = express.Router();
 
 // =====================================================
@@ -52,6 +57,7 @@ router.get(
 
 router.get(
   "/chapter/:chapterNumber",
+  optionalAuth,
   getChapterShlokas
 );
 
