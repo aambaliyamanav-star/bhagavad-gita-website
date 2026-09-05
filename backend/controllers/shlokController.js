@@ -403,10 +403,6 @@ const getChapterShlokas = async (
         req.params.chapterNumber
       );
 
-    // =================================================
-    // VALIDATE CHAPTER
-    // =================================================
-
     if (
       !chapterNumber ||
       chapterNumber < 1 ||
@@ -414,56 +410,69 @@ const getChapterShlokas = async (
     ) {
       return res.status(400).json({
         success: false,
-
         message:
           "Invalid chapter number.",
       });
     }
 
-    // =================================================
-    // BACKEND ACCESS RESTRICTION
-    // =================================================
-    //
-    // Anonymous user:
-    // Shlok 1–5 only
-    //
-    // Logged-in user:
-    // All shlokas
-    // =================================================
+    const shlokas =
+      await Shlok.find({
+        chapterNumber:
+          chapterNumber,
+      })
+        .sort({
+          shlokNumber: 1,
+        })
+        .lean();
 
-    let query = {
-      chapterNumber:
-        chapterNumber,
-    };
+    // =====================================================
+    // LOGGED-OUT USER
+    // =====================================================
 
     if (!req.user) {
-      query.shlokNumber = {
-        $lte: 5,
-      };
+
+      const publicShlokas =
+        shlokas.map((shloka) => {
+
+          // Shlok 1–5 → Full content
+          if (
+            Number(
+              shloka.shlokNumber
+            ) <= 5
+          ) {
+            return shloka;
+          }
+
+          // Shlok 6+ → Only button information
+          return {
+            _id: shloka._id,
+            chapterNumber:
+              shloka.chapterNumber,
+            chapterName:
+              shloka.chapterName,
+            shlokNumber:
+              shloka.shlokNumber,
+          };
+        });
+
+      return res.status(200).json({
+        success: true,
+        shlokas:
+          publicShlokas,
+      });
     }
 
-    // =================================================
-    // GET SHLOKAS
-    // =================================================
+    // =====================================================
+    // LOGGED-IN USER
+    // =====================================================
 
-    const shlokas =
-      await Shlok.find(
-        query
-      ).sort({
-        shlokNumber: 1,
-      });
-
-    // =================================================
-    // RESPONSE
-    // =================================================
-
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
-
       shlokas,
     });
 
   } catch (error) {
+
     console.error(
       "Get Chapter Shlokas Error:",
       error
@@ -471,10 +480,8 @@ const getChapterShlokas = async (
 
     res.status(500).json({
       success: false,
-
       message:
         "Error fetching chapter shlokas",
-
       error:
         error.message,
     });
