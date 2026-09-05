@@ -4187,3 +4187,39 @@ body[data-theme="dark"] .welcome p,
   }
 }
 
+
+
+/* =====================================================
+   MOBILE — HERO TEXT VISIBILITY
+   ===================================================== */
+
+@media (max-width: 768px) {
+
+  .hero h1 {
+    color: #ffffff;
+    text-shadow:
+      0 3px 8px rgba(0, 0, 0, 0.75),
+      0 0 18px rgba(0, 0, 0, 0.45);
+  }
+
+  .hero h2 {
+    color: #ffffff;
+    text-shadow:
+      0 2px 6px rgba(0, 0, 0, 0.75);
+  }
+
+  .hero p {
+    color: #ffffff;
+    text-shadow:
+      0 2px 5px rgba(0, 0, 0, 0.85);
+  }
+
+  .hero .sacred-title,
+  .hero .hero-sacred-title {
+    color: #fff4c4;
+    text-shadow:
+      0 2px 7px rgba(0, 0, 0, 0.85),
+      0 0 12px rgba(0, 0, 0, 0.5);
+  }
+
+}
