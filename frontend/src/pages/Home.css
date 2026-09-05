@@ -4226,3 +4226,19 @@ body[data-theme="dark"] .welcome p,
   }
 
 }
+
+/* =====================================================
+   MOBILE — HERO DESCRIPTION
+   ===================================================== */
+
+@media (max-width: 768px) {
+
+  .hero p {
+    color: #111111;
+
+    text-shadow:
+      0 2px 3px rgba(255, 255, 255, 0.75),
+      0 3px 8px rgba(0, 0, 0, 0.55);
+  }
+
+}
