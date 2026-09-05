@@ -810,13 +810,23 @@ const nextShloka = () => {
     // LOGIN REQUIRED AFTER 5 SHLOKAS
     // =====================================================
 
-    if (
-      !user &&
-      Number(next?.shlokNumber) > 5
-    ) {
-      navigate("/login");
-      return;
-    }
+if (
+  !user &&
+  Number(next?.shlokNumber) > 5
+) {
+  localStorage.setItem(
+    "pendingChapter",
+    String(currentChapterNumber)
+  );
+
+  localStorage.setItem(
+    "pendingShloka",
+    String(next.shlokNumber)
+  );
+
+  navigate("/login");
+  return;
+}
 
     setCurrentShloka(
       nextIndex
