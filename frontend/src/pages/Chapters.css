@@ -56,12 +56,12 @@
 
   border-radius: 0;
 
-  background: transparent;
+  background: transparent !important;
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
 
-  border: none;
 
-  box-shadow:
-    0 12px 25px rgba(0, 40, 90, 0.10);
 
   overflow: visible;
 
@@ -71,52 +71,7 @@
 
 /* Header decorative glow */
 
-.chapters-header::before {
-  content: "";
 
-  position: absolute;
-
-  width: 230px;
-  height: 230px;
-
-  top: -130px;
-  right: -70px;
-
-  border-radius: 50%;
-
-  background:
-    radial-gradient(
-      circle,
-      rgba(66, 165, 245, 0.20),
-      transparent 68%
-    );
-
-  pointer-events: none;
-}
-
-
-.chapters-header::after {
-  content: "";
-
-  position: absolute;
-
-  width: 180px;
-  height: 180px;
-
-  bottom: -110px;
-  left: -70px;
-
-  border-radius: 50%;
-
-  background:
-    radial-gradient(
-      circle,
-      rgba(13, 71, 161, 0.12),
-      transparent 68%
-    );
-
-  pointer-events: none;
-}
 
 
 /* =========================================================
