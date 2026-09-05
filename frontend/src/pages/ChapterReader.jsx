@@ -559,28 +559,34 @@ function ChapterReader() {
   // SELECT SHLOK
   // =====================================================
 
-  const selectShloka = (index) => {
-    if (
-      index < 0 ||
-      index >= shlokas.length
-    ) {
-      return;
-    }
+ const selectShloka = (index) => {
+  if (
+    index < 0 ||
+    index >= shlokas.length
+  ) {
+    return;
+  }
 
-    setCurrentShloka(index);
-    setActiveWordIndex(null);
+  setCurrentShloka(index);
+  setActiveWordIndex(null);
 
-    // Continue Reading
-    const selectedShlok =
-      shlokas[index];
+  // Continue Reading
+  const selectedShlok =
+    shlokas[index];
 
-    if (selectedShlok) {
-      saveContinueReading(
-        currentChapterNumber,
-        selectedShlok.shlokNumber
-      );
-    }
-  };
+  if (selectedShlok) {
+    saveContinueReading(
+      currentChapterNumber,
+      selectedShlok.shlokNumber
+    );
+  }
+
+  // Scroll to current shloka
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth",
+  });
+};
 
   // =====================================================
   // INVALID CHAPTER
