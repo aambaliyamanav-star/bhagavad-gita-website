@@ -54,28 +54,18 @@
 
   padding: 48px 25px 38px;
 
-  border-radius: 28px;
+  border-radius: 0;
 
-  background:
-    linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 0.96),
-      rgba(229, 242, 255, 0.96)
-    );
+  background: transparent;
 
-  border: 1px solid rgba(100, 170, 230, 0.38);
+  border: none;
 
   box-shadow:
-    0 20px 50px rgba(28, 86, 140, 0.13),
-    0 5px 15px rgba(28, 86, 140, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    0 12px 25px rgba(0, 40, 90, 0.10);
 
-  overflow: hidden;
+  overflow: visible;
 
-  transition:
-    background 0.3s ease,
-    border-color 0.3s ease,
-    box-shadow 0.3s ease;
+  transition: color 0.3s ease;
 }
 
 
@@ -183,8 +173,9 @@
 
   letter-spacing: -0.6px;
 
-  text-shadow:
-    0 3px 8px rgba(21, 84, 154, 0.15);
+text-shadow:
+  0 3px 6px rgba(255, 255, 255, 0.9),
+  0 5px 12px rgba(0, 45, 100, 0.45);
 
   transition: color 0.3s ease;
 }
