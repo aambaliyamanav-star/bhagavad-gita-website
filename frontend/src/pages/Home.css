@@ -3397,27 +3397,47 @@ body[data-theme="dark"] .hero::after,
 }
 
 /* =====================================================
-   MOBILE — GITA BACKGROUND FIX
+   MOBILE — GITA BACKGROUND
    ===================================================== */
 
 @media (max-width: 768px) {
 
   .home-page::before {
+    background-image:
+      linear-gradient(
+        135deg,
+        rgba(239, 249, 255, 0.18) 0%,
+        rgba(220, 239, 255, 0.20) 50%,
+        rgba(201, 231, 255, 0.24) 100%
+      ),
+      url("/images/gita-background-mobile.png");
+
     background-size: cover;
     background-position: center top;
+    background-repeat: no-repeat;
   }
 
   html[data-theme="dark"] .home-page::before,
   body[data-theme="dark"] .home-page::before,
   html.dark .home-page::before,
   body.dark .home-page::before {
+
+    background-image:
+      linear-gradient(
+        135deg,
+        rgba(3, 13, 25, 0.58) 0%,
+        rgba(5, 22, 39, 0.52) 50%,
+        rgba(5, 31, 53, 0.58) 100%
+      ),
+      url("/images/gita-background-mobile.png");
+
     background-size: cover;
     background-position: center top;
+    background-repeat: no-repeat;
   }
 
   .hero {
-    background-size: cover;
-    background-position: center top;
+    background-image: none;
   }
 
 }
