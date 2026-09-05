@@ -32,6 +32,29 @@ function Login() {
   const [messageType, setMessageType] =
     useState("");
 
+    // =====================================================
+// PROTECTED SHLOK MESSAGE
+// =====================================================
+
+const [protectedShlokMessage] =
+  useState(() => {
+    const chapter =
+      localStorage.getItem(
+        "pendingChapter"
+      );
+
+    const shlok =
+      localStorage.getItem(
+        "pendingShloka"
+      );
+
+    if (chapter && shlok) {
+      return `અધ્યાય ${chapter} ના શ્લોક ${shlok} વાંચવા માટે Login અથવા Register કરો.`;
+    }
+
+    return "";
+  });
+
   // =====================================================
   // LOADING
   // =====================================================
@@ -160,16 +183,44 @@ function Login() {
         // GO TO HOME
         // -----------------------------------------------
 
-        setTimeout(() => {
-          navigate("/");
-        }, 1000);
-      }
+setTimeout(() => {
+  const pendingChapter =
+    localStorage.getItem(
+      "pendingChapter"
+    );
 
+  const pendingShloka =
+    localStorage.getItem(
+      "pendingShloka"
+    );
+
+  if (
+    pendingChapter &&
+    pendingShloka
+  ) {
+    localStorage.removeItem(
+      "pendingChapter"
+    );
+
+    localStorage.removeItem(
+      "pendingShloka"
+    );
+
+    navigate(
+      `/chapter/${pendingChapter}?shloka=${pendingShloka}`
+    );
+  } else {
+    navigate("/");
+  }
+}, 1000);
+
+      }
+      
       // =================================================
       // ERROR
       // =================================================
 
-      else {
+  else {
         setMessage(
           data.message ||
             "Email અથવા Password ખોટો છે."
@@ -232,6 +283,13 @@ function Login() {
             MESSAGE
         ================================================= */}
 
+        {protectedShlokMessage && (
+  <div className="auth-message error">
+    🔒 {protectedShlokMessage}
+  </div>
+)}
+        
+        
         {message && (
           <div
             className={

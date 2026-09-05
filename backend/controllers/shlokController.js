@@ -403,6 +403,10 @@ const getChapterShlokas = async (
         req.params.chapterNumber
       );
 
+    // =================================================
+    // VALIDATE CHAPTER
+    // =================================================
+
     if (
       !chapterNumber ||
       chapterNumber < 1 ||
@@ -416,19 +420,49 @@ const getChapterShlokas = async (
       });
     }
 
+    // =================================================
+    // BACKEND ACCESS RESTRICTION
+    // =================================================
+    //
+    // Anonymous user:
+    // Shlok 1–5 only
+    //
+    // Logged-in user:
+    // All shlokas
+    // =================================================
+
+    let query = {
+      chapterNumber:
+        chapterNumber,
+    };
+
+    if (!req.user) {
+      query.shlokNumber = {
+        $lte: 5,
+      };
+    }
+
+    // =================================================
+    // GET SHLOKAS
+    // =================================================
+
     const shlokas =
-      await Shlok.find({
-        chapterNumber:
-          chapterNumber,
-      }).sort({
+      await Shlok.find(
+        query
+      ).sort({
         shlokNumber: 1,
       });
+
+    // =================================================
+    // RESPONSE
+    // =================================================
 
     res.status(200).json({
       success: true,
 
       shlokas,
     });
+
   } catch (error) {
     console.error(
       "Get Chapter Shlokas Error:",
