@@ -45,15 +45,13 @@ body {
 
 
 /* =====================================================
-   FIXED GITA BACKGROUND
-   Desktop
+   FIXED GITA BACKGROUND — DESKTOP
 ===================================================== */
 
 body::before {
   content: "";
 
   position: fixed;
-
   top: 74px;
   left: 0;
   right: 0;
@@ -76,7 +74,6 @@ body::before {
   background-repeat: no-repeat;
 
   z-index: -9999;
-
   pointer-events: none;
 }
 
@@ -116,7 +113,7 @@ main {
   min-height: 100vh;
 
   padding:
-    70px 20px 90px;
+    70px 20px 60px;
 
   display: flex;
   flex-direction: column;
@@ -128,6 +125,8 @@ main {
 
   background: transparent !important;
   background-image: none !important;
+
+  gap: 0;
 }
 
 
@@ -136,7 +135,8 @@ main {
 ===================================================== */
 
 .subtitle {
-  margin: 0 0 12px;
+  margin:
+    0 0 10px;
 
   color: #1565c0;
 
@@ -166,9 +166,11 @@ main {
 
 
 .description {
+  width: 100%;
   max-width: 760px;
 
-  margin: 20px auto 30px;
+  margin:
+    18px auto 26px;
 
   color: #315b7d;
 
@@ -181,7 +183,7 @@ main {
 
 
 /* =====================================================
-   START / CONTINUE READING
+   CONTINUE READING BUTTON
 ===================================================== */
 
 .hero > button,
@@ -192,16 +194,20 @@ main {
   justify-content: center;
 
   width: auto;
-  max-width: 100%;
+
+  max-width:
+    calc(100vw - 32px);
+
+  min-height: 58px;
 
   margin:
-    0 auto 34px;
+    0 auto 24px;
 
   padding:
-    15px 30px;
+    16px 26px;
 
   border: none;
-  border-radius: 14px;
+  border-radius: 15px;
 
   background:
     linear-gradient(
@@ -213,10 +219,10 @@ main {
 
   color: #ffffff;
 
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 700;
 
-  line-height: 1.25;
+  line-height: 1.2;
 
   white-space: nowrap;
 
@@ -235,7 +241,8 @@ main {
 
 .hero > button:hover,
 .continue-reading-button:hover {
-  transform: translateY(-4px);
+  transform:
+    translateY(-4px);
 
   box-shadow:
     0 16px 28px rgba(13, 71, 161, 0.30),
@@ -246,7 +253,79 @@ main {
 
 .hero > button:active,
 .continue-reading-button:active {
-  transform: translateY(1px);
+  transform:
+    translateY(1px);
+
+  box-shadow:
+    0 5px 10px rgba(13, 71, 161, 0.25);
+}
+
+
+/* =====================================================
+   QUIZ BUTTON
+===================================================== */
+
+.quiz-button {
+  display: inline-flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-height: 56px;
+
+  margin:
+    0 auto 28px;
+
+  padding:
+    15px 28px;
+
+  border: none;
+  border-radius: 15px;
+
+  background:
+    linear-gradient(
+      145deg,
+      #42a5f5,
+      #1976d2,
+      #0d47a1
+    );
+
+  color: #ffffff;
+
+  font-size: 18px;
+  font-weight: 700;
+
+  line-height: 1.2;
+
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 10px 20px rgba(13, 71, 161, 0.25),
+    0 5px 0 rgba(8, 55, 120, 0.25),
+    inset 0 1px 1px rgba(255, 255, 255, 0.35);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+
+.quiz-button:hover {
+  transform:
+    translateY(-4px);
+
+  box-shadow:
+    0 16px 28px rgba(13, 71, 161, 0.30),
+    0 6px 0 rgba(8, 55, 120, 0.22),
+    inset 0 1px 1px rgba(255, 255, 255, 0.40);
+}
+
+
+.quiz-button:active {
+  transform:
+    translateY(1px);
 
   box-shadow:
     0 5px 10px rgba(13, 71, 161, 0.25);
@@ -258,17 +337,23 @@ main {
 ===================================================== */
 
 .home-search {
-  width: calc(100% - 40px);
-  max-width: 1050px;
+  width:
+    calc(100% - 40px);
+
+  max-width:
+    1050px;
 
   margin:
-    0 auto 38px;
+    0 auto 30px;
 
-  padding: 28px;
+  padding:
+    28px;
 
-  position: relative;
+  position:
+    relative;
 
-  border-radius: 24px;
+  border-radius:
+    24px;
 
   background:
     linear-gradient(
@@ -294,7 +379,8 @@ main {
 
 
 .home-search:hover {
-  transform: translateY(-4px);
+  transform:
+    translateY(-4px);
 
   box-shadow:
     0 28px 48px rgba(21, 101, 160, 0.22),
@@ -310,15 +396,23 @@ main {
 .home-search::before {
   content: "";
 
-  position: absolute;
+  position:
+    absolute;
 
-  top: 0;
-  left: 8%;
+  top:
+    0;
 
-  width: 84%;
-  height: 2px;
+  left:
+    8%;
 
-  border-radius: 50%;
+  width:
+    84%;
+
+  height:
+    2px;
+
+  border-radius:
+    50%;
 
   background:
     linear-gradient(
@@ -338,12 +432,17 @@ main {
   margin:
     0 0 22px;
 
-  color: #0d47a1;
+  color:
+    #0d47a1;
 
-  font-size: 24px;
-  font-weight: 800;
+  font-size:
+    24px;
 
-  text-align: center;
+  font-weight:
+    800;
+
+  text-align:
+    center;
 
   text-shadow:
     0 2px 6px rgba(13, 71, 161, 0.12);
@@ -355,16 +454,23 @@ main {
 ===================================================== */
 
 .search-fields {
-  width: 100%;
+  width:
+    100%;
 
-  display: flex;
+  display:
+    flex;
 
-  align-items: center;
-  justify-content: center;
+  align-items:
+    center;
 
-  gap: 12px;
+  justify-content:
+    center;
 
-  flex-wrap: nowrap;
+  gap:
+    12px;
+
+  flex-wrap:
+    nowrap;
 }
 
 
@@ -373,9 +479,14 @@ main {
 ===================================================== */
 
 .search-fields input {
-  width: 190px;
-  min-width: 0;
-  height: 50px;
+  width:
+    190px;
+
+  min-width:
+    0;
+
+  height:
+    50px;
 
   padding:
     0 16px;
@@ -383,9 +494,11 @@ main {
   border:
     1px solid #a8cde9;
 
-  border-radius: 12px;
+  border-radius:
+    12px;
 
-  outline: none;
+  outline:
+    none;
 
   background:
     linear-gradient(
@@ -394,9 +507,11 @@ main {
       #f1f9ff
     );
 
-  color: #163f60;
+  color:
+    #163f60;
 
-  font-size: 15px;
+  font-size:
+    15px;
 
   box-shadow:
     inset 0 3px 6px rgba(52, 113, 160, 0.08),
@@ -412,14 +527,17 @@ main {
 
 
 .search-fields input:hover {
-  transform: translateY(-1px);
+  transform:
+    translateY(-1px);
 
-  border-color: #64b5f6;
+  border-color:
+    #64b5f6;
 }
 
 
 .search-fields input:focus {
-  border-color: #1976d2;
+  border-color:
+    #1976d2;
 
   box-shadow:
     0 0 0 3px rgba(33, 150, 243, 0.12),
@@ -429,7 +547,8 @@ main {
 
 
 .search-fields input::placeholder {
-  color: #7898ae;
+  color:
+    #7898ae;
 }
 
 
@@ -439,7 +558,8 @@ main {
 
 .search-fields input[type="number"]::-webkit-inner-spin-button,
 .search-fields input[type="number"]::-webkit-outer-spin-button {
-  opacity: 0.7;
+  opacity:
+    0.7;
 }
 
 
@@ -451,16 +571,23 @@ main {
   flex:
     0 0 auto;
 
-  width: auto;
-  min-width: 95px;
+  width:
+    auto;
 
-  height: 50px;
+  min-width:
+    95px;
+
+  height:
+    50px;
 
   padding:
     0 24px;
 
-  border: none;
-  border-radius: 12px;
+  border:
+    none;
+
+  border-radius:
+    12px;
 
   background:
     linear-gradient(
@@ -470,12 +597,17 @@ main {
       #0d47a1
     );
 
-  color: #ffffff;
+  color:
+    #ffffff;
 
-  font-size: 16px;
-  font-weight: 700;
+  font-size:
+    16px;
 
-  cursor: pointer;
+  font-weight:
+    700;
+
+  cursor:
+    pointer;
 
   box-shadow:
     0 8px 16px rgba(13, 71, 161, 0.24),
@@ -489,7 +621,8 @@ main {
 
 
 .search-button:hover {
-  transform: translateY(-3px);
+  transform:
+    translateY(-3px);
 
   box-shadow:
     0 13px 22px rgba(13, 71, 161, 0.30),
@@ -499,7 +632,8 @@ main {
 
 
 .search-button:active {
-  transform: translateY(1px);
+  transform:
+    translateY(1px);
 
   box-shadow:
     0 5px 10px rgba(13, 71, 161, 0.22);
@@ -507,11 +641,14 @@ main {
 
 
 .search-button:disabled {
-  opacity: 0.6;
+  opacity:
+    0.6;
 
-  cursor: not-allowed;
+  cursor:
+    not-allowed;
 
-  transform: none;
+  transform:
+    none;
 }
 
 
@@ -520,12 +657,14 @@ main {
 ===================================================== */
 
 .search-message {
-  margin-top: 20px;
+  margin-top:
+    20px;
 
   padding:
     13px 16px;
 
-  border-radius: 12px;
+  border-radius:
+    12px;
 
   background:
     linear-gradient(
@@ -537,9 +676,11 @@ main {
   border:
     1px solid #b9daf2;
 
-  color: #18547d;
+  color:
+    #18547d;
 
-  font-size: 15px;
+  font-size:
+    15px;
 
   box-shadow:
     inset 0 2px 5px rgba(60, 120, 165, 0.06),
@@ -552,11 +693,14 @@ main {
 ===================================================== */
 
 .search-results {
-  width: 100%;
+  width:
+    100%;
 
-  margin-top: 25px;
+  margin-top:
+    25px;
 
-  text-align: left;
+  text-align:
+    left;
 }
 
 
@@ -564,22 +708,29 @@ main {
   margin:
     0 0 18px;
 
-  color: #0d47a1;
+  color:
+    #0d47a1;
 
-  text-align: center;
+  text-align:
+    center;
 
-  font-size: 20px;
+  font-size:
+    20px;
 }
 
 
 .search-result-card {
-  width: 100%;
+  width:
+    100%;
 
-  margin-bottom: 14px;
+  margin-bottom:
+    14px;
 
-  padding: 20px;
+  padding:
+    20px;
 
-  border-radius: 16px;
+  border-radius:
+    16px;
 
   background:
     linear-gradient(
@@ -595,7 +746,8 @@ main {
     0 8px 16px rgba(40, 110, 165, 0.10),
     0 3px 0 rgba(100, 165, 210, 0.12);
 
-  cursor: pointer;
+  cursor:
+    pointer;
 
   transition:
     transform 0.25s ease,
@@ -604,7 +756,8 @@ main {
 
 
 .search-result-card:hover {
-  transform: translateY(-3px);
+  transform:
+    translateY(-3px);
 
   box-shadow:
     0 14px 24px rgba(40, 110, 165, 0.15),
@@ -613,10 +766,14 @@ main {
 
 
 .result-chapter {
-  color: #1976d2;
+  color:
+    #1976d2;
 
-  font-size: 14px;
-  font-weight: 700;
+  font-size:
+    14px;
+
+  font-weight:
+    700;
 }
 
 
@@ -624,9 +781,11 @@ main {
   margin:
     7px 0;
 
-  color: #123f68;
+  color:
+    #123f68;
 
-  font-size: 18px;
+  font-size:
+    18px;
 }
 
 
@@ -634,16 +793,20 @@ main {
   margin:
     8px 0;
 
-  color: #42627b;
+  color:
+    #42627b;
 
-  line-height: 1.7;
+  line-height:
+    1.7;
 }
 
 
 .search-result-card span {
-  color: #0d47a1;
+  color:
+    #0d47a1;
 
-  font-weight: 700;
+  font-weight:
+    700;
 }
 
 
@@ -652,17 +815,23 @@ main {
 ===================================================== */
 
 .today-shlok {
-  width: calc(100% - 40px);
-  max-width: 1050px;
+  width:
+    calc(100% - 40px);
+
+  max-width:
+    1050px;
 
   margin:
-    0 auto 42px;
+    0 auto 30px;
 
-  padding: 30px;
+  padding:
+    30px;
 
-  position: relative;
+  position:
+    relative;
 
-  border-radius: 26px;
+  border-radius:
+    26px;
 
   background:
     linear-gradient(
@@ -679,7 +848,8 @@ main {
     0 9px 0 rgba(83, 153, 207, 0.18),
     inset 0 1px 1px rgba(255, 255, 255, 0.95);
 
-  text-align: left;
+  text-align:
+    left;
 
   transition:
     transform 0.3s ease,
@@ -690,7 +860,8 @@ main {
 
 
 .today-shlok:hover {
-  transform: translateY(-4px);
+  transform:
+    translateY(-4px);
 
   box-shadow:
     0 30px 52px rgba(21, 101, 160, 0.22),
@@ -704,17 +875,26 @@ main {
 ===================================================== */
 
 .today-shlok::before {
-  content: "";
+  content:
+    "";
 
-  position: absolute;
+  position:
+    absolute;
 
-  top: 0;
-  left: 8%;
+  top:
+    0;
 
-  width: 84%;
-  height: 3px;
+  left:
+    8%;
 
-  border-radius: 50%;
+  width:
+    84%;
+
+  height:
+    3px;
+
+  border-radius:
+    50%;
 
   background:
     linear-gradient(
@@ -732,28 +912,41 @@ main {
 ===================================================== */
 
 .today-shlok-header {
-  display: flex;
+  display:
+    flex;
 
-  align-items: center;
+  align-items:
+    center;
 
-  gap: 16px;
+  gap:
+    16px;
 
-  margin-bottom: 22px;
+  margin-bottom:
+    22px;
 }
 
 
 .today-shlok-icon {
-  width: 55px;
-  height: 55px;
+  width:
+    55px;
 
-  flex-shrink: 0;
+  height:
+    55px;
 
-  display: flex;
+  flex-shrink:
+    0;
 
-  align-items: center;
-  justify-content: center;
+  display:
+    flex;
 
-  border-radius: 50%;
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  border-radius:
+    50%;
 
   background:
     linear-gradient(
@@ -765,7 +958,8 @@ main {
   border:
     1px solid #b4d9f2;
 
-  font-size: 27px;
+  font-size:
+    27px;
 
   box-shadow:
     0 8px 15px rgba(33, 100, 160, 0.15),
@@ -774,12 +968,17 @@ main {
 
 
 .today-shlok-header h2 {
-  margin: 0;
+  margin:
+    0;
 
-  color: #0d47a1;
+  color:
+    #0d47a1;
 
-  font-size: 28px;
-  font-weight: 800;
+  font-size:
+    28px;
+
+  font-weight:
+    800;
 }
 
 
@@ -787,11 +986,14 @@ main {
   margin:
     5px 0 0;
 
-  color: #52718b;
+  color:
+    #52718b;
 
-  font-size: 14px;
+  font-size:
+    14px;
 
-  line-height: 1.6;
+  line-height:
+    1.6;
 }
 
 
@@ -800,13 +1002,17 @@ main {
 ===================================================== */
 
 .today-shlok-meta {
-  display: flex;
+  display:
+    flex;
 
-  gap: 10px;
+  gap:
+    10px;
 
-  flex-wrap: wrap;
+  flex-wrap:
+    wrap;
 
-  margin-bottom: 22px;
+  margin-bottom:
+    22px;
 }
 
 
@@ -814,7 +1020,8 @@ main {
   padding:
     8px 14px;
 
-  border-radius: 20px;
+  border-radius:
+    20px;
 
   background:
     linear-gradient(
@@ -826,10 +1033,14 @@ main {
   border:
     1px solid #b9daf2;
 
-  color: #0d47a1;
+  color:
+    #0d47a1;
 
-  font-size: 14px;
-  font-weight: 700;
+  font-size:
+    14px;
+
+  font-weight:
+    700;
 
   box-shadow:
     0 4px 8px rgba(40, 110, 165, 0.08),
@@ -842,9 +1053,11 @@ main {
 ===================================================== */
 
 .today-sanskrit {
-  padding: 25px;
+  padding:
+    25px;
 
-  border-radius: 17px;
+  border-radius:
+    17px;
 
   background:
     linear-gradient(
@@ -859,13 +1072,17 @@ main {
   border-left:
     5px solid #1976d2;
 
-  color: #173f61;
+  color:
+    #173f61;
 
-  font-size: 22px;
+  font-size:
+    22px;
 
-  line-height: 2;
+  line-height:
+    2;
 
-  text-align: center;
+  text-align:
+    center;
 
   box-shadow:
     inset 0 3px 8px rgba(50, 110, 155, 0.06),
@@ -879,11 +1096,14 @@ main {
 
 .today-translation,
 .today-message {
-  margin-top: 18px;
+  margin-top:
+    18px;
 
-  padding: 20px;
+  padding:
+    20px;
 
-  border-radius: 15px;
+  border-radius:
+    15px;
 
   background:
     linear-gradient(
@@ -903,21 +1123,27 @@ main {
 
 .today-translation h3,
 .today-message h3 {
-  margin-top: 0;
+  margin-top:
+    0;
 
-  color: #0d47a1;
+  color:
+    #0d47a1;
 
-  font-size: 19px;
+  font-size:
+    19px;
 }
 
 
 .today-translation div,
 .today-message div {
-  color: #42627b;
+  color:
+    #42627b;
 
-  line-height: 1.8;
+  line-height:
+    1.8;
 
-  font-size: 16px;
+  font-size:
+    16px;
 }
 
 
@@ -926,7 +1152,8 @@ main {
 ===================================================== */
 
 .today-shlok-button {
-  display: block;
+  display:
+    block;
 
   margin:
     24px auto 0;
@@ -934,9 +1161,11 @@ main {
   padding:
     13px 24px;
 
-  border: none;
+  border:
+    none;
 
-  border-radius: 12px;
+  border-radius:
+    12px;
 
   background:
     linear-gradient(
@@ -946,12 +1175,17 @@ main {
       #0d47a1
     );
 
-  color: #ffffff;
+  color:
+    #ffffff;
 
-  font-size: 15px;
-  font-weight: 700;
+  font-size:
+    15px;
 
-  cursor: pointer;
+  font-weight:
+    700;
+
+  cursor:
+    pointer;
 
   box-shadow:
     0 8px 16px rgba(13, 71, 161, 0.23),
@@ -965,7 +1199,8 @@ main {
 
 
 .today-shlok-button:hover {
-  transform: translateY(-3px);
+  transform:
+    translateY(-3px);
 
   box-shadow:
     0 13px 22px rgba(13, 71, 161, 0.28),
@@ -979,20 +1214,26 @@ main {
 ===================================================== */
 
 .welcome {
-  width: calc(100% - 40px);
-  max-width: 900px;
+  width:
+    calc(100% - 40px);
+
+  max-width:
+    900px;
 
   margin:
-    0 auto 45px;
+    0 auto 30px;
 
   padding:
     45px 30px;
 
-  position: relative;
+  position:
+    relative;
 
-  text-align: center;
+  text-align:
+    center;
 
-  border-radius: 26px;
+  border-radius:
+    26px;
 
   background:
     linear-gradient(
@@ -1018,7 +1259,8 @@ main {
 
 
 .welcome:hover {
-  transform: translateY(-4px);
+  transform:
+    translateY(-4px);
 
   box-shadow:
     0 30px 50px rgba(21, 101, 160, 0.22),
@@ -1032,17 +1274,26 @@ main {
 ===================================================== */
 
 .welcome::before {
-  content: "";
+  content:
+    "";
 
-  position: absolute;
+  position:
+    absolute;
 
-  top: 0;
-  left: 10%;
+  top:
+    0;
 
-  width: 80%;
-  height: 3px;
+  left:
+    10%;
 
-  border-radius: 50%;
+  width:
+    80%;
+
+  height:
+    3px;
+
+  border-radius:
+    50%;
 
   background:
     linear-gradient(
@@ -1063,10 +1314,14 @@ main {
   margin:
     0 0 18px;
 
-  color: #0d47a1;
+  color:
+    #0d47a1;
 
-  font-size: 31px;
-  font-weight: 800;
+  font-size:
+    31px;
+
+  font-weight:
+    800;
 
   text-shadow:
     0 3px 8px rgba(13, 71, 161, 0.12);
@@ -1077,13 +1332,17 @@ main {
   margin:
     0 auto;
 
-  max-width: 720px;
+  max-width:
+    720px;
 
-  color: #42627b;
+  color:
+    #42627b;
 
-  font-size: 17px;
+  font-size:
+    17px;
 
-  line-height: 1.9;
+  line-height:
+    1.9;
 }
 
 
@@ -1092,20 +1351,23 @@ main {
 ===================================================== */
 
 .home-search {
-  order: 10;
+  order:
+    10;
 }
 
 .today-shlok {
-  order: 20;
+  order:
+    20;
 }
 
 .welcome {
-  order: 30;
+  order:
+    30;
 }
 
 
 /* =====================================================
-   DARK MODE
+   DARK MODE — GLOBAL
 ===================================================== */
 
 html.dark,
@@ -1114,7 +1376,8 @@ body.dark,
 html[data-theme="dark"],
 body[data-theme="dark"],
 #root[data-theme="dark"] {
-  color: #e8f4ff;
+  color:
+    #e8f4ff;
 }
 
 
@@ -1135,9 +1398,14 @@ body[data-theme="dark"]::before {
     ),
     url("/images/gita-background.png");
 
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
+  background-size:
+    cover;
+
+  background-position:
+    center center;
+
+  background-repeat:
+    no-repeat;
 }
 
 
@@ -1149,7 +1417,8 @@ html.dark .subtitle,
 body.dark .subtitle,
 html[data-theme="dark"] .subtitle,
 body[data-theme="dark"] .subtitle {
-  color: #64b5f6;
+  color:
+    #64b5f6;
 }
 
 
@@ -1157,7 +1426,8 @@ html.dark .hero h1,
 body.dark .hero h1,
 html[data-theme="dark"] .hero h1,
 body[data-theme="dark"] .hero h1 {
-  color: #90caf9;
+  color:
+    #90caf9;
 }
 
 
@@ -1165,7 +1435,37 @@ html.dark .description,
 body.dark .description,
 html[data-theme="dark"] .description,
 body[data-theme="dark"] .description {
-  color: #b7d3e8;
+  color:
+    #b7d3e8;
+}
+
+
+/* =====================================================
+   DARK BUTTONS
+===================================================== */
+
+html.dark .hero > button,
+html.dark .continue-reading-button,
+html.dark .quiz-button,
+body.dark .hero > button,
+body.dark .continue-reading-button,
+body.dark .quiz-button,
+html[data-theme="dark"] .hero > button,
+html[data-theme="dark"] .continue-reading-button,
+html[data-theme="dark"] .quiz-button,
+body[data-theme="dark"] .hero > button,
+body[data-theme="dark"] .continue-reading-button,
+body[data-theme="dark"] .quiz-button {
+  background:
+    linear-gradient(
+      145deg,
+      #42a5f5,
+      #1976d2,
+      #0d47a1
+    );
+
+  color:
+    #ffffff;
 }
 
 
@@ -1198,7 +1498,8 @@ html.dark .search-title,
 body.dark .search-title,
 html[data-theme="dark"] .search-title,
 body[data-theme="dark"] .search-title {
-  color: #90caf9;
+  color:
+    #90caf9;
 }
 
 
@@ -1217,9 +1518,11 @@ body[data-theme="dark"] .search-fields input {
       #0b253b
     );
 
-  border-color: #315d7d;
+  border-color:
+    #315d7d;
 
-  color: #e8f4ff;
+  color:
+    #e8f4ff;
 
   box-shadow:
     inset 0 3px 6px rgba(0, 0, 0, 0.25),
@@ -1231,7 +1534,8 @@ html.dark .search-fields input::placeholder,
 body.dark .search-fields input::placeholder,
 html[data-theme="dark"] .search-fields input::placeholder,
 body[data-theme="dark"] .search-fields input::placeholder {
-  color: #8fb0c8;
+  color:
+    #8fb0c8;
 }
 
 
@@ -1239,7 +1543,8 @@ html.dark .search-fields input:focus,
 body.dark .search-fields input:focus,
 html[data-theme="dark"] .search-fields input:focus,
 body[data-theme="dark"] .search-fields input:focus {
-  border-color: #42a5f5;
+  border-color:
+    #42a5f5;
 
   box-shadow:
     0 0 0 3px rgba(66, 165, 245, 0.18),
@@ -1263,9 +1568,11 @@ body[data-theme="dark"] .search-message {
       #0d2940
     );
 
-  border-color: #315d7d;
+  border-color:
+    #315d7d;
 
-  color: #b9d8ed;
+  color:
+    #b9d8ed;
 }
 
 
@@ -1277,7 +1584,8 @@ html.dark .search-results > h3,
 body.dark .search-results > h3,
 html[data-theme="dark"] .search-results > h3,
 body[data-theme="dark"] .search-results > h3 {
-  color: #90caf9;
+  color:
+    #90caf9;
 }
 
 
@@ -1292,7 +1600,8 @@ body[data-theme="dark"] .search-result-card {
       #0e2b43
     );
 
-  border-color: #315d7d;
+  border-color:
+    #315d7d;
 
   box-shadow:
     0 8px 16px rgba(0, 0, 0, 0.28),
@@ -1304,7 +1613,8 @@ html.dark .result-chapter,
 body.dark .result-chapter,
 html[data-theme="dark"] .result-chapter,
 body[data-theme="dark"] .result-chapter {
-  color: #64b5f6;
+  color:
+    #64b5f6;
 }
 
 
@@ -1312,7 +1622,8 @@ html.dark .search-result-card h4,
 body.dark .search-result-card h4,
 html[data-theme="dark"] .search-result-card h4,
 body[data-theme="dark"] .search-result-card h4 {
-  color: #d9edff;
+  color:
+    #d9edff;
 }
 
 
@@ -1320,7 +1631,8 @@ html.dark .search-result-card p,
 body.dark .search-result-card p,
 html[data-theme="dark"] .search-result-card p,
 body[data-theme="dark"] .search-result-card p {
-  color: #a9c6da;
+  color:
+    #a9c6da;
 }
 
 
@@ -1328,7 +1640,8 @@ html.dark .search-result-card span,
 body.dark .search-result-card span,
 html[data-theme="dark"] .search-result-card span,
 body[data-theme="dark"] .search-result-card span {
-  color: #90caf9;
+  color:
+    #90caf9;
 }
 
 
@@ -1361,7 +1674,8 @@ html.dark .today-shlok-header h2,
 body.dark .today-shlok-header h2,
 html[data-theme="dark"] .today-shlok-header h2,
 body[data-theme="dark"] .today-shlok-header h2 {
-  color: #90caf9;
+  color:
+    #90caf9;
 }
 
 
@@ -1369,7 +1683,8 @@ html.dark .today-shlok-header p,
 body.dark .today-shlok-header p,
 html[data-theme="dark"] .today-shlok-header p,
 body[data-theme="dark"] .today-shlok-header p {
-  color: #9ebbd0;
+  color:
+    #9ebbd0;
 }
 
 
@@ -1388,7 +1703,8 @@ body[data-theme="dark"] .today-shlok-icon {
       #102f49
     );
 
-  border-color: #315d7d;
+  border-color:
+    #315d7d;
 
   box-shadow:
     0 8px 15px rgba(0, 0, 0, 0.25),
@@ -1411,9 +1727,11 @@ body[data-theme="dark"] .today-shlok-meta span {
       #102f48
     );
 
-  border-color: #315d7d;
+  border-color:
+    #315d7d;
 
-  color: #9dd3ff;
+  color:
+    #9dd3ff;
 
   box-shadow:
     0 4px 8px rgba(0, 0, 0, 0.18),
@@ -1436,11 +1754,14 @@ body[data-theme="dark"] .today-sanskrit {
       #0b263d
     );
 
-  border-color: #315d7d;
+  border-color:
+    #315d7d;
 
-  border-left-color: #42a5f5;
+  border-left-color:
+    #42a5f5;
 
-  color: #d9edff;
+  color:
+    #d9edff;
 
   box-shadow:
     inset 0 3px 8px rgba(0, 0, 0, 0.20),
@@ -1467,7 +1788,8 @@ body[data-theme="dark"] .today-message {
       #0d2b43
     );
 
-  border-color: #315d7d;
+  border-color:
+    #315d7d;
 
   box-shadow:
     0 6px 14px rgba(0, 0, 0, 0.20),
@@ -1483,7 +1805,8 @@ html[data-theme="dark"] .today-translation h3,
 html[data-theme="dark"] .today-message h3,
 body[data-theme="dark"] .today-translation h3,
 body[data-theme="dark"] .today-message h3 {
-  color: #90caf9;
+  color:
+    #90caf9;
 }
 
 
@@ -1495,7 +1818,8 @@ html[data-theme="dark"] .today-translation div,
 html[data-theme="dark"] .today-message div,
 body[data-theme="dark"] .today-translation div,
 body[data-theme="dark"] .today-message div {
-  color: #aec8da;
+  color:
+    #aec8da;
 }
 
 
@@ -1528,7 +1852,8 @@ html.dark .welcome h2,
 body.dark .welcome h2,
 html[data-theme="dark"] .welcome h2,
 body[data-theme="dark"] .welcome h2 {
-  color: #90caf9;
+  color:
+    #90caf9;
 }
 
 
@@ -1536,12 +1861,13 @@ html.dark .welcome p,
 body.dark .welcome p,
 html[data-theme="dark"] .welcome p,
 body[data-theme="dark"] .welcome p {
-  color: #aec8da;
+  color:
+    #aec8da;
 }
 
 
 /* =====================================================
-   TABLET
+   TABLET / MOBILE
 ===================================================== */
 
 @media (max-width: 768px) {
@@ -1551,7 +1877,8 @@ body[data-theme="dark"] .welcome p {
   ------------------------------------------------- */
 
   body::before {
-    top: 62px;
+    top:
+      62px;
 
     height:
       calc(100vh - 62px);
@@ -1565,7 +1892,8 @@ body[data-theme="dark"] .welcome p {
       ),
       url("/images/gita-background-mobile.png");
 
-    background-size: cover;
+    background-size:
+      cover;
 
     background-position:
       center top;
@@ -1592,7 +1920,8 @@ body[data-theme="dark"] .welcome p {
       ),
       url("/images/gita-background-mobile.png");
 
-    background-size: cover;
+    background-size:
+      cover;
 
     background-position:
       center top;
@@ -1607,12 +1936,11 @@ body[data-theme="dark"] .welcome p {
   ------------------------------------------------- */
 
   .hero {
-    min-height: auto;
+    min-height:
+      auto;
 
     padding:
-      48px 0 70px;
-
-    gap: 0;
+      42px 0 45px;
   }
 
 
@@ -1621,18 +1949,23 @@ body[data-theme="dark"] .welcome p {
   ------------------------------------------------- */
 
   .subtitle {
-    margin-bottom: 8px;
+    margin-bottom:
+      8px;
 
-    font-size: 18px;
+    font-size:
+      18px;
 
-    letter-spacing: 0.5px;
+    letter-spacing:
+      0.5px;
   }
 
 
   .hero h1 {
-    font-size: 42px;
+    font-size:
+      42px;
 
-    line-height: 1.25;
+    line-height:
+      1.25;
   }
 
 
@@ -1640,16 +1973,20 @@ body[data-theme="dark"] .welcome p {
     width:
       calc(100% - 32px);
 
-    max-width: 620px;
+    max-width:
+      620px;
 
     margin:
-      16px auto 28px;
+      14px auto 22px;
 
-    font-size: 16px;
+    font-size:
+      16px;
 
-    line-height: 1.8;
+    line-height:
+      1.8;
 
-    color: #111111;
+    color:
+      #111111;
 
     text-shadow:
       0 2px 3px rgba(255, 255, 255, 0.75),
@@ -1659,7 +1996,7 @@ body[data-theme="dark"] .welcome p {
 
   /* -------------------------------------------------
      CONTINUE READING
-     ALWAYS ONE LINE
+     ONE LINE
   ------------------------------------------------- */
 
   .hero > button,
@@ -1670,14 +2007,17 @@ body[data-theme="dark"] .welcome p {
     max-width:
       calc(100vw - 32px);
 
+    min-height:
+      58px;
+
     margin:
-      0 auto 34px;
+      0 auto 22px;
 
     padding:
-      14px 18px;
+      16px 24px;
 
     font-size:
-      14px;
+      15px;
 
     line-height:
       1.2;
@@ -1686,6 +2026,28 @@ body[data-theme="dark"] .welcome p {
       nowrap;
 
     flex-wrap:
+      nowrap;
+  }
+
+
+  /* -------------------------------------------------
+     QUIZ BUTTON
+  ------------------------------------------------- */
+
+  .quiz-button {
+    min-height:
+      56px;
+
+    margin:
+      0 auto 26px;
+
+    padding:
+      15px 25px;
+
+    font-size:
+      16px;
+
+    white-space:
       nowrap;
   }
 
@@ -1702,7 +2064,7 @@ body[data-theme="dark"] .welcome p {
       650px;
 
     margin:
-      0 auto 38px;
+      0 auto 28px;
 
     padding:
       24px 16px;
@@ -1726,7 +2088,8 @@ body[data-theme="dark"] .welcome p {
   ------------------------------------------------- */
 
   .search-fields {
-    width: 100%;
+    width:
+      100%;
 
     display:
       flex;
@@ -1766,21 +2129,18 @@ body[data-theme="dark"] .welcome p {
   }
 
 
-  /* Chapter */
   .search-fields input:nth-child(1) {
     flex:
       0 1 30%;
   }
 
 
-  /* Shlok */
   .search-fields input:nth-child(2) {
     flex:
       0 1 30%;
   }
 
 
-  /* Word search */
   .search-fields input:nth-child(3) {
     flex:
       1 1 40%;
@@ -1788,7 +2148,7 @@ body[data-theme="dark"] .welcome p {
 
 
   /* -------------------------------------------------
-     SEARCH BUTTON — ICON ONLY
+     SEARCH BUTTON
   ------------------------------------------------- */
 
   .search-button {
@@ -1837,7 +2197,7 @@ body[data-theme="dark"] .welcome p {
 
 
   /* -------------------------------------------------
-     TODAY SHLOK CARD
+     TODAY SHLOK
   ------------------------------------------------- */
 
   .today-shlok {
@@ -1848,7 +2208,7 @@ body[data-theme="dark"] .welcome p {
       650px;
 
     margin:
-      0 auto 40px;
+      0 auto 28px;
 
     padding:
       24px 18px;
@@ -1955,7 +2315,7 @@ body[data-theme="dark"] .welcome p {
 
 
   /* -------------------------------------------------
-     WELCOME CARD
+     WELCOME
   ------------------------------------------------- */
 
   .welcome {
@@ -1966,7 +2326,7 @@ body[data-theme="dark"] .welcome p {
       650px;
 
     margin:
-      0 auto 45px;
+      0 auto 28px;
 
     padding:
       32px 20px;
@@ -2010,7 +2370,7 @@ body[data-theme="dark"] .welcome p {
 
   .hero {
     padding:
-      42px 0 60px;
+      38px 0 40px;
   }
 
 
@@ -2037,7 +2397,7 @@ body[data-theme="dark"] .welcome p {
       calc(100% - 28px);
 
     margin:
-      14px auto 26px;
+      12px auto 20px;
 
     font-size:
       15px;
@@ -2049,28 +2409,57 @@ body[data-theme="dark"] .welcome p {
 
   /* -------------------------------------------------
      CONTINUE READING
-     ONE LINE GUARANTEED
+     WIDER + THICKER
+     ONE LINE
   ------------------------------------------------- */
 
   .hero > button,
   .continue-reading-button {
     max-width:
-      calc(100vw - 24px);
+      calc(100vw - 28px);
+
+    min-height:
+      56px;
 
     padding:
-      13px 14px;
+      15px 20px;
+
+    margin:
+      0 auto 22px;
 
     font-size:
-      13px;
+      14px;
 
     border-radius:
-      13px;
+      14px;
 
     white-space:
       nowrap;
 
     letter-spacing:
       -0.1px;
+  }
+
+
+  /* -------------------------------------------------
+     QUIZ
+  ------------------------------------------------- */
+
+  .quiz-button {
+    min-height:
+      54px;
+
+    padding:
+      14px 23px;
+
+    margin:
+      0 auto 26px;
+
+    font-size:
+      15px;
+
+    border-radius:
+      14px;
   }
 
 
@@ -2082,8 +2471,8 @@ body[data-theme="dark"] .welcome p {
     width:
       calc(100% - 24px);
 
-    margin-bottom:
-      36px;
+    margin:
+      0 auto 28px;
 
     padding:
       22px 12px;
@@ -2173,8 +2562,8 @@ body[data-theme="dark"] .welcome p {
     width:
       calc(100% - 24px);
 
-    margin-bottom:
-      38px;
+    margin:
+      0 auto 28px;
 
     padding:
       22px 15px;
@@ -2275,8 +2664,8 @@ body[data-theme="dark"] .welcome p {
     width:
       calc(100% - 24px);
 
-    margin-bottom:
-      35px;
+    margin:
+      0 auto 28px;
 
     padding:
       30px 16px;
@@ -2311,6 +2700,12 @@ body[data-theme="dark"] .welcome p {
 
 @media (max-width: 360px) {
 
+  .hero {
+    padding:
+      34px 0 36px;
+  }
+
+
   .hero h1 {
     font-size:
       33px;
@@ -2323,25 +2718,74 @@ body[data-theme="dark"] .welcome p {
   }
 
 
+  /* -------------------------------------------------
+     CONTINUE READING
+     SCREEN SIDE SPACE REMAINS
+  ------------------------------------------------- */
+
   .hero > button,
   .continue-reading-button {
     max-width:
       calc(100vw - 18px);
 
+    min-height:
+      54px;
+
     padding:
-      12px 11px;
+      14px 13px;
 
     font-size:
       12px;
+
+    border-radius:
+      13px;
+
+    white-space:
+      nowrap;
+
+    letter-spacing:
+      -0.15px;
   }
 
+
+  /* -------------------------------------------------
+     QUIZ
+  ------------------------------------------------- */
+
+  .quiz-button {
+    min-height:
+      52px;
+
+    padding:
+      13px 19px;
+
+    margin-bottom:
+      24px;
+
+    font-size:
+      14px;
+
+    border-radius:
+      13px;
+  }
+
+
+  /* -------------------------------------------------
+     SEARCH
+  ------------------------------------------------- */
 
   .home-search {
     width:
       calc(100% - 18px);
 
+    margin-bottom:
+      26px;
+
     padding:
       20px 9px;
+
+    border-radius:
+      18px;
   }
 
 
@@ -2361,8 +2805,8 @@ body[data-theme="dark"] .welcome p {
 
 
   .search-button {
-    flex-basis:
-      44px;
+    flex:
+      0 0 44px;
 
     width:
       44px;
@@ -2381,10 +2825,17 @@ body[data-theme="dark"] .welcome p {
   }
 
 
+  /* -------------------------------------------------
+     TODAY / WELCOME
+  ------------------------------------------------- */
+
   .today-shlok,
   .welcome {
     width:
       calc(100% - 18px);
+
+    margin-bottom:
+      26px;
   }
 }
 
