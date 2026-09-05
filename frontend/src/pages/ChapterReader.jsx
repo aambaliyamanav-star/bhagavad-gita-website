@@ -163,9 +163,20 @@ useEffect(() => {
         setError("");
         setActiveWordIndex(null);
 
-        const response = await fetch(
-          `${API_URL}/chapter/${currentChapterNumber}`
-        );
+const token =
+  localStorage.getItem("token");
+
+const response = await fetch(
+  `${API_URL}/chapter/${currentChapterNumber}`,
+  {
+    headers: token
+      ? {
+          Authorization:
+            `Bearer ${token}`,
+        }
+      : {},
+  }
+);
 
         const data =
           await response.json();
