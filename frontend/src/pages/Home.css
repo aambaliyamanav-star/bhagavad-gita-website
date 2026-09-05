@@ -300,87 +300,9 @@ body.dark .home-page .description {
 }
 
 
-/* =====================================================
-   MOBILE
-   ===================================================== */
-
-@media (max-width: 768px) {
-
-  .home-page::before {
-    /*
-      Mobile navbar ≈ 62px
-    */
-    top: 62px;
-
-    height: calc(100vh - 62px);
-
-    background-size: 100% 100%;
-    background-position: center top;
-    background-repeat: no-repeat;
-  }
 
 
-  .hero {
-    min-height: 100vh;
 
-    padding:
-      50px 15px 60px;
-  }
-
-
-  .hero h1 {
-    font-size: 38px;
-  }
-
-
-  .subtitle {
-    font-size: 18px;
-  }
-
-
-  .description {
-    font-size: 16px;
-    line-height: 1.8;
-  }
-}
-
-
-/* =====================================================
-   SMALL MOBILE
-   ===================================================== */
-
-@media (max-width: 480px) {
-
-  .home-page::before {
-    top: 62px;
-
-    height: calc(100vh - 62px);
-
-    background-size: 100% 100%;
-    background-position: center top;
-  }
-
-
-  .hero {
-    padding:
-      40px 12px 50px;
-  }
-
-
-  .hero h1 {
-    font-size: 32px;
-  }
-
-
-  .subtitle {
-    font-size: 16px;
-  }
-
-
-  .description {
-    font-size: 15px;
-  }
-}
 
 
 /* =====================================================
@@ -1943,266 +1865,9 @@ body[data-theme="dark"] .welcome p,
 }
 
 
-/* =====================================================
-   MOBILE / TABLET
-===================================================== */
 
-@media (max-width: 768px) {
 
-  .hero {
 
-    padding:
-      50px 15px 60px;
-  }
-
-
-  .hero::before {
-
-    inset: -15%;
-
-    background-position: center;
-
-    opacity: 0.14;
-
-    -webkit-mask-image:
-      radial-gradient(
-        ellipse at center,
-        black 20%,
-        rgba(0, 0, 0, 0.7) 52%,
-        transparent 88%
-      );
-
-    mask-image:
-      radial-gradient(
-        ellipse at center,
-        black 20%,
-        rgba(0, 0, 0, 0.7) 52%,
-        transparent 88%
-      );
-  }
-
-
-  .hero h1 {
-
-    font-size: 42px;
-  }
-
-
-  .subtitle {
-
-    font-size: 18px;
-  }
-
-
-  .description {
-
-    font-size: 16px;
-
-    line-height: 1.8;
-  }
-
-
-  .home-search {
-
-    padding: 22px 16px;
-
-    border-radius: 20px;
-
-    margin-bottom: 24px;
-  }
-
-
-  .search-fields {
-
-    flex-direction: column;
-
-    width: 100%;
-  }
-
-
-  .search-fields input,
-  .search-button {
-
-    width: 100%;
-
-    max-width: 100%;
-  }
-
-
-  .today-shlok {
-
-    padding: 22px 16px;
-
-    border-radius: 21px;
-
-    margin-bottom: 35px;
-  }
-
-
-  .today-shlok-header h2 {
-
-    font-size: 24px;
-  }
-
-
-  .today-sanskrit {
-
-    padding: 20px 14px;
-
-    font-size: 19px;
-
-    line-height: 1.9;
-  }
-
-
-  .welcome {
-
-    padding: 35px 20px;
-
-    border-radius: 21px;
-
-    margin-bottom: 35px;
-  }
-
-
-  .welcome h2 {
-
-    font-size: 26px;
-  }
-
-
-  .welcome p {
-
-    font-size: 16px;
-  }
-}
-
-
-/* =====================================================
-   SMALL MOBILE
-===================================================== */
-
-@media (max-width: 480px) {
-
-  .hero {
-
-    padding:
-      40px 12px 50px;
-  }
-
-
-  .hero::before {
-
-    inset: -20%;
-
-    opacity: 0.11;
-  }
-
-
-  .hero h1 {
-
-    font-size: 35px;
-  }
-
-
-  .subtitle {
-
-    font-size: 16px;
-
-    letter-spacing: 0.5px;
-  }
-
-
-  .description {
-
-    font-size: 15px;
-  }
-
-
-  .hero > button,
-  .continue-reading-button {
-
-    width: 100%;
-
-    padding:
-      13px 18px;
-
-    font-size: 15px;
-  }
-
-
-  .search-title {
-
-    font-size: 21px;
-  }
-
-
-  .today-shlok-header {
-
-    align-items: flex-start;
-
-    gap: 12px;
-  }
-
-
-  .today-shlok-icon {
-
-    width: 45px;
-    height: 45px;
-
-    font-size: 22px;
-  }
-
-
-  .today-shlok-header h2 {
-
-    font-size: 22px;
-  }
-
-
-  .today-shlok-header p {
-
-    font-size: 13px;
-  }
-
-
-  .today-shlok-meta {
-
-    flex-direction: column;
-
-    align-items: flex-start;
-  }
-
-
-  .today-sanskrit {
-
-    font-size: 17px;
-
-    padding: 18px 12px;
-  }
-
-
-  .today-translation,
-  .today-message {
-
-    padding: 16px;
-  }
-
-
-  .welcome {
-
-    padding:
-      30px 17px;
-
-    margin-bottom: 30px;
-  }
-
-
-  .welcome h2 {
-
-    font-size: 23px;
-  }
-}
 
 /* =====================================================
    GLOBAL PAGE BACKGROUND
@@ -3396,51 +3061,7 @@ body[data-theme="dark"] .hero::after,
     );
 }
 
-/* =====================================================
-   MOBILE — GITA BACKGROUND
-   ===================================================== */
 
-@media (max-width: 768px) {
-
-  .home-page::before {
-    background-image:
-      linear-gradient(
-        135deg,
-        rgba(239, 249, 255, 0.18) 0%,
-        rgba(220, 239, 255, 0.20) 50%,
-        rgba(201, 231, 255, 0.24) 100%
-      ),
-      url("/images/gita-background-mobile.png");
-
-    background-size: cover;
-    background-position: center top;
-    background-repeat: no-repeat;
-  }
-
-  html[data-theme="dark"] .home-page::before,
-  body[data-theme="dark"] .home-page::before,
-  html.dark .home-page::before,
-  body.dark .home-page::before {
-
-    background-image:
-      linear-gradient(
-        135deg,
-        rgba(3, 13, 25, 0.58) 0%,
-        rgba(5, 22, 39, 0.52) 50%,
-        rgba(5, 31, 53, 0.58) 100%
-      ),
-      url("/images/gita-background-mobile.png");
-
-    background-size: cover;
-    background-position: center top;
-    background-repeat: no-repeat;
-  }
-
-  .hero {
-    background-image: none;
-  }
-
-}
 
 /* =====================================================
    DARK HERO TEXT
@@ -3925,16 +3546,86 @@ body[data-theme="dark"] .welcome p,
 }
 
 
+
+
 /* =====================================================
-   MOBILE / TABLET
-===================================================== */
+   MOBILE
+   ===================================================== */
 
 @media (max-width: 768px) {
 
+  /* =================================================
+     MOBILE GITA BACKGROUND
+     ================================================= */
+
+  .home-page::before {
+
+    /*
+      Mobile navbar ≈ 62px
+    */
+
+    top: 62px;
+
+    height:
+      calc(100vh - 62px);
+
+    background-image:
+      linear-gradient(
+        135deg,
+        rgba(239, 249, 255, 0.18) 0%,
+        rgba(220, 239, 255, 0.20) 50%,
+        rgba(201, 231, 255, 0.24) 100%
+      ),
+      url("/images/gita-background-mobile.png");
+
+    background-size: cover;
+
+    background-position:
+      center top;
+
+    background-repeat: no-repeat;
+  }
+
+
+  /* =================================================
+     DARK MODE BACKGROUND
+     ================================================= */
+
+  html[data-theme="dark"] .home-page::before,
+  body[data-theme="dark"] .home-page::before,
+  html.dark .home-page::before,
+  body.dark .home-page::before {
+
+    background-image:
+      linear-gradient(
+        135deg,
+        rgba(3, 13, 25, 0.58) 0%,
+        rgba(5, 22, 39, 0.52) 50%,
+        rgba(5, 31, 53, 0.58) 100%
+      ),
+      url("/images/gita-background-mobile.png");
+
+    background-size: cover;
+
+    background-position:
+      center top;
+
+    background-repeat: no-repeat;
+  }
+
+
+  /* =================================================
+     HERO
+     ================================================= */
+
   .hero {
+
+    min-height: 100vh;
 
     padding:
       50px 15px 60px;
+
+    background-image: none;
   }
 
 
@@ -3967,6 +3658,22 @@ body[data-theme="dark"] .welcome p,
   .hero h1 {
 
     font-size: 42px;
+
+    color: #063b8f;
+
+    text-shadow:
+      0 2px 0 rgba(255, 255, 255, 0.75),
+      0 4px 10px rgba(0, 25, 70, 0.65);
+  }
+
+
+  .hero h2 {
+
+    color: #06458f;
+
+    text-shadow:
+      0 2px 6px rgba(255, 255, 255, 0.7),
+      0 3px 8px rgba(0, 25, 70, 0.65);
   }
 
 
@@ -3984,40 +3691,174 @@ body[data-theme="dark"] .welcome p,
   }
 
 
-  .home-search {
+  .hero p {
 
-    padding: 22px 16px;
+    color: #111111;
 
-    border-radius: 20px;
-
-    margin-bottom: 24px;
+    text-shadow:
+      0 2px 3px rgba(255, 255, 255, 0.75),
+      0 3px 8px rgba(0, 0, 0, 0.55);
   }
 
+
+  .hero .sacred-title,
+  .hero .hero-sacred-title {
+
+    color: #0751a5;
+
+    text-shadow:
+      0 2px 5px rgba(255, 255, 255, 0.8),
+      0 3px 8px rgba(0, 25, 70, 0.6);
+  }
+
+
+  /* =================================================
+     SEARCH CARD
+     ================================================= */
+
+  .home-search {
+
+    width: 92%;
+
+    max-width: 1050px;
+
+    margin:
+      10px auto 35px;
+
+    padding:
+      22px 16px;
+
+    border-radius: 22px;
+
+    box-sizing: border-box;
+  }
+
+
+  /* =================================================
+     SEARCH INPUTS — ONE LINE
+     ================================================= */
 
   .search-fields {
 
-    flex-direction: column;
+    display: grid;
+
+    grid-template-columns:
+      1fr 1fr 1.5fr 42px;
+
+    align-items: center;
+
+    gap: 6px;
 
     width: 100%;
+
+    flex-direction: row;
+
+    flex-wrap: nowrap;
   }
 
 
-  .search-fields input,
+  .search-fields input {
+
+    width: 100%;
+
+    min-width: 0;
+
+    height: 48px;
+
+    padding:
+      0 9px;
+
+    border-radius: 11px;
+
+    font-size: 13px;
+
+    box-sizing: border-box;
+  }
+
+
+  .search-fields input::placeholder {
+
+    font-size: 12px;
+  }
+
+
+  /* =================================================
+     SEARCH BUTTON — ICON ONLY
+     ================================================= */
+
   .search-button {
 
-    width: 100%;
+    width: 42px;
 
-    max-width: 100%;
+    min-width: 42px;
+
+    height: 48px;
+
+    padding: 0;
+
+    border-radius: 11px;
+
+    font-size: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    box-sizing: border-box;
   }
 
+
+  .search-button::before {
+
+    content: "🔍";
+
+    font-size: 20px;
+
+    line-height: 1;
+  }
+
+
+  /* =================================================
+     TODAY'S SHLOK CARD
+     ================================================= */
 
   .today-shlok {
 
-    padding: 22px 16px;
+    width: 92%;
 
-    border-radius: 21px;
+    max-width: 1050px;
 
-    margin-bottom: 35px;
+    margin:
+      0 auto 35px;
+
+    padding:
+      22px 18px;
+
+    border-radius: 22px;
+
+    box-sizing: border-box;
+  }
+
+
+  .today-shlok-header {
+
+    align-items: flex-start;
+
+    gap: 12px;
+  }
+
+
+  .today-shlok-icon {
+
+    width: 48px;
+
+    height: 48px;
+
+    font-size: 23px;
+
+    flex-shrink: 0;
   }
 
 
@@ -4027,23 +3868,63 @@ body[data-theme="dark"] .welcome p,
   }
 
 
+  .today-shlok-header p {
+
+    font-size: 13px;
+
+    line-height: 1.6;
+  }
+
+
+  .today-shlok-meta {
+
+    flex-direction: column;
+
+    align-items: flex-start;
+  }
+
+
   .today-sanskrit {
 
-    padding: 20px 14px;
+    padding:
+      20px 14px;
 
     font-size: 19px;
 
     line-height: 1.9;
+
+    overflow-wrap: anywhere;
+
+    word-break: break-word;
   }
 
 
+  .today-translation,
+  .today-message {
+
+    padding: 16px;
+  }
+
+
+  /* =================================================
+     GITA WHY / WELCOME CARD
+     ================================================= */
+
   .welcome {
 
-    padding: 35px 20px;
+    width: 92%;
 
-    border-radius: 21px;
+    max-width: 900px;
 
-    margin-bottom: 35px;
+    margin:
+      0 auto 35px;
+
+    padding:
+      35px 20px;
+
+    border-radius: 22px;
+
+    box-sizing: border-box;
   }
 
 
@@ -4056,20 +3937,47 @@ body[data-theme="dark"] .welcome p,
   .welcome p {
 
     font-size: 16px;
+
+    line-height: 1.9;
   }
+
 }
 
 
 /* =====================================================
    SMALL MOBILE
-===================================================== */
+   ===================================================== */
 
 @media (max-width: 480px) {
+
+  /* =================================================
+     BACKGROUND
+     ================================================= */
+
+  .home-page::before {
+
+    top: 62px;
+
+    height:
+      calc(100vh - 62px);
+
+    background-size: cover;
+
+    background-position:
+      center top;
+
+    opacity: 1;
+  }
+
+
+  /* =================================================
+     HERO
+     ================================================= */
 
   .hero {
 
     padding:
-      40px 12px 50px;
+      40px 10px 50px;
   }
 
 
@@ -4077,7 +3985,7 @@ body[data-theme="dark"] .welcome p,
 
     inset: -20%;
 
-    opacity: 0.12;
+    opacity: 0.11;
   }
 
 
@@ -4098,42 +4006,136 @@ body[data-theme="dark"] .welcome p,
   .description {
 
     font-size: 15px;
+
+    line-height: 1.8;
   }
 
 
-  .hero > button,
-  .continue-reading-button {
+  /* =================================================
+     SEARCH CARD
+     ================================================= */
 
-    width: 100%;
+  .home-search {
+
+    width: 92%;
 
     padding:
-      13px 18px;
+      20px 12px;
 
-    font-size: 15px;
+    margin:
+      8px auto 30px;
+
+    border-radius: 20px;
   }
 
 
   .search-title {
 
     font-size: 21px;
+
+    margin-bottom: 18px;
+  }
+
+
+  /* =================================================
+     SEARCH — ONE LINE
+     ================================================= */
+
+  .search-fields {
+
+    grid-template-columns:
+      1fr 1fr 1.5fr 40px;
+
+    gap: 5px;
+
+    width: 100%;
+  }
+
+
+  .search-fields input {
+
+    width: 100%;
+
+    min-width: 0;
+
+    height: 45px;
+
+    padding:
+      0 7px;
+
+    font-size: 12px;
+
+    border-radius: 10px;
+
+    box-sizing: border-box;
+  }
+
+
+  .search-fields input::placeholder {
+
+    font-size: 11px;
+  }
+
+
+  /* =================================================
+     SEARCH BUTTON — ICON ONLY
+     ================================================= */
+
+  .search-button {
+
+    width: 40px;
+
+    min-width: 40px;
+
+    height: 45px;
+
+    padding: 0;
+
+    border-radius: 10px;
+
+    font-size: 0;
+  }
+
+
+  .search-button::before {
+
+    font-size: 19px;
+  }
+
+
+  /* =================================================
+     TODAY'S SHLOK
+     ================================================= */
+
+  .today-shlok {
+
+    width: 92%;
+
+    padding:
+      20px 14px;
+
+    margin:
+      0 auto 30px;
+
+    border-radius: 21px;
+
+    box-sizing: border-box;
   }
 
 
   .today-shlok-header {
 
-    align-items: flex-start;
-
-    gap: 12px;
+    gap: 10px;
   }
 
 
   .today-shlok-icon {
 
-    width: 45px;
+    width: 44px;
 
-    height: 45px;
+    height: 44px;
 
-    font-size: 22px;
+    font-size: 21px;
   }
 
 
@@ -4145,7 +4147,9 @@ body[data-theme="dark"] .welcome p,
 
   .today-shlok-header p {
 
-    font-size: 13px;
+    font-size: 12.5px;
+
+    line-height: 1.6;
   }
 
 
@@ -4161,84 +4165,55 @@ body[data-theme="dark"] .welcome p,
 
     font-size: 17px;
 
-    padding: 18px 12px;
+    padding:
+      18px 12px;
+
+    line-height: 1.9;
   }
 
 
   .today-translation,
   .today-message {
 
-    padding: 16px;
+    padding: 15px;
   }
 
 
+  /* =================================================
+     GITA WHY
+     ================================================= */
+
   .welcome {
+
+    width: 92%;
 
     padding:
       30px 17px;
 
-    margin-bottom: 30px;
+    margin:
+      0 auto 30px;
+
+    border-radius: 21px;
+
+    box-sizing: border-box;
   }
 
 
   .welcome h2 {
 
     font-size: 23px;
-  }
-}
 
-
-
-/* =====================================================
-   MOBILE — HERO TEXT VISIBILITY
-   THEME BLUE
-   ===================================================== */
-
-@media (max-width: 768px) {
-
-  .hero h1 {
-    color: #063b8f;
-    text-shadow:
-      0 2px 0 rgba(255, 255, 255, 0.75),
-      0 4px 10px rgba(0, 25, 70, 0.65);
+    line-height: 1.4;
   }
 
-  .hero h2 {
-    color: #06458f;
-    text-shadow:
-      0 2px 6px rgba(255, 255, 255, 0.7),
-      0 3px 8px rgba(0, 25, 70, 0.65);
-  }
 
-  .hero p {
-    color: #164f87;
-    text-shadow:
-      0 1px 3px rgba(255, 255, 255, 0.8),
-      0 2px 6px rgba(0, 25, 70, 0.55);
-  }
+  .welcome p {
 
-  .hero .sacred-title,
-  .hero .hero-sacred-title {
-    color: #0751a5;
-    text-shadow:
-      0 2px 5px rgba(255, 255, 255, 0.8),
-      0 3px 8px rgba(0, 25, 70, 0.6);
+    font-size: 15px;
+
+    line-height: 1.9;
   }
 
 }
 
-/* =====================================================
-   MOBILE — HERO DESCRIPTION
-   ===================================================== */
 
-@media (max-width: 768px) {
-
-  .hero p {
-    color: #111111;
-
-    text-shadow:
-      0 2px 3px rgba(255, 255, 255, 0.75),
-      0 3px 8px rgba(0, 0, 0, 0.55);
-  }
-
-}
