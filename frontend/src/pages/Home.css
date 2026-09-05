@@ -1052,12 +1052,15 @@ main {
    TODAY SANSKRIT
 ===================================================== */
 
-.today-sanskrit {
-  padding:
-    25px;
+/* =====================================================
+   TODAY SANSKRIT
+   MAXIMUM 2 LINES ON MOBILE
+===================================================== */
 
-  border-radius:
-    17px;
+.today-sanskrit {
+  padding: 25px 20px;
+
+  border-radius: 17px;
 
   background:
     linear-gradient(
@@ -1079,14 +1082,39 @@ main {
     22px;
 
   line-height:
-    2;
+    1.45;
 
   text-align:
     center;
 
+  display:
+    flex;
+
+ align-items:
+    center;
+
+  justify-content:
+    center;
+
+  overflow:
+    hidden;
+
   box-shadow:
     inset 0 3px 8px rgba(50, 110, 155, 0.06),
     0 5px 12px rgba(40, 110, 165, 0.08);
+}
+
+
+.today-sanskrit-text {
+  width: 100%;
+
+  line-height: 1.45;
+
+  text-align: center;
+
+  overflow-wrap: break-word;
+
+  word-break: normal;
 }
 
 
@@ -2275,16 +2303,34 @@ body[data-theme="dark"] .welcome p {
   }
 
 
-  .today-sanskrit {
-    padding:
-      20px 14px;
+.today-sanskrit {
+  padding:
+    20px 14px;
 
-    font-size:
-      19px;
+  font-size:
+    19px;
 
-    line-height:
-      1.9;
-  }
+  line-height:
+    1.45;
+
+  overflow:
+    hidden;
+
+  min-height:
+    110px;
+
+  max-height:
+    110px;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+}
 
 
   .today-translation,
@@ -2557,6 +2603,32 @@ body[data-theme="dark"] .welcome p {
   /* -------------------------------------------------
      TODAY SHLOK
   ------------------------------------------------- */
+
+  .today-sanskrit {
+  padding:
+    18px 11px;
+
+  font-size:
+    17px;
+
+  line-height:
+    1.45;
+
+  min-height:
+    100px;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    center;
+
+  overflow:
+    hidden;
+}
 
   .today-shlok {
     width:
