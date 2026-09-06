@@ -1,10 +1,18 @@
 /* =====================================================
-   REGISTER PAGE - BLUE THEME
+   REGISTER PAGE
+   LIGHT + DARK MODE
+   PREMIUM BLUE THEME
+===================================================== */
+
+
+/* =====================================================
+   1. REGISTER PAGE - LIGHT MODE
 ===================================================== */
 
 .register-page {
   min-height: 100vh;
   width: 100%;
+
   box-sizing: border-box;
 
   display: flex;
@@ -12,6 +20,10 @@
   align-items: center;
 
   padding: 40px 20px;
+
+  position: relative;
+
+  overflow-x: hidden;
 
   background:
     radial-gradient(
@@ -31,22 +43,31 @@
       #eef6ff 100%
     );
 
-  position: relative;
-  overflow-x: hidden;
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
 }
 
 
 /* =====================================================
-   REGISTER CARD
+   2. REGISTER CARD - LIGHT
 ===================================================== */
 
 .register-card {
   width: 100%;
   max-width: 520px;
 
+  box-sizing: border-box;
+
   padding: 34px 38px 28px;
 
-  box-sizing: border-box;
+  position: relative;
+
+  overflow: hidden;
+
+  border-radius: 24px;
+
+  border: 1px solid rgba(72, 139, 224, 0.35);
 
   background:
     linear-gradient(
@@ -56,22 +77,21 @@
       #edf5ff 100%
     );
 
-  border: 1px solid rgba(72, 139, 224, 0.35);
-
-  border-radius: 24px;
-
   box-shadow:
     0 25px 55px rgba(32, 88, 150, 0.18),
     0 8px 20px rgba(45, 105, 175, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.95);
 
-  position: relative;
-
-  overflow: hidden;
+  transition:
+    background 0.3s ease,
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 
-/* Top shine */
+/* =====================================================
+   3. TOP BLUE SHINE
+===================================================== */
 
 .register-card::before {
   content: "";
@@ -97,14 +117,19 @@
 
 
 /* =====================================================
-   HEADER
+   4. HEADER
 ===================================================== */
 
 .register-header {
   text-align: center;
+
   margin-bottom: 25px;
 }
 
+
+/* =====================================================
+   OM
+===================================================== */
 
 .register-om {
   width: 58px;
@@ -140,6 +165,10 @@
 }
 
 
+/* =====================================================
+   LOTUS
+===================================================== */
+
 .register-lotus {
   font-size: 24px;
 
@@ -153,6 +182,10 @@
 }
 
 
+/* =====================================================
+   HEADER TITLE
+===================================================== */
+
 .register-header h1 {
   margin: 5px 0 7px;
 
@@ -163,8 +196,15 @@
   color: #174f8f;
 
   letter-spacing: 0.2px;
+
+  text-shadow:
+    0 2px 5px rgba(30, 90, 150, 0.12);
 }
 
+
+/* =====================================================
+   HEADER DESCRIPTION
+===================================================== */
 
 .register-header p {
   margin: 0;
@@ -178,25 +218,33 @@
 
 
 /* =====================================================
-   PROGRESS
+   5. REGISTRATION PROGRESS
 ===================================================== */
 
 .register-progress {
   width: 100%;
 
   display: flex;
+
   align-items: flex-start;
+
   justify-content: center;
 
   margin: 20px 0 25px;
 }
 
 
+/* =====================================================
+   STEP
+===================================================== */
+
 .register-step {
   min-width: 60px;
 
   display: flex;
+
   flex-direction: column;
+
   align-items: center;
 
   gap: 6px;
@@ -205,37 +253,52 @@
 }
 
 
+/* =====================================================
+   STEP CIRCLE
+===================================================== */
+
 .register-step span {
   width: 35px;
   height: 35px;
 
   display: flex;
+
   align-items: center;
   justify-content: center;
 
   border-radius: 50%;
 
   font-size: 14px;
+
   font-weight: 800;
+
+  color: #7690a8;
 
   background: #edf4fb;
 
   border: 2px solid #c7d8e9;
-
-  color: #7690a8;
 
   box-shadow:
     inset 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 
+/* =====================================================
+   STEP LABEL
+===================================================== */
+
 .register-step small {
   font-size: 11px;
+
   font-weight: 700;
 
   white-space: nowrap;
 }
 
+
+/* =====================================================
+   ACTIVE STEP
+===================================================== */
 
 .register-step.active span {
   color: #ffffff;
@@ -260,6 +323,10 @@
 }
 
 
+/* =====================================================
+   PROGRESS LINE
+===================================================== */
+
 .register-progress-line {
   width: 55px;
   height: 4px;
@@ -270,9 +337,15 @@
 
   background: #d5e3f0;
 
-  transition: all 0.3s ease;
+  transition:
+    background 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
+
+/* =====================================================
+   ACTIVE PROGRESS LINE
+===================================================== */
 
 .register-progress-line.active {
   background:
@@ -288,7 +361,7 @@
 
 
 /* =====================================================
-   MESSAGE
+   6. MESSAGE
 ===================================================== */
 
 .register-message {
@@ -312,6 +385,10 @@
 }
 
 
+/* =====================================================
+   SUCCESS MESSAGE
+===================================================== */
+
 .register-message.success {
   color: #175b9f;
 
@@ -329,23 +406,39 @@
 }
 
 
+/* =====================================================
+   ERROR MESSAGE
+===================================================== */
+
 .register-message.error {
   color: #a33e4b;
 
-  background: #fff0f2;
+  background:
+    linear-gradient(
+      135deg,
+      #fff4f5,
+      #ffecef
+    );
 
   border: 1px solid #f0b8c0;
+
+  box-shadow:
+    0 5px 12px rgba(180, 60, 80, 0.08);
 }
 
 
 /* =====================================================
-   FORM
+   7. FORM
 ===================================================== */
 
 .register-form {
   width: 100%;
 }
 
+
+/* =====================================================
+   FORM FIELD
+===================================================== */
 
 .register-field {
   width: 100%;
@@ -354,8 +447,13 @@
 }
 
 
+/* =====================================================
+   FIELD LABEL
+===================================================== */
+
 .register-field label {
   display: flex;
+
   align-items: center;
 
   gap: 8px;
@@ -370,17 +468,26 @@
 }
 
 
+/* =====================================================
+   FIELD ICON
+===================================================== */
+
 .field-icon {
   width: 28px;
   height: 28px;
 
   display: inline-flex;
+
   align-items: center;
   justify-content: center;
+
+  flex-shrink: 0;
 
   border-radius: 8px;
 
   font-size: 15px;
+
+  color: #2368b2;
 
   background:
     linear-gradient(
@@ -396,7 +503,9 @@
 }
 
 
-/* Keep all icons in blue theme */
+/* =====================================================
+   ALL FIELD ICON COLORS
+===================================================== */
 
 .field-icon.purple,
 .field-icon.orange,
@@ -416,7 +525,7 @@
 
 
 /* =====================================================
-   INPUTS
+   8. INPUTS
 ===================================================== */
 
 .register-field input {
@@ -452,19 +561,32 @@
   transition:
     border-color 0.25s ease,
     box-shadow 0.25s ease,
-    transform 0.25s ease;
+    transform 0.25s ease,
+    background 0.25s ease;
 }
 
+
+/* =====================================================
+   PLACEHOLDER
+===================================================== */
 
 .register-field input::placeholder {
   color: #9aafc3;
 }
 
 
+/* =====================================================
+   INPUT HOVER
+===================================================== */
+
 .register-field input:hover {
   border-color: #8db8e2;
 }
 
+
+/* =====================================================
+   INPUT FOCUS
+===================================================== */
 
 .register-field input:focus {
   border-color: #3b88df;
@@ -480,7 +602,7 @@
 
 
 /* =====================================================
-   BIRTH DATE
+   9. BIRTH DATE
 ===================================================== */
 
 .birth-date-container {
@@ -491,14 +613,23 @@
   position: relative;
 
   display: flex;
+
   align-items: center;
 }
 
+
+/* =====================================================
+   DATE INPUT
+===================================================== */
 
 .birth-date-display {
   padding-right: 53px !important;
 }
 
+
+/* =====================================================
+   CALENDAR BUTTON
+===================================================== */
 
 .calendar-button {
   position: absolute;
@@ -515,6 +646,8 @@
   cursor: pointer;
 
   font-size: 17px;
+
+  color: #245d98;
 
   background:
     linear-gradient(
@@ -535,6 +668,10 @@
 }
 
 
+/* =====================================================
+   CALENDAR HOVER
+===================================================== */
+
 .calendar-button:hover {
   transform: translateY(-2px);
 
@@ -544,12 +681,20 @@
 }
 
 
+/* =====================================================
+   CALENDAR ACTIVE
+===================================================== */
+
 .calendar-button:active {
   transform:
     translateY(1px)
     scale(0.97);
 }
 
+
+/* =====================================================
+   HIDDEN DATE PICKER
+===================================================== */
 
 .hidden-date-picker {
   position: absolute;
@@ -564,7 +709,7 @@
 
 
 /* =====================================================
-   MAIN BLUE BUTTON
+   10. MAIN REGISTER BUTTON
 ===================================================== */
 
 .register-submit {
@@ -575,6 +720,10 @@
   margin-top: 5px;
 
   padding: 11px 18px;
+
+  position: relative;
+
+  overflow: hidden;
 
   border: 1px solid #1966bd;
 
@@ -603,17 +752,15 @@
     0 13px 22px rgba(28, 103, 190, 0.22),
     inset 0 2px 2px rgba(255, 255, 255, 0.35);
 
-  position: relative;
-
-  overflow: hidden;
-
   transition:
     transform 0.18s ease,
     box-shadow 0.18s ease;
 }
 
 
-/* Shine */
+/* =====================================================
+   BUTTON SHINE
+===================================================== */
 
 .register-submit::before {
   content: "";
@@ -645,6 +792,10 @@
 }
 
 
+/* =====================================================
+   BUTTON HOVER
+===================================================== */
+
 .register-submit:hover {
   transform: translateY(-3px);
 
@@ -655,6 +806,10 @@
 }
 
 
+/* =====================================================
+   BUTTON ACTIVE
+===================================================== */
+
 .register-submit:active {
   transform: translateY(4px);
 
@@ -663,6 +818,10 @@
     0 7px 12px rgba(28, 103, 190, 0.2);
 }
 
+
+/* =====================================================
+   BUTTON DISABLED
+===================================================== */
 
 .register-submit:disabled {
   cursor: not-allowed;
@@ -678,7 +837,7 @@
 
 
 /* =====================================================
-   OTP SECTION
+   11. OTP SECTION
 ===================================================== */
 
 .otp-section {
@@ -688,6 +847,10 @@
 }
 
 
+/* =====================================================
+   OTP ICON
+===================================================== */
+
 .otp-icon {
   width: 67px;
   height: 67px;
@@ -695,12 +858,15 @@
   margin: 5px auto 12px;
 
   display: flex;
+
   align-items: center;
   justify-content: center;
 
   border-radius: 50%;
 
   font-size: 30px;
+
+  color: #2167ae;
 
   background:
     linear-gradient(
@@ -717,6 +883,10 @@
 }
 
 
+/* =====================================================
+   OTP TITLE
+===================================================== */
+
 .otp-section h2 {
   margin: 0 0 7px;
 
@@ -728,17 +898,23 @@
 }
 
 
+/* =====================================================
+   OTP DESCRIPTION
+===================================================== */
+
 .otp-section > p {
   margin: 0 0 20px;
 
   color: #7189a2;
 
   font-size: 13px;
+
+  line-height: 1.6;
 }
 
 
 /* =====================================================
-   SECONDARY BUTTON
+   12. SECONDARY BUTTON
 ===================================================== */
 
 .register-secondary {
@@ -780,6 +956,10 @@
 }
 
 
+/* =====================================================
+   SECONDARY HOVER
+===================================================== */
+
 .register-secondary:hover {
   transform: translateY(-2px);
 
@@ -795,19 +975,28 @@
 }
 
 
+/* =====================================================
+   SECONDARY ACTIVE
+===================================================== */
+
 .register-secondary:active {
   transform: translateY(1px);
 }
 
 
+/* =====================================================
+   SECONDARY DISABLED
+===================================================== */
+
 .register-secondary:disabled {
   cursor: not-allowed;
+
   opacity: 0.6;
 }
 
 
 /* =====================================================
-   BACK BUTTON
+   13. BACK BUTTON
 ===================================================== */
 
 .register-back {
@@ -843,7 +1032,7 @@
 
 
 /* =====================================================
-   VERIFIED BOX
+   14. VERIFIED BOX
 ===================================================== */
 
 .verified-box {
@@ -880,7 +1069,7 @@
 
 
 /* =====================================================
-   PASSWORD HINT
+   15. PASSWORD HINT
 ===================================================== */
 
 .password-hint {
@@ -895,7 +1084,7 @@
 
 
 /* =====================================================
-   LOGIN LINK
+   16. LOGIN LINK
 ===================================================== */
 
 .register-login {
@@ -947,7 +1136,7 @@
 
 
 /* =====================================================
-   BOTTOM OM
+   17. BOTTOM OM
 ===================================================== */
 
 .register-bottom {
@@ -998,494 +1187,15 @@
 
 
 /* =====================================================
-   DARK MODE
+   =====================================================
+   18. DARK MODE
+   CLASS BASED ONLY
+   =====================================================
    ===================================================== */
-
-@media (prefers-color-scheme: dark) {
-
-  .register-page {
-    background:
-      radial-gradient(
-        circle at 15% 20%,
-        rgba(48, 116, 190, 0.22),
-        transparent 30%
-      ),
-      radial-gradient(
-        circle at 85% 80%,
-        rgba(30, 91, 165, 0.20),
-        transparent 32%
-      ),
-      linear-gradient(
-        135deg,
-        #071b2d 0%,
-        #0b2943 48%,
-        #071d31 100%
-      );
-  }
-
-
-  .register-card {
-    background:
-      linear-gradient(
-        145deg,
-        #102f49 0%,
-        #0d2941 48%,
-        #0a2238 100%
-      );
-
-    border-color: rgba(75, 145, 220, 0.42);
-
-    box-shadow:
-      0 25px 55px rgba(0, 0, 0, 0.52),
-      0 8px 22px rgba(0, 0, 0, 0.38),
-      0 0 30px rgba(39, 111, 184, 0.10),
-      inset 0 1px 0 rgba(111, 174, 230, 0.12);
-  }
-
-
-  .register-card::before {
-    background:
-      linear-gradient(
-        90deg,
-        #1e67ae,
-        #438fd4,
-        #2b78bb,
-        #5a9ddd,
-        #1e67ae
-      );
-  }
-
-
-  .register-om {
-    color: #8bc4ff;
-
-    background:
-      linear-gradient(
-        145deg,
-        #164367,
-        #0d2d49
-      );
-
-    border-color: #347ab7;
-
-    box-shadow:
-      0 8px 20px rgba(0, 0, 0, 0.38),
-      0 0 16px rgba(48, 125, 202, 0.14),
-      inset 0 2px 4px rgba(117, 181, 235, 0.12);
-
-    text-shadow:
-      0 2px 5px rgba(72, 157, 229, 0.28);
-  }
-
-
-  .register-lotus {
-    filter:
-      drop-shadow(
-        0 3px 6px rgba(0, 0, 0, 0.42)
-      );
-  }
-
-
-  .register-header h1 {
-    color: #82bfff;
-
-    text-shadow:
-      0 2px 7px rgba(39, 126, 204, 0.25);
-  }
-
-
-  .register-header p {
-    color: #9ab6d0;
-  }
-
-
-  .register-step {
-    color: #7597b4;
-  }
-
-
-  .register-step span {
-    background:
-      linear-gradient(
-        145deg,
-        #17364f,
-        #102b42
-      );
-
-    border-color: #31536e;
-
-    color: #82a4bf;
-
-    box-shadow:
-      inset 0 2px 5px rgba(0, 0, 0, 0.30);
-  }
-
-
-  .register-step.active span {
-    color: #ffffff;
-
-    border-color: #3889d5;
-
-    background:
-      linear-gradient(
-        145deg,
-        #398bd3,
-        #145e9f
-      );
-
-    box-shadow:
-      0 6px 14px rgba(0, 0, 0, 0.38),
-      0 0 12px rgba(43, 133, 215, 0.16),
-      inset 0 2px 3px rgba(133, 202, 255, 0.18);
-  }
-
-
-  .register-step.active small {
-    color: #78b7ee;
-  }
-
-
-  .register-progress-line {
-    background: #1c3a52;
-  }
-
-
-  .register-progress-line.active {
-    background:
-      linear-gradient(
-        90deg,
-        #2879bd,
-        #4d9de0
-      );
-
-    box-shadow:
-      0 2px 8px rgba(0, 0, 0, 0.30),
-      0 0 8px rgba(49, 132, 210, 0.14);
-  }
-
-
-  .register-message.success {
-    color: #82c3f7;
-
-    background:
-      linear-gradient(
-        135deg,
-        #123b5b,
-        #0d304b
-      );
-
-    border-color: #286b9f;
-
-    box-shadow:
-      0 5px 14px rgba(0, 0, 0, 0.25);
-  }
-
-
-  .register-message.error {
-    color: #ff9eab;
-
-    background:
-      linear-gradient(
-        135deg,
-        #3a202a,
-        #301a25
-      );
-
-    border-color: #743b49;
-  }
-
-
-  .register-field label {
-    color: #9bc5e7;
-  }
-
-
-  .field-icon {
-    background:
-      linear-gradient(
-        145deg,
-        #153b59,
-        #102f48
-      );
-
-    border-color: #315d7d;
-
-    box-shadow:
-      0 3px 8px rgba(0, 0, 0, 0.28);
-  }
-
-
-  .field-icon.purple,
-  .field-icon.orange,
-  .field-icon.blue,
-  .field-icon.pink {
-    color: #8dc5f7;
-
-    background:
-      linear-gradient(
-        145deg,
-        #153b59,
-        #102f48
-      );
-
-    border-color: #315d7d;
-  }
-
-
-  .register-field input {
-    border-color: #315b79;
-
-    background:
-      linear-gradient(
-        145deg,
-        #12334e,
-        #0d2a42
-      );
-
-    color: #d3e9fb;
-
-    box-shadow:
-      inset 0 2px 5px rgba(0, 0, 0, 0.28),
-      0 3px 9px rgba(0, 0, 0, 0.22);
-  }
-
-
-  .register-field input::placeholder {
-    color: #7595b0;
-  }
-
-
-  .register-field input:hover {
-    border-color: #4c84ad;
-  }
-
-
-  .register-field input:focus {
-    border-color: #4597d9;
-
-    background:
-      linear-gradient(
-        145deg,
-        #143a58,
-        #0f304a
-      );
-
-    box-shadow:
-      0 0 0 3px rgba(59, 136, 223, 0.16),
-      0 7px 18px rgba(0, 0, 0, 0.30),
-      0 0 12px rgba(55, 143, 214, 0.10);
-  }
-
-
-  .calendar-button {
-    background:
-      linear-gradient(
-        145deg,
-        #174466,
-        #10324e
-      );
-
-    border-color: #376888;
-
-    box-shadow:
-      0 4px 9px rgba(0, 0, 0, 0.32),
-      inset 0 2px 3px rgba(110, 178, 231, 0.10);
-  }
-
-
-  .calendar-button:hover {
-    box-shadow:
-      0 7px 14px rgba(0, 0, 0, 0.40),
-      0 0 10px rgba(53, 137, 207, 0.10),
-      inset 0 2px 3px rgba(110, 178, 231, 0.12);
-  }
-
-
-  .register-submit {
-    background:
-      linear-gradient(
-        145deg,
-        #398bd3 0%,
-        #2878bd 45%,
-        #155d9c 100%
-      );
-
-    border-color: #2b78b9;
-
-    box-shadow:
-      0 8px 0 #0b416e,
-      0 13px 24px rgba(0, 0, 0, 0.40),
-      0 0 12px rgba(38, 125, 202, 0.10),
-      inset 0 2px 2px rgba(147, 210, 255, 0.18);
-  }
-
-
-  .register-submit:hover {
-    box-shadow:
-      0 10px 0 #0b416e,
-      0 17px 29px rgba(0, 0, 0, 0.46),
-      0 0 15px rgba(38, 125, 202, 0.13),
-      inset 0 2px 3px rgba(147, 210, 255, 0.20);
-  }
-
-
-  .register-submit:active {
-    box-shadow:
-      0 3px 0 #0b416e,
-      0 7px 13px rgba(0, 0, 0, 0.38);
-  }
-
-
-  .register-submit:disabled {
-    box-shadow:
-      0 5px 0 #31536d,
-      0 8px 15px rgba(0, 0, 0, 0.28);
-  }
-
-
-  .otp-icon {
-    background:
-      linear-gradient(
-        145deg,
-        #174366,
-        #10314d
-      );
-
-    border-color: #376b8d;
-
-    box-shadow:
-      0 9px 21px rgba(0, 0, 0, 0.38),
-      0 0 15px rgba(45, 126, 198, 0.10),
-      inset 0 2px 4px rgba(111, 181, 235, 0.12);
-  }
-
-
-  .otp-section h2 {
-    color: #8bc3f4;
-  }
-
-
-  .otp-section > p {
-    color: #8ca8c0;
-  }
-
-
-  .register-secondary {
-    border-color: #37698b;
-
-    color: #8dc5f6;
-
-    background:
-      linear-gradient(
-        145deg,
-        #153a56,
-        #102f48
-      );
-
-    box-shadow:
-      0 5px 11px rgba(0, 0, 0, 0.28),
-      inset 0 1px 2px rgba(115, 182, 234, 0.10);
-  }
-
-
-  .register-secondary:hover {
-    background:
-      linear-gradient(
-        145deg,
-        #194564,
-        #123751
-      );
-
-    box-shadow:
-      0 8px 17px rgba(0, 0, 0, 0.36),
-      0 0 10px rgba(45, 129, 202, 0.08);
-  }
-
-
-  .register-back {
-    color: #80a8c6;
-  }
-
-
-  .register-back:hover {
-    color: #8bc5f7;
-  }
-
-
-  .verified-box {
-    color: #86c5f7;
-
-    background:
-      linear-gradient(
-        135deg,
-        #123b59,
-        #0d304a
-      );
-
-    border-color: #316b98;
-
-    box-shadow:
-      0 6px 14px rgba(0, 0, 0, 0.28);
-  }
-
-
-  .password-hint {
-    color: #819db6;
-  }
-
-
-  .register-login {
-    border-top-color: #294961;
-
-    color: #849fb7;
-  }
-
-
-  .register-login a {
-    color: #80baf0;
-  }
-
-
-  .register-login a:hover {
-    color: #9dcefa;
-
-    background:
-      rgba(55, 135, 207, 0.14);
-  }
-
-
-  .register-bottom span {
-    background:
-      linear-gradient(
-        90deg,
-        transparent,
-        #416781
-      );
-  }
-
-
-  .register-bottom span:last-child {
-    background:
-      linear-gradient(
-        90deg,
-        #416781,
-        transparent
-      );
-  }
-
-
-  .register-bottom b {
-    color: #72b0e4;
-
-    text-shadow:
-      0 2px 6px rgba(46, 133, 207, 0.20);
-  }
-
-}
 
 
 /* =====================================================
-   DARK MODE CLASS SUPPORT
+   DARK PAGE
 ===================================================== */
 
 .dark .register-page,
@@ -1510,6 +1220,10 @@
 }
 
 
+/* =====================================================
+   DARK REGISTER CARD
+===================================================== */
+
 .dark .register-card,
 [data-theme="dark"] .register-card {
   background:
@@ -1530,9 +1244,74 @@
 }
 
 
+/* =====================================================
+   DARK TOP SHINE
+===================================================== */
+
+.dark .register-card::before,
+[data-theme="dark"] .register-card::before {
+  background:
+    linear-gradient(
+      90deg,
+      #1e67ae,
+      #438fd4,
+      #2b78bb,
+      #5a9ddd,
+      #1e67ae
+    );
+}
+
+
+/* =====================================================
+   DARK OM
+===================================================== */
+
+.dark .register-om,
+[data-theme="dark"] .register-om {
+  color: #8bc4ff;
+
+  background:
+    linear-gradient(
+      145deg,
+      #164367,
+      #0d2d49
+    );
+
+  border-color: #347ab7;
+
+  box-shadow:
+    0 8px 20px rgba(0, 0, 0, 0.38),
+    0 0 16px rgba(48, 125, 202, 0.14),
+    inset 0 2px 4px rgba(117, 181, 235, 0.12);
+
+  text-shadow:
+    0 2px 5px rgba(72, 157, 229, 0.28);
+}
+
+
+/* =====================================================
+   DARK LOTUS
+===================================================== */
+
+.dark .register-lotus,
+[data-theme="dark"] .register-lotus {
+  filter:
+    drop-shadow(
+      0 3px 6px rgba(0, 0, 0, 0.42)
+    );
+}
+
+
+/* =====================================================
+   DARK HEADER
+===================================================== */
+
 .dark .register-header h1,
 [data-theme="dark"] .register-header h1 {
   color: #82bfff;
+
+  text-shadow:
+    0 2px 7px rgba(39, 126, 204, 0.25);
 }
 
 
@@ -1542,11 +1321,181 @@
 }
 
 
+/* =====================================================
+   DARK PROGRESS
+===================================================== */
+
+.dark .register-step,
+[data-theme="dark"] .register-step {
+  color: #7597b4;
+}
+
+
+.dark .register-step span,
+[data-theme="dark"] .register-step span {
+  background:
+    linear-gradient(
+      145deg,
+      #17364f,
+      #102b42
+    );
+
+  border-color: #31536e;
+
+  color: #82a4bf;
+
+  box-shadow:
+    inset 0 2px 5px rgba(0, 0, 0, 0.30);
+}
+
+
+.dark .register-step.active span,
+[data-theme="dark"] .register-step.active span {
+  color: #ffffff;
+
+  border-color: #3889d5;
+
+  background:
+    linear-gradient(
+      145deg,
+      #398bd3,
+      #145e9f
+    );
+
+  box-shadow:
+    0 6px 14px rgba(0, 0, 0, 0.38),
+    0 0 12px rgba(43, 133, 215, 0.16),
+    inset 0 2px 3px rgba(133, 202, 255, 0.18);
+}
+
+
+.dark .register-step.active small,
+[data-theme="dark"] .register-step.active small {
+  color: #78b7ee;
+}
+
+
+.dark .register-progress-line,
+[data-theme="dark"] .register-progress-line {
+  background: #1c3a52;
+}
+
+
+.dark .register-progress-line.active,
+[data-theme="dark"] .register-progress-line.active {
+  background:
+    linear-gradient(
+      90deg,
+      #2879bd,
+      #4d9de0
+    );
+
+  box-shadow:
+    0 2px 8px rgba(0, 0, 0, 0.30),
+    0 0 8px rgba(49, 132, 210, 0.14);
+}
+
+
+/* =====================================================
+   DARK SUCCESS MESSAGE
+===================================================== */
+
+.dark .register-message.success,
+[data-theme="dark"] .register-message.success {
+  color: #82c3f7;
+
+  background:
+    linear-gradient(
+      135deg,
+      #123b5b,
+      #0d304b
+    );
+
+  border-color: #286b9f;
+
+  box-shadow:
+    0 5px 14px rgba(0, 0, 0, 0.25);
+}
+
+
+/* =====================================================
+   DARK ERROR MESSAGE
+===================================================== */
+
+.dark .register-message.error,
+[data-theme="dark"] .register-message.error {
+  color: #ff9eab;
+
+  background:
+    linear-gradient(
+      135deg,
+      #3a202a,
+      #301a25
+    );
+
+  border-color: #743b49;
+
+  box-shadow:
+    0 5px 14px rgba(0, 0, 0, 0.25);
+}
+
+
+/* =====================================================
+   DARK LABEL
+===================================================== */
+
 .dark .register-field label,
 [data-theme="dark"] .register-field label {
   color: #9bc5e7;
 }
 
+
+/* =====================================================
+   DARK ICON
+===================================================== */
+
+.dark .field-icon,
+[data-theme="dark"] .field-icon {
+  color: #8dc5f7;
+
+  background:
+    linear-gradient(
+      145deg,
+      #153b59,
+      #102f48
+    );
+
+  border-color: #315d7d;
+
+  box-shadow:
+    0 3px 8px rgba(0, 0, 0, 0.28);
+}
+
+
+.dark .field-icon.purple,
+.dark .field-icon.orange,
+.dark .field-icon.blue,
+.dark .field-icon.pink,
+[data-theme="dark"] .field-icon.purple,
+[data-theme="dark"] .field-icon.orange,
+[data-theme="dark"] .field-icon.blue,
+[data-theme="dark"] .field-icon.pink {
+  color: #8dc5f7;
+
+  background:
+    linear-gradient(
+      145deg,
+      #153b59,
+      #102f48
+    );
+
+  border-color: #315d7d;
+}
+
+
+/* =====================================================
+   DARK INPUT
+===================================================== */
 
 .dark .register-field input,
 [data-theme="dark"] .register-field input {
@@ -1560,22 +1509,181 @@
     );
 
   color: #d3e9fb;
+
+  box-shadow:
+    inset 0 2px 5px rgba(0, 0, 0, 0.28),
+    0 3px 9px rgba(0, 0, 0, 0.22);
 }
 
 
+/* =====================================================
+   DARK PLACEHOLDER
+===================================================== */
+
+.dark .register-field input::placeholder,
+[data-theme="dark"] .register-field input::placeholder {
+  color: #7595b0;
+}
+
+
+/* =====================================================
+   DARK INPUT HOVER
+===================================================== */
+
+.dark .register-field input:hover,
+[data-theme="dark"] .register-field input:hover {
+  border-color: #4c84ad;
+}
+
+
+/* =====================================================
+   DARK INPUT FOCUS
+===================================================== */
+
 .dark .register-field input:focus,
 [data-theme="dark"] .register-field input:focus {
+  border-color: #4597d9;
+
   background:
     linear-gradient(
       145deg,
       #143a58,
       #0f304a
     );
+
+  box-shadow:
+    0 0 0 3px rgba(59, 136, 223, 0.16),
+    0 7px 18px rgba(0, 0, 0, 0.30),
+    0 0 12px rgba(55, 143, 214, 0.10);
 }
 
 
+/* =====================================================
+   DARK CALENDAR
+===================================================== */
+
+.dark .calendar-button,
+[data-theme="dark"] .calendar-button {
+  color: #8dc5f7;
+
+  background:
+    linear-gradient(
+      145deg,
+      #174466,
+      #10324e
+    );
+
+  border-color: #376888;
+
+  box-shadow:
+    0 4px 9px rgba(0, 0, 0, 0.32),
+    inset 0 2px 3px rgba(110, 178, 231, 0.10);
+}
+
+
+.dark .calendar-button:hover,
+[data-theme="dark"] .calendar-button:hover {
+  box-shadow:
+    0 7px 14px rgba(0, 0, 0, 0.40),
+    0 0 10px rgba(53, 137, 207, 0.10),
+    inset 0 2px 3px rgba(110, 178, 231, 0.12);
+}
+
+
+/* =====================================================
+   DARK MAIN BUTTON
+===================================================== */
+
+.dark .register-submit,
+[data-theme="dark"] .register-submit {
+  background:
+    linear-gradient(
+      145deg,
+      #398bd3 0%,
+      #2878bd 45%,
+      #155d9c 100%
+    );
+
+  border-color: #2b78b9;
+
+  box-shadow:
+    0 8px 0 #0b416e,
+    0 13px 24px rgba(0, 0, 0, 0.40),
+    0 0 12px rgba(38, 125, 202, 0.10),
+    inset 0 2px 2px rgba(147, 210, 255, 0.18);
+}
+
+
+.dark .register-submit:hover,
+[data-theme="dark"] .register-submit:hover {
+  box-shadow:
+    0 10px 0 #0b416e,
+    0 17px 29px rgba(0, 0, 0, 0.46),
+    0 0 15px rgba(38, 125, 202, 0.13),
+    inset 0 2px 3px rgba(147, 210, 255, 0.20);
+}
+
+
+.dark .register-submit:active,
+[data-theme="dark"] .register-submit:active {
+  box-shadow:
+    0 3px 0 #0b416e,
+    0 7px 13px rgba(0, 0, 0, 0.38);
+}
+
+
+.dark .register-submit:disabled,
+[data-theme="dark"] .register-submit:disabled {
+  box-shadow:
+    0 5px 0 #31536d,
+    0 8px 15px rgba(0, 0, 0, 0.28);
+}
+
+
+/* =====================================================
+   DARK OTP
+===================================================== */
+
+.dark .otp-icon,
+[data-theme="dark"] .otp-icon {
+  color: #8dc5f7;
+
+  background:
+    linear-gradient(
+      145deg,
+      #174366,
+      #10314d
+    );
+
+  border-color: #376b8d;
+
+  box-shadow:
+    0 9px 21px rgba(0, 0, 0, 0.38),
+    0 0 15px rgba(45, 126, 198, 0.10),
+    inset 0 2px 4px rgba(111, 181, 235, 0.12);
+}
+
+
+.dark .otp-section h2,
+[data-theme="dark"] .otp-section h2 {
+  color: #8bc3f4;
+}
+
+
+.dark .otp-section > p,
+[data-theme="dark"] .otp-section > p {
+  color: #8ca8c0;
+}
+
+
+/* =====================================================
+   DARK SECONDARY BUTTON
+===================================================== */
+
 .dark .register-secondary,
 [data-theme="dark"] .register-secondary {
+  border-color: #37698b;
+
   color: #8dc5f6;
 
   background:
@@ -1585,15 +1693,78 @@
       #102f48
     );
 
-  border-color: #37698b;
+  box-shadow:
+    0 5px 11px rgba(0, 0, 0, 0.28),
+    inset 0 1px 2px rgba(115, 182, 234, 0.10);
 }
 
+
+.dark .register-secondary:hover,
+[data-theme="dark"] .register-secondary:hover {
+  background:
+    linear-gradient(
+      145deg,
+      #194564,
+      #123751
+    );
+
+  box-shadow:
+    0 8px 17px rgba(0, 0, 0, 0.36),
+    0 0 10px rgba(45, 129, 202, 0.08);
+}
+
+
+/* =====================================================
+   DARK BACK
+===================================================== */
 
 .dark .register-back,
 [data-theme="dark"] .register-back {
   color: #80a8c6;
 }
 
+
+.dark .register-back:hover,
+[data-theme="dark"] .register-back:hover {
+  color: #8bc5f7;
+}
+
+
+/* =====================================================
+   DARK VERIFIED BOX
+===================================================== */
+
+.dark .verified-box,
+[data-theme="dark"] .verified-box {
+  color: #86c5f7;
+
+  background:
+    linear-gradient(
+      135deg,
+      #123b59,
+      #0d304a
+    );
+
+  border-color: #316b98;
+
+  box-shadow:
+    0 6px 14px rgba(0, 0, 0, 0.28);
+}
+
+
+/* =====================================================
+   DARK PASSWORD HINT
+===================================================== */
+
+.dark .password-hint,
+[data-theme="dark"] .password-hint {
+  color: #819db6;
+}
+
+
+/* =====================================================
+   DARK LOGIN
+===================================================== */
 
 .dark .register-login,
 [data-theme="dark"] .register-login {
@@ -1609,14 +1780,52 @@
 }
 
 
-.dark .password-hint,
-[data-theme="dark"] .password-hint {
-  color: #819db6;
+.dark .register-login a:hover,
+[data-theme="dark"] .register-login a:hover {
+  color: #9dcefa;
+
+  background:
+    rgba(55, 135, 207, 0.14);
 }
 
 
 /* =====================================================
-   RESPONSIVE - TABLET
+   DARK BOTTOM OM
+===================================================== */
+
+.dark .register-bottom span,
+[data-theme="dark"] .register-bottom span {
+  background:
+    linear-gradient(
+      90deg,
+      transparent,
+      #416781
+    );
+}
+
+
+.dark .register-bottom span:last-child,
+[data-theme="dark"] .register-bottom span:last-child {
+  background:
+    linear-gradient(
+      90deg,
+      #416781,
+      transparent
+    );
+}
+
+
+.dark .register-bottom b,
+[data-theme="dark"] .register-bottom b {
+  color: #72b0e4;
+
+  text-shadow:
+    0 2px 6px rgba(46, 133, 207, 0.20);
+}
+
+
+/* =====================================================
+   19. TABLET
 ===================================================== */
 
 @media (max-width: 650px) {
@@ -1624,6 +1833,7 @@
   .register-page {
     padding: 25px 15px;
   }
+
 
   .register-card {
     max-width: 500px;
@@ -1633,9 +1843,11 @@
     border-radius: 21px;
   }
 
+
   .register-header h1 {
     font-size: 27px;
   }
+
 
   .register-progress-line {
     width: 42px;
@@ -1644,7 +1856,7 @@
 
 
 /* =====================================================
-   RESPONSIVE - MOBILE
+   20. MOBILE
 ===================================================== */
 
 @media (max-width: 480px) {
@@ -1653,15 +1865,18 @@
     padding: 20px 11px;
   }
 
+
   .register-card {
     padding: 27px 19px 22px;
 
     border-radius: 19px;
   }
 
+
   .register-header {
     margin-bottom: 20px;
   }
+
 
   .register-om {
     width: 52px;
@@ -1670,25 +1885,31 @@
     font-size: 27px;
   }
 
+
   .register-lotus {
     font-size: 21px;
   }
+
 
   .register-header h1 {
     font-size: 24px;
   }
 
+
   .register-header p {
     font-size: 12px;
   }
+
 
   .register-progress {
     margin: 17px 0 21px;
   }
 
+
   .register-step {
     min-width: 50px;
   }
+
 
   .register-step span {
     width: 32px;
@@ -1697,9 +1918,11 @@
     font-size: 13px;
   }
 
+
   .register-step small {
     font-size: 10px;
   }
+
 
   .register-progress-line {
     width: 28px;
@@ -1708,13 +1931,16 @@
     margin-top: 15px;
   }
 
+
   .register-field {
     margin-bottom: 15px;
   }
 
+
   .register-field label {
     font-size: 13px;
   }
+
 
   .register-field input {
     height: 46px;
@@ -1722,10 +1948,12 @@
     font-size: 13px;
   }
 
+
   .calendar-button {
     width: 36px;
     height: 36px;
   }
+
 
   .register-submit {
     min-height: 47px;
@@ -1738,9 +1966,11 @@
       inset 0 2px 2px rgba(255, 255, 255, 0.35);
   }
 
+
   .register-login {
     font-size: 12px;
   }
+
 
   .register-bottom span {
     width: 50px;
@@ -1749,7 +1979,7 @@
 
 
 /* =====================================================
-   VERY SMALL MOBILE
+   21. VERY SMALL MOBILE
 ===================================================== */
 
 @media (max-width: 360px) {
@@ -1759,17 +1989,21 @@
     padding-right: 15px;
   }
 
+
   .register-progress-line {
     width: 20px;
   }
+
 
   .register-step {
     min-width: 45px;
   }
 
+
   .register-step small {
     font-size: 9px;
   }
+
 
   .register-header h1 {
     font-size: 22px;
