@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./QuizManagement.css";
 
 function QuizManagement() {
+
+    const navigate = useNavigate();
   // =====================================================
   // API
   // =====================================================
@@ -822,25 +825,33 @@ function QuizManagement() {
           HEADER
       ================================================= */}
 
-      <section className="quiz-management-header">
+<section className="quiz-management-header">
 
-        <div className="quiz-management-icon">
-          🧠
-        </div>
+  <div className="quiz-management-icon">
+    🧠
+  </div>
 
-        <div>
+  <div className="quiz-management-header-content">
 
-          <h1>
-            Quiz Management
-          </h1>
+    <h1>
+      Quiz Management
+    </h1>
 
-          <p>
-            Quiz questions Add, Edit અને Delete કરો.
-          </p>
+    <p>
+      Quiz questions Add, Edit અને Delete કરો.
+    </p>
 
-        </div>
+  </div>
 
-      </section>
+  <button
+    type="button"
+    className="quiz-dashboard-back-button"
+    onClick={() => navigate("/admin")}
+  >
+    ← Admin Dashboard
+  </button>
+
+</section>
 
 
       {/* =================================================
