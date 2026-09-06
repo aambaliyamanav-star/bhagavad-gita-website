@@ -2205,13 +2205,23 @@
   }
 
 
-  /* Sanskrit */
+/* Sanskrit - Mobile: maximum 2 lines, auto-fit */
 
-  .sanskrit {
-    font-size: 21px;
+.sanskrit {
+  width: 100%;
+  font-size: clamp(14px, 5vw, 21px);
+  line-height: 1.55;
+  text-align: center;
+  overflow-wrap: normal;
+  word-break: normal;
+}
 
-    line-height: 1.9;
-  }
+.sanskrit-line {
+  flex-wrap: nowrap;
+  justify-content: center;
+  white-space: nowrap;
+  min-width: 0;
+}
 
 
   .content-box {
