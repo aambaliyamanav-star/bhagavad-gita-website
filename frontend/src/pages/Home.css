@@ -48,35 +48,7 @@ body {
    FIXED GITA BACKGROUND — DESKTOP
 ===================================================== */
 
-body::before {
-  content: "";
 
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-
-  width: 100%;
-  height: 100vh;
-
-  background-image:
-    linear-gradient(
-      135deg,
-      rgba(239, 249, 255, 0.20) 0%,
-      rgba(220, 239, 255, 0.24) 50%,
-      rgba(201, 231, 255, 0.30) 100%
-    ),
-    url("/images/gita-background.png");
-
-background-size: contain;
-background-position: center center;
-background-repeat: no-repeat;
-background-color: #dcefff;
-
-  z-index: -9999;
-  pointer-events: none;
-}
 
 
 /* =====================================================
@@ -109,25 +81,34 @@ main {
    HERO
 ===================================================== */
 
+/* =====================================================
+   HERO — DESKTOP
+===================================================== */
+
 .hero {
-  width: 100%;
-  min-height: 100vh;
-
-  padding:
-    70px 20px 60px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  text-align: center;
-
   position: relative;
 
-  background: transparent !important;
-  background-image: none !important;
+  width: 100%;
+  max-width: 100%;
 
-  gap: 0;
+  background-image:
+    linear-gradient(
+      135deg,
+      rgba(239, 249, 255, 0.20) 0%,
+      rgba(220, 239, 255, 0.24) 50%,
+      rgba(201, 231, 255, 0.30) 100%
+    ),
+    url("/images/gita-background.png");
+
+  /* IMPORTANT:
+     આખી image દેખાશે, crop નહીં થાય */
+  background-size: 100% auto;
+  background-position: center top;
+  background-repeat: no-repeat;
+
+  min-height: calc(100vw * 0.5625);
+
+  overflow: visible;
 }
 
 
@@ -1414,28 +1395,7 @@ body[data-theme="dark"],
    DARK BACKGROUND
 ===================================================== */
 
-html.dark body::before,
-body.dark::before,
-html[data-theme="dark"] body::before,
-body[data-theme="dark"]::before {
-  background-image:
-    linear-gradient(
-      135deg,
-      rgba(4, 18, 35, 0.72) 0%,
-      rgba(7, 29, 50, 0.68) 50%,
-      rgba(8, 42, 70, 0.72) 100%
-    ),
-    url("/images/gita-background.png");
 
-  background-size:
-    cover;
-
-  background-position:
-    center center;
-
-  background-repeat:
-    no-repeat;
-}
 
 
 /* =====================================================
