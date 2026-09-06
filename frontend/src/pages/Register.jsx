@@ -1,6 +1,7 @@
 
 import { useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 import "./Register.css";
 
 function Register() {
@@ -47,6 +48,14 @@ function Register() {
   // =====================================================
 
   const [loading, setLoading] = useState(false);
+
+  // =====================================================
+// PASSWORD VISIBILITY
+// =====================================================
+
+const [showPassword, setShowPassword] = useState(false);
+const [showConfirmPassword, setShowConfirmPassword] =
+  useState(false);
 
   // =====================================================
   // BIRTH DATE REF
@@ -1088,15 +1097,43 @@ function Register() {
 
               </label>
 
-              <input
-                id="password"
-                type="password"
-                name="password"
-                placeholder="Password બનાવો"
-                value={formData.password}
-                onChange={handleChange}
-                autoComplete="new-password"
-              />
+              <div className="password-input-container">
+
+  <input
+    id="password"
+    type={showPassword ? "text" : "password"}
+    name="password"
+    placeholder="Password બનાવો"
+    value={formData.password}
+    onChange={handleChange}
+    autoComplete="new-password"
+  />
+
+<button
+  type="button"
+  className="password-toggle-button"
+  onClick={() =>
+    setShowPassword((previous) => !previous)
+  }
+  aria-label={
+    showPassword
+      ? "Password hide કરો"
+      : "Password show કરો"
+  }
+  title={
+    showPassword
+      ? "Password hide કરો"
+      : "Password show કરો"
+  }
+>
+  {showPassword ? (
+    <EyeOff size={20} strokeWidth={2} />
+  ) : (
+    <Eye size={20} strokeWidth={2} />
+  )}
+</button>
+
+</div>
 
             </div>
 
@@ -1116,17 +1153,49 @@ function Register() {
 
               </label>
 
-              <input
-                id="confirmPassword"
-                type="password"
-                name="confirmPassword"
-                placeholder="Password ફરીથી નાખો"
-                value={
-                  formData.confirmPassword
-                }
-                onChange={handleChange}
-                autoComplete="new-password"
-              />
+<div className="password-input-container">
+
+  <input
+    id="confirmPassword"
+    type={
+      showConfirmPassword
+        ? "text"
+        : "password"
+    }
+    name="confirmPassword"
+    placeholder="Password ફરીથી નાખો"
+    value={formData.confirmPassword}
+    onChange={handleChange}
+    autoComplete="new-password"
+  />
+
+<button
+  type="button"
+  className="password-toggle-button"
+  onClick={() =>
+    setShowConfirmPassword(
+      (previous) => !previous
+    )
+  }
+  aria-label={
+    showConfirmPassword
+      ? "Confirm Password hide કરો"
+      : "Confirm Password show કરો"
+  }
+  title={
+    showConfirmPassword
+      ? "Password hide કરો"
+      : "Password show કરો"
+  }
+>
+  {showConfirmPassword ? (
+    <EyeOff size={20} strokeWidth={2} />
+  ) : (
+    <Eye size={20} strokeWidth={2} />
+  )}
+</button>
+
+</div>
 
             </div>
 

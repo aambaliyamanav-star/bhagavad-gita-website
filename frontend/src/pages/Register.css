@@ -2009,3 +2009,60 @@
     font-size: 22px;
   }
 }
+
+/* =====================================================
+   PASSWORD SHOW / HIDE
+===================================================== */
+
+.password-input-container {
+  position: relative;
+  width: 100%;
+}
+
+.password-input-container input {
+  width: 100%;
+  padding-right: 52px;
+}
+
+.password-toggle-button {
+  position: absolute;
+  top: 50%;
+  right: 12px;
+  transform: translateY(-50%);
+
+  width: 36px;
+  height: 36px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0;
+  margin: 0;
+
+  border: none;
+  background: transparent;
+
+  cursor: pointer;
+
+  border-radius: 8px;
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.password-toggle-button:hover {
+  background: rgba(100, 100, 100, 0.10);
+}
+
+.password-toggle-button:active {
+  transform: translateY(-50%) scale(0.92);
+}
+
+/* DARK MODE */
+
+.dark .password-toggle-button:hover,
+[data-theme="dark"] .password-toggle-button:hover {
+  background: rgba(255, 255, 255, 0.10);
+}

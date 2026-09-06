@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 
 import {
   Link,
@@ -60,6 +61,13 @@ const [protectedShlokMessage] =
   // =====================================================
 
   const [loading, setLoading] =
+    useState(false);
+
+  // =====================================================
+  // PASSWORD VISIBILITY
+  // =====================================================
+
+  const [showPassword, setShowPassword] =
     useState(false);
 
   // =====================================================
@@ -215,7 +223,7 @@ setTimeout(() => {
 }, 1000);
 
       }
-      
+
       // =================================================
       // ERROR
       // =================================================
@@ -361,15 +369,55 @@ setTimeout(() => {
 
             </label>
 
-            <input
-              id="password"
-              type="password"
-              name="password"
-              placeholder="તમારો Password"
-              value={formData.password}
-              onChange={handleChange}
-              autoComplete="current-password"
-            />
+<div className="password-input-container">
+
+  <input
+    id="password"
+    type={
+      showPassword
+        ? "text"
+        : "password"
+    }
+    name="password"
+    placeholder="તમારો Password"
+    value={formData.password}
+    onChange={handleChange}
+    autoComplete="current-password"
+  />
+
+  <button
+    type="button"
+    className="password-toggle-button"
+    onClick={() =>
+      setShowPassword(
+        (previous) => !previous
+      )
+    }
+    aria-label={
+      showPassword
+        ? "Password hide કરો"
+        : "Password show કરો"
+    }
+    title={
+      showPassword
+        ? "Password hide કરો"
+        : "Password show કરો"
+    }
+  >
+    {showPassword ? (
+      <EyeOff
+        size={20}
+        strokeWidth={2}
+      />
+    ) : (
+      <Eye
+        size={20}
+        strokeWidth={2}
+      />
+    )}
+  </button>
+
+</div>
 
           </div>
 
