@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://bhagavad-gita-website-rk1v.vercel.app/sitemap.xml
