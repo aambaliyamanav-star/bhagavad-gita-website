@@ -369,17 +369,7 @@ const sendOTP = async (
     // CHECK EXISTING MOBILE
     // =================================================
 
-    const existingMobile =
-      await User.findOne({
-        mobile: cleanMobile,
-      });
 
-    if (existingMobile) {
-      return res.status(400).json({
-        message:
-          "આ Mobile Number પહેલેથી register થયેલ છે.",
-      });
-    }
 
     // =================================================
     // GENERATE OTP
@@ -790,17 +780,7 @@ const registerUser = async (
       });
     }
 
-    const existingMobile =
-      await User.findOne({
-        mobile: cleanMobile,
-      });
 
-    if (existingMobile) {
-      return res.status(400).json({
-        message:
-          "આ Mobile Number પહેલેથી register થયેલ છે.",
-      });
-    }
 
     if (
       password.length < 6
