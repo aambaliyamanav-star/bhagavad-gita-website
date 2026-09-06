@@ -561,6 +561,8 @@
 
 .sanskrit {
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
 
   font-family:
     "Noto Sans Devanagari",
@@ -568,16 +570,17 @@
     sans-serif;
 
   font-size: 25px;
-
-  line-height: 2;
-
+  line-height: 1.8;
   font-weight: 600;
 
   color: var(--reader-sanskrit);
-
   text-align: center;
 
-  overflow-wrap: anywhere;
+  overflow: hidden;
+  overflow-wrap: normal;
+  word-break: normal;
+
+  box-sizing: border-box;
 }
 
 
@@ -606,18 +609,19 @@
 
 .sanskrit-line {
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
 
   display: flex;
-
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 
   justify-content: center;
-
   align-items: center;
 
   gap: 0;
 
-  min-width: 0;
+  white-space: nowrap;
+  overflow: visible;
 }
 
 
@@ -627,11 +631,10 @@
 
 .sanskrit-word-wrapper {
   position: relative;
-
   display: inline-flex;
-
   align-items: center;
 
+  min-width: 0;
   max-width: 100%;
 }
 
@@ -646,6 +649,7 @@
   white-space: nowrap;
 
   max-width: 100%;
+  min-width: 0;
 
   padding: 2px 4px;
 
