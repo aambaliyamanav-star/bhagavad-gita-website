@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react";
 import { useAuth } from "../context/AuthContext.jsx";
 import "./Profile.css";
 
@@ -62,6 +63,16 @@ function Profile() {
   // =====================================================
 
   const [loading, setLoading] = useState(false);
+
+  // =====================================================
+// PASSWORD SHOW / HIDE
+// =====================================================
+
+const [showCurrentPassword, setShowCurrentPassword] =
+  useState(false);
+
+const [showNewPassword, setShowNewPassword] =
+  useState(false);
 
   // =====================================================
   // API URL
@@ -193,6 +204,9 @@ function Profile() {
     setMessage("");
     setMessageType("");
 
+    setShowCurrentPassword(false);
+    setShowNewPassword(false);
+
     setEditing(true);
   };
 
@@ -213,6 +227,9 @@ function Profile() {
 
     setMessage("");
     setMessageType("");
+
+    setShowCurrentPassword(false);
+    setShowNewPassword(false);
   };
 
   // =====================================================
@@ -1293,16 +1310,56 @@ function Profile() {
                 🔑 Current Password
               </label>
 
-              <input
-                type="password"
-                name="currentPassword"
-                placeholder="Password બદલવો હોય તો"
-                value={
-                  formData.currentPassword
-                }
-                onChange={handleChange}
-                autoComplete="current-password"
-              />
+<div className="password-input-container">
+
+  <input
+    type={
+      showCurrentPassword
+        ? "text"
+        : "password"
+    }
+    name="currentPassword"
+    placeholder="Password બદલવો હોય તો"
+    value={
+      formData.currentPassword
+    }
+    onChange={handleChange}
+    autoComplete="current-password"
+  />
+
+  <button
+    type="button"
+    className="password-toggle-button"
+    onClick={() =>
+      setShowCurrentPassword(
+        (previous) => !previous
+      )
+    }
+    aria-label={
+      showCurrentPassword
+        ? "Current Password hide કરો"
+        : "Current Password show કરો"
+    }
+    title={
+      showCurrentPassword
+        ? "Current Password hide કરો"
+        : "Current Password show કરો"
+    }
+  >
+    {showCurrentPassword ? (
+      <EyeOff
+        size={20}
+        strokeWidth={2}
+      />
+    ) : (
+      <Eye
+        size={20}
+        strokeWidth={2}
+      />
+    )}
+  </button>
+
+</div>
             </div>
 
             {/* =================================================
@@ -1314,16 +1371,56 @@ function Profile() {
                 🔒 New Password
               </label>
 
-              <input
-                type="password"
-                name="newPassword"
-                placeholder="નવો Password"
-                value={
-                  formData.newPassword
-                }
-                onChange={handleChange}
-                autoComplete="new-password"
-              />
+<div className="password-input-container">
+
+  <input
+    type={
+      showNewPassword
+        ? "text"
+        : "password"
+    }
+    name="newPassword"
+    placeholder="નવો Password"
+    value={
+      formData.newPassword
+    }
+    onChange={handleChange}
+    autoComplete="new-password"
+  />
+
+  <button
+    type="button"
+    className="password-toggle-button"
+    onClick={() =>
+      setShowNewPassword(
+        (previous) => !previous
+      )
+    }
+    aria-label={
+      showNewPassword
+        ? "New Password hide કરો"
+        : "New Password show કરો"
+    }
+    title={
+      showNewPassword
+        ? "New Password hide કરો"
+        : "New Password show કરો"
+    }
+  >
+    {showNewPassword ? (
+      <EyeOff
+        size={20}
+        strokeWidth={2}
+      />
+    ) : (
+      <Eye
+        size={20}
+        strokeWidth={2}
+      />
+    )}
+  </button>
+
+</div>
 
               {/* =================================================
                   FORGOT PASSWORD LINK

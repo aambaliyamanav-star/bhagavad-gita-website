@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import "./ForgotPassword.css";
 
@@ -17,6 +18,16 @@ function ForgotPassword() {
   const [step, setStep] = useState(1);
 
   const [loading, setLoading] = useState(false);
+
+  // =====================================================
+// PASSWORD VISIBILITY
+// =====================================================
+
+const [showNewPassword, setShowNewPassword] =
+  useState(false);
+
+const [showConfirmPassword, setShowConfirmPassword] =
+  useState(false);
 
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
@@ -530,36 +541,116 @@ function ForgotPassword() {
               New Password
             </label>
 
-            <input
-              type="password"
-              placeholder="નવો Password"
-              value={newPassword}
-              onChange={(e) =>
-                setNewPassword(
-                  e.target.value
-                )
-              }
-              autoComplete="new-password"
-              disabled={loading}
-            />
+<div className="password-input-container">
+
+  <input
+    type={
+      showNewPassword
+        ? "text"
+        : "password"
+    }
+    placeholder="નવો Password"
+    value={newPassword}
+    onChange={(e) =>
+      setNewPassword(
+        e.target.value
+      )
+    }
+    autoComplete="new-password"
+    disabled={loading}
+  />
+
+  <button
+    type="button"
+    className="password-toggle-button"
+    onClick={() =>
+      setShowNewPassword(
+        (previous) => !previous
+      )
+    }
+    aria-label={
+      showNewPassword
+        ? "Password hide કરો"
+        : "Password show કરો"
+    }
+    title={
+      showNewPassword
+        ? "Password hide કરો"
+        : "Password show કરો"
+    }
+  >
+    {showNewPassword ? (
+      <EyeOff
+        size={20}
+        strokeWidth={2}
+      />
+    ) : (
+      <Eye
+        size={20}
+        strokeWidth={2}
+      />
+    )}
+  </button>
+
+</div>
 
 
             <label>
               Confirm New Password
             </label>
 
-            <input
-              type="password"
-              placeholder="Password ફરી નાખો"
-              value={confirmPassword}
-              onChange={(e) =>
-                setConfirmPassword(
-                  e.target.value
-                )
-              }
-              autoComplete="new-password"
-              disabled={loading}
-            />
+<div className="password-input-container">
+
+  <input
+    type={
+      showConfirmPassword
+        ? "text"
+        : "password"
+    }
+    placeholder="Password ફરી નાખો"
+    value={confirmPassword}
+    onChange={(e) =>
+      setConfirmPassword(
+        e.target.value
+      )
+    }
+    autoComplete="new-password"
+    disabled={loading}
+  />
+
+  <button
+    type="button"
+    className="password-toggle-button"
+    onClick={() =>
+      setShowConfirmPassword(
+        (previous) => !previous
+      )
+    }
+    aria-label={
+      showConfirmPassword
+        ? "Confirm Password hide કરો"
+        : "Confirm Password show કરો"
+    }
+    title={
+      showConfirmPassword
+        ? "Password hide કરો"
+        : "Password show કરો"
+    }
+  >
+    {showConfirmPassword ? (
+      <EyeOff
+        size={20}
+        strokeWidth={2}
+      />
+    ) : (
+      <Eye
+        size={20}
+        strokeWidth={2}
+      />
+    )}
+  </button>
+
+</div>
 
 
             <button
