@@ -3322,3 +3322,24 @@ button:focus-visible {
 
   outline-offset: 3px;
 }
+
+
+
+.chapter-reader {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative;
+  z-index: 10;
+  min-height: 100vh;
+}
+
+.reader-header,
+.reader-progress,
+.shloka-card,
+.chapter-navigation,
+.chapter-shloka-selector {
+  display: block;
+  visibility: visible;
+  opacity: 1;
+}
