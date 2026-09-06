@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import "./ChapterReader.css";
 
 import {
@@ -32,9 +32,6 @@ function ChapterReader() {
 
   // Currently clicked Sanskrit word
   const [activeWordIndex, setActiveWordIndex] = useState(null);
-
-  const sanskritRef = useRef(null);
-  const [sanskritFontSize, setSanskritFontSize] = useState(21); 
 
   // =====================================================
   // FAVOURITE STATE
@@ -752,12 +749,6 @@ if (
   if (shlokas.length === 0) {
     return (
       <main className="chapter-reader">
-
-      <h1 style={{ color: "red", fontSize: "30px", position: "relative", zIndex: 99999 }}>
-  TEST CHAPTER READER
-</h1>
-
-
         <section className="reader-header">
           <div className="reader-om">
             ॐ
@@ -1045,67 +1036,6 @@ if (
       );
     };
 
-
-
-    useEffect(() => {
-  if (!sanskritRef.current) return;
-
-  const container = sanskritRef.current;
-
-  const fitSanskrit = () => {
-    const lines = container.querySelectorAll(
-      ".sanskrit-line"
-    );
-
-    if (lines.length === 0) return;
-
-    const isMobile = window.innerWidth <= 700;
-
-    if (!isMobile) {
-      setSanskritFontSize(25);
-      return;
-    }
-
-    let fontSize = 21;
-
-    container.style.fontSize = `${fontSize}px`;
-
-    while (
-      fontSize > 14 &&
-      Array.from(lines).some(
-        (line) =>
-          line.scrollWidth > line.clientWidth
-      )
-    ) {
-      fontSize -= 0.5;
-      container.style.fontSize = `${fontSize}px`;
-    }
-
-    setSanskritFontSize(fontSize);
-  };
-
-  const timer = setTimeout(
-    fitSanskrit,
-    50
-  );
-
-  window.addEventListener(
-    "resize",
-    fitSanskrit
-  );
-
-  return () => {
-    clearTimeout(timer);
-    window.removeEventListener(
-      "resize",
-      fitSanskrit
-    );
-  };
-}, [
-  currentShloka,
-  shloka?.sanskrit,
-]);
-
   // =====================================================
   // RENDER SANSKRIT
   // =====================================================
@@ -1362,15 +1292,9 @@ if (
               🕉️ સંસ્કૃત શ્લોક
             </h3>
 
-<div
-  ref={sanskritRef}
-  className="sanskrit formatted-content"
-  style={{
-    fontSize: `${sanskritFontSize}px`,
-  }}
->
-  {renderSanskritWords()}
-</div>
+            <div className="sanskrit formatted-content">
+              {renderSanskritWords()}
+            </div>
 
             {/* WORD MEANING INFO */}
 

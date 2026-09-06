@@ -2205,23 +2205,13 @@
   }
 
 
-/* Sanskrit - Mobile: maximum 2 lines, auto-fit */
+  /* Sanskrit */
 
-.sanskrit {
-  width: 100%;
-  font-size: clamp(14px, 5vw, 21px);
-  line-height: 1.55;
-  text-align: center;
-  overflow-wrap: normal;
-  word-break: normal;
-}
+  .sanskrit {
+    font-size: 21px;
 
-.sanskrit-line {
-  flex-wrap: nowrap;
-  justify-content: center;
-  white-space: nowrap;
-  min-width: 0;
-}
+    line-height: 1.9;
+  }
 
 
   .content-box {
@@ -3321,25 +3311,4 @@ button:focus-visible {
   outline: 3px solid rgba(59, 130, 246, 0.35);
 
   outline-offset: 3px;
-}
-
-
-
-.chapter-reader {
-  display: block !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  position: relative;
-  z-index: 10;
-  min-height: 100vh;
-}
-
-.reader-header,
-.reader-progress,
-.shloka-card,
-.chapter-navigation,
-.chapter-shloka-selector {
-  display: block;
-  visibility: visible;
-  opacity: 1;
 }
