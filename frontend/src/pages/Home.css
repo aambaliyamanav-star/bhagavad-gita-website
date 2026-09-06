@@ -48,7 +48,38 @@ body {
    FIXED GITA BACKGROUND — DESKTOP
 ===================================================== */
 
+body::before {
+  content: "";
 
+  position: fixed;
+
+  top: 74px;
+  left: 0;
+
+  width: 100%;
+  height: calc(100vh - 74px);
+
+  background-image:
+    linear-gradient(
+      135deg,
+      rgba(239, 249, 255, 0.20) 0%,
+      rgba(220, 239, 255, 0.24) 50%,
+      rgba(201, 231, 255, 0.30) 100%
+    ),
+    url("/images/gita-background.png");
+
+  background-size: 100% auto;
+
+  background-position:
+    center top;
+
+  background-repeat:
+    no-repeat;
+
+  z-index: 0;
+
+  pointer-events: none;
+}
 
 
 /* =====================================================
@@ -63,6 +94,8 @@ main {
   padding: 0;
 
   position: relative;
+
+  z-index: 1;
 
   background: transparent !important;
   background-image: none !important;
@@ -81,34 +114,25 @@ main {
    HERO
 ===================================================== */
 
-/* =====================================================
-   HERO — DESKTOP
-===================================================== */
-
 .hero {
   position: relative;
 
   width: 100%;
   max-width: 100%;
 
-  background-image:
-    linear-gradient(
-      135deg,
-      rgba(239, 249, 255, 0.20) 0%,
-      rgba(220, 239, 255, 0.24) 50%,
-      rgba(201, 231, 255, 0.30) 100%
-    ),
-    url("/images/gita-background.png");
+  min-height:
+    calc(100vh - 74px);
 
-  /* IMPORTANT:
-     આખી image દેખાશે, crop નહીં થાય */
-  background-size: 100% auto;
-  background-position: center top;
-  background-repeat: no-repeat;
-
-  min-height: calc(100vw * 0.5625);
+  padding:
+    42px 0 45px;
 
   overflow: visible;
+
+  background:
+    transparent !important;
+
+  background-image:
+    none !important;
 }
 
 
@@ -120,12 +144,17 @@ main {
   margin:
     0 0 10px;
 
-  color: #0b3d91;
+  color:
+    #0b3d91;
 
-  font-size: 21px;
-  font-weight: 700;
+  font-size:
+    21px;
 
-  letter-spacing: 1px;
+  font-weight:
+    700;
+
+  letter-spacing:
+    1px;
 
   text-shadow:
     0 2px 8px rgba(11, 61, 145, 0.20);
@@ -133,14 +162,20 @@ main {
 
 
 .hero h1 {
-  margin: 0;
+  margin:
+    0;
 
-  color: #0b3d91;
+  color:
+    #0b3d91;
 
-  font-size: 54px;
-  font-weight: 800;
+  font-size:
+    54px;
 
-  letter-spacing: 1px;
+  font-weight:
+    800;
+
+  letter-spacing:
+    1px;
 
   text-shadow:
     0 4px 12px rgba(13, 71, 161, 0.20);
@@ -148,16 +183,23 @@ main {
 
 
 .description {
-  width: 100%;
-  max-width: 760px;
+  width:
+    100%;
+
+  max-width:
+    760px;
 
   margin:
     18px auto 26px;
 
-  color: #315b7d;
+  color:
+    #315b7d;
 
-  font-size: 18px;
-  line-height: 1.9;
+  font-size:
+    18px;
+
+  line-height:
+    1.9;
 
   text-shadow:
     0 1px 3px rgba(255, 255, 255, 0.7);
@@ -170,17 +212,23 @@ main {
 
 .hero > button,
 .continue-reading-button {
-  display: inline-flex;
+  display:
+    inline-flex;
 
-  align-items: center;
-  justify-content: center;
+  align-items:
+    center;
 
-  width: auto;
+  justify-content:
+    center;
+
+  width:
+    auto;
 
   max-width:
     calc(100vw - 32px);
 
-  min-height: 58px;
+  min-height:
+    58px;
 
   margin:
     0 auto 24px;
@@ -188,8 +236,11 @@ main {
   padding:
     16px 26px;
 
-  border: none;
-  border-radius: 15px;
+  border:
+    none;
+
+  border-radius:
+    15px;
 
   background:
     linear-gradient(
@@ -199,16 +250,23 @@ main {
       #0d47a1
     );
 
-  color: #ffffff;
+  color:
+    #ffffff;
 
-  font-size: 18px;
-  font-weight: 700;
+  font-size:
+    18px;
 
-  line-height: 1.2;
+  font-weight:
+    700;
 
-  white-space: nowrap;
+  line-height:
+    1.2;
 
-  cursor: pointer;
+  white-space:
+    nowrap;
+
+  cursor:
+    pointer;
 
   box-shadow:
     0 10px 20px rgba(13, 71, 161, 0.25),
@@ -248,12 +306,17 @@ main {
 ===================================================== */
 
 .quiz-button {
-  display: inline-flex;
+  display:
+    inline-flex;
 
-  align-items: center;
-  justify-content: center;
+  align-items:
+    center;
 
-  min-height: 56px;
+  justify-content:
+    center;
+
+  min-height:
+    56px;
 
   margin:
     0 auto 28px;
@@ -261,8 +324,11 @@ main {
   padding:
     15px 28px;
 
-  border: none;
-  border-radius: 15px;
+  border:
+    none;
+
+  border-radius:
+    15px;
 
   background:
     linear-gradient(
@@ -272,16 +338,23 @@ main {
       #0d47a1
     );
 
-  color: #ffffff;
+  color:
+    #ffffff;
 
-  font-size: 18px;
-  font-weight: 700;
+  font-size:
+    18px;
 
-  line-height: 1.2;
+  font-weight:
+    700;
 
-  white-space: nowrap;
+  line-height:
+    1.2;
 
-  cursor: pointer;
+  white-space:
+    nowrap;
+
+  cursor:
+    pointer;
 
   box-shadow:
     0 10px 20px rgba(13, 71, 161, 0.25),
@@ -376,7 +449,8 @@ main {
 ===================================================== */
 
 .home-search::before {
-  content: "";
+  content:
+    "";
 
   position:
     absolute;
@@ -1034,15 +1108,12 @@ main {
    TODAY SANSKRIT
 ===================================================== */
 
-/* =====================================================
-   TODAY SANSKRIT
-   MAXIMUM 2 LINES ON MOBILE
-===================================================== */
-
 .today-sanskrit {
-  padding: 25px 20px;
+  padding:
+    25px 20px;
 
-  border-radius: 17px;
+  border-radius:
+    17px;
 
   background:
     linear-gradient(
@@ -1072,7 +1143,7 @@ main {
   display:
     flex;
 
- align-items:
+  align-items:
     center;
 
   justify-content:
@@ -1088,15 +1159,20 @@ main {
 
 
 .today-sanskrit-text {
-  width: 100%;
+  width:
+    100%;
 
-  line-height: 1.45;
+  line-height:
+    1.45;
 
-  text-align: center;
+  text-align:
+    center;
 
-  overflow-wrap: break-word;
+  overflow-wrap:
+    break-word;
 
-  word-break: normal;
+  word-break:
+    normal;
 }
 
 
@@ -1392,10 +1468,31 @@ body[data-theme="dark"],
 
 
 /* =====================================================
-   DARK BACKGROUND
+   DARK BACKGROUND — DESKTOP
 ===================================================== */
 
+html.dark body::before,
+body.dark::before,
+html[data-theme="dark"] body::before,
+body[data-theme="dark"]::before {
+  background-image:
+    linear-gradient(
+      135deg,
+      rgba(4, 18, 35, 0.72) 0%,
+      rgba(7, 29, 50, 0.68) 50%,
+      rgba(8, 42, 70, 0.72) 100%
+    ),
+    url("/images/gita-background.png");
 
+  background-size:
+    100% auto;
+
+  background-position:
+    center top;
+
+  background-repeat:
+    no-repeat;
+}
 
 
 /* =====================================================
@@ -1930,6 +2027,12 @@ body[data-theme="dark"] .welcome p {
 
     padding:
       42px 0 45px;
+
+    background:
+      transparent !important;
+
+    background-image:
+      none !important;
   }
 
 
@@ -2264,34 +2367,34 @@ body[data-theme="dark"] .welcome p {
   }
 
 
-.today-sanskrit {
-  padding:
-    20px 14px;
+  .today-sanskrit {
+    padding:
+      20px 14px;
 
-  font-size:
-    19px;
+    font-size:
+      19px;
 
-  line-height:
-    1.45;
+    line-height:
+      1.45;
 
-  overflow:
-    hidden;
+    overflow:
+      hidden;
 
-  min-height:
-    110px;
+    min-height:
+      110px;
 
-  max-height:
-    110px;
+    max-height:
+      110px;
 
-  display:
-    flex;
+    display:
+      flex;
 
-  align-items:
-    center;
+    align-items:
+      center;
 
-  justify-content:
-    center;
-}
+    justify-content:
+      center;
+  }
 
 
   .today-translation,
@@ -2565,32 +2668,6 @@ body[data-theme="dark"] .welcome p {
      TODAY SHLOK
   ------------------------------------------------- */
 
-  .today-sanskrit {
-  padding:
-    18px 11px;
-
-  font-size:
-    17px;
-
-  line-height:
-    1.45;
-
-  min-height:
-    100px;
-
-  display:
-    flex;
-
-  align-items:
-    center;
-
-  justify-content:
-    center;
-
-  overflow:
-    hidden;
-}
-
   .today-shlok {
     width:
       calc(100% - 24px);
@@ -2654,6 +2731,24 @@ body[data-theme="dark"] .welcome p {
 
     line-height:
       1.85;
+
+    min-height:
+      100px;
+
+    max-height:
+      100px;
+
+    display:
+      flex;
+
+    align-items:
+      center;
+
+    justify-content:
+      center;
+
+    overflow:
+      hidden;
   }
 
 
