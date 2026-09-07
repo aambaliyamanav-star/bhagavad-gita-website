@@ -36,6 +36,8 @@ function ChapterReader() {
   const sanskritRef = useRef(null);
 const [sanskritFontSize, setSanskritFontSize] = useState(21);
 
+
+
   // =====================================================
   // FAVOURITE STATE
   // =====================================================
@@ -72,6 +74,82 @@ const [sanskritFontSize, setSanskritFontSize] = useState(21);
   const requestedShloka = Number(
     searchParams.get("shloka")
   );
+
+  // =====================================================
+// AUTO FIT SANSKRIT FOR MOBILE
+// =====================================================
+
+useEffect(() => {
+  const container = sanskritRef.current;
+
+  if (!container) {
+    return;
+  }
+
+  const fitSanskrit = () => {
+    const lines =
+      container.querySelectorAll(
+        ".sanskrit-line"
+      );
+
+    if (lines.length === 0) {
+      return;
+    }
+
+    // Desktop
+    if (window.innerWidth > 700) {
+      container.style.fontSize = "25px";
+      setSanskritFontSize(25);
+      return;
+    }
+
+    // Start from normal mobile size
+    let fontSize = 21;
+
+    container.style.fontSize =
+      `${fontSize}px`;
+
+    // Reduce only when a line is wider
+    // than the available mobile width
+    while (
+      fontSize > 12 &&
+      Array.from(lines).some(
+        (line) =>
+          line.scrollWidth >
+          line.clientWidth
+      )
+    ) {
+      fontSize -= 0.5;
+
+      container.style.fontSize =
+        `${fontSize}px`;
+    }
+
+    setSanskritFontSize(fontSize);
+  };
+
+  const timer = setTimeout(
+    fitSanskrit,
+    100
+  );
+
+  window.addEventListener(
+    "resize",
+    fitSanskrit
+  );
+
+  return () => {
+    clearTimeout(timer);
+
+    window.removeEventListener(
+      "resize",
+      fitSanskrit
+    );
+  };
+}, [
+  currentShloka,
+  shlokas,
+]);
 
   // =====================================================
   // CHAPTER NAMES
@@ -805,78 +883,7 @@ if (
   const shloka =
     shlokas[currentShloka];
 
-    // =====================================================
-// AUTO FIT SANSKRIT FOR MOBILE
-// =====================================================
 
-useEffect(() => {
-  if (!sanskritRef.current) {
-    return;
-  }
-
-  const container =
-    sanskritRef.current;
-
-  const fitSanskrit = () => {
-    const lines =
-      container.querySelectorAll(
-        ".sanskrit-line"
-      );
-
-    if (lines.length === 0) {
-      return;
-    }
-
-    // Desktop
-    if (window.innerWidth > 700) {
-      setSanskritFontSize(25);
-      return;
-    }
-
-    let fontSize = 21;
-
-    container.style.fontSize =
-      `${fontSize}px`;
-
-    while (
-      fontSize > 12 &&
-      Array.from(lines).some(
-        (line) =>
-          line.scrollWidth >
-          line.clientWidth
-      )
-    ) {
-      fontSize -= 0.5;
-
-      container.style.fontSize =
-        `${fontSize}px`;
-    }
-
-    setSanskritFontSize(fontSize);
-  };
-
-  const timer = setTimeout(
-    fitSanskrit,
-    100
-  );
-
-  window.addEventListener(
-    "resize",
-    fitSanskrit
-  );
-
-  return () => {
-    clearTimeout(timer);
-
-    window.removeEventListener(
-      "resize",
-      fitSanskrit
-    );
-  };
-}, [
-  currentShloka,
-  shloka?.sanskrit,
-]);
 
   // =====================================================
   // NEXT SHLOK
