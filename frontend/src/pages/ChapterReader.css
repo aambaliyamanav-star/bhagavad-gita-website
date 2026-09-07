@@ -561,6 +561,8 @@
 
 .sanskrit {
   width: 100%;
+  max-width: 100%;
+  min-width: 0;
 
   font-family:
     "Noto Sans Devanagari",
@@ -568,16 +570,18 @@
     sans-serif;
 
   font-size: 25px;
-
   line-height: 2;
-
   font-weight: 600;
 
   color: var(--reader-sanskrit);
 
   text-align: center;
 
-  overflow-wrap: anywhere;
+  overflow: hidden;
+  overflow-wrap: normal;
+  word-break: normal;
+
+  box-sizing: border-box;
 }
 
 
@@ -632,7 +636,9 @@
 
   align-items: center;
 
-  max-width: 100%;
+  min-width: 0;
+
+  flex: 0 0 auto;
 }
 
 
