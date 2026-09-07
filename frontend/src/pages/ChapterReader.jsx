@@ -1090,34 +1090,54 @@ if (
   // PREPARE SANSKRIT WORDS
   // =====================================================
 
-  const prepareSanskritLines =
-    () => {
-      const plainSanskrit =
-        removeHtml(
-          shloka.sanskrit
-        );
+const prepareSanskritLines = () => {
+  const plainSanskrit =
+    removeHtml(shloka.sanskrit);
 
-      if (!plainSanskrit) {
-        return [];
-      }
+  if (!plainSanskrit) {
+    return [];
+  }
 
-      const rawLines =
-        plainSanskrit.split(/\n+/);
+  const rawLines = plainSanskrit
+    .split(/\n+/)
+    .map((line) =>
+      line
+        .replace(/\s+/g, " ")
+        .trim()
+    )
+    .filter(Boolean);
 
-      const lines = rawLines
-        .map((line) =>
-          line
-            .replace(/\s+/g, " ")
-            .trim()
-        )
-        .filter(Boolean);
+  // Always display Sanskrit in exactly 2 lines
+  if (rawLines.length <= 2) {
+    return rawLines.map((line) =>
+      line
+        .split(" ")
+        .filter(Boolean)
+    );
+  }
 
-      return lines.map((line) =>
-        line
-          .split(" ")
-          .filter(Boolean)
-      );
-    };
+  const middle = Math.ceil(
+    rawLines.length / 2
+  );
+
+  const firstLine = rawLines
+    .slice(0, middle)
+    .join(" ");
+
+  const secondLine = rawLines
+    .slice(middle)
+    .join(" ");
+
+  return [
+    firstLine
+      .split(" ")
+      .filter(Boolean),
+
+    secondLine
+      .split(" ")
+      .filter(Boolean),
+  ];
+};
 
   // =====================================================
   // RENDER SANSKRIT
