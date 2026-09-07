@@ -541,6 +541,10 @@
       #ffffff,
       #edf6ff
     );
+
+  position: relative;
+  z-index: 50;
+  overflow: visible;
 }
 
 
@@ -563,6 +567,9 @@
   width: 100%;
   max-width: 100%;
   min-width: 0;
+
+    position: relative;
+  z-index: 60;
 
   font-family:
     "Noto Sans Devanagari",
@@ -613,7 +620,7 @@
 
   display: flex;
 
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 
   justify-content: center;
 
@@ -639,8 +646,9 @@
   min-width: 0;
 
   flex: 0 0 auto;
-}
 
+  z-index: 9999;
+}
 
 /* =========================================================
    NORMAL WORD
