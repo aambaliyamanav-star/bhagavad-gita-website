@@ -1107,8 +1107,8 @@ const prepareSanskritLines = () => {
     )
     .filter(Boolean);
 
-  // Always display Sanskrit in exactly 2 lines
-  if (rawLines.length <= 2) {
+  // If already 2 lines, keep database structure
+  if (rawLines.length === 2) {
     return rawLines.map((line) =>
       line
         .split(" ")
@@ -1116,26 +1116,24 @@ const prepareSanskritLines = () => {
     );
   }
 
+  // Collect all words
+  const allWords = rawLines
+    .join(" ")
+    .split(" ")
+    .filter(Boolean);
+
+  if (allWords.length === 0) {
+    return [];
+  }
+
+  // Split into exactly 2 lines
   const middle = Math.ceil(
-    rawLines.length / 2
+    allWords.length / 2
   );
 
-  const firstLine = rawLines
-    .slice(0, middle)
-    .join(" ");
-
-  const secondLine = rawLines
-    .slice(middle)
-    .join(" ");
-
   return [
-    firstLine
-      .split(" ")
-      .filter(Boolean),
-
-    secondLine
-      .split(" ")
-      .filter(Boolean),
+    allWords.slice(0, middle),
+    allWords.slice(middle),
   ];
 };
 
