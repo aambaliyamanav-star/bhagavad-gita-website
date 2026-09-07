@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./ChapterReader.css";
 
 import {
@@ -32,6 +32,9 @@ function ChapterReader() {
 
   // Currently clicked Sanskrit word
   const [activeWordIndex, setActiveWordIndex] = useState(null);
+
+  const sanskritRef = useRef(null);
+const [sanskritFontSize, setSanskritFontSize] = useState(21);
 
   // =====================================================
   // FAVOURITE STATE
@@ -802,6 +805,79 @@ if (
   const shloka =
     shlokas[currentShloka];
 
+    // =====================================================
+// AUTO FIT SANSKRIT FOR MOBILE
+// =====================================================
+
+useEffect(() => {
+  if (!sanskritRef.current) {
+    return;
+  }
+
+  const container =
+    sanskritRef.current;
+
+  const fitSanskrit = () => {
+    const lines =
+      container.querySelectorAll(
+        ".sanskrit-line"
+      );
+
+    if (lines.length === 0) {
+      return;
+    }
+
+    // Desktop
+    if (window.innerWidth > 700) {
+      setSanskritFontSize(25);
+      return;
+    }
+
+    let fontSize = 21;
+
+    container.style.fontSize =
+      `${fontSize}px`;
+
+    while (
+      fontSize > 12 &&
+      Array.from(lines).some(
+        (line) =>
+          line.scrollWidth >
+          line.clientWidth
+      )
+    ) {
+      fontSize -= 0.5;
+
+      container.style.fontSize =
+        `${fontSize}px`;
+    }
+
+    setSanskritFontSize(fontSize);
+  };
+
+  const timer = setTimeout(
+    fitSanskrit,
+    100
+  );
+
+  window.addEventListener(
+    "resize",
+    fitSanskrit
+  );
+
+  return () => {
+    clearTimeout(timer);
+
+    window.removeEventListener(
+      "resize",
+      fitSanskrit
+    );
+  };
+}, [
+  currentShloka,
+  shloka?.sanskrit,
+]);
+
   // =====================================================
   // NEXT SHLOK
   // =====================================================
@@ -1292,9 +1368,15 @@ if (
               🕉️ સંસ્કૃત શ્લોક
             </h3>
 
-            <div className="sanskrit formatted-content">
-              {renderSanskritWords()}
-            </div>
+<div
+  ref={sanskritRef}
+  className="sanskrit formatted-content"
+  style={{
+    fontSize: `${sanskritFontSize}px`,
+  }}
+>
+  {renderSanskritWords()}
+</div>
 
             {/* WORD MEANING INFO */}
 
