@@ -622,6 +622,8 @@
 
   flex-wrap: nowrap;
 
+  overflow: visible;
+
   justify-content: center;
 
   align-items: center;
@@ -734,7 +736,7 @@
 
   left: 50%;
 
-  bottom: calc(100% + 12px);
+  bottom: calc(100% + 85px);
 
   transform: translateX(-50%);
 
