@@ -1485,10 +1485,10 @@ body[data-theme="dark"],
    DARK BACKGROUND — DESKTOP
 ===================================================== */
 
-html.dark body::before,
-body.dark::before,
-html[data-theme="dark"] body::before,
-body[data-theme="dark"]::before {
+html.dark .home-page::before,
+body.dark .home-page::before,
+html[data-theme="dark"] .home-page::before,
+body[data-theme="dark"] .home-page::before {
   background-image:
     linear-gradient(
       135deg,
