@@ -40,7 +40,7 @@ body {
   min-height: 100vh;
   position: relative;
   isolation: isolate;
-  background: transparent;
+  background: #0b2d4d;
 }
 
 
@@ -84,7 +84,7 @@ body {
    HOME PAGE
 ===================================================== */
 
-main {
+.home-page {
   width: 100%;
   min-height: 100vh;
 
