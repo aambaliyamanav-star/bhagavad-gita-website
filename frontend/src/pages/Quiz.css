@@ -17,17 +17,23 @@
 
   background:
     radial-gradient(
-      circle at top left,
-      rgba(255, 193, 7, 0.08),
+      circle at 15% 20%,
+      rgba(55, 145, 210, 0.18),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 85% 80%,
+      rgba(35, 110, 180, 0.16),
       transparent 35%
     ),
     linear-gradient(
       135deg,
-      #f5f9ff,
-      #edf4ff
+      #dcefff 0%,
+      #c9e5fa 48%,
+      #e5f4ff 100%
     );
 
-  color: #183153;
+  color: #173f63;
 
   transition:
     background 0.35s ease,
