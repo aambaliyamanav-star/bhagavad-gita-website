@@ -48,7 +48,7 @@ body {
    FIXED GITA BACKGROUND — DESKTOP
 ===================================================== */
 
-body::before {
+.home-page::before {
   content: "";
 
   position: fixed;
@@ -70,11 +70,9 @@ body::before {
 
   background-size: 100% auto;
 
-  background-position:
-    center top;
+  background-position: center top;
 
-  background-repeat:
-    no-repeat;
+  background-repeat: no-repeat;
 
   z-index: 0;
 
@@ -1978,7 +1976,7 @@ body[data-theme="dark"] .welcome p {
      MOBILE BACKGROUND
   ------------------------------------------------- */
 
-  body::before {
+  .home-page::before {
     top:
       62px;
 
@@ -2008,11 +2006,10 @@ body[data-theme="dark"] .welcome p {
   /* -------------------------------------------------
      DARK MOBILE BACKGROUND
   ------------------------------------------------- */
-
-  html.dark body::before,
-  body.dark::before,
-  html[data-theme="dark"] body::before,
-  body[data-theme="dark"]::before {
+html.dark .home-page::before,
+body.dark .home-page::before,
+html[data-theme="dark"] .home-page::before,
+body[data-theme="dark"] .home-page::before {
     background-image:
       linear-gradient(
         135deg,
