@@ -3033,43 +3033,24 @@ main,
 }
 
 /* =====================================================
-   CHROME DESKTOP VIEW ON MOBILE
-   FULL IMAGE — NO CROP — NO HORIZONTAL SCROLL
+   CHROME DESKTOP VIEW ON MOBILE — BACKGROUND FIX
 ===================================================== */
 
 @media (max-width: 1100px) {
 
-  html,
-  body,
-  #root {
-    width: 100%;
-    max-width: 100%;
-    overflow-x: hidden !important;
-  }
-
-  .home-page {
-    width: 100%;
-    max-width: 100%;
-    overflow-x: hidden !important;
-  }
-
   .hero {
-    width: 100%;
-    max-width: 100%;
     min-height: auto !important;
     height: auto !important;
   }
 
   .home-page::before {
-    position: absolute;
+    position: fixed;
 
     top: 74px;
     left: 0;
 
     width: 100%;
-
-    /* IMPORTANT */
-    height: 100%;
+    height: calc(100vh - 74px);
 
     background-size: 100% auto;
     background-position: center top;
@@ -3077,4 +3058,5 @@ main,
 
     z-index: 0;
   }
+
 }
