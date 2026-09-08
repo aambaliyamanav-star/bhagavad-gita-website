@@ -19,23 +19,23 @@
 
   box-sizing: border-box;
 
-  background:
-    radial-gradient(
-      circle at 10% 15%,
-      rgba(30, 136, 229, 0.22),
-      transparent 35%
-    ),
-    radial-gradient(
-      circle at 90% 85%,
-      rgba(3, 169, 244, 0.18),
-      transparent 38%
-    ),
-    linear-gradient(
-      135deg,
-      #d7efff 0%,
-      #c4e6ff 50%,
-      #eaf7ff 100%
-    );
+background:
+  radial-gradient(
+    circle at 15% 20%,
+    rgba(173, 216, 255, 0.45),
+    transparent 35%
+  ),
+  radial-gradient(
+    circle at 85% 80%,
+    rgba(200, 235, 255, 0.55),
+    transparent 40%
+  ),
+  linear-gradient(
+    135deg,
+    #f4fbff 0%,
+    #e5f5ff 45%,
+    #d8efff 100%
+  );
 
   color: #183153;
 
