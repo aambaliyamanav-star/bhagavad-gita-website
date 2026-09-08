@@ -21,14 +21,20 @@
 
   background:
     radial-gradient(
-      circle at top left,
-      rgba(255, 193, 7, 0.08),
+      circle at 10% 15%,
+      rgba(30, 136, 229, 0.22),
       transparent 35%
+    ),
+    radial-gradient(
+      circle at 90% 85%,
+      rgba(3, 169, 244, 0.18),
+      transparent 38%
     ),
     linear-gradient(
       135deg,
-      #f5f9ff,
-      #edf4ff
+      #d7efff 0%,
+      #c4e6ff 50%,
+      #eaf7ff 100%
     );
 
   color: #183153;
