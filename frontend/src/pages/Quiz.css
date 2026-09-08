@@ -15,23 +15,23 @@
   padding: 30px 20px;
   box-sizing: border-box;
 
-  background:
-    radial-gradient(
-      circle at 15% 20%,
-      rgba(55, 145, 210, 0.18),
-      transparent 32%
-    ),
-    radial-gradient(
-      circle at 85% 80%,
-      rgba(35, 110, 180, 0.16),
-      transparent 35%
-    ),
-    linear-gradient(
-      135deg,
-      #dcefff 0%,
-      #c9e5fa 48%,
-      #e5f4ff 100%
-    );
+background:
+  radial-gradient(
+    circle at 10% 15%,
+    rgba(30, 136, 229, 0.22),
+    transparent 35%
+  ),
+  radial-gradient(
+    circle at 90% 85%,
+    rgba(3, 169, 244, 0.18),
+    transparent 38%
+  ),
+  linear-gradient(
+    135deg,
+    #d7efff 0%,
+    #c4e6ff 50%,
+    #eaf7ff 100%
+  );
 
   color: #173f63;
 
