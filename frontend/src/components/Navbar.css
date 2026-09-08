@@ -2691,28 +2691,49 @@ body {
 }
 
 /* =====================================================
-   MOBILE NAVBAR - LONG PAGE TITLE FIX
-   Shlok Management / Quiz Management
+   NAVBAR RIGHT SIDE
+   Keep page title near hamburger
 ===================================================== */
 
 .navbar-right {
-  min-width: 0;
-  flex: 1 1 auto;
+  display: flex;
+  align-items: center;
   justify-content: flex-end;
-  overflow: hidden;
+
+  margin-left: auto;
+
+  min-width: 0;
+  flex: 0 1 auto;
+
+  gap: 12px;
 }
+
+
+/* =====================================================
+   CURRENT PAGE TITLE
+===================================================== */
 
 .current-page-title {
   min-width: 0;
+  max-width: 300px;
+
   flex: 0 1 auto;
 
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 
-  font-size: clamp(14px, 3vw, 22px);
+  font-size: clamp(16px, 2.2vw, 22px);
   line-height: 1.2;
+
+  /* Space after Bhagavad Gita logo */
+  margin-left: 16px;
 }
+
+
+/* =====================================================
+   HAMBURGER
+===================================================== */
 
 .hamburger-btn {
   flex: 0 0 auto;
@@ -2726,19 +2747,20 @@ body {
 @media (max-width: 600px) {
 
   .navbar-right {
-    gap: 6px;
-    min-width: 0;
+    margin-left: auto;
+    gap: 7px;
   }
 
   .current-page-title {
-    font-size: clamp(13px, 4vw, 19px);
-    max-width: 42vw;
+    max-width: 38vw;
+    font-size: clamp(13px, 3.8vw, 18px);
+
+    margin-left: 12px;
   }
 
   .hamburger-btn {
     flex-shrink: 0;
   }
-
 }
 
 
@@ -2753,10 +2775,11 @@ body {
   }
 
   .current-page-title {
+    max-width: 34vw;
     font-size: 14px;
-    max-width: 38vw;
-  }
 
+    margin-left: 8px;
+  }
 }
 
 
@@ -2767,8 +2790,10 @@ body {
 @media (max-width: 360px) {
 
   .current-page-title {
+    max-width: 31vw;
     font-size: 13px;
-    max-width: 35vw;
+
+    margin-left: 6px;
   }
 
 }
