@@ -3031,3 +3031,40 @@ main,
   overflow-x:
     hidden;
 }
+
+/* =====================================================
+   DESKTOP VIEW ON MOBILE FIX
+   Chrome "Desktop site" mode
+===================================================== */
+
+@media (max-width: 1100px) {
+
+  .hero {
+    min-height: auto !important;
+    height: auto !important;
+    padding: 30px 0 35px;
+  }
+
+  .home-page::before {
+    position: absolute;
+    top: 74px;
+    left: 0;
+    width: 100%;
+    height: 850px;
+
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
+  }
+
+  .home-page {
+    min-height: 100vh;
+  }
+
+  .home-search,
+  .today-shlok,
+  .welcome {
+    position: relative;
+    z-index: 2;
+  }
+}
