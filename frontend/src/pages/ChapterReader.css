@@ -541,10 +541,6 @@
       #ffffff,
       #edf6ff
     );
-
-  position: relative;
-  z-index: 50;
-  overflow: visible;
 }
 
 
@@ -565,11 +561,6 @@
 
 .sanskrit {
   width: 100%;
-  max-width: 100%;
-  min-width: 0;
-
-    position: relative;
-  z-index: 60;
 
   font-family:
     "Noto Sans Devanagari",
@@ -577,18 +568,16 @@
     sans-serif;
 
   font-size: 25px;
+
   line-height: 2;
+
   font-weight: 600;
 
   color: var(--reader-sanskrit);
 
   text-align: center;
 
-  overflow: hidden;
-  overflow-wrap: normal;
-  word-break: normal;
-
-  box-sizing: border-box;
+  overflow-wrap: anywhere;
 }
 
 
@@ -620,9 +609,7 @@
 
   display: flex;
 
-  flex-wrap: nowrap;
-
-  overflow: visible;
+  flex-wrap: wrap;
 
   justify-content: center;
 
@@ -645,12 +632,9 @@
 
   align-items: center;
 
-  min-width: 0;
-
-  flex: 0 0 auto;
-
-  z-index: 100;
+  max-width: 100%;
 }
+
 
 /* =========================================================
    NORMAL WORD
@@ -731,21 +715,16 @@
    FIXED FOR LONG GUJARATI MEANINGS
    ========================================================= */
 
-/* =========================================================
-   WORD MEANING POPUP
-   ========================================================= */
-
 .word-meaning-popup {
   position: absolute;
 
   left: 50%;
 
-  /* Default: popup appears above the clicked word */
-  bottom: calc(100% + 14px);
+  bottom: calc(100% + 12px);
 
   transform: translateX(-50%);
 
-  z-index: 99999;
+  z-index: 100;
 
   display: flex;
 
@@ -781,14 +760,11 @@
       #edf6ff
     );
 
-  border: 1px solid
-    rgba(59, 130, 246, 0.28);
+  border: 1px solid rgba(59, 130, 246, 0.28);
 
   box-shadow:
-    0 12px 28px
-      rgba(30, 64, 175, 0.20),
-    inset 0 1px 0
-      rgba(255, 255, 255, 0.95);
+    0 12px 28px rgba(30, 64, 175, 0.20),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
 
   white-space: normal;
 
@@ -798,50 +774,14 @@
 
   text-align: center;
 
-  pointer-events: none;
-
-  animation:
-    meaningPopupIn
-    0.18s
-    ease-out;
+  animation: meaningPopupIn 0.18s ease-out;
 }
 
 
-/* =========================================================
-   FIRST SANSKRIT LINE POPUP
-   Move above the "સંસ્કૃત શ્લોક" heading
-   ========================================================= */
-
-.sanskrit-line:first-child
-  .word-meaning-popup {
-
-  bottom: calc(100% + 85px);
-
-  z-index: 99999;
-}
-
-
-/* =========================================================
-   SECOND SANSKRIT LINE POPUP
-   Keep it directly above the second line
-   ========================================================= */
-
-.sanskrit-line:nth-child(2)
-  .word-meaning-popup {
-
-  bottom: calc(100% + 14px);
-
-  z-index: 99999;
-}
-
-
-/* =========================================================
-   DARK MODE POPUP
-   ========================================================= */
+/* Dark popup */
 
 .dark .word-meaning-popup,
 [data-theme="dark"] .word-meaning-popup {
-
   background:
     linear-gradient(
       145deg,
@@ -849,23 +789,17 @@
       #10243d
     );
 
-  border-color:
-    rgba(96, 165, 250, 0.30);
+  border-color: rgba(96, 165, 250, 0.30);
 
   box-shadow:
-    0 14px 30px
-      rgba(0, 0, 0, 0.40),
-    inset 0 1px 0
-      rgba(255, 255, 255, 0.08);
+    0 14px 30px rgba(0, 0, 0, 0.40),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 
-/* =========================================================
-   POPUP INNER CONTENT
-   ========================================================= */
+/* Popup inner content safety */
 
 .word-meaning-popup > * {
-
   min-width: 0;
 
   max-width: 100%;
@@ -874,12 +808,9 @@
 }
 
 
-/* =========================================================
-   POPUP ARROW
-   ========================================================= */
+/* Popup arrow */
 
 .word-meaning-popup::after {
-
   content: "";
 
   position: absolute;
@@ -894,13 +825,9 @@
 
   background: #edf6ff;
 
-  border-right:
-    1px solid
-    rgba(59, 130, 246, 0.20);
+  border-right: 1px solid rgba(59, 130, 246, 0.20);
 
-  border-bottom:
-    1px solid
-    rgba(59, 130, 246, 0.20);
+  border-bottom: 1px solid rgba(59, 130, 246, 0.20);
 
   transform:
     translateX(-50%)
@@ -909,25 +836,18 @@
 
 
 .dark .word-meaning-popup::after,
-[data-theme="dark"]
-.word-meaning-popup::after {
-
+[data-theme="dark"] .word-meaning-popup::after {
   background: #10243d;
 
-  border-right-color:
-    rgba(96, 165, 250, 0.25);
+  border-right-color: rgba(96, 165, 250, 0.25);
 
-  border-bottom-color:
-    rgba(96, 165, 250, 0.25);
+  border-bottom-color: rgba(96, 165, 250, 0.25);
 }
 
 
-/* =========================================================
-   SANSKRIT WORD
-   ========================================================= */
+/* Sanskrit meaning */
 
 .word-meaning-sanskrit {
-
   display: inline-block;
 
   flex: 0 1 auto;
@@ -950,12 +870,9 @@
 }
 
 
-/* =========================================================
-   ARROW
-   ========================================================= */
+/* Arrow */
 
 .word-meaning-arrow {
-
   display: inline-block;
 
   flex: 0 0 auto;
@@ -968,12 +885,9 @@
 }
 
 
-/* =========================================================
-   GUJARATI MEANING
-   ========================================================= */
+/* Gujarati meaning */
 
 .word-meaning-gujarati {
-
   display: inline-block;
 
   flex: 1 1 auto;
@@ -1001,21 +915,15 @@
 
 
 .dark .word-meaning-gujarati,
-[data-theme="dark"]
-.word-meaning-gujarati {
-
+[data-theme="dark"] .word-meaning-gujarati {
   color: #c4daf2;
 }
 
 
-/* =========================================================
-   POPUP ANIMATION
-   ========================================================= */
+/* Popup animation */
 
 @keyframes meaningPopupIn {
-
   from {
-
     opacity: 0;
 
     transform:
@@ -1024,13 +932,50 @@
   }
 
   to {
-
     opacity: 1;
 
     transform:
       translateX(-50%)
       translateY(0);
   }
+}
+
+
+/* =========================================================
+   WORD MEANING INFO
+   ========================================================= */
+
+.word-meaning-info {
+  margin-top: 14px;
+
+  padding: 9px 14px;
+
+  border-radius: 11px;
+
+  background:
+    rgba(59, 130, 246, 0.07);
+
+  border: 1px solid rgba(59, 130, 246, 0.12);
+
+  color: #50749f;
+
+  font-size: 13px;
+
+  font-weight: 600;
+
+  text-align: center;
+}
+
+
+.dark .word-meaning-info,
+[data-theme="dark"] .word-meaning-info {
+  color: #9fc1e5;
+
+  background:
+    rgba(96, 165, 250, 0.08);
+
+  border-color:
+    rgba(96, 165, 250, 0.15);
 }
 
 
