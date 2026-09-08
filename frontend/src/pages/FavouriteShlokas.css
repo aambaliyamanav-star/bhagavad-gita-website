@@ -4,32 +4,30 @@
 ===================================================== */
 
 .favourite-page {
-
   min-height: 100vh;
-
   padding: 40px 20px 70px;
+  box-sizing: border-box;
 
   background:
     radial-gradient(
       circle at 15% 20%,
-      rgba(55, 145, 210, 0.18),
-      transparent 32%
+      rgba(190, 225, 255, 0.35),
+      transparent 35%
     ),
     radial-gradient(
       circle at 85% 80%,
-      rgba(35, 110, 180, 0.14),
-      transparent 35%
+      rgba(215, 240, 255, 0.45),
+      transparent 40%
     ),
     linear-gradient(
       135deg,
-      #dcefff 0%,
-      #c9e5fa 48%,
-      #e8f5ff 100%
+      #ffffff 0%,
+      #f0f9ff 50%,
+      #e4f4ff 100%
     );
 
   color: #173f63;
 }
-
 
 /* =====================================================
    HEADER BOX
