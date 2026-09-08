@@ -2689,3 +2689,86 @@ body {
 [data-theme="dark"] .current-page-title {
   color: #8ecbff;
 }
+
+/* =====================================================
+   MOBILE NAVBAR - LONG PAGE TITLE FIX
+   Shlok Management / Quiz Management
+===================================================== */
+
+.navbar-right {
+  min-width: 0;
+  flex: 1 1 auto;
+  justify-content: flex-end;
+  overflow: hidden;
+}
+
+.current-page-title {
+  min-width: 0;
+  flex: 0 1 auto;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  font-size: clamp(14px, 3vw, 22px);
+  line-height: 1.2;
+}
+
+.hamburger-btn {
+  flex: 0 0 auto;
+}
+
+
+/* =====================================================
+   MOBILE
+===================================================== */
+
+@media (max-width: 600px) {
+
+  .navbar-right {
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .current-page-title {
+    font-size: clamp(13px, 4vw, 19px);
+    max-width: 42vw;
+  }
+
+  .hamburger-btn {
+    flex-shrink: 0;
+  }
+
+}
+
+
+/* =====================================================
+   SMALL MOBILE
+===================================================== */
+
+@media (max-width: 400px) {
+
+  .navbar-right {
+    gap: 5px;
+  }
+
+  .current-page-title {
+    font-size: 14px;
+    max-width: 38vw;
+  }
+
+}
+
+
+/* =====================================================
+   VERY SMALL MOBILE
+===================================================== */
+
+@media (max-width: 360px) {
+
+  .current-page-title {
+    font-size: 13px;
+    max-width: 35vw;
+  }
+
+}
