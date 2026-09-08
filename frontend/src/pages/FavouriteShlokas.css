@@ -9,12 +9,23 @@
 
   padding: 40px 20px 70px;
 
-  background: linear-gradient(
-    135deg,
-    #eef7ff,
-    #e4f2ff,
-    #f8fbff
-  );
+  background:
+    radial-gradient(
+      circle at 15% 20%,
+      rgba(55, 145, 210, 0.18),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 85% 80%,
+      rgba(35, 110, 180, 0.14),
+      transparent 35%
+    ),
+    linear-gradient(
+      135deg,
+      #dcefff 0%,
+      #c9e5fa 48%,
+      #e8f5ff 100%
+    );
 
   color: #173f63;
 }
