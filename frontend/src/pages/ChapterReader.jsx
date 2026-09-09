@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { BookOpen, Heart, Mic, Loader2, Sparkles, AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import { BookOpen, Heart, Mic, Loader2, Sparkles, AlertCircle, ChevronLeft, ChevronRight, Share2 } from "lucide-react";
 import "./ChapterReader.css";
+import ShareShlokaModal from "../components/ShareShlokaModal.jsx";
 
 import {
   useParams,
@@ -47,6 +48,12 @@ const [sanskritFontSize, setSanskritFontSize] = useState(21);
 
   const [favoriteLoading, setFavoriteLoading] =
     useState(false);
+
+  // =====================================================
+  // SHARE MODAL STATE
+  // =====================================================
+
+  const [shareModalOpen, setShareModalOpen] = useState(false);
 
   // =====================================================
   // API URL
@@ -1403,35 +1410,47 @@ const prepareSanskritLines = () => {
           </div>
 
           {/* =================================================
-              FAVOURITE BUTTON
+              TOP ACTIONS: SHARE CARD & FAVOURITE BUTTON
           ================================================= */}
 
-          <button
-            type="button"
-            className={
-              isFavorite(shloka)
-                ? "favorite-shloka-button favorited"
-                : "favorite-shloka-button"
-            }
-            onClick={
-              toggleFavorite
-            }
-            disabled={favoriteLoading}
-            aria-label={
-              isFavorite(shloka)
-                ? "Favouriteમાંથી દૂર કરો"
-                : "Favouriteમાં ઉમેરો"
-            }
-            title={
-              isFavorite(shloka)
-                ? "Favouriteમાંથી દૂર કરો"
-                : "Favouriteમાં ઉમેરો"
-            }
-          >
-            {isFavorite(shloka)
-              ? <Heart fill="currentColor" size={20} />
-              : <Heart size={20} />}
-          </button>
+          <div className="shloka-top-actions">
+            <button
+              type="button"
+              className="share-shloka-button"
+              onClick={() => setShareModalOpen(true)}
+              aria-label="શ્લોક કાર્ડ શેર કરો"
+              title="શ્લોક કાર્ડ શેર કરો / ડાઉનલોડ કરો"
+            >
+              <Share2 size={20} />
+            </button>
+
+            <button
+              type="button"
+              className={
+                isFavorite(shloka)
+                  ? "favorite-shloka-button favorited"
+                  : "favorite-shloka-button"
+              }
+              onClick={
+                toggleFavorite
+              }
+              disabled={favoriteLoading}
+              aria-label={
+                isFavorite(shloka)
+                  ? "Favouriteમાંથી દૂર કરો"
+                  : "Favouriteમાં ઉમેરો"
+              }
+              title={
+                isFavorite(shloka)
+                  ? "Favouriteમાંથી દૂર કરો"
+                  : "Favouriteમાં ઉમેરો"
+              }
+            >
+              {isFavorite(shloka)
+                ? <Heart fill="currentColor" size={20} />
+                : <Heart size={20} />}
+            </button>
+          </div>
 
           {/* SPEAKER */}
 
@@ -1700,6 +1719,25 @@ const prepareSanskritLines = () => {
         </div>
 
       </section>
+
+      {/* =================================================
+          SHARE SHLOKA CARD MODAL
+      ================================================= */}
+      {shloka && (
+        <ShareShlokaModal
+          isOpen={shareModalOpen}
+          onClose={() => setShareModalOpen(false)}
+          shlokaData={{
+            chapterNumber: currentChapterNumber,
+            chapterName: chapterName || `અધ્યાય ${currentChapterNumber}`,
+            shlokNumber: shloka.shlokNumber,
+            sanskrit: shloka.sanskrit,
+            translation: shloka.translation,
+            speaker: shloka.speaker,
+            message: shloka.message,
+          }}
+        />
+      )}
 
     </main>
   );

@@ -2447,6 +2447,79 @@ button:focus-visible {
 
 
 /* =========================================================
+   ⭐ TOP ACTIONS (SHARE & FAVOURITE)
+   ========================================================= */
+
+.shloka-top-actions {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 20;
+}
+
+.shloka-top-actions .favorite-shloka-button,
+.shloka-top-actions .share-shloka-button {
+  position: relative;
+  top: auto;
+  right: auto;
+}
+
+/* =========================================================
+   SHARE SHLOKA BUTTON
+   ========================================================= */
+
+.share-shloka-button {
+  width: 48px;
+  height: 48px;
+  border: 2px solid #60a5fa;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  background: linear-gradient(145deg, #ffffff, #edf6ff);
+  color: #2563eb;
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.12),
+              inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transition: transform 0.22s ease,
+              box-shadow 0.22s ease,
+              background 0.22s ease,
+              color 0.22s ease,
+              border-color 0.22s ease;
+}
+
+.share-shloka-button:hover {
+  transform: translateY(-3px) scale(1.06);
+  color: #d4af37;
+  border-color: #d4af37;
+  background: linear-gradient(145deg, #ffffff, #fffdf2);
+  box-shadow: 0 10px 22px rgba(212, 175, 55, 0.25);
+}
+
+.share-shloka-button:active {
+  transform: translateY(1px) scale(0.96);
+}
+
+.dark .share-shloka-button,
+[data-theme="dark"] .share-shloka-button {
+  background: linear-gradient(145deg, #173455, #122b48);
+  border-color: rgba(96, 165, 250, 0.28);
+  color: #93c5fd;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+}
+
+.dark .share-shloka-button:hover,
+[data-theme="dark"] .share-shloka-button:hover {
+  background: linear-gradient(145deg, #1d406a, #153254);
+  border-color: #ffd54f;
+  color: #ffd54f;
+  box-shadow: 0 0 18px rgba(255, 213, 79, 0.35);
+}
+
+/* =========================================================
    FAVOURITE BUTTON
    ========================================================= */
 
@@ -3111,6 +3184,17 @@ button:focus-visible {
 
 @media (max-width: 700px) {
 
+  .shloka-top-actions {
+    top: 12px;
+    right: 12px;
+    gap: 8px;
+  }
+
+  .share-shloka-button {
+    width: 43px;
+    height: 43px;
+  }
+
   .favorite-shloka-button {
     top: 12px;
 
@@ -3186,6 +3270,11 @@ button:focus-visible {
 
 @media (max-width: 480px) {
 
+  .share-shloka-button {
+    width: 40px;
+    height: 40px;
+  }
+
   .favorite-shloka-button {
     width: 40px;
 
@@ -3242,7 +3331,8 @@ button:focus-visible {
 
 .favorite-shloka-button:focus-visible,
 .remove-favorite-button:focus-visible,
-.shloka-favorite-button:focus-visible {
+.shloka-favorite-button:focus-visible,
+.share-shloka-button:focus-visible {
   outline: 3px solid rgba(59, 130, 246, 0.35);
 
   outline-offset: 3px;

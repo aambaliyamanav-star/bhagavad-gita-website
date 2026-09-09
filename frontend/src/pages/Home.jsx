@@ -12,9 +12,11 @@ import {
   Loader2, 
   AlertCircle, 
   TriangleAlert, 
-  Sparkles 
+  Sparkles,
+  Share2
 } from "lucide-react";
 import "./Home.css";
+import ShareShlokaModal from "../components/ShareShlokaModal.jsx";
 
 function Home() {
   const navigate = useNavigate();
@@ -55,6 +57,7 @@ function Home() {
   // =====================================================
 
   const [todayShlok, setTodayShlok] = useState(null);
+  const [shareModalOpen, setShareModalOpen] = useState(false);
 
   // =====================================================
 // TODAY'S SANSKRIT AUTO FIT
@@ -1185,15 +1188,23 @@ useEffect(() => {
 
           </div>
 
-          <button
-            type="button"
-            className="today-shlok-button"
-            onClick={
-              handleTodayShlok
-            }
-          >
-            <BookOpen className="btn-icon" size={18} /> સંપૂર્ણ શ્લોક વાંચો
-          </button>
+          <div className="today-shlok-actions">
+            <button
+              type="button"
+              className="today-shlok-button"
+              onClick={handleTodayShlok}
+            >
+              <BookOpen className="btn-icon" size={18} /> સંપૂર્ણ શ્લોક વાંચો
+            </button>
+            <button
+              type="button"
+              className="today-shlok-button today-share-button"
+              onClick={() => setShareModalOpen(true)}
+              title="શ્લોક કાર્ડ શેર કરો / ડાઉનલોડ કરો"
+            >
+              <Share2 className="btn-icon" size={18} /> શ્લોક કાર્ડ શેર કરો
+            </button>
+          </div>
 
         </section>
       )}
@@ -1215,6 +1226,28 @@ useEffect(() => {
         </p>
 
       </section>
+
+      {/* =================================================
+          SHARE SHLOKA CARD MODAL (TODAY'S SHLOK)
+      ================================================= */}
+      {todayShlok && (
+        <ShareShlokaModal
+          isOpen={shareModalOpen}
+          onClose={() => setShareModalOpen(false)}
+          shlokaData={{
+            chapterNumber: todayShlok.chapterNumber,
+            chapterName:
+              todayShlok.chapterName ||
+              (typeof chapterNames !== "undefined" && chapterNames[todayShlok.chapterNumber]) ||
+              `અધ્યાય ${todayShlok.chapterNumber}`,
+            shlokNumber: todayShlok.shlokNumber,
+            sanskrit: todayShlok.sanskrit,
+            translation: todayShlok.translation,
+            speaker: todayShlok.speaker,
+            message: todayShlok.message,
+          }}
+        />
+      )}
 
     </main>
   );

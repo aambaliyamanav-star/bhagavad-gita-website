@@ -1,0 +1,653 @@
+/* =========================================================
+   BHAGAVAD GITA - LIFE GUIDANCE PAGE
+   PREMIUM BLUE • 3D • DEVOTIONAL • RESPONSIVE
+   ========================================================= */
+
+.guidance-page {
+  min-height: 100vh;
+  width: 100%;
+  padding-bottom: 75px;
+
+  /* Royal Blue Theme Background (matching Chapters & History) */
+  background:
+    radial-gradient(
+      circle at 10% 8%,
+      rgba(66, 165, 245, 0.18),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 90% 12%,
+      rgba(21, 101, 192, 0.14),
+      transparent 32%
+    ),
+    linear-gradient(
+      135deg,
+      #eef7ff 0%,
+      #dceeff 48%,
+      #f5faff 100%
+    );
+
+  color: #17375e;
+  overflow-x: hidden;
+  box-sizing: border-box;
+
+  transition:
+    background 0.35s ease,
+    color 0.35s ease;
+}
+
+/* =========================================================
+   DARK THEME BASE
+   ========================================================= */
+
+[data-theme="dark"] .guidance-page {
+  background:
+    radial-gradient(
+      circle at 10% 8%,
+      rgba(66, 165, 245, 0.16),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 90% 12%,
+      rgba(30, 136, 229, 0.12),
+      transparent 32%
+    ),
+    linear-gradient(
+      135deg,
+      #0b1724 0%,
+      #10263a 48%,
+      #142f47 100%
+    );
+
+  color: #d9ecff;
+}
+
+/* =========================================================
+   HEADER BANNER (ROYAL BLUE 3D CARD)
+   ========================================================= */
+
+.guidance-header-banner {
+  max-width: 1100px;
+  margin: 32px auto 36px;
+  padding: 38px 24px 30px;
+  text-align: center;
+  border-radius: 26px;
+
+  /* Royal Blue Glassmorphism */
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.95),
+      rgba(240, 248, 255, 0.92)
+    );
+
+  border: 1px solid rgba(140, 195, 255, 0.38);
+
+  box-shadow:
+    0 16px 40px rgba(18, 65, 120, 0.08),
+    0 4px 12px rgba(18, 65, 120, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85);
+
+  position: relative;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .guidance-header-banner {
+  background:
+    linear-gradient(
+      135deg,
+      rgba(25, 43, 59, 0.98),
+      rgba(20, 49, 72, 0.98)
+    );
+
+  border-color: rgba(120, 190, 240, 0.24);
+
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.40),
+    0 5px 15px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+
+
+.guidance-header-banner h1 {
+  font-size: 2.3rem;
+  font-weight: 850;
+  color: #0d47a1;
+  margin: 0 0 14px;
+  line-height: 1.45;
+  letter-spacing: -0.2px;
+  padding-top: 6px;
+}
+
+[data-theme="dark"] .guidance-header-banner h1 {
+  color: #b9ddff;
+}
+
+.highlight-text {
+  display: inline-block;
+  padding-top: 0.28em;
+  padding-bottom: 0.12em;
+  padding-left: 2px;
+  padding-right: 2px;
+  margin-top: -0.28em;
+  margin-bottom: -0.12em;
+  vertical-align: baseline;
+  background: linear-gradient(135deg, #e65100 0%, #ff9800 50%, #f57c00 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+[data-theme="dark"] .highlight-text {
+  background: linear-gradient(135deg, #ffb74d 0%, #ffe082 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.guidance-intro {
+  font-size: 1.02rem;
+  color: #4a6582;
+  max-width: 720px;
+  margin: 0 auto 28px;
+  line-height: 1.65;
+  font-weight: 500;
+}
+
+[data-theme="dark"] .guidance-intro {
+  color: #a4c4e2;
+}
+
+/* =========================================================
+   TOPICS GRID (SYMMETRICAL ROWS & COLUMNS)
+   ========================================================= */
+
+.guidance-topics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  width: 100%;
+  max-width: 1060px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+@media (max-width: 1024px) {
+  .guidance-topics-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+}
+
+@media (max-width: 768px) {
+  .guidance-topics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .guidance-topics-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+}
+
+@media (max-width: 360px) {
+  .guidance-topics-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
+
+.topic-pill-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 15px;
+  border: 1.5px solid rgba(13, 71, 161, 0.14);
+  background: #ffffff;
+  color: #173b68;
+  cursor: pointer;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: left;
+  transition: all 0.22s cubic-bezier(0.2, 0, 0, 1);
+  box-shadow: 0 2px 8px rgba(18, 65, 120, 0.05);
+}
+
+[data-theme="dark"] .topic-pill-btn {
+  background: #14273d;
+  border-color: rgba(100, 180, 255, 0.16);
+  color: #d8ecff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
+}
+
+.topic-pill-btn:hover {
+  transform: translateY(-2px);
+  border-color: var(--topic-accent);
+  box-shadow: 0 6px 20px rgba(18, 65, 120, 0.12);
+}
+
+[data-theme="dark"] .topic-pill-btn:hover {
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+}
+
+.topic-pill-btn.active {
+  background: var(--topic-accent);
+  border-color: var(--topic-accent);
+  color: #ffffff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+  transform: translateY(-2px);
+}
+
+.pill-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  border-radius: 11px;
+  background: var(--topic-bg);
+  color: var(--topic-accent);
+  transition: all 0.2s ease;
+}
+
+.topic-pill-btn.active .pill-icon {
+  background: rgba(255, 255, 255, 0.26);
+  color: #ffffff;
+}
+
+.pill-text {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  min-width: 0;
+  flex: 1;
+}
+
+.pill-text strong {
+  font-size: 0.94rem;
+  font-weight: 750;
+  line-height: 1.35;
+  padding-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: inherit;
+}
+
+.pill-text small {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #5d7e9e;
+  line-height: 1.2;
+  margin-top: 2px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.2s ease;
+}
+
+[data-theme="dark"] .pill-text small {
+  color: #8bb1cf;
+}
+
+.topic-pill-btn.active .pill-text small {
+  color: rgba(255, 255, 255, 0.90);
+}
+
+/* =========================================================
+   CONTENT CONTAINER
+   ========================================================= */
+
+.guidance-content-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* =========================================================
+   DIVINE ESSENCE CARD
+   ========================================================= */
+
+.divine-essence-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  padding: 24px 26px;
+  border-radius: 20px;
+  background: #ffffff;
+  border: 1px solid rgba(140, 195, 255, 0.32);
+  border-left-width: 6px;
+  margin-bottom: 32px;
+  box-shadow: 0 8px 28px rgba(18, 65, 120, 0.06);
+}
+
+[data-theme="dark"] .divine-essence-card {
+  background: #132236;
+  border-color: rgba(120, 190, 240, 0.20);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+}
+
+.essence-badge-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 14px;
+  flex-shrink: 0;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+}
+
+.essence-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.essence-tag {
+  font-size: 0.82rem;
+  font-weight: 750;
+  letter-spacing: 0.2px;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.essence-info h3 {
+  font-size: 1.05rem;
+  line-height: 1.62;
+  color: #1a3860;
+  margin: 0;
+  font-weight: 600;
+}
+
+[data-theme="dark"] .essence-info h3 {
+  color: #e1f0ff;
+}
+
+/* =========================================================
+   SHLOKAS GRID & CARDS (3D BLUE DEVOTIONAL STYLE)
+   ========================================================= */
+
+.guidance-shlokas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
+}
+
+.guidance-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: #ffffff;
+  border: 1px solid rgba(140, 195, 255, 0.32);
+  border-radius: 22px;
+  padding: 24px;
+  transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+  box-shadow:
+    0 8px 24px rgba(18, 65, 120, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.90);
+}
+
+[data-theme="dark"] .guidance-card {
+  background: #111d2e;
+  border-color: rgba(120, 190, 240, 0.18);
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.40),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.guidance-card:hover {
+  transform: translateY(-5px);
+  border-color: #1976d2;
+  box-shadow:
+    0 18px 40px rgba(18, 65, 120, 0.12),
+    0 4px 12px rgba(18, 65, 120, 0.06);
+}
+
+[data-theme="dark"] .guidance-card:hover {
+  border-color: #64b5f6;
+  box-shadow:
+    0 18px 45px rgba(0, 0, 0, 0.55),
+    0 4px 16px rgba(100, 181, 246, 0.15);
+}
+
+/* CARD HEADER META */
+
+.card-header-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.card-ref-badge {
+  font-size: 0.82rem;
+  font-weight: 750;
+  padding: 5px 13px;
+  border-radius: 999px;
+  background: rgba(13, 71, 161, 0.09);
+  color: #0d47a1;
+  border: 1px solid rgba(13, 71, 161, 0.18);
+}
+
+[data-theme="dark"] .card-ref-badge {
+  background: rgba(144, 202, 249, 0.14);
+  color: #90caf9;
+  border-color: rgba(144, 202, 249, 0.25);
+}
+
+.card-chapter-title {
+  font-size: 0.82rem;
+  color: #6a829e;
+  font-weight: 650;
+}
+
+[data-theme="dark"] .card-chapter-title {
+  color: #8dafc9;
+}
+
+/* SANSKRIT BLOCK */
+
+.card-sanskrit-block {
+  background: #fdfaf3;
+  border-left: 3.5px solid #f57c00;
+  border-radius: 0 14px 14px 0;
+  padding: 14px 16px;
+  margin-bottom: 16px;
+}
+
+[data-theme="dark"] .card-sanskrit-block {
+  background: #17273d;
+  border-left-color: #ffb74d;
+}
+
+.sanskrit-text {
+  font-size: 0.98rem;
+  line-height: 1.55;
+  color: #c0392b;
+  font-style: italic;
+  font-weight: 650;
+  margin: 0;
+}
+
+[data-theme="dark"] .sanskrit-text {
+  color: #ffcc80;
+}
+
+/* MEANING BLOCK */
+
+.card-meaning-block {
+  margin-bottom: 16px;
+}
+
+.card-meaning-block h4 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.88rem;
+  color: #0d47a1;
+  font-weight: 750;
+  margin: 0 0 6px;
+}
+
+[data-theme="dark"] .card-meaning-block h4 {
+  color: #90caf9;
+}
+
+.card-meaning-block p {
+  font-size: 0.94rem;
+  line-height: 1.62;
+  color: #38506e;
+  margin: 0;
+}
+
+[data-theme="dark"] .card-meaning-block p {
+  color: #c4d7ec;
+}
+
+/* PRACTICAL LESSON BLOCK */
+
+.card-lesson-block {
+  border: 1px dashed;
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin-bottom: 20px;
+}
+
+.lesson-header-tag {
+  font-size: 0.82rem;
+  font-weight: 750;
+  display: block;
+  margin-bottom: 4px;
+}
+
+.card-lesson-block p {
+  font-size: 0.90rem;
+  line-height: 1.52;
+  color: #243b55;
+  margin: 0;
+  font-weight: 550;
+}
+
+[data-theme="dark"] .card-lesson-block p {
+  color: #d5e5f7;
+}
+
+/* 3D ACTION BUTTON */
+
+.card-navigate-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 12px;
+
+  /* 3D Blue Button */
+  background:
+    linear-gradient(
+      135deg,
+      #0d47a1 0%,
+      #1565c0 48%,
+      #1976d2 100%
+    );
+
+  color: #ffffff;
+  font-size: 0.92rem;
+  font-weight: 750;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow:
+    0 4px 12px rgba(13, 71, 161, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  margin-top: auto;
+}
+
+.card-navigate-btn:hover {
+  transform: translateY(-2px);
+  background:
+    linear-gradient(
+      135deg,
+      #1565c0 0%,
+      #1976d2 48%,
+      #1e88e5 100%
+    );
+  box-shadow:
+    0 8px 20px rgba(13, 71, 161, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.card-navigate-btn:active {
+  transform: translateY(0);
+  box-shadow:
+    0 2px 6px rgba(13, 71, 161, 0.25);
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 768px) {
+  .guidance-header-banner {
+    margin: 20px 12px 24px;
+    padding: 26px 16px 22px;
+    border-radius: 20px;
+  }
+
+  .guidance-header-banner h1 {
+    font-size: 1.8rem;
+    line-height: 1.45;
+    padding-top: 4px;
+  }
+
+  .guidance-intro {
+    font-size: 0.92rem;
+    margin-bottom: 20px;
+  }
+
+  .guidance-content-container {
+    padding: 0 12px;
+  }
+
+  .divine-essence-card {
+    flex-direction: column;
+    padding: 18px;
+    gap: 12px;
+  }
+
+  .guidance-shlokas-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .topic-pill-btn {
+    padding: 10px 12px;
+    gap: 10px;
+    border-radius: 13px;
+  }
+
+  .pill-icon {
+    width: 32px;
+    height: 32px;
+    flex: 0 0 32px;
+    border-radius: 9px;
+  }
+
+  .pill-text strong {
+    font-size: 0.86rem;
+  }
+
+  .pill-text small {
+    font-size: 0.68rem;
+  }
+}
+
