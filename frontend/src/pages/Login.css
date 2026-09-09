@@ -29,9 +29,9 @@
     ),
     linear-gradient(
       135deg,
-      #edf6ff 0%,
-      #dcecff 50%,
-      #f4f9ff 100%
+      #eef7ff 0%,
+      #dceeff 48%,
+      #f5faff 100%
     );
 }
 
@@ -51,42 +51,16 @@
 
   border-radius: 24px;
 
-  background:
-    linear-gradient(
-      145deg,
-      #ffffff 0%,
-      #f4f9ff 55%,
-      #e7f1ff 100%
-    );
-
-  border: 2px solid rgba(
-    63,
-    128,
-    197,
-    0.25
-  );
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
 
   box-shadow:
-    0 20px 45px rgba(
-      42,
-      93,
-      145,
-      0.20
-    ),
-    0 6px 15px rgba(
-      42,
-      93,
-      145,
-      0.10
-    ),
-    inset 0 1px 0 rgba(
-      255,
-      255,
-      255,
-      0.95
-    );
+    0 20px 45px rgba(42, 93, 145, 0.15),
+    0 6px 15px rgba(42, 93, 145, 0.08);
 
-  animation: loginCardShow 0.55s ease;
+  animation: loginCardShow 0.6s ease-out forwards;
 }
 
 
@@ -235,6 +209,34 @@
 }
 
 
+.auth-message.info {
+  color: #1e40af;
+
+  background:
+    linear-gradient(
+      135deg,
+      #eff6ff,
+      #dbeafe
+    );
+
+  border: 1px solid #93c5fd;
+
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  line-height: 1.4;
+}
+
+[data-theme="dark"] .auth-message.info {
+  color: #bfdbfe;
+  background: rgba(30, 58, 138, 0.45);
+  border-color: rgba(96, 165, 250, 0.35);
+}
+
+
 /* =====================================================
    FORM
    ===================================================== */
@@ -287,25 +289,17 @@
 
 .auth-field input {
   width: 100%;
-
   height: 48px;
-
   box-sizing: border-box;
-
   padding: 0 15px;
-
   border-radius: 12px;
-
-  border: 1.5px solid #b6cce4;
-
-  background: #ffffff;
-
+  border: 1.5px solid rgba(182, 204, 228, 0.6);
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   color: #294968;
-
   font-size: 15px;
-
   outline: none;
-
   transition:
     border-color 0.25s ease,
     box-shadow 0.25s ease,
@@ -313,39 +307,22 @@
     background 0.25s ease;
 }
 
-
 .auth-field input::placeholder {
   color: #9aaec3;
 }
 
-
 .auth-field input:hover {
   border-color: #79a5d2;
-
-  background: #fbfdff;
+  background: rgba(255, 255, 255, 0.65);
 }
-
 
 .auth-field input:focus {
   border-color: #4385c7;
-
-  background: #ffffff;
-
+  background: rgba(255, 255, 255, 0.85);
   transform: translateY(-1px);
-
   box-shadow:
-    0 0 0 3px rgba(
-      67,
-      133,
-      199,
-      0.13
-    ),
-    0 6px 15px rgba(
-      67,
-      133,
-      199,
-      0.10
-    );
+    0 0 0 3px rgba(67, 133, 199, 0.13),
+    0 6px 15px rgba(67, 133, 199, 0.10);
 }
 
 
@@ -656,21 +633,27 @@
    ANIMATIONS
    ===================================================== */
 
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+.btn-icon {
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
 @keyframes loginCardShow {
   from {
     opacity: 0;
-
-    transform:
-      translateY(18px)
-      scale(0.98);
+    transform: translateY(20px);
   }
-
   to {
     opacity: 1;
-
-    transform:
-      translateY(0)
-      scale(1);
+    transform: translateY(0);
   }
 }
 
@@ -798,17 +781,17 @@ body[data-theme="dark"] .auth-page {
     ),
     linear-gradient(
       135deg,
-      #061827 0%,
-      #08243a 48%,
-      #061725 100%
-    );
+      #0b1724 0%,
+      #10263a 48%,
+      #142f47 100%
+    ) !important;
 
   color: #c9e7ff;
 }
 
 
 /* =====================================================
-   DARK LOGIN CARD
+   DARK CARD
    ===================================================== */
 
 .dark .auth-card,
@@ -818,40 +801,13 @@ body.dark .auth-card,
 body.dark-theme .auth-card,
 body[data-theme="dark"] .auth-card {
 
-  background:
-    linear-gradient(
-      145deg,
-      #0b2a43 0%,
-      #092238 52%,
-      #071b2d 100%
-    );
+  background: rgba(10, 25, 55, 0.55) !important;
 
-  border: 2px solid rgba(
-    73,
-    145,
-    205,
-    0.38
-  );
+  border: 1px solid rgba(100, 181, 246, 0.25) !important;
 
   box-shadow:
-    0 24px 50px rgba(
-      0,
-      0,
-      0,
-      0.48
-    ),
-    0 8px 20px rgba(
-      0,
-      30,
-      55,
-      0.42
-    ),
-    inset 0 1px 0 rgba(
-      94,
-      168,
-      220,
-      0.12
-    );
+    0 25px 50px rgba(0, 0, 0, 0.45),
+    0 8px 20px rgba(0, 0, 0, 0.25) !important;
 }
 
 
@@ -1021,30 +977,9 @@ body.dark .auth-field input,
 body.dark-theme .auth-field input,
 body[data-theme="dark"] .auth-field input {
 
-  background:
-    linear-gradient(
-      145deg,
-      #0b304b,
-      #09263d
-    );
-
-  border: 1.5px solid #315d7c;
-
-  color: #d4edff;
-
-  box-shadow:
-    inset 0 1px 0 rgba(
-      81,
-      145,
-      185,
-      0.10
-    ),
-    0 5px 14px rgba(
-      0,
-      0,
-      0,
-      0.18
-    );
+  background: rgba(10, 25, 55, 0.45);
+  border-color: rgba(96, 165, 250, 0.25);
+  color: #e6f3ff;
 }
 
 
@@ -1074,13 +1009,7 @@ body.dark .auth-field input:hover,
 body.dark-theme .auth-field input:hover,
 body[data-theme="dark"] .auth-field input:hover {
 
-  background:
-    linear-gradient(
-      145deg,
-      #0d3552,
-      #0a2b44
-    );
-
+  background: rgba(10, 25, 55, 0.65);
   border-color: #427ba3;
 }
 
@@ -1096,30 +1025,13 @@ body.dark .auth-field input:focus,
 body.dark-theme .auth-field input:focus,
 body[data-theme="dark"] .auth-field input:focus {
 
-  background:
-    linear-gradient(
-      145deg,
-      #0d3857,
-      #0a2c46
-    );
-
+  background: rgba(10, 25, 55, 0.85);
   border-color: #4d9bd0;
-
   color: #e0f4ff;
 
   box-shadow:
-    0 0 0 3px rgba(
-      52,
-      145,
-      210,
-      0.18
-    ),
-    0 8px 18px rgba(
-      0,
-      0,
-      0,
-      0.25
-    );
+    0 0 0 3px rgba(52, 145, 210, 0.18),
+    0 8px 18px rgba(0, 0, 0, 0.25);
 }
 
 

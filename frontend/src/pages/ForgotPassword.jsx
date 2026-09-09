@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Mail, KeyRound, Lock, ArrowLeft, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import "./ForgotPassword.css";
 
@@ -76,7 +76,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
 
       setMessage(
         data.message ||
-          "તમારા Email પર OTP મોકલવામાં આવ્યો છે. ✅"
+          "તમારા Email પર OTP મોકલવામાં આવ્યો છે."
       );
 
       setStep(2);
@@ -151,7 +151,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
 
       setMessage(
         data.message ||
-          "OTP successfully verify થઈ ગયો છે. ✅"
+          "OTP successfully verify થઈ ગયો છે."
       );
 
       setStep(3);
@@ -238,7 +238,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
 
       setMessage(
         data.message ||
-          "Password successfully reset થઈ ગયો છે. ✅"
+          "Password successfully reset થઈ ગયો છે."
       );
 
       // =================================================
@@ -360,13 +360,13 @@ const [showConfirmPassword, setShowConfirmPassword] =
 
         {message && (
           <div className="forgot-success">
-            ✅ {message}
+            <CheckCircle size={16} className="btn-icon" /> {message}
           </div>
         )}
 
         {error && (
           <div className="forgot-error">
-            ❌ {error}
+            <AlertCircle size={16} className="btn-icon" /> {error}
           </div>
         )}
 
@@ -384,7 +384,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
           >
 
             <div className="forgot-form-icon">
-              📧
+              <Mail size={32} color="#2563eb" />
             </div>
 
             <h2>
@@ -419,8 +419,8 @@ const [showConfirmPassword, setShowConfirmPassword] =
               disabled={loading}
             >
               {loading
-                ? "OTP મોકલાઈ રહ્યો છે..."
-                : "📨 Send OTP"}
+                ? <><Loader2 size={16} className="spinner btn-icon" /> OTP મોકલાઈ રહ્યો છે...</>
+                : <><Mail size={16} className="btn-icon" /> Send OTP</>}
             </button>
 
           </form>
@@ -440,7 +440,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
           >
 
             <div className="forgot-form-icon">
-              🔐
+              <KeyRound size={32} color="#2563eb" />
             </div>
 
             <h2>
@@ -488,8 +488,8 @@ const [showConfirmPassword, setShowConfirmPassword] =
               disabled={loading}
             >
               {loading
-                ? "Verify થઈ રહ્યું છે..."
-                : "✅ Verify OTP"}
+                ? <><Loader2 size={16} className="spinner btn-icon" /> Verify થઈ રહ્યું છે...</>
+                : <><CheckCircle size={16} className="btn-icon" /> Verify OTP</>}
             </button>
 
 
@@ -504,7 +504,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
               }}
               disabled={loading}
             >
-              ← Email ફરી નાખો
+              <ArrowLeft size={15} className="btn-icon" /> Email ફરી નાખો
             </button>
 
           </form>
@@ -524,7 +524,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
           >
 
             <div className="forgot-form-icon">
-              🔑
+              <Lock size={32} color="#2563eb" />
             </div>
 
             <h2>
@@ -659,8 +659,8 @@ const [showConfirmPassword, setShowConfirmPassword] =
               disabled={loading}
             >
               {loading
-                ? "Password reset થઈ રહ્યો છે..."
-                : "🔒 Reset Password"}
+                ? <><Loader2 size={16} className="spinner btn-icon" /> Password reset થઈ રહ્યો છે...</>
+                : <><Lock size={16} className="btn-icon" /> Reset Password</>}
             </button>
 
           </form>
@@ -678,7 +678,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
             onClick={handleBackToLogin}
             disabled={loading}
           >
-            ← Login Page પર પાછા જાઓ
+            <ArrowLeft size={15} className="btn-icon" /> Login Page પર પાછા જાઓ
           </button>
 
         </div>

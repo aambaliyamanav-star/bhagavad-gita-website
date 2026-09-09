@@ -1,5 +1,26 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  BrainCircuit,
+  Save,
+  Plus,
+  Library,
+  BookOpen,
+  RefreshCw,
+  Search,
+  Lightbulb,
+  Trash2,
+  Edit3,
+  Loader2,
+  ArrowLeft,
+  Check,
+  AlertCircle,
+  CheckCircle2,
+  ChevronDown,
+  ChevronUp,
+  HelpCircle,
+  FileQuestion
+} from "lucide-react";
 import "./QuizManagement.css";
 
 function QuizManagement() {
@@ -547,7 +568,7 @@ function QuizManagement() {
 
       setSuccess(
         data.message ||
-          "Question successfully save થયો. ✅"
+          "Question successfully save થયો."
       );
 
       resetForm();
@@ -615,7 +636,7 @@ function QuizManagement() {
 
       setSuccess(
         data.message ||
-          "Question delete થયો. 🗑️"
+          "Question delete થયો."
       );
 
       if (
@@ -807,7 +828,7 @@ function QuizManagement() {
       <main className="quiz-management-page">
 
         <div className="quiz-management-loading">
-          ⏳ Quiz questions load થઈ રહ્યા છે...
+          <span><Loader2 className="btn-icon animate-spin" size={20} /> Quiz questions load થઈ રહ્યા છે...</span>
         </div>
 
       </main>
@@ -828,7 +849,7 @@ function QuizManagement() {
 <section className="quiz-management-header">
 
   <div className="quiz-management-icon">
-    🧠
+    <BrainCircuit size={34} color="#1d4ed8" strokeWidth={1.75} />
   </div>
 
   <div className="quiz-management-header-content">
@@ -848,7 +869,7 @@ function QuizManagement() {
     className="quiz-dashboard-back-button"
     onClick={() => navigate("/admin")}
   >
-    ← Admin Dashboard
+    <ArrowLeft className="btn-icon" size={16} /> Admin Dashboard
   </button>
 
 </section>
@@ -860,13 +881,13 @@ function QuizManagement() {
 
       {error && (
         <div className="quiz-management-error">
-          ❌ {error}
+          <AlertCircle className="btn-icon" size={18} /> {error}
         </div>
       )}
 
       {success && (
         <div className="quiz-management-success">
-          ✅ {success}
+          <CheckCircle2 className="btn-icon" size={18} /> {success}
         </div>
       )}
 
@@ -880,9 +901,15 @@ function QuizManagement() {
         <div className="quiz-form-title">
 
           <h2>
-            {editingId
-              ? "✏️ Quiz Question Edit કરો"
-              : "➕ New Quiz Question Add કરો"}
+            {editingId ? (
+              <span>
+                <Edit3 className="btn-icon" size={20} /> Quiz Question Edit કરો
+              </span>
+            ) : (
+              <span>
+                <Plus className="btn-icon" size={20} /> New Quiz Question Add કરો
+              </span>
+            )}
           </h2>
 
           {editingId && (
@@ -1198,11 +1225,19 @@ function QuizManagement() {
               className="quiz-save-button"
               disabled={saving}
             >
-              {saving
-                ? "⏳ Saving..."
-                : editingId
-                ? "💾 Update Question"
-                : "➕ Add Question"}
+              {saving ? (
+                <span>
+                  <Loader2 className="btn-icon animate-spin" size={16} /> Saving...
+                </span>
+              ) : editingId ? (
+                <span>
+                  <Save className="btn-icon" size={16} /> Update Question
+                </span>
+              ) : (
+                <span>
+                  <Plus className="btn-icon" size={16} /> Add Question
+                </span>
+              )}
             </button>
 
             {editingId && (
@@ -1238,7 +1273,10 @@ function QuizManagement() {
           <div>
 
             <h2>
-              📚 Quiz Questions
+              <span className="quiz-heading-icon-wrap">
+                <FileQuestion size={22} />
+              </span>
+              Quiz Questions
             </h2>
 
             <p>
@@ -1271,7 +1309,7 @@ function QuizManagement() {
             >
 
               <option value="all">
-                📚 બધા Questions
+                <Library className="btn-icon" size={16} /> બધા Questions
               </option>
 
               {Array.from(
@@ -1281,13 +1319,13 @@ function QuizManagement() {
                     key={index + 1}
                     value={`chapter-${index + 1}`}
                   >
-                    📖 અધ્યાય {index + 1}
+                    <BookOpen className="btn-icon" size={16} /> અધ્યાય {index + 1}
                   </option>
                 )
               )}
 
               <option value="mahabharata">
-                ⚔️ સમગ્ર મહાભારત
+                સમગ્ર મહાભારત
               </option>
 
             </select>
@@ -1306,7 +1344,7 @@ function QuizManagement() {
               loadQuestions
             }
           >
-            🔄 Refresh
+            <RefreshCw className="btn-icon" size={16} /> Refresh
           </button>
 
         </div>
@@ -1320,8 +1358,8 @@ function QuizManagement() {
 
           <div className="quiz-no-questions">
 
-            <div>
-              📖
+            <div className="quiz-no-questions-icon">
+              <BookOpen size={42} strokeWidth={1.5} color="#3b82f6" />
             </div>
 
             <h3>
@@ -1338,8 +1376,8 @@ function QuizManagement() {
 
           <div className="quiz-no-questions">
 
-            <div>
-              🔍
+            <div className="quiz-no-questions-icon">
+              <Search size={42} strokeWidth={1.5} color="#3b82f6" />
             </div>
 
             <h3>
@@ -1390,7 +1428,13 @@ function QuizManagement() {
                         )
                       }
                     >
-                      {item.question}
+                      <span className="quiz-question-title-text">
+                        <HelpCircle className="btn-icon question-help-icon" size={18} />
+                        {item.question}
+                      </span>
+                      <span className="quiz-card-expand-indicator">
+                        {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                      </span>
                     </h3>
 
 
@@ -1430,7 +1474,7 @@ function QuizManagement() {
                         {item.chapterNumber && (
                           <div className="quiz-question-chapter">
 
-                            📖 Chapter{" "}
+                            <BookOpen className="btn-icon" size={14} /> Chapter{" "}
                             {item.chapterNumber}
 
                           </div>
@@ -1479,7 +1523,7 @@ function QuizManagement() {
 
                                   {isCorrect && (
                                     <strong>
-                                      ✓ Correct
+                                      <Check size={14} className="btn-icon" /> Correct
                                     </strong>
                                   )}
 
@@ -1500,7 +1544,7 @@ function QuizManagement() {
                           <div className="quiz-question-explanation">
 
                             <strong>
-                              💡 Explanation:
+                              <Lightbulb className="btn-icon" size={14} /> Explanation:
                             </strong>
 
                             <p>
@@ -1526,7 +1570,7 @@ function QuizManagement() {
                               )
                             }
                           >
-                            ✏️ Edit
+                            <Edit3 className="btn-icon" size={15} /> Edit
                           </button>
 
                           <button
@@ -1538,7 +1582,7 @@ function QuizManagement() {
                               )
                             }
                           >
-                            🗑️ Delete
+                            <Trash2 className="btn-icon" size={16} /> Delete
                           </button>
 
                         </div>

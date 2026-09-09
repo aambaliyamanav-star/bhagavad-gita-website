@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
+import {  Shield, LogOut, BookOpen, BrainCircuit, Users, FileText, Search, Lock, Trash2, Loader2 , ArrowRight } from "lucide-react";
 import "./Admin.css";
 
 function Admin() {
@@ -196,7 +197,7 @@ function Admin() {
 
           <div>
             <h1>
-              Admin Dashboard 🛡️
+              <Shield className="btn-icon" size={28} /> Admin Dashboard
             </h1>
 
             <p>
@@ -210,7 +211,7 @@ function Admin() {
             className="admin-logout-btn"
             onClick={handleAdminLogout}
           >
-            🚪 Logout
+            <LogOut className="btn-icon" size={18} /> Logout
           </button>
 
         </div>
@@ -233,7 +234,7 @@ function Admin() {
             >
 
               <div className="management-icon">
-                📖
+                <BookOpen size={48} color="#175bb5" strokeWidth={1.5} />
               </div>
 
               <div className="management-content">
@@ -248,9 +249,7 @@ function Admin() {
 
               </div>
 
-              <div className="management-arrow">
-                →
-              </div>
+              <div className="management-arrow"><ArrowRight size={22} className="management-arrow-icon" /></div>
 
             </Link>
 
@@ -265,7 +264,7 @@ function Admin() {
             >
 
               <div className="management-icon">
-                🧠
+                <BrainCircuit size={48} color="#175bb5" strokeWidth={1.5} />
               </div>
 
               <div className="management-content">
@@ -280,9 +279,7 @@ function Admin() {
 
               </div>
 
-              <div className="management-arrow">
-                →
-              </div>
+              <div className="management-arrow"><ArrowRight size={22} className="management-arrow-icon" /></div>
 
             </Link>
 
@@ -300,7 +297,7 @@ function Admin() {
             <div className="stat-card">
 
               <div className="stat-icon">
-                👥
+                <Users size={32} color="#175bb5" strokeWidth={1.5} />
               </div>
 
               <div>
@@ -319,7 +316,7 @@ function Admin() {
             <div className="stat-card">
 
               <div className="stat-icon">
-                📖
+                <BookOpen size={32} color="#175bb5" strokeWidth={1.5} />
               </div>
 
               <div>
@@ -338,7 +335,7 @@ function Admin() {
             <div className="stat-card">
 
               <div className="stat-icon">
-                📜
+                <FileText size={32} color="#175bb5" strokeWidth={1.5} />
               </div>
 
               <div>
@@ -380,7 +377,7 @@ function Admin() {
 
             <input
               type="text"
-              placeholder="🔍 Search user..."
+              placeholder="Search user..."
               value={search}
               onChange={(e) =>
                 setSearch(e.target.value)
@@ -525,7 +522,7 @@ function Admin() {
                             "admin" ? (
 
                               <span className="protected-user">
-                                🔒 Protected
+                                <Lock className="btn-icon" size={16} /> Protected
                               </span>
 
                             ) : (
@@ -547,7 +544,7 @@ function Admin() {
                                 {deletingId ===
                                 user._id
                                   ? "Deleting..."
-                                  : "🗑️ Delete"}
+                                  : <span><Trash2 className="btn-icon" size={16} /> Delete</span>}
 
                               </button>
 

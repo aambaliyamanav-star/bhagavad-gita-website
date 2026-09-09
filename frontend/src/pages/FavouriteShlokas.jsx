@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Heart, Lock, Loader2, AlertCircle, RefreshCw, BookOpen, Trash2 } from "lucide-react";
 import { useAuth } from "../context/AuthContext.jsx";
 import "./FavouriteShlokas.css";
 
@@ -320,7 +321,7 @@ function FavouriteShlokas() {
           </p>
 
           <h1>
-            ❤️ Favourite શ્લોક
+            <Heart className="btn-icon" size={28} /> Favourite શ્લોક
           </h1>
 
           <p>
@@ -333,7 +334,7 @@ function FavouriteShlokas() {
         <section className="favourite-empty-card">
 
           <div className="favourite-empty-icon">
-            🔐
+            <Lock size={48} color="#3b82f6" />
           </div>
 
           <h2>
@@ -348,11 +349,23 @@ function FavouriteShlokas() {
           <button
             type="button"
             className="favourite-back-btn"
-            onClick={() =>
-              navigate("/login")
-            }
+            onClick={() => {
+              sessionStorage.setItem(
+                "authRedirect",
+                JSON.stringify({
+                  from: "/favorites",
+                  message: "મનપસંદ શ્લોક જોવા માટે Login કરવું જરૂરી છે.",
+                })
+              );
+              navigate("/login", {
+                state: {
+                  from: "/favorites",
+                  message: "મનપસંદ શ્લોક જોવા માટે Login કરવું જરૂરી છે.",
+                },
+              });
+            }}
           >
-            🔐 Login કરો
+            <Lock className="btn-icon" size={18} /> Login કરો
           </button>
 
         </section>
@@ -380,7 +393,7 @@ function FavouriteShlokas() {
           </p>
 
           <h1>
-            ❤️ Favourite શ્લોક
+            <Heart className="btn-icon" size={28} /> Favourite શ્લોક
           </h1>
 
         </section>
@@ -388,7 +401,7 @@ function FavouriteShlokas() {
         <section className="favourite-empty-card">
 
           <div className="favourite-empty-icon">
-            🕉️
+            <Loader2 className="spinner" size={48} color="#3b82f6" />
           </div>
 
           <h2>
@@ -424,7 +437,7 @@ function FavouriteShlokas() {
           </p>
 
           <h1>
-            ❤️ Favourite શ્લોક
+            <Heart className="btn-icon" size={28} /> Favourite શ્લોક
           </h1>
 
         </section>
@@ -432,7 +445,7 @@ function FavouriteShlokas() {
         <section className="favourite-empty-card">
 
           <div className="favourite-empty-icon">
-            ❌
+            <AlertCircle size={48} color="#ef4444" />
           </div>
 
           <h2>
@@ -450,7 +463,7 @@ function FavouriteShlokas() {
               window.location.reload()
             }
           >
-            🔄 ફરી પ્રયાસ કરો
+            <RefreshCw className="btn-icon" size={18} /> ફરી પ્રયાસ કરો
           </button>
 
         </section>
@@ -482,7 +495,7 @@ function FavouriteShlokas() {
           </p>
 
           <h1>
-            ❤️ Favourite શ્લોક
+            <Heart className="btn-icon" size={28} /> Favourite શ્લોક
           </h1>
 
           <p>
@@ -498,7 +511,7 @@ function FavouriteShlokas() {
         <section className="favourite-empty-card">
 
           <div className="favourite-empty-icon">
-            ❤️
+            <Heart size={48} color="#ef4444" />
           </div>
 
           <h2>
@@ -517,7 +530,7 @@ function FavouriteShlokas() {
               navigate("/chapters")
             }
           >
-            📖 ગીતા વાંચવાનું શરૂ કરો
+            <BookOpen className="btn-icon" size={18} /> ગીતા વાંચવાનું શરૂ કરો
           </button>
 
         </section>
@@ -548,7 +561,7 @@ function FavouriteShlokas() {
         </p>
 
         <h1>
-          ❤️ Favourite શ્લોક
+          <Heart className="btn-icon" size={28} /> Favourite શ્લોક
         </h1>
 
         <p>
@@ -582,7 +595,7 @@ function FavouriteShlokas() {
             clearAllFavourites
           }
         >
-          🗑️ બધા દૂર કરો
+          <Trash2 className="btn-icon" size={16} /> બધા દૂર કરો
         </button>
 
       </section>
@@ -644,7 +657,7 @@ function FavouriteShlokas() {
                     title="Favourite દૂર કરો"
                     aria-label="Favourite દૂર કરો"
                   >
-                    ❤️
+                    <Heart fill="currentColor" size={20} />
                   </button>
 
                 </div>
@@ -678,7 +691,7 @@ function FavouriteShlokas() {
                     openShloka(item)
                   }
                 >
-                  📖 શ્લોક વાંચો →
+                  <BookOpen className="btn-icon" size={16} /> શ્લોક વાંચો
                 </button>
 
               </article>

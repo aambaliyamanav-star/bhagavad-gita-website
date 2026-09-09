@@ -9,34 +9,23 @@
    ========================================================= */
 
 :root {
---reader-bg:
-  linear-gradient(
-    135deg,
-    #dceeff 0%,
-    #c7e2ff 50%,
-    #b7d8f7 100%
-  );
+  --reader-bg:
+    linear-gradient(
+      135deg,
+      #eef7ff 0%,
+      #dceeff 48%,
+      #f5faff 100%
+    );
 
   --reader-text: #183b68;
 
-  --reader-card-bg:
-    linear-gradient(
-      145deg,
-      #ffffff,
-      #edf6ff
-    );
+  --reader-card-bg: rgba(255, 255, 255, 0.65);
+  --reader-card-bg-2: rgba(255, 255, 255, 0.70);
 
-  --reader-card-bg-2:
-    linear-gradient(
-      145deg,
-      #ffffff,
-      #f2f8ff
-    );
-
-  --reader-border: rgba(59, 130, 246, 0.22);
+  --reader-border: rgba(255, 255, 255, 0.6);
 
   --reader-shadow:
-    0 12px 28px rgba(15, 70, 120, 0.20);
+    0 12px 28px rgba(15, 70, 120, 0.08);
 
   --reader-primary: #2563eb;
   --reader-primary-light: #60a5fa;
@@ -45,7 +34,7 @@
   --reader-secondary: #6485ad;
   --reader-muted: #5278a7;
 
-  --reader-progress-bg: #dcecff;
+  --reader-progress-bg: rgba(255, 255, 255, 0.5);
 
   --reader-sanskrit: #173f73;
   --reader-sanskrit-word: #214f86;
@@ -67,31 +56,20 @@
   --reader-bg:
     linear-gradient(
       135deg,
-      #071426,
-      #0b1d35,
-      #08182c
+      #0b1724 0%,
+      #10263a 48%,
+      #142f47 100%
     );
 
   --reader-text: #dbeafe;
 
-  --reader-card-bg:
-    linear-gradient(
-      145deg,
-      #10233d,
-      #0c1d34
-    );
+  --reader-card-bg: rgba(10, 25, 55, 0.55);
+  --reader-card-bg-2: rgba(10, 25, 55, 0.55);
 
-  --reader-card-bg-2:
-    linear-gradient(
-      145deg,
-      #10233d,
-      #0d213a
-    );
-
-  --reader-border: rgba(96, 165, 250, 0.25);
+  --reader-border: rgba(100, 181, 246, 0.25);
 
   --reader-shadow:
-    0 16px 38px rgba(0, 0, 0, 0.35);
+    0 16px 38px rgba(0, 0, 0, 0.25);
 
   --reader-primary: #60a5fa;
   --reader-primary-light: #93c5fd;
@@ -100,7 +78,7 @@
   --reader-secondary: #94b8df;
   --reader-muted: #9fc3eb;
 
-  --reader-progress-bg: #17365c;
+  --reader-progress-bg: rgba(0, 0, 0, 0.2);
 
   --reader-sanskrit: #dbeafe;
   --reader-sanskrit-word: #bfdbfe;
@@ -111,6 +89,33 @@
   --reader-white: #ffffff;
 }
 
+/* =========================================================
+   UTILITIES & ANIMATIONS
+   ========================================================= */
+
+.btn-icon {
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
 /* =========================================================
    CHAPTER READER
@@ -141,29 +146,22 @@
 
 .reader-header {
   width: min(850px, 92%);
-
   margin: 0 auto 28px;
-
   padding: 25px 30px;
-
   text-align: center;
-
   background: var(--reader-card-bg);
-
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
   border: 1px solid var(--reader-border);
-
   border-radius: 22px;
-
-box-shadow: var(--reader-shadow);
-
+  box-shadow: var(--reader-shadow);
   position: relative;
-
   overflow: hidden;
-
   transition:
     background 0.3s ease,
     border-color 0.3s ease,
     box-shadow 0.3s ease;
+  animation: fadeUp 0.8s ease-out forwards;
 }
 
 
@@ -280,40 +278,25 @@ box-shadow: var(--reader-shadow);
 
 .reader-progress {
   width: min(650px, 72%);
-
   margin: 0 auto 25px;
-
   padding: 14px 18px;
-
-  background: rgba(255, 255, 255, 0.78);
-
-  border: 1px solid rgba(59, 130, 246, 0.14);
-
+  background: var(--reader-card-bg);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid var(--reader-border);
   border-radius: 15px;
-
-  box-shadow:
-    0 7px 18px rgba(37, 99, 235, 0.08);
-
+  box-shadow: var(--reader-shadow);
   box-sizing: border-box;
-
   transition:
     background 0.3s ease,
     border-color 0.3s ease,
     box-shadow 0.3s ease;
+  animation: fadeUp 0.8s ease-out 0.2s forwards;
+  opacity: 0;
 }
 
 
-/* Dark progress */
-
-.dark .reader-progress,
-[data-theme="dark"] .reader-progress {
-  background: rgba(16, 35, 61, 0.88);
-
-  border-color: rgba(96, 165, 250, 0.20);
-
-  box-shadow:
-    0 8px 20px rgba(0, 0, 0, 0.25);
-}
+/* Dark progress handled by variables */
 
 
 .progress-info {
@@ -378,35 +361,26 @@ box-shadow: var(--reader-shadow);
 
 .shloka-card {
   width: min(950px, 94%);
-
   margin: 0 auto;
-
   display: grid;
-
   grid-template-columns: 58px minmax(0, 1fr) 58px;
-
   align-items: center;
-
   gap: 14px;
-
   padding: 22px;
-
   box-sizing: border-box;
-
   background: var(--reader-card-bg-2);
-
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
   border: 1px solid var(--reader-border);
-
   border-radius: 24px;
-
-box-shadow: var(--reader-shadow);
-
+  box-shadow: var(--reader-shadow);
   position: relative;
-
   transition:
     background 0.3s ease,
     border-color 0.3s ease,
     box-shadow 0.3s ease;
+  animation: fadeUp 0.8s ease-out 0.4s forwards;
+  opacity: 0;
 }
 
 
@@ -480,26 +454,23 @@ box-shadow: var(--reader-shadow);
 
 .content-box {
   width: 100%;
-
   margin: 0 auto 18px;
-
   padding: 20px;
-
   box-sizing: border-box;
-
   border-radius: 18px;
-
   border: 1px solid rgba(59, 130, 246, 0.16);
-
-  box-shadow:
-    0 8px 20px rgba(30, 64, 175, 0.07);
-
+  background: rgba(255, 255, 255, 0.45);
+  box-shadow: 0 8px 20px rgba(30, 64, 175, 0.05);
   position: relative;
-
   transition:
     background 0.3s ease,
     border-color 0.3s ease,
     box-shadow 0.3s ease;
+}
+
+[data-theme="dark"] .content-box {
+  background: rgba(10, 25, 55, 0.45);
+  border: 1px solid rgba(96, 165, 250, 0.15);
 }
 
 
@@ -1412,56 +1383,39 @@ box-shadow: var(--reader-shadow);
 
 .chapter-nav-center {
   min-width: 230px;
-
   padding: 13px 24px;
-
   border-radius: 17px;
-
   display: flex;
-
   flex-direction: column;
-
   align-items: center;
-
   justify-content: center;
-
   text-align: center;
-
+  
   background: var(--reader-card-bg);
-
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
   border: 1px solid rgba(59, 130, 246, 0.20);
-
-box-shadow:
-  0 8px 20px rgba(15, 70, 120, 0.16);
-
+  box-shadow: 0 8px 20px rgba(15, 70, 120, 0.16);
+  
   transition:
     background 0.3s ease,
     border-color 0.3s ease,
     box-shadow 0.3s ease;
 }
 
-
 .chapter-nav-center span {
   margin-bottom: 4px;
-
   color: var(--reader-primary);
-
   font-size: 13px;
-
   font-weight: 800;
 }
-
 
 .chapter-nav-center div {
   color: var(--reader-heading);
-
   font-size: 15px;
-
   font-weight: 800;
-
   line-height: 1.3;
 }
-
 
 /* =========================================================
    ALL SHLOK SELECTOR
@@ -1469,22 +1423,17 @@ box-shadow:
 
 .chapter-shloka-selector {
   width: min(950px, 94%);
-
   margin: 0 auto;
-
   padding: 25px;
-
   box-sizing: border-box;
-
   border-radius: 22px;
-
+  
   background: var(--reader-card-bg);
-
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
   border: 1px solid rgba(59, 130, 246, 0.20);
-
-box-shadow:
-  0 13px 30px rgba(15, 70, 120, 0.16);
-
+  box-shadow: 0 13px 30px rgba(15, 70, 120, 0.16);
+  
   transition:
     background 0.3s ease,
     border-color 0.3s ease,

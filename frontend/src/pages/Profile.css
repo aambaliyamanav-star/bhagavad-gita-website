@@ -43,26 +43,21 @@
 
   padding: 38px 42px;
 
-  background:
-    linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.98),
-      rgba(239, 246, 255, 0.96)
-    );
-
-  border: 1px solid rgba(37, 99, 235, 0.28);
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
 
   border-radius: 28px;
 
   box-shadow:
-    0 25px 60px rgba(30, 64, 175, 0.18),
-    0 8px 22px rgba(37, 99, 235, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    0 20px 45px rgba(42, 93, 145, 0.15),
+    0 6px 15px rgba(42, 93, 145, 0.08);
 
   position: relative;
   overflow: hidden;
 
-  animation: profileCardAppear 0.7s ease;
+  animation: fadeUp 0.6s ease-out forwards;
 }
 
 
@@ -636,50 +631,29 @@
 
 .profile-edit-field input {
   width: 100%;
-
   height: 48px;
-
   padding: 0 15px;
-
   box-sizing: border-box;
-
   border-radius: 12px;
-
-  border: 1px solid #bfdbfe;
-
-  outline: none;
-
-  background:
-    linear-gradient(
-      145deg,
-      #ffffff,
-      #f8fbff
-    );
-
+  border: 1.5px solid rgba(182, 204, 228, 0.6);
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   color: #1e3a8a;
-
   font-size: 15px;
-
-  box-shadow:
-    inset 0 2px 5px rgba(30, 64, 175, 0.04);
-
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease,
-    transform 0.2s ease;
+  outline: none;
+  box-shadow: inset 0 2px 5px rgba(30, 64, 175, 0.04);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, background 0.2s ease;
 }
-
 
 .profile-edit-field input::placeholder {
   color: #94a3b8;
 }
 
-
 .profile-edit-field input:focus {
   border-color: #3b82f6;
-
+  background: rgba(255, 255, 255, 0.85);
   transform: translateY(-1px);
-
   box-shadow:
     0 0 0 4px rgba(59, 130, 246, 0.12),
     0 7px 18px rgba(37, 99, 235, 0.10);
@@ -1185,21 +1159,14 @@ button:disabled {
    DARK PROFILE CARD
 ===================================================== */
 
-[data-theme="dark"] .profile-card {
-  background:
-    linear-gradient(
-      145deg,
-      #102b45,
-      #0d243b 50%,
-      #0a1d31 100%
-    );
-
-  border-color: rgba(96, 165, 250, 0.28);
+[data-theme="dark"] .profile-card,
+.dark .profile-card {
+  background: rgba(10, 25, 55, 0.55) !important;
+  border: 1px solid rgba(100, 181, 246, 0.25) !important;
 
   box-shadow:
-    0 25px 60px rgba(0, 0, 0, 0.45),
-    0 8px 22px rgba(0, 0, 0, 0.30),
-    inset 0 1px 0 rgba(147, 197, 253, 0.10);
+    0 25px 50px rgba(0, 0, 0, 0.45),
+    0 8px 20px rgba(0, 0, 0, 0.25) !important;
 }
 
 
@@ -1417,37 +1384,28 @@ button:disabled {
 }
 
 
-[data-theme="dark"] .profile-edit-field input {
-  border-color: #315a7e;
-
-  background:
-    linear-gradient(
-      145deg,
-      #0f2b45,
-      #0c243b
-    );
-
-  color: #dbeafe;
-
-  box-shadow:
-    inset 0 2px 5px rgba(0, 0, 0, 0.20);
+[data-theme="dark"] .profile-edit-field input,
+.dark .profile-edit-field input {
+  background: rgba(10, 25, 55, 0.45);
+  border-color: rgba(96, 165, 250, 0.25);
+  color: #e6f3ff;
 }
 
-
-[data-theme="dark"] .profile-edit-field input::placeholder {
+[data-theme="dark"] .profile-edit-field input::placeholder,
+.dark .profile-edit-field input::placeholder {
   color: #71869b;
 }
 
-
-[data-theme="dark"] .profile-edit-field input:hover {
+[data-theme="dark"] .profile-edit-field input:hover,
+.dark .profile-edit-field input:hover {
+  background: rgba(10, 25, 55, 0.65);
   border-color: #477ba8;
 }
 
-
-[data-theme="dark"] .profile-edit-field input:focus {
+[data-theme="dark"] .profile-edit-field input:focus,
+.dark .profile-edit-field input:focus {
+  background: rgba(10, 25, 55, 0.85);
   border-color: #60a5fa;
-
-  background: #102d48;
 
   box-shadow:
     0 0 0 4px rgba(59, 130, 246, 0.14),
@@ -1851,4 +1809,36 @@ button:disabled {
 .dark .password-toggle-button:hover,
 [data-theme="dark"] .password-toggle-button:hover {
   background: rgba(255, 255, 255, 0.10);
+}
+
+/* =====================================================
+   FADE UP ANIMATION (Standard)
+===================================================== */
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* =====================================================
+   UTILITY CLASSES
+===================================================== */
+
+.btn-icon {
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.spinner {
+  animation: spin 0.8s linear infinite;
 }

@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { History as HistoryIcon, ClipboardList, ChevronRight } from "lucide-react";
 
 import "./History.css";
 
@@ -27,7 +28,7 @@ function History() {
       <section className="history-header">
 
         <div className="history-om">
-          ॐ
+          <HistoryIcon />
         </div>
 
         <p className="history-sacred-title">
@@ -62,7 +63,7 @@ function History() {
         >
 
           <div className="history-option-icon">
-            📝
+            <ClipboardList />
           </div>
 
           <div className="history-option-content">
@@ -79,7 +80,7 @@ function History() {
           </div>
 
           <div className="history-option-arrow">
-            →
+            <ChevronRight />
           </div>
 
         </button>

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { Brain, Target, BookOpen, Sword, History, BookMarked, Hash, Shuffle, PlayCircle, Loader2, BookText, Flame, Trophy } from "lucide-react";
 import "./QuizCategory.css";
+
 
 function QuizCategory() {
   const navigate = useNavigate();
@@ -399,7 +400,7 @@ function QuizCategory() {
         <div className="quiz-category-header-content">
 
           <div className="quiz-category-icon">
-            🧠
+            <Brain size={36} color="#2563eb" />
           </div>
 
           <div>
@@ -424,9 +425,9 @@ function QuizCategory() {
         <button
           type="button"
           className="quiz-category-back-btn"
-          onClick={goBack}
+          onClick={() => navigate("/quiz-results")}
         >
-          ← પાછા જાઓ
+          <History size={16} className="btn-icon" /> Quiz History
         </button>
 
       </section>
@@ -440,7 +441,7 @@ function QuizCategory() {
         <div className="quiz-setup-header">
 
           <div className="quiz-setup-icon">
-            🎯
+            <Target size={28} color="#2563eb" />
           </div>
 
           <div>
@@ -464,7 +465,7 @@ function QuizCategory() {
         <div className="quiz-setup-group">
 
           <label>
-            📚 Quiz પ્રકાર
+            <BookOpen size={14} className="btn-icon" /> Quiz પ્રકાર
           </label>
 
           <div className="quiz-type-options">
@@ -484,7 +485,7 @@ function QuizCategory() {
             >
 
               <span className="quiz-type-icon">
-                📚
+                <BookOpen size={22} />
               </span>
 
               <span className="quiz-type-text">
@@ -518,7 +519,7 @@ function QuizCategory() {
             >
 
               <span className="quiz-type-icon">
-                📖
+                <BookMarked size={22} />
               </span>
 
               <span className="quiz-type-text">
@@ -552,7 +553,7 @@ function QuizCategory() {
             >
 
               <span className="quiz-type-icon">
-                🏹
+                <Sword size={22} />
               </span>
 
               <span className="quiz-type-text">
@@ -581,7 +582,7 @@ function QuizCategory() {
           <div className="quiz-setup-group">
 
             <label htmlFor="quiz-chapter-select">
-              📖 અધ્યાય પસંદ કરો
+              <BookMarked size={14} className="btn-icon" /> અધ્યાય પસંદ કરો
             </label>
 
             <select
@@ -626,7 +627,7 @@ function QuizCategory() {
         <div className="quiz-setup-group">
 
           <label htmlFor="quiz-question-count">
-            🔢 કેટલા પ્રશ્નોની ક્વિઝ?
+            <Hash size={14} className="btn-icon" /> કેટલા પ્રશ્નોની ક્વિઝ?
           </label>
 
           <div className="quiz-count-wrapper">
@@ -665,11 +666,11 @@ function QuizCategory() {
 
             {loadingQuestions ? (
               <span className="quiz-available-count">
-                ⏳ Questions તપાસી રહ્યા છીએ...
+                <Loader2 size={13} className="spinner btn-icon" /> Questions તપાસી રહ્યા છીએ...
               </span>
             ) : availableQuestions !== null ? (
               <span className="quiz-available-count">
-                📊 {availableQuestions} પ્રશ્નો ઉપલબ્ધ
+                {availableQuestions} પ્રશ્નો ઉપલબ્ધ
               </span>
             ) : null}
 
@@ -683,7 +684,7 @@ function QuizCategory() {
 
         {error && (
           <div className="quiz-setup-error">
-            ❌ {error}
+            {error}
           </div>
         )}
 
@@ -728,7 +729,7 @@ function QuizCategory() {
             </span>
 
             <strong>
-              🎲 Random
+              <Shuffle size={13} className="btn-icon" /> Random
             </strong>
 
           </div>
@@ -755,7 +756,7 @@ function QuizCategory() {
             )
           }
         >
-          🚀 Quiz શરૂ કરો
+          <PlayCircle size={18} className="btn-icon" /> Quiz શરૂ કરો
         </button>
 
       </section>
@@ -769,7 +770,7 @@ function QuizCategory() {
         <div className="quiz-info-item">
 
           <div className="quiz-info-icon">
-            🕉️
+            <BookText size={24} color="#2563eb" />
           </div>
 
           <div>
@@ -787,7 +788,7 @@ function QuizCategory() {
         <div className="quiz-info-item">
 
           <div className="quiz-info-icon">
-            🌸
+            <Flame size={24} color="#2563eb" />
           </div>
 
           <div>
@@ -805,7 +806,7 @@ function QuizCategory() {
         <div className="quiz-info-item">
 
           <div className="quiz-info-icon">
-            🏆
+            <Trophy size={24} color="#2563eb" />
           </div>
 
           <div>

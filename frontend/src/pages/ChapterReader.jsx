@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { BookOpen, Heart, Mic, Loader2, Sparkles, AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import "./ChapterReader.css";
 
 import {
@@ -314,11 +315,13 @@ const response = await fetch(
 
         if (requestedShloka) {
 
-          // Anonymous user cannot open Shlok 6+
           if (
             !user &&
             requestedShloka > 5
           ) {
+            const redirectPath = `/chapter/${currentChapterNumber}?shloka=${requestedShloka}`;
+            const redirectMsg = `અધ્યાય ${currentChapterNumber} ના શ્લોક ${requestedShloka} વાંચવા માટે Login કરવું જરૂરી છે.`;
+
             localStorage.setItem(
               "pendingChapter",
               String(
@@ -333,7 +336,20 @@ const response = await fetch(
               )
             );
 
-            navigate("/login");
+            sessionStorage.setItem(
+              "authRedirect",
+              JSON.stringify({
+                from: redirectPath,
+                message: redirectMsg,
+              })
+            );
+
+            navigate("/login", {
+              state: {
+                from: redirectPath,
+                message: redirectMsg,
+              },
+            });
             return;
           }
 
@@ -699,6 +715,9 @@ if (
   !user &&
   Number(selectedShlok?.shlokNumber) > 5
 ) {
+  const redirectPath = `/chapter/${currentChapterNumber}?shloka=${selectedShlok.shlokNumber}`;
+  const redirectMsg = `અધ્યાય ${currentChapterNumber} ના શ્લોક ${selectedShlok.shlokNumber} વાંચવા માટે Login કરવું જરૂરી છે.`;
+
   localStorage.setItem(
     "pendingChapter",
     String(currentChapterNumber)
@@ -709,7 +728,20 @@ if (
     String(selectedShlok.shlokNumber)
   );
 
-  navigate("/login");
+  sessionStorage.setItem(
+    "authRedirect",
+    JSON.stringify({
+      from: redirectPath,
+      message: redirectMsg,
+    })
+  );
+
+  navigate("/login", {
+    state: {
+      from: redirectPath,
+      message: redirectMsg,
+    },
+  });
   return;
 }
 
@@ -743,7 +775,7 @@ if (
       <main className="chapter-reader">
         <div className="reader-error-card">
           <div className="error-icon">
-            ❌
+            <AlertCircle size={48} color="#ef4444" />
           </div>
 
           <h1>
@@ -761,7 +793,7 @@ if (
               navigate("/chapters")
             }
           >
-            ← 18 અધ્યાય પર પાછા જાઓ
+            ૧૮ અધ્યાય પર પાછા જાઓ
           </button>
         </div>
       </main>
@@ -777,7 +809,7 @@ if (
       <main className="chapter-reader">
         <div className="reader-loading-card">
           <div className="loading-spinner">
-            🕉️
+            <Loader2 className="spinner" size={48} color="#3b82f6" />
           </div>
 
           <h2>
@@ -801,7 +833,7 @@ if (
       <main className="chapter-reader">
         <div className="reader-error-card">
           <div className="error-icon">
-            ❌
+            <AlertCircle size={48} color="#ef4444" />
           </div>
 
           <h1>
@@ -816,7 +848,7 @@ if (
               navigate("/chapters")
             }
           >
-            ← 18 અધ્યાય પર પાછા જાઓ
+            ૧૮ અધ્યાય પર પાછા જાઓ
           </button>
         </div>
       </main>
@@ -851,7 +883,7 @@ if (
 
         <div className="reader-empty-card">
           <div className="empty-icon">
-            📖
+            <BookOpen size={48} color="#3b82f6" />
           </div>
 
           <h2>
@@ -869,7 +901,7 @@ if (
               navigate("/chapters")
             }
           >
-            ← 18 અધ્યાય
+            ૧૮ અધ્યાય
           </button>
         </div>
       </main>
@@ -908,6 +940,9 @@ if (
   !user &&
   Number(next?.shlokNumber) > 5
 ) {
+  const redirectPath = `/chapter/${currentChapterNumber}?shloka=${next.shlokNumber}`;
+  const redirectMsg = `અધ્યાય ${currentChapterNumber} ના શ્લોક ${next.shlokNumber} વાંચવા માટે Login કરવું જરૂરી છે.`;
+
   localStorage.setItem(
     "pendingChapter",
     String(currentChapterNumber)
@@ -918,7 +953,20 @@ if (
     String(next.shlokNumber)
   );
 
-  navigate("/login");
+  sessionStorage.setItem(
+    "authRedirect",
+    JSON.stringify({
+      from: redirectPath,
+      message: redirectMsg,
+    })
+  );
+
+  navigate("/login", {
+    state: {
+      from: redirectPath,
+      message: redirectMsg,
+    },
+  });
   return;
 }
 
@@ -1340,7 +1388,7 @@ const prepareSanskritLines = () => {
           aria-label="પાછલો શ્લોક"
           title="પાછલો શ્લોક"
         >
-          ←
+          <ChevronLeft size={28} />
         </button>
 
         {/* MAIN CONTENT */}
@@ -1381,14 +1429,14 @@ const prepareSanskritLines = () => {
             }
           >
             {isFavorite(shloka)
-              ? "❤️"
-              : "🤍"}
+              ? <Heart fill="currentColor" size={20} />
+              : <Heart size={20} />}
           </button>
 
           {/* SPEAKER */}
 
           <div className="speaker">
-            🎙️ {shloka.speaker}
+            <Mic className="btn-icon" size={16} /> {shloka.speaker}
           </div>
 
           {/* =================================================
@@ -1398,7 +1446,7 @@ const prepareSanskritLines = () => {
           <div className="content-box sanskrit-box">
 
             <h3>
-              🕉️ સંસ્કૃત શ્લોક
+              <Sparkles className="btn-icon" size={18} /> સંસ્કૃત શ્લોક
             </h3>
 
 <div
@@ -1414,7 +1462,7 @@ const prepareSanskritLines = () => {
             {/* WORD MEANING INFO */}
 
             <div className="word-meaning-info">
-              💡 સંસ્કૃત શબ્દનો અર્થ
+              <BookOpen className="btn-icon" size={14} /> સંસ્કૃત શબ્દનો અર્થ
               ઉપલબ્ધ છે તેના પર click
               કરીને ગુજરાતી અર્થ જુઓ.
             </div>
@@ -1428,7 +1476,7 @@ const prepareSanskritLines = () => {
           <div className="content-box translation-box">
 
             <h3>
-              📖 ગુજરાતી અનુવાદ
+              <BookOpen className="btn-icon" size={18} /> ગુજરાતી અનુવાદ
             </h3>
 
             <div
@@ -1449,7 +1497,7 @@ const prepareSanskritLines = () => {
           <div className="content-box message-box">
 
             <h3>
-              🌸 સંદેશ / સમજણ
+              <Sparkles className="btn-icon" size={18} /> સંદેશ / સમજણ
             </h3>
 
             <div
@@ -1478,7 +1526,7 @@ const prepareSanskritLines = () => {
           aria-label="આગળનો શ્લોક"
           title="આગળનો શ્લોક"
         >
-          →
+          <ChevronRight size={28} />
         </button>
 
       </section>
@@ -1502,6 +1550,7 @@ const prepareSanskritLines = () => {
             1
           }
         >
+          <ChevronLeft size={26} style={{ marginRight: '10px' }} />
           <span className="chapter-nav-text">
             <h3>
               પાછલો અધ્યાય
@@ -1556,6 +1605,7 @@ const prepareSanskritLines = () => {
               </strong>
             )}
           </span>
+          <ChevronRight size={26} style={{ marginLeft: '10px' }} />
         </button>
 
       </section>
@@ -1570,7 +1620,7 @@ const prepareSanskritLines = () => {
 
           <div>
             <span className="selector-small-title">
-              📖 અધ્યાય{" "}
+              <BookOpen className="btn-icon" size={14} /> અધ્યાય{" "}
               {currentChapterNumber}
             </span>
 

@@ -3,8 +3,9 @@ import {
   useNavigate,
   useSearchParams,
 } from "react-router-dom";
-
+import { ArrowLeft, Star, Loader2, BookOpen, AlertCircle, RefreshCw, Trophy, PlayCircle, Check, X, Lightbulb, ChevronLeft, ChevronRight } from "lucide-react";
 import "./Quiz.css";
+
 
 function Quiz() {
   const navigate = useNavigate();
@@ -1014,7 +1015,7 @@ function Quiz() {
         <div className="quiz-loading">
 
           <div className="quiz-loading-icon">
-            🕉️
+            <Loader2 size={40} className="spinner" color="#2563eb" />
           </div>
 
           <h2>
@@ -1042,7 +1043,7 @@ function Quiz() {
         <div className="quiz-error">
 
           <div className="quiz-error-icon">
-            ❌
+            <AlertCircle size={40} color="#ef4444" />
           </div>
 
           <h2>
@@ -1059,14 +1060,14 @@ function Quiz() {
               type="button"
               onClick={retryQuiz}
             >
-              🔄 ફરી પ્રયાસ કરો
+              <RefreshCw size={15} className="btn-icon" /> ફરી પ્રયાસ કરો
             </button>
 
             <button
               type="button"
               onClick={exitQuiz}
             >
-              ← Quiz Category
+              <ArrowLeft size={15} className="btn-icon" /> Quiz Category
             </button>
 
           </div>
@@ -1090,7 +1091,7 @@ function Quiz() {
         <div className="quiz-empty">
 
           <div className="quiz-empty-icon">
-            📖
+            <BookOpen size={40} color="#2563eb" />
           </div>
 
           <h2>
@@ -1106,7 +1107,7 @@ function Quiz() {
             type="button"
             onClick={exitQuiz}
           >
-            ← Quiz Category
+            <ArrowLeft size={15} className="btn-icon" /> Quiz Category
           </button>
 
         </div>
@@ -1211,7 +1212,7 @@ function Quiz() {
         <section className="quiz-complete-card">
 
           <div className="quiz-complete-icon">
-            🏆
+            <Trophy size={48} color="#2563eb" />
           </div>
 
           <h1 className="quiz-result-title">
@@ -1288,14 +1289,14 @@ function Quiz() {
               type="button"
               onClick={retryQuiz}
             >
-              🔄 ફરી Quiz આપો
+              <RefreshCw size={15} className="btn-icon" /> ફરી Quiz આપો
             </button>
 
             <button
               type="button"
               onClick={exitQuiz}
             >
-              📚 Quiz Category
+              <BookOpen size={15} className="btn-icon" /> Quiz Category
             </button>
 
           </div>
@@ -1372,13 +1373,13 @@ function Quiz() {
             className="quiz-back-btn"
             onClick={exitQuiz}
           >
-            ←
+            <ArrowLeft size={20} />
           </button>
 
           <div>
 
             <span>
-              🕉️ ભગવદ્ ગીતા Quiz
+              ભગવદ્ ગીતા Quiz
             </span>
 
             <h1>
@@ -1390,7 +1391,7 @@ function Quiz() {
         </div>
 
         <div className="quiz-score-badge">
-          ⭐ {score}
+          <Star size={14} className="btn-icon" fill="#2563eb" color="#2563eb" /> {score}
         </div>
 
       </section>
@@ -1593,11 +1594,11 @@ function Quiz() {
 
               <>
                 <strong>
-                  ✓ સાચો જવાબ!
+                  <Check size={15} className="btn-icon" /> સાચો જવાબ!
                 </strong>
 
                 <span>
-                  ખૂબ સરસ! 👏
+                  ખૂબ સરસ!
                 </span>
               </>
 
@@ -1605,7 +1606,7 @@ function Quiz() {
 
               <>
                 <strong>
-                  ✕ ખોટો જવાબ
+                  <X size={15} className="btn-icon" /> ખોટો જવાબ
                 </strong>
 
                 <span>
@@ -1632,7 +1633,7 @@ function Quiz() {
           <div className="quiz-explanation">
 
             <div className="quiz-explanation-title">
-              💡 સમજણ
+              <Lightbulb size={15} className="btn-icon" /> સમજણ
             </div>
 
             <div className="quiz-explanation-text">
@@ -1662,7 +1663,7 @@ function Quiz() {
               submitting
             }
           >
-            ← પાછલો પ્રશ્ન
+            <ChevronLeft size={16} className="btn-icon" /> પાછલો પ્રશ્ન
           </button>
 
           <button
@@ -1678,11 +1679,11 @@ function Quiz() {
           >
 
             {submitting
-              ? "Result save થઈ રહ્યું છે..."
+              ? <><Loader2 size={15} className="spinner btn-icon" /> Result save થઈ રહ્યું છે...</>
               : currentQuestion ===
                 questions.length - 1
-              ? "Quiz પૂર્ણ કરો 🏆"
-              : "આગળનો પ્રશ્ન →"}
+              ? <><Trophy size={15} className="btn-icon" /> Quiz પૂર્ણ કરો</>
+              : <>આગળનો પ્રશ્ન <ChevronRight size={16} /></>}
 
           </button>
 

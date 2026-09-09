@@ -5,6 +5,15 @@ import {
 } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
+import { 
+  BookOpen, 
+  BrainCircuit, 
+  Search, 
+  Loader2, 
+  AlertCircle, 
+  TriangleAlert, 
+  Sparkles 
+} from "lucide-react";
 import "./Home.css";
 
 function Home() {
@@ -209,7 +218,7 @@ useEffect(() => {
         );
 
         setMessage(
-          "❌ Server સાથે connection થઈ શક્યું નથી."
+          "Server સાથે connection થઈ શક્યું નથી."
         );
       } finally {
         setLoading(false);
@@ -297,7 +306,25 @@ useEffect(() => {
 
   const handleContinueReading = () => {
     if (!user) {
-      navigate("/login");
+      const target =
+        continueReading?.chapterNumber && continueReading?.shlokNumber
+          ? `/chapter/${continueReading.chapterNumber}?shloka=${continueReading.shlokNumber}`
+          : "/chapters";
+
+      sessionStorage.setItem(
+        "authRedirect",
+        JSON.stringify({
+          from: target,
+          message: "વાંચન ચાલુ રાખવા માટે Login કરવું જરૂરી છે.",
+        })
+      );
+
+      navigate("/login", {
+        state: {
+          from: target,
+          message: "વાંચન ચાલુ રાખવા માટે Login કરવું જરૂરી છે.",
+        },
+      });
       return;
     }
 
@@ -328,9 +355,22 @@ useEffect(() => {
   // =====================================================
 
   const handleQuiz = () => {
-    // Login ન હોય તો Login page
+    // Login ન હોય તો Login page પર message અને target path સાથે મોકલો
     if (!user) {
-      navigate("/login");
+      sessionStorage.setItem(
+        "authRedirect",
+        JSON.stringify({
+          from: "/quiz-category",
+          message: "Quiz રમવા માટે Login કરવું જરૂરી છે.",
+        })
+      );
+
+      navigate("/login", {
+        state: {
+          from: "/quiz-category",
+          message: "Quiz રમવા માટે Login કરવું જરૂરી છે.",
+        },
+      });
       return;
     }
 
@@ -569,7 +609,7 @@ useEffect(() => {
       !textValue
     ) {
       setMessage(
-        "❌ કૃપા કરીને શોધવા માટે કંઈક લખો."
+        "કૃપા કરીને શોધવા માટે કંઈક લખો."
       );
       return;
     }
@@ -580,7 +620,7 @@ useEffect(() => {
       !textValue
     ) {
       setMessage(
-        "⚠️ માત્ર અધ્યાય નંબરથી શોધી શકાશે નહીં. શ્લોક નંબર અથવા શબ્દ પણ લખો."
+        "માત્ર અધ્યાય નંબરથી શોધી શકાશે નહીં. શ્લોક નંબર અથવા શબ્દ પણ લખો."
       );
       return;
     }
@@ -593,7 +633,7 @@ useEffect(() => {
       )
     ) {
       setMessage(
-        "❌ અધ્યાય નંબર 1 થી 18 સુધી જ હોઈ શકે છે."
+        "અધ્યાય નંબર 1 થી 18 સુધી જ હોઈ શકે છે."
       );
       return;
     }
@@ -611,21 +651,21 @@ useEffect(() => {
 
       if (shlokaNum === 0) {
         setMessage(
-          "❌ આ અધ્યાયમાં હાલમાં કોઈ શ્લોક ઉપલબ્ધ નથી."
+          "આ અધ્યાયમાં હાલમાં કોઈ શ્લોક ઉપલબ્ધ નથી."
         );
         return;
       }
 
       if (shlokaNum < 1) {
         setMessage(
-          "❌ શ્લોક નંબર 1 અથવા તેનાથી મોટો હોવો જોઈએ."
+          "શ્લોક નંબર 1 અથવા તેનાથી મોટો હોવો જોઈએ."
         );
         return;
       }
 
       if (maxShloka === 0) {
         setMessage(
-          "❌ આ અધ્યાયમાં હાલમાં કોઈ શ્લોક ઉપલબ્ધ નથી."
+          "આ અધ્યાયમાં હાલમાં કોઈ શ્લોક ઉપલબ્ધ નથી."
         );
         return;
       }
@@ -634,7 +674,7 @@ useEffect(() => {
         shlokaNum > maxShloka
       ) {
         setMessage(
-          `❌ ${
+          `${
             chapterValue
               ? "આ અધ્યાયમાં"
               : "ગીતા માં"
@@ -696,7 +736,7 @@ useEffect(() => {
       matches.length === 0
     ) {
       setMessage(
-        "❌ કોઈ શ્લોક મળ્યો નથી."
+        "કોઈ શ્લોક મળ્યો નથી."
       );
       return;
     }
@@ -740,7 +780,7 @@ useEffect(() => {
             className="continue-reading-button"
             disabled
           >
-            ⏳ Continue Reading...
+            <Loader2 className="btn-icon spinner" size={20} /> Continue Reading...
           </button>
         );
       }
@@ -758,7 +798,7 @@ useEffect(() => {
               handleContinueReading
             }
           >
-            📖 Continue Reading
+            <BookOpen className="btn-icon" size={20} /> Continue Reading
             {" • "}
             અધ્યાય{" "}
             {
@@ -781,7 +821,7 @@ useEffect(() => {
             handleStartReading
           }
         >
-          📖 ગીતા વાંચવાનું શરૂ કરો
+          <BookOpen className="btn-icon" size={20} /> ગીતા વાંચવાનું શરૂ કરો
         </button>
       );
     }
@@ -823,33 +863,32 @@ useEffect(() => {
         </p>
 
         {/* =================================================
-            START READING
+            HERO ACTIONS (BUTTONS)
         ================================================= */}
 
-        {user ? (
-          renderReadingButton()
-        ) : (
+        <div className="hero-actions">
+          {user ? (
+            renderReadingButton()
+          ) : (
+            <button
+              type="button"
+              className="continue-reading-button"
+              onClick={
+                handleStartReading
+              }
+            >
+              <BookOpen className="btn-icon" size={20} /> ગીતા વાંચવાનું શરૂ કરો
+            </button>
+          )}
+
           <button
             type="button"
-            onClick={
-              handleStartReading
-            }
+            className="quiz-home-button quiz-button"
+            onClick={handleQuiz}
           >
-            ગીતા વાંચવાનું શરૂ કરો
+            <BrainCircuit className="btn-icon" size={20} /> Quiz રમો
           </button>
-        )}
-
-        {/* =================================================
-            QUIZ BUTTON
-        ================================================= */}
-
-        <button
-          type="button"
-          className="quiz-home-button"
-          onClick={handleQuiz}
-        >
-          📝 Quiz રમો
-        </button>
+        </div>
 
         {/* =================================================
             ADVANCED SEARCH
@@ -860,7 +899,7 @@ useEffect(() => {
           {/* SEARCH TITLE */}
 
           <div className="search-title">
-            🔎 ગીતા શ્લોક શોધો
+            <Search className="title-icon" size={22} /> ગીતા શ્લોક શોધો
           </div>
 
           {/* SEARCH FIELDS */}
@@ -946,9 +985,15 @@ useEffect(() => {
               }
               disabled={loading}
             >
-              {loading
-                ? "⏳ Loading..."
-                : "🔍 શોધો"}
+              {loading ? (
+                <>
+                  <Loader2 className="btn-icon spinner" size={18} /> Loading...
+                </>
+              ) : (
+                <>
+                  <Search className="btn-icon" size={18} /> શોધો
+                </>
+              )}
             </button>
 
           </div>
@@ -957,7 +1002,7 @@ useEffect(() => {
 
           {loading && (
             <div className="search-message">
-              📖 MongoDBમાંથી શ્લોક data
+              <Loader2 className="msg-icon spinner" size={18} /> MongoDBમાંથી શ્લોક data
               લોડ થઈ રહ્યો છે...
             </div>
           )}
@@ -967,7 +1012,7 @@ useEffect(() => {
           {!loading &&
             message && (
               <div className="search-message">
-                {message}
+                <AlertCircle className="msg-icon" size={18} /> {message}
               </div>
             )}
 
@@ -977,7 +1022,7 @@ useEffect(() => {
             <div className="search-results">
 
               <h3>
-                🔎 {result.length} પરિણામ મળ્યા
+                <Search className="title-icon" size={20} /> {result.length} પરિણામ મળ્યા
               </h3>
 
               {result.map(
@@ -1023,7 +1068,7 @@ useEffect(() => {
                     </p>
 
                     <span>
-                      શ્લોક વાંચો →
+                      શ્લોક વાંચો
                     </span>
 
                   </div>
@@ -1047,7 +1092,7 @@ useEffect(() => {
           <div className="today-shlok-header">
 
             <span className="today-shlok-icon">
-              🌸
+              <Sparkles size={28} />
             </span>
 
             <div>
@@ -1108,7 +1153,7 @@ useEffect(() => {
               <div className="today-translation">
 
                 <h3>
-                  📖 ગુજરાતી અનુવાદ
+                  <BookOpen className="section-icon" size={20} /> ગુજરાતી અનુવાદ
                 </h3>
 
                 <div
@@ -1125,7 +1170,7 @@ useEffect(() => {
               <div className="today-message">
 
                 <h3>
-                  🌼 આજનો સંદેશ
+                  <Sparkles className="section-icon" size={20} /> આજનો સંદેશ
                 </h3>
 
                 <div
@@ -1147,7 +1192,7 @@ useEffect(() => {
               handleTodayShlok
             }
           >
-            📖 સંપૂર્ણ શ્લોક વાંચો →
+            <BookOpen className="btn-icon" size={18} /> સંપૂર્ણ શ્લોક વાંચો
           </button>
 
         </section>
@@ -1160,7 +1205,7 @@ useEffect(() => {
       <section className="welcome">
 
         <h2>
-          ગીતા શા માટે વાંચવી?
+          <Sparkles className="title-icon" size={28} /> ગીતા શા માટે વાંચવી?
         </h2>
 
         <p>
