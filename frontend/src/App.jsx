@@ -1,7 +1,7 @@
 
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 
-import { AuthProvider } from "./context/AuthContext.jsx";
+import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
 import { ThemeProvider } from "./context/ThemeContext.jsx";
 
 import Navbar from "./components/Navbar.jsx";
@@ -28,6 +28,85 @@ import QuizCategory from "./pages/QuizCategory.jsx";
 import History from "./pages/History.jsx";
 
 import QuizResult from "./pages/QuizResult";
+
+// =====================================================
+// PROTECTED ROUTE COMPONENT
+// =====================================================
+
+function ProtectedRoute({ children, message }) {
+  const { user } = useAuth();
+  const location = useLocation();
+
+  if (!user) {
+    const targetPath = location.pathname + location.search;
+    const redirectMessage =
+      message || "આ પેજનો ઉપયોગ કરવા માટે Login કરવું જરૂરી છે.";
+
+    try {
+      sessionStorage.setItem(
+        "authRedirect",
+        JSON.stringify({
+          from: targetPath,
+          message: redirectMessage,
+        })
+      );
+    } catch (e) {}
+
+    return (
+      <Navigate
+        to="/login"
+        state={{
+          from: targetPath,
+          message: redirectMessage,
+        }}
+        replace
+      />
+    );
+  }
+
+  return children;
+}
+
+// =====================================================
+// ADMIN ROUTE COMPONENT
+// =====================================================
+
+function AdminRoute({ children }) {
+  const { user } = useAuth();
+  const location = useLocation();
+
+  if (!user) {
+    const targetPath = location.pathname + location.search;
+    const redirectMessage = "Admin પેનલનો ઉપયોગ કરવા માટે Login કરવું જરૂરી છે.";
+
+    try {
+      sessionStorage.setItem(
+        "authRedirect",
+        JSON.stringify({
+          from: targetPath,
+          message: redirectMessage,
+        })
+      );
+    } catch (e) {}
+
+    return (
+      <Navigate
+        to="/login"
+        state={{
+          from: targetPath,
+          message: redirectMessage,
+        }}
+        replace
+      />
+    );
+  }
+
+  if (user.role !== "admin") {
+    return <Navigate to="/" replace />;
+  }
+
+  return children;
+}
 
 function App() {
   return (
@@ -89,100 +168,140 @@ function App() {
 
 
             {/* =================================================
-                PROFILE
+                PROFILE (PROTECTED)
             ================================================= */}
 
             <Route
               path="/profile"
-              element={<Profile />}
+              element={
+                <ProtectedRoute message="તમારી Profile જોવા માટે Login કરવું જરૂરી છે.">
+                  <Profile />
+                </ProtectedRoute>
+              }
             />
 
 
             {/* =================================================
-                FAVOURITE SHLOKAS
+                FAVOURITE SHLOKAS (PROTECTED)
             ================================================= */}
 
             <Route
               path="/favorites"
-              element={<FavouriteShlokas />}
+              element={
+                <ProtectedRoute message="મનપસંદ શ્લોક જોવા માટે Login કરવું જરૂરી છે.">
+                  <FavouriteShlokas />
+                </ProtectedRoute>
+              }
             />
 
 
             {/* =================================================
-                ADMIN DASHBOARD
+                ADMIN DASHBOARD (ADMIN PROTECTED)
             ================================================= */}
 
             <Route
               path="/admin"
-              element={<Admin />}
+              element={
+                <AdminRoute>
+                  <Admin />
+                </AdminRoute>
+              }
             />
 
 
             {/* =================================================
-                ADMIN → SHLOK MANAGEMENT
+                ADMIN → SHLOK MANAGEMENT (ADMIN PROTECTED)
             ================================================= */}
 
             <Route
               path="/admin/shloks"
-              element={<ShlokManagement />}
+              element={
+                <AdminRoute>
+                  <ShlokManagement />
+                </AdminRoute>
+              }
             />
 
 
             {/* =================================================
-                ADMIN → QUIZ MANAGEMENT
+                ADMIN → QUIZ MANAGEMENT (ADMIN PROTECTED)
             ================================================= */}
 
             <Route
               path="/admin/quiz"
-              element={<QuizManagement />}
+              element={
+                <AdminRoute>
+                  <QuizManagement />
+                </AdminRoute>
+              }
             />
 
 
             {/* =================================================
-                QUIZ CATEGORY SELECTION
-                Navbar Quiz → અહીં આવશે
+                QUIZ CATEGORY SELECTION (PROTECTED)
             ================================================= */}
 
             <Route
               path="/quiz"
-              element={<QuizCategory />}
+              element={
+                <ProtectedRoute message="Quiz રમવા માટે Login કરવું જરૂરી છે.">
+                  <QuizCategory />
+                </ProtectedRoute>
+              }
             />
 
 
             {/* =================================================
-                QUIZ QUESTIONS
-                Category પસંદ કર્યા પછી આ route ઉપયોગ થશે.
-
-                Example:
-                /quiz/play?category=chapter&chapterNumber=1
-                /quiz/play?category=all
-                /quiz/play?category=mahabharat
+                QUIZ PLAY (PROTECTED)
             ================================================= */}
 
             <Route
               path="/quiz/play"
-              element={<Quiz />}
+              element={
+                <ProtectedRoute message="Quiz રમવા માટે Login કરવું જરૂરી છે.">
+                  <Quiz />
+                </ProtectedRoute>
+              }
             />
 
 
             {/* =================================================
-                QUIZ CATEGORY
-                Existing direct category route પણ રાખ્યો છે.
+                QUIZ CATEGORY (PROTECTED)
             ================================================= */}
 
             <Route
               path="/quiz-category"
-              element={<QuizCategory />}
+              element={
+                <ProtectedRoute message="Quiz રમવા માટે Login કરવું જરૂરી છે.">
+                  <QuizCategory />
+                </ProtectedRoute>
+              }
             />
+
+            {/* =================================================
+                QUIZ HISTORY (PROTECTED)
+            ================================================= */}
 
             <Route
               path="/history"
-              element={<History />}
+              element={
+                <ProtectedRoute message="તમારી History જોવા માટે Login કરવું જરૂરી છે.">
+                  <History />
+                </ProtectedRoute>
+              }
             />
+
+            {/* =================================================
+                QUIZ RESULTS (PROTECTED)
+            ================================================= */}
 
             <Route
               path="/quiz-results"
-              element={<QuizResult />}
+              element={
+                <ProtectedRoute message="Quiz Results જોવા માટે Login કરવું જરૂરી છે.">
+                  <QuizResult />
+                </ProtectedRoute>
+              }
             />
 
           </Routes>

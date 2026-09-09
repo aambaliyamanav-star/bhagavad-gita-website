@@ -1,9 +1,29 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   Link,
   useLocation,
   useNavigate,
 } from "react-router-dom";
+
+import {
+  ChevronLeft,
+  ChevronRight,
+  Flower2,
+  Home,
+  BookOpen,
+  Heart,
+  Brain,
+  Clock,
+  CircleUser,
+  ShieldCheck,
+  LogIn,
+  UserPlus,
+  LogOut,
+  Moon,
+  Sun,
+  X,
+  Menu,
+} from "lucide-react";
 
 import { useAuth } from "../context/AuthContext.jsx";
 import { useTheme } from "../context/ThemeContext.jsx";
@@ -33,17 +53,37 @@ function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   // =====================================================
-  // NAVIGATION HISTORY
+  // SCROLL STATE
   // =====================================================
 
-  const [historyStack, setHistoryStack] =
-    useState(["/"]);
+  const [scrolled, setScrolled] = useState(false);
 
-  const [historyIndex, setHistoryIndex] =
-    useState(0);
+  // =====================================================
+  // NAVIGATION HISTORY (ATOMIC STATE & REF)
+  // =====================================================
 
-  const [isNavigating, setIsNavigating] =
-    useState(false);
+  const [navHistory, setNavHistory] = useState(() => ({
+    stack: [location.pathname + location.search],
+    index: 0,
+  }));
+
+  const isNavigatingRef = useRef(false);
+
+  // Helper to check if a route requires login
+  const isProtectedPath = (path) => {
+    const cleanPath = path.split("?")[0];
+    const protectedPrefixes = [
+      "/quiz",
+      "/quiz-category",
+      "/favorites",
+      "/history",
+      "/profile",
+      "/admin",
+    ];
+    return protectedPrefixes.some(
+      (prefix) => cleanPath === prefix || cleanPath.startsWith(prefix + "/")
+    );
+  };
 
   // =====================================================
   // CURRENT PAGE NAME
@@ -141,42 +181,51 @@ function Navbar() {
     const currentPath =
       location.pathname + location.search;
 
-    if (isNavigating) {
-      setIsNavigating(false);
+    if (isNavigatingRef.current) {
+      isNavigatingRef.current = false;
       return;
     }
 
-    setHistoryStack((previousHistory) => {
-      const currentPathInHistory =
-        previousHistory[historyIndex];
+    setNavHistory((previous) => {
+      const currentInStack =
+        previous.stack[previous.index];
 
-      // Same page
-      if (
-        currentPathInHistory ===
-        currentPath
-      ) {
-        return previousHistory;
+      // Same page - do not push duplicate
+      if (currentInStack === currentPath) {
+        return previous;
       }
 
-      // Back પછી નવી page ખોલે તો
-      // Forward history remove થશે
-      const newHistory =
-        previousHistory.slice(
-          0,
-          historyIndex + 1
-        );
+      const prevPath =
+        previous.stack[previous.index]?.split("?")[0];
 
-      newHistory.push(currentPath);
+      // If user just logged in (previous was /login or /register and now user exists),
+      // replace the /login entry so it does not linger in history
+      if (user && (prevPath === "/login" || prevPath === "/register")) {
+        const newStack = previous.stack.slice(0, previous.index);
+        newStack.push(currentPath);
+        return {
+          stack: newStack,
+          index: newStack.length - 1,
+        };
+      }
 
-      setHistoryIndex(
-        newHistory.length - 1
+      // Back પછી નવી page ખોલે તો Forward history remove થશે
+      const newStack = previous.stack.slice(
+        0,
+        previous.index + 1
       );
 
-      return newHistory;
+      newStack.push(currentPath);
+
+      return {
+        stack: newStack,
+        index: newStack.length - 1,
+      };
     });
   }, [
     location.pathname,
     location.search,
+    user,
   ]);
 
   // =====================================================
@@ -191,24 +240,101 @@ function Navbar() {
   ]);
 
   // =====================================================
+  // SCROLL LISTENER — shrink navbar on scroll
+  // =====================================================
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+
+    window.addEventListener(
+      "scroll",
+      handleScroll,
+      { passive: true }
+    );
+
+    // Check on mount too
+    handleScroll();
+
+    return () => {
+      window.removeEventListener(
+        "scroll",
+        handleScroll
+      );
+    };
+  }, []);
+
+  // =====================================================
   // BACK
   // =====================================================
 
   const handleBack = () => {
-    if (historyIndex <= 0) {
+    // 1. If currently on /login or /register, always return to the last accessible page
+    if (location.pathname === "/login" || location.pathname === "/register") {
+      let targetIndex = -1;
+      for (let i = navHistory.index - 1; i >= 0; i--) {
+        const path = navHistory.stack[i];
+        const cleanPath = path.split("?")[0];
+        // Skip login/register and skip protected routes if user is not logged in
+        if (
+          cleanPath !== "/login" &&
+          cleanPath !== "/register" &&
+          (!isProtectedPath(cleanPath) || user)
+        ) {
+          targetIndex = i;
+          break;
+        }
+      }
+
+      if (targetIndex >= 0) {
+        const targetPath = navHistory.stack[targetIndex];
+        isNavigatingRef.current = true;
+        setNavHistory((prev) => ({
+          ...prev,
+          index: targetIndex,
+        }));
+        navigate(targetPath);
+        return;
+      }
+
+      // Fallback if no accessible page in stack
+      navigate("/");
       return;
     }
 
-    const newIndex =
-      historyIndex - 1;
+    // 2. Normal back navigation
+    if (navHistory.index <= 0) {
+      return;
+    }
 
-    setIsNavigating(true);
+    let targetIndex = navHistory.index - 1;
+    while (targetIndex >= 0) {
+      const cleanPath = navHistory.stack[targetIndex].split("?")[0];
+      // If user is logged in, NEVER go back to /login or /register!
+      if (user && (cleanPath === "/login" || cleanPath === "/register")) {
+        targetIndex--;
+        continue;
+      }
+      // If user is logged out, skip protected routes and login
+      if (!user && (isProtectedPath(cleanPath) || cleanPath === "/login")) {
+        targetIndex--;
+        continue;
+      }
+      break;
+    }
 
-    setHistoryIndex(newIndex);
-
-    navigate(
-      historyStack[newIndex]
-    );
+    if (targetIndex >= 0) {
+      const targetPath = navHistory.stack[targetIndex];
+      isNavigatingRef.current = true;
+      setNavHistory((prev) => ({
+        ...prev,
+        index: targetIndex,
+      }));
+      navigate(targetPath);
+    } else {
+      navigate("/");
+    }
   };
 
   // =====================================================
@@ -217,34 +343,41 @@ function Navbar() {
 
   const handleForward = () => {
     if (
-      historyIndex >=
-      historyStack.length - 1
+      navHistory.index >=
+      navHistory.stack.length - 1
     ) {
       return;
     }
 
     const newIndex =
-      historyIndex + 1;
+      navHistory.index + 1;
+    const targetPath =
+      navHistory.stack[newIndex];
 
-    setIsNavigating(true);
+    isNavigatingRef.current = true;
+    setNavHistory((prev) => ({
+      ...prev,
+      index: newIndex,
+    }));
 
-    setHistoryIndex(newIndex);
-
-    navigate(
-      historyStack[newIndex]
-    );
+    navigate(targetPath);
   };
 
   // =====================================================
   // BUTTON STATUS
   // =====================================================
 
+  const isAuthPage =
+    location.pathname === "/login" || location.pathname === "/register";
+
+  // On Login/Register page, always enable back button so user is never stuck
   const canGoBack =
-    historyIndex > 0;
+    isAuthPage || navHistory.index > 0;
 
   const canGoForward =
-    historyIndex <
-    historyStack.length - 1;
+    !isAuthPage &&
+    navHistory.index <
+      navHistory.stack.length - 1;
 
   // =====================================================
   // LOGOUT
@@ -272,30 +405,54 @@ function Navbar() {
   // =====================================================
 
   const handleNormalNavigation = () => {
-    setIsNavigating(false);
+    isNavigatingRef.current = false;
     setMenuOpen(false);
   };
 
   // =====================================================
-  // QUIZ NAVIGATION
+  // PROTECTED NAVIGATION (FOR LOGGED IN & LOGGED OUT)
   // =====================================================
 
-  const handleQuizNavigation = () => {
-    setIsNavigating(false);
+  const handleProtectedNavigation = (targetPath, requiredMessage) => {
+    isNavigatingRef.current = false;
     setMenuOpen(false);
 
-    navigate("/quiz-category");
+    if (user) {
+      navigate(targetPath);
+    } else {
+      sessionStorage.setItem(
+        "authRedirect",
+        JSON.stringify({
+          from: targetPath,
+          message: requiredMessage,
+        })
+      );
+
+      navigate("/login", {
+        state: {
+          from: targetPath,
+          message: requiredMessage,
+        },
+      });
+    }
   };
 
   // =====================================================
-  // HISTORY NAVIGATION
+  // DIRECT LOGIN (FROM NAVBAR - NO MESSAGE)
   // =====================================================
 
-  const handleHistoryNavigation = () => {
-    setIsNavigating(false);
+  const handleDirectLogin = () => {
+    isNavigatingRef.current = false;
     setMenuOpen(false);
 
-    navigate("/history");
+    // Clear any pending redirect or messages
+    sessionStorage.removeItem("authRedirect");
+    localStorage.removeItem("pendingChapter");
+    localStorage.removeItem("pendingShloka");
+
+    navigate("/login", {
+      state: null,
+    });
   };
 
   // =====================================================
@@ -318,7 +475,7 @@ function Navbar() {
           NAVBAR
       ================================================= */}
 
-      <nav className="navbar">
+      <nav className={`navbar${scrolled ? " scrolled" : ""}`}>
 
         {/* =================================================
             BACK + FORWARD
@@ -336,9 +493,10 @@ function Navbar() {
             title="પાછળ જાઓ"
             aria-label="પાછળ જાઓ"
           >
-            <span className="arrow-3d left-arrow">
-              ❮
-            </span>
+            <ChevronLeft
+              size={18}
+              strokeWidth={2.2}
+            />
           </button>
 
           {/* FORWARD */}
@@ -351,9 +509,10 @@ function Navbar() {
             title="આગળ જાઓ"
             aria-label="આગળ જાઓ"
           >
-            <span className="arrow-3d right-arrow">
-              ❯
-            </span>
+            <ChevronRight
+              size={18}
+              strokeWidth={2.2}
+            />
           </button>
 
         </div>
@@ -370,7 +529,12 @@ function Navbar() {
           title="18 અધ્યાય"
           aria-label="18 અધ્યાય"
         >
-          🪷 ભગવદ્ ગીતા
+          <Flower2
+            size={26}
+            strokeWidth={1.8}
+            className="logo-icon"
+          />
+          ભગવદ્ ગીતા
         </Link>
 
 
@@ -410,11 +574,10 @@ function Navbar() {
                 : "મેનુ ખોલો"
             }
           >
-
-            <span></span>
-            <span></span>
-            <span></span>
-
+            {menuOpen
+              ? <X size={20} strokeWidth={2.2} />
+              : <Menu size={20} strokeWidth={2.2} />
+            }
           </button>
 
         </div>
@@ -470,7 +633,10 @@ function Navbar() {
           <div className="side-menu-title">
 
             <div className="side-menu-logo">
-              🪷
+              <Flower2
+                size={26}
+                strokeWidth={1.6}
+              />
             </div>
 
             <div>
@@ -505,7 +671,7 @@ function Navbar() {
             aria-label="મેનુ બંધ કરો"
             title="બંધ કરો"
           >
-            ×
+            <X size={20} strokeWidth={2.2} />
           </button>
 
         </div>
@@ -530,7 +696,7 @@ function Navbar() {
           >
 
             <span className="side-menu-icon">
-              ⌂
+              <Home size={20} strokeWidth={1.8} />
             </span>
 
             <span className="side-menu-text">
@@ -546,7 +712,7 @@ function Navbar() {
             </span>
 
             <span className="side-menu-arrow">
-              ›
+              <ChevronRight size={18} strokeWidth={2} />
             </span>
 
           </Link>
@@ -565,7 +731,7 @@ function Navbar() {
           >
 
             <span className="side-menu-icon">
-              📖
+              <BookOpen size={20} strokeWidth={1.8} />
             </span>
 
             <span className="side-menu-text">
@@ -581,7 +747,7 @@ function Navbar() {
             </span>
 
             <span className="side-menu-arrow">
-              ›
+              <ChevronRight size={18} strokeWidth={2} />
             </span>
 
           </Link>
@@ -591,146 +757,132 @@ function Navbar() {
               FAVOURITES
           ================================================= */}
 
-          <Link
-            to="/favorites"
-            className="side-menu-item"
-            onClick={
-              handleNormalNavigation
+          <button
+            type="button"
+            className="side-menu-item side-menu-button"
+            onClick={() =>
+              handleProtectedNavigation(
+                "/favorites",
+                "મનપસંદ શ્લોક જોવા માટે Login કરવું જરૂરી છે."
+              )
             }
           >
-
             <span className="side-menu-icon">
-              ♥
+              <Heart size={20} strokeWidth={1.8} />
             </span>
 
             <span className="side-menu-text">
-
               <strong>
                 મનપસંદ શ્લોક
               </strong>
-
               <small>
                 Favourite Shlokas
               </small>
-
             </span>
 
             <span className="side-menu-arrow">
-              ›
+              <ChevronRight size={18} strokeWidth={2} />
             </span>
-
-          </Link>
+          </button>
 
 
           {/* =================================================
               QUIZ
           ================================================= */}
 
-          {user && (
-            <button
-              type="button"
-              className="side-menu-item side-menu-button"
-              onClick={
-                handleQuizNavigation
-              }
-            >
+          <button
+            type="button"
+            className="side-menu-item side-menu-button"
+            onClick={() =>
+              handleProtectedNavigation(
+                "/quiz-category",
+                "Quiz રમવા માટે Login કરવું જરૂરી છે."
+              )
+            }
+          >
+            <span className="side-menu-icon">
+              <Brain size={20} strokeWidth={1.8} />
+            </span>
 
-              <span className="side-menu-icon">
-                🧠
-              </span>
+            <span className="side-menu-text">
+              <strong>
+                Quiz
+              </strong>
+              <small>
+                Test Your Knowledge
+              </small>
+            </span>
 
-              <span className="side-menu-text">
-
-                <strong>
-                  Quiz
-                </strong>
-
-                <small>
-                  Test Your Knowledge
-                </small>
-
-              </span>
-
-              <span className="side-menu-arrow">
-                ›
-              </span>
-
-            </button>
-          )}
+            <span className="side-menu-arrow">
+              <ChevronRight size={18} strokeWidth={2} />
+            </span>
+          </button>
 
 
           {/* =================================================
               HISTORY
           ================================================= */}
 
-          {user && (
-            <button
-              type="button"
-              className="side-menu-item side-menu-button"
-              onClick={
-                handleHistoryNavigation
-              }
-            >
+          <button
+            type="button"
+            className="side-menu-item side-menu-button"
+            onClick={() =>
+              handleProtectedNavigation(
+                "/history",
+                "તમારી History જોવા માટે Login કરવું જરૂરી છે."
+              )
+            }
+          >
+            <span className="side-menu-icon">
+              <Clock size={20} strokeWidth={1.8} />
+            </span>
 
-              <span className="side-menu-icon">
-                ◷
-              </span>
+            <span className="side-menu-text">
+              <strong>
+                History
+              </strong>
+              <small>
+                Your Quiz History
+              </small>
+            </span>
 
-              <span className="side-menu-text">
-
-                <strong>
-                  History
-                </strong>
-
-                <small>
-                  Your Quiz History
-                </small>
-
-              </span>
-
-              <span className="side-menu-arrow">
-                ›
-              </span>
-
-            </button>
-          )}
+            <span className="side-menu-arrow">
+              <ChevronRight size={18} strokeWidth={2} />
+            </span>
+          </button>
 
 
           {/* =================================================
               PROFILE
           ================================================= */}
 
-          {user && (
-            <Link
-              to="/profile"
-              className="side-menu-item"
-              onClick={
-                handleNormalNavigation
-              }
-            >
+          <button
+            type="button"
+            className="side-menu-item side-menu-button"
+            onClick={() =>
+              handleProtectedNavigation(
+                "/profile",
+                "તમારી Profile જોવા માટે Login કરવું જરૂરી છે."
+              )
+            }
+          >
+            <span className="side-menu-icon">
+              <CircleUser size={20} strokeWidth={1.8} />
+            </span>
 
-              <span className="side-menu-icon">
-                ◉
-              </span>
+            <span className="side-menu-text">
+              <strong>
+                Profile
+              </strong>
+              <small>
+                Your Account
+              </small>
+            </span>
 
-              <span className="side-menu-text">
-
-                <strong>
-                  Profile
-                </strong>
-
-                <small>
-                  Your Account
-                </small>
-
-              </span>
-
-              <span className="side-menu-arrow">
-                ›
-              </span>
-
-            </Link>
-          )}
+            <span className="side-menu-arrow">
+              <ChevronRight size={18} strokeWidth={2} />
+            </span>
+          </button>
 
 
           {/* =================================================
@@ -745,27 +897,22 @@ function Navbar() {
                 handleNormalNavigation
               }
             >
-
               <span className="side-menu-icon">
-                ◆
+                <ShieldCheck size={20} strokeWidth={1.8} />
               </span>
 
               <span className="side-menu-text">
-
                 <strong>
                   Admin
                 </strong>
-
                 <small>
                   Admin Dashboard
                 </small>
-
               </span>
 
               <span className="side-menu-arrow">
-                ›
+                <ChevronRight size={18} strokeWidth={2} />
               </span>
-
             </Link>
           )}
 
@@ -775,35 +922,28 @@ function Navbar() {
           ================================================= */}
 
           {!user && (
-            <Link
-              to="/login"
-              className="side-menu-item"
-              onClick={
-                handleNormalNavigation
-              }
+            <button
+              type="button"
+              className="side-menu-item side-menu-button"
+              onClick={handleDirectLogin}
             >
-
               <span className="side-menu-icon">
-                🔐
+                <LogIn size={20} strokeWidth={1.8} />
               </span>
 
               <span className="side-menu-text">
-
                 <strong>
                   લોગિન
                 </strong>
-
                 <small>
                   Login to your account
                 </small>
-
               </span>
 
               <span className="side-menu-arrow">
-                ›
+                <ChevronRight size={18} strokeWidth={2} />
               </span>
-
-            </Link>
+            </button>
           )}
 
 
@@ -821,7 +961,7 @@ function Navbar() {
             >
 
               <span className="side-menu-icon">
-                ✦
+                <UserPlus size={20} strokeWidth={1.8} />
               </span>
 
               <span className="side-menu-text">
@@ -837,7 +977,7 @@ function Navbar() {
               </span>
 
               <span className="side-menu-arrow">
-                ›
+                <ChevronRight size={18} strokeWidth={2} />
               </span>
 
             </Link>
@@ -858,8 +998,8 @@ function Navbar() {
 
               <span className="theme-icon">
                 {theme === "light"
-                  ? "☾"
-                  : "☀"}
+                  ? <Moon size={20} strokeWidth={1.8} />
+                  : <Sun size={20} strokeWidth={1.8} />}
               </span>
 
               <span className="side-menu-text">
@@ -905,7 +1045,7 @@ function Navbar() {
             >
 
               <span className="logout-icon">
-                ↪
+                <LogOut size={18} strokeWidth={2} />
               </span>
 
               <span>

@@ -462,6 +462,28 @@ const submitQuiz = async (
       }
     }
 
+    if (
+      !finalChapterNumber &&
+      typeof category === "string" &&
+      category.startsWith("chapter-")
+    ) {
+      const parsedFromCat =
+        Number(
+          category.replace("chapter-", "")
+        );
+
+      if (
+        Number.isInteger(
+          parsedFromCat
+        ) &&
+        parsedFromCat >= 1 &&
+        parsedFromCat <= 18
+      ) {
+        finalChapterNumber =
+          parsedFromCat;
+      }
+    }
+
     // =================================================
     // FINAL CATEGORY
     // =================================================

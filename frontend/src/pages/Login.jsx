@@ -1,9 +1,10 @@
-import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Eye, EyeOff, Lock, Mail, LogIn, Loader2, CheckCircle, AlertCircle, Sparkles } from "lucide-react";
 
 import {
   Link,
   useNavigate,
+  useLocation,
 } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext.jsx";
@@ -12,8 +13,16 @@ import "./Login.css";
 
 function Login() {
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const { login } = useAuth();
+  const { user, login } = useAuth();
+
+  // If user is already logged in, redirect away from /login
+  useEffect(() => {
+    if (user) {
+      navigate("/", { replace: true });
+    }
+  }, [user, navigate]);
 
   // =====================================================
   // FORM DATA
@@ -33,24 +42,37 @@ function Login() {
   const [messageType, setMessageType] =
     useState("");
 
-    // =====================================================
-// PROTECTED SHLOK MESSAGE
-// =====================================================
+  // =====================================================
+  // LOGIN REQUIRED NOTICE BANNER
+  // =====================================================
 
-const [protectedShlokMessage] =
-  useState(() => {
-    const chapter =
-      localStorage.getItem(
-        "pendingChapter"
-      );
+  const [authNotice] = useState(() => {
+    // If state is explicitly null (e.g. user clicked Login from Navbar), NEVER show banner!
+    if (location.state === null) {
+      return "";
+    }
 
-    const shlok =
-      localStorage.getItem(
-        "pendingShloka"
-      );
+    // 1. From navigation state (e.g. from ProtectedRoute or Navbar protected click)
+    if (location.state?.message) {
+      return location.state.message;
+    }
 
-    if (chapter && shlok) {
-      return `અધ્યાય ${chapter} ના શ્લોક ${shlok} વાંચવા માટે Login અથવા Register કરો.`;
+    // 2. Check sessionStorage if location.state was undefined (e.g. page refresh)
+    if (location.state === undefined) {
+      try {
+        const saved = sessionStorage.getItem("authRedirect");
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          if (parsed.message) return parsed.message;
+        }
+      } catch (e) {}
+
+      // Fallback for pending chapter
+      const chapter = localStorage.getItem("pendingChapter");
+      const shlok = localStorage.getItem("pendingShloka");
+      if (chapter && shlok) {
+        return `અધ્યાય ${chapter} ના શ્લોક ${shlok} વાંચવા માટે Login કરવું જરૂરી છે.`;
+      }
     }
 
     return "";
@@ -182,7 +204,7 @@ const [protectedShlokMessage] =
         );
 
         setMessage(
-          "Login સફળ થયું ✅"
+          "Login સફળ થયું"
         );
 
         setMessageType("success");
@@ -192,33 +214,47 @@ const [protectedShlokMessage] =
         // -----------------------------------------------
 
 setTimeout(() => {
-  const pendingChapter =
-    localStorage.getItem(
-      "pendingChapter"
-    );
+  let destination = "";
 
-  const pendingShloka =
-    localStorage.getItem(
-      "pendingShloka"
-    );
+  // 1. From location.state
+  if (location.state?.from) {
+    destination = location.state.from;
+  }
 
-  if (
-    pendingChapter &&
-    pendingShloka
-  ) {
-    localStorage.removeItem(
-      "pendingChapter"
-    );
+  // 2. From sessionStorage
+  if (!destination) {
+    try {
+      const saved = sessionStorage.getItem("authRedirect");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.from) {
+          destination = parsed.from;
+        }
+      }
+    } catch (e) {}
+  }
 
-    localStorage.removeItem(
-      "pendingShloka"
-    );
+  // 3. From pendingChapter / pendingShloka
+  if (!destination) {
+    const pendingChapter =
+      localStorage.getItem("pendingChapter");
+    const pendingShloka =
+      localStorage.getItem("pendingShloka");
 
-    navigate(
-      `/chapter/${pendingChapter}?shloka=${pendingShloka}`
-    );
+    if (pendingChapter && pendingShloka) {
+      destination = `/chapter/${pendingChapter}?shloka=${pendingShloka}`;
+    }
+  }
+
+  // Clean up all pending storage artifacts
+  sessionStorage.removeItem("authRedirect");
+  localStorage.removeItem("pendingChapter");
+  localStorage.removeItem("pendingShloka");
+
+  if (destination) {
+    navigate(destination, { replace: true });
   } else {
-    navigate("/");
+    navigate("/", { replace: true });
   }
 }, 1000);
 
@@ -272,7 +308,7 @@ setTimeout(() => {
           </div>
 
           <div className="auth-lotus">
-            🪷
+            <Sparkles size={32} color="#f59e0b" />
           </div>
 
           <h1>
@@ -281,7 +317,7 @@ setTimeout(() => {
 
           <p>
             તમારા Bhagavad Gita
-            accountમાં પ્રવેશ કરો 🙏
+            accountમાં પ્રવેશ કરો
           </p>
 
         </div>
@@ -291,11 +327,11 @@ setTimeout(() => {
             MESSAGE
         ================================================= */}
 
-        {protectedShlokMessage && (
-  <div className="auth-message error">
-    🔒 {protectedShlokMessage}
-  </div>
-)}
+        {authNotice && (
+          <div className="auth-message info">
+            <Lock size={16} className="btn-icon" /> {authNotice}
+          </div>
+        )}
         
         
         {message && (
@@ -306,6 +342,11 @@ setTimeout(() => {
                 : "auth-message error"
             }
           >
+            {messageType === "success" ? (
+              <CheckCircle size={18} className="btn-icon" />
+            ) : (
+              <AlertCircle size={18} className="btn-icon" />
+            )}
             {message}
           </div>
         )}
@@ -329,7 +370,7 @@ setTimeout(() => {
             <label htmlFor="email">
 
               <span className="auth-field-icon">
-                ✉️
+                <Mail size={16} />
               </span>
 
               <span>
@@ -360,7 +401,7 @@ setTimeout(() => {
             <label htmlFor="password">
 
               <span className="auth-field-icon">
-                🔒
+                <Lock size={16} />
               </span>
 
               <span>
@@ -444,9 +485,17 @@ setTimeout(() => {
             className="auth-submit"
             disabled={loading}
           >
-            {loading
-              ? "Login થઈ રહ્યું છે..."
-              : "✓ Login કરો"}
+            {loading ? (
+              <>
+                <Loader2 className="spinner btn-icon" size={18} />
+                Login થઈ રહ્યું છે...
+              </>
+            ) : (
+              <>
+                <LogIn className="btn-icon" size={18} />
+                Login કરો
+              </>
+            )}
           </button>
 
         </form>

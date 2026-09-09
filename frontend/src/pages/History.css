@@ -60,15 +60,16 @@ background:
 
   border-radius: 25px;
 
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.65);
 
-  border: 1px solid #d5e3f8;
+  border: 1px solid rgba(255, 255, 255, 0.6);
 
   box-shadow:
     0 18px 40px rgba(34, 83, 140, 0.10),
     inset 0 1px 0 rgba(255, 255, 255, 0.95);
 
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
 
   transition:
     background 0.35s ease,
@@ -256,14 +257,11 @@ background:
 
   border-radius: 20px;
 
-  border: 1px solid #d1e0f3;
+  border: 1px solid rgba(255, 255, 255, 0.6);
 
-  background:
-    linear-gradient(
-      145deg,
-      #ffffff,
-      #edf4fd
-    );
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
 
   color: #24466d;
 
@@ -463,8 +461,6 @@ background:
 
   color: #ffffff;
 
-  font-size: 24px;
-
   font-weight: 900;
 
   box-shadow:
@@ -476,6 +472,29 @@ background:
     box-shadow 0.22s ease;
 }
 
+.history-om svg {
+  width: 42px;
+  height: 42px;
+  color: #2166ba;
+  stroke: #2166ba;
+  display: block;
+}
+
+.history-option-icon svg {
+  width: 28px;
+  height: 28px;
+  color: #2166ba;
+  stroke: #2166ba;
+  display: block;
+}
+
+.history-option-arrow svg {
+  width: 24px;
+  height: 24px;
+  color: #ffffff;
+  stroke: #ffffff;
+  display: block;
+}
 
 /* =====================================================
    ARROW HOVER
@@ -520,18 +539,16 @@ background:
 
 [data-theme="dark"] .history-header,
 .dark .history-header {
-  background:
-    linear-gradient(
-      145deg,
-      rgba(25, 43, 63, 0.97),
-      rgba(15, 30, 47, 0.97)
-    );
+  background: rgba(10, 25, 55, 0.55);
 
-  border-color: #2b4058;
+  border-color: rgba(96, 165, 250, 0.25);
 
   box-shadow:
     0 18px 45px rgba(0, 0, 0, 0.30),
     inset 0 1px 0 rgba(255, 255, 255, 0.035);
+
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
 }
 
 
@@ -599,14 +616,11 @@ background:
 
 [data-theme="dark"] .history-option-card,
 .dark .history-option-card {
-  background:
-    linear-gradient(
-      145deg,
-      #1e334b,
-      #17283d
-    );
+  background: rgba(10, 25, 55, 0.45);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
 
-  border-color: #314a64;
+  border-color: rgba(96, 165, 250, 0.25);
 
   color: #dbe7f4;
 

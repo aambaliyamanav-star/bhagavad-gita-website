@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Loader2, AlertCircle, RefreshCw, ArrowLeft, BookOpen, ChevronRight, ClipboardList, CheckCircle2, XCircle, SkipForward, Clock, PlayCircle } from "lucide-react";
 import "./QuizResult.css";
 
 const API_URL = "https://bhagavad-gita-website.onrender.com/api/quiz";
@@ -186,18 +187,92 @@ function QuizResult() {
 
   const getResultMessage = (percentage) => {
     if (percentage >= 90) {
-      return "અદ્ભુત! ખૂબ જ સરસ પ્રદર્શન! 🌟";
+      return "અદ્ભુત! ખૂબ જ સરસ પ્રદર્શન!";
     }
 
     if (percentage >= 75) {
-      return "ખૂબ સરસ! તમારું પ્રદર્શન ઉત્તમ છે. 🙏";
+      return "ખૂબ સરસ! તમારું પ્રદર્શન ઉત્તમ છે.";
     }
 
     if (percentage >= 50) {
-      return "સારું પ્રદર્શન! વધુ અભ્યાસ કરો. 📖";
+      return "સારું પ્રદર્શન! વધુ અભ્યાસ કરો.";
     }
 
-    return "વધુ મહેનત કરો અને ફરી પ્રયાસ કરો. 💪";
+    return "વધુ મહેનત કરો અને ફરી પ્રયાસ કરો.";
+  };
+
+  // =====================================================
+  // EXTRACT CHAPTER NUMBER
+  // =====================================================
+
+  const getChapterNumber = (result) => {
+    if (!result) return null;
+
+    if (result.chapterNumber !== undefined && result.chapterNumber !== null) {
+      const parsed = Number(result.chapterNumber);
+      if (Number.isInteger(parsed) && parsed >= 1 && parsed <= 18) {
+        return parsed;
+      }
+    }
+
+    if (typeof result.category === "string") {
+      const cat = result.category.trim().toLowerCase();
+      if (cat.startsWith("chapter-") || cat.startsWith("chapter_")) {
+        const parsed = Number(cat.replace(/^chapter[-_]/, ""));
+        if (Number.isInteger(parsed) && parsed >= 1 && parsed <= 18) {
+          return parsed;
+        }
+      }
+      const directNum = Number(cat);
+      if (Number.isInteger(directNum) && directNum >= 1 && directNum <= 18) {
+        return directNum;
+      }
+    }
+
+    return null;
+  };
+
+  // =====================================================
+  // QUIZ TARGET INFO
+  // =====================================================
+
+  const getQuizTargetInfo = (result) => {
+    const chapterNumber = getChapterNumber(result);
+
+    if (chapterNumber) {
+      const chapterTitle = chapterNames[chapterNumber] || "";
+      return {
+        isChapter: true,
+        chapterNumber,
+        shortTitle: `અધ્યાય ${chapterNumber}`,
+        title: `અધ્યાય ${chapterNumber}: ${chapterTitle}`,
+        badge: `અધ્યાય ${chapterNumber} • ${chapterTitle}`,
+        shortBadge: `અધ્યાય ${chapterNumber}`,
+        subtitle: `શ્રીમદ્ ભગવદ્ ગીતા • અધ્યાય ${chapterNumber}`,
+      };
+    }
+
+    if (result.category === "mahabharata") {
+      return {
+        isChapter: false,
+        chapterNumber: null,
+        shortTitle: "મહાભારત Quiz",
+        title: "મહાભારત Quiz",
+        badge: "મહાભારત વિશેષ ક્વિઝ",
+        shortBadge: "મહાભારત",
+        subtitle: "મહાભારત વિશેષ જ્ઞાન કસોટી",
+      };
+    }
+
+    return {
+      isChapter: false,
+      chapterNumber: null,
+      shortTitle: "ભગવદ્ ગીતા Quiz",
+      title: "શ્રીમદ્ ભગવદ્ ગીતા Quiz",
+      badge: "સમગ્ર ભગવદ્ ગીતા",
+      shortBadge: "સમગ્ર ગીતા",
+      subtitle: "સંપૂર્ણ ભગવદ્ ગીતા સામાન્ય જ્ઞાન કસોટી",
+    };
   };
 
   // =====================================================
@@ -205,42 +280,8 @@ function QuizResult() {
   // =====================================================
 
   const getCategoryName = (result) => {
-    if (result.categoryName) {
-      return result.categoryName;
-    }
-
-    if (result.category === "mahabharata") {
-      return "મહાભારત Quiz";
-    }
-
-    if (result.category === "gita") {
-      return "ભગવદ્ ગીતા Quiz";
-    }
-
-    if (result.category === "all") {
-      return "ભગવદ્ ગીતા Quiz";
-    }
-
-    if (
-      typeof result.category === "string" &&
-      result.category.startsWith("chapter-")
-    ) {
-      const chapterNumber = Number(
-        result.category.replace(
-          "chapter-",
-          ""
-        )
-      );
-
-      if (
-        chapterNumber >= 1 &&
-        chapterNumber <= 18
-      ) {
-        return `અધ્યાય ${chapterNumber} Quiz`;
-      }
-    }
-
-    return "ભગવદ્ ગીતા Quiz";
+    const target = getQuizTargetInfo(result);
+    return target.title;
   };
 
   // =====================================================
@@ -248,25 +289,8 @@ function QuizResult() {
   // =====================================================
 
   const getChapterText = (result) => {
-    const chapterNumber =
-      Number(result.chapterNumber);
-
-    if (
-      Number.isInteger(chapterNumber) &&
-      chapterNumber >= 1 &&
-      chapterNumber <= 18
-    ) {
-      return (
-        `અધ્યાય ${chapterNumber} • ` +
-        `${chapterNames[chapterNumber] || ""}`
-      );
-    }
-
-    if (result.category === "mahabharata") {
-      return "મહાભારત";
-    }
-
-    return "ભગવદ્ ગીતા";
+    const target = getQuizTargetInfo(result);
+    return target.badge;
   };
 
   // =====================================================
@@ -302,7 +326,7 @@ function QuizResult() {
         <section className="quiz-result-loading">
 
           <div className="quiz-result-loading-icon">
-            🕉️
+            <Loader2 size={40} className="spinner" color="#2563eb" />
           </div>
 
           <h2>
@@ -330,7 +354,7 @@ function QuizResult() {
         <section className="quiz-result-error">
 
           <div className="quiz-result-error-icon">
-            ❌
+            <AlertCircle size={40} color="#ef4444" />
           </div>
 
           <h2>
@@ -349,7 +373,7 @@ function QuizResult() {
                 window.location.reload()
               }
             >
-              🔄 ફરી પ્રયાસ કરો
+              <RefreshCw size={15} className="btn-icon" /> ફરી પ્રયાસ કરો
             </button>
 
             <button
@@ -358,7 +382,7 @@ function QuizResult() {
                 navigate("/quiz")
               }
             >
-              ← Quiz પર પાછા જાઓ
+              <ArrowLeft size={15} className="btn-icon" /> Quiz પર પાછા જાઓ
             </button>
 
           </div>
@@ -400,7 +424,7 @@ function QuizResult() {
         <section className="quiz-result-empty">
 
           <div className="quiz-result-empty-icon">
-            📖
+            <BookOpen size={40} color="#2563eb" />
           </div>
 
           <h2>
@@ -417,7 +441,7 @@ function QuizResult() {
               navigate("/quiz")
             }
           >
-            📝 Quiz શરૂ કરો
+            <PlayCircle size={16} className="btn-icon" /> Quiz શરૂ કરો
           </button>
 
         </section>
@@ -471,7 +495,7 @@ function QuizResult() {
             navigate("/quiz")
           }
         >
-          ← Quiz પર પાછા જાઓ
+          <ArrowLeft size={15} className="btn-icon" /> Quiz પર પાછા જાઓ
         </button>
 
         
@@ -565,18 +589,17 @@ function QuizResult() {
           );
 
           // ------------------------------------------------
-          // CATEGORY
+          // TARGET & CATEGORY INFO
           // ------------------------------------------------
+
+          const targetInfo =
+            getQuizTargetInfo(result);
 
           const categoryName =
-            getCategoryName(result);
-
-          // ------------------------------------------------
-          // CHAPTER
-          // ------------------------------------------------
+            targetInfo.title;
 
           const chapterText =
-            getChapterText(result);
+            targetInfo.badge;
 
           // ------------------------------------------------
           // UNIQUE KEY
@@ -677,13 +700,16 @@ function QuizResult() {
 
                 <div className="quiz-history-info">
 
-                  <h3>
-                    {categoryName}
+                  <h3 className="quiz-history-title">
+                    {targetInfo.shortTitle}
                   </h3>
 
-                  <p>
-                    {chapterText}
-                  </p>
+                  {formattedDate && (
+                    <p className="quiz-history-date">
+                      <Clock size={12} className="quiz-date-icon" />
+                      {formattedDate}
+                    </p>
+                  )}
 
                 </div>
 
@@ -728,7 +754,7 @@ function QuizResult() {
                       : "quiz-history-arrow"
                   }
                 >
-                  →
+                  <ChevronRight size={18} />
                 </span>
 
               </button>
@@ -750,18 +776,26 @@ function QuizResult() {
 
                     <div className="quiz-result-card-info">
 
-                      <span className="quiz-result-number">
-                        Quiz #
-                        {results.length - index}
-                      </span>
+                      <div className="quiz-result-meta-row">
+                        <span className="quiz-result-number">
+                          Quiz #{results.length - index}
+                        </span>
+                      </div>
 
-                      <h2>
-                        {categoryName}
+                      <h2 className="quiz-result-title">
+                        {targetInfo.title}
                       </h2>
 
-                      <p>
-                        {chapterText}
-                      </p>
+                      <div className="quiz-result-chapter-desc">
+                        <p className="quiz-result-subheading">
+                          {targetInfo.subtitle}
+                        </p>
+                        {formattedDate && (
+                          <span className="quiz-result-timestamp">
+                            <Clock size={12} /> {formattedDate}
+                          </span>
+                        )}
+                      </div>
 
                     </div>
 
@@ -812,7 +846,7 @@ function QuizResult() {
                     <div className="quiz-result-stat total">
 
                       <span className="quiz-result-stat-icon">
-                        📋
+                        <ClipboardList size={20} />
                       </span>
 
                       <div>
@@ -835,7 +869,7 @@ function QuizResult() {
                     <div className="quiz-result-stat correct">
 
                       <span className="quiz-result-stat-icon">
-                        ✓
+                        <CheckCircle2 size={20} />
                       </span>
 
                       <div>
@@ -858,7 +892,7 @@ function QuizResult() {
                     <div className="quiz-result-stat wrong">
 
                       <span className="quiz-result-stat-icon">
-                        ✕
+                        <XCircle size={20} />
                       </span>
 
                       <div>
@@ -882,7 +916,7 @@ function QuizResult() {
                       <div className="quiz-result-stat skipped">
 
                         <span className="quiz-result-stat-icon">
-                          ⏭
+                          <SkipForward size={20} />
                         </span>
 
                         <div>
@@ -943,7 +977,7 @@ function QuizResult() {
                   {formattedDate && (
                     <div className="quiz-result-date">
 
-                      🕒 {formattedDate}
+                      <Clock size={13} className="btn-icon" /> {formattedDate}
 
                     </div>
                   )}
@@ -965,7 +999,7 @@ function QuizResult() {
       <section className="quiz-result-bottom">
 
         <div className="quiz-result-bottom-icon">
-          🕉️
+          <BookOpen size={36} color="#2563eb" />
         </div>
 
         <h2>
@@ -983,7 +1017,7 @@ function QuizResult() {
             navigate("/quiz")
           }
         >
-          ફરી Quiz આપો →
+          ફરી Quiz આપો <ChevronRight size={16} />
         </button>
 
       </section>

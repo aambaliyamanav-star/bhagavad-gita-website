@@ -3949,3 +3949,507 @@ html[data-theme="dark"] .shlok-management-page::-webkit-scrollbar-thumb {
       #42a5f5
     );
 }
+
+/* =====================================================
+   ADMIN GLASSMORPHISM (APPENDED PATCH)
+===================================================== */
+
+/* Light Theme Background */
+.shlok-management-page {
+  background: radial-gradient(circle at 15% 20%, rgba(173, 216, 255, 0.45), transparent 35%), 
+              radial-gradient(circle at 85% 80%, rgba(200, 235, 255, 0.55), transparent 40%), 
+              linear-gradient(135deg, #f4fbff 0%, #e5f5ff 45%, #d8efff 100%) !important;
+  color: #183153 !important;
+}
+
+/* Light Theme Cards */
+.shlok-management-header, .shlok-form-section, .shlok-item, .word-wise-meaning-item, .shlok-management-container, .word-empty-box, .shlok-list-section {
+  background: rgba(255, 255, 255, 0.65) !important;
+  backdrop-filter: blur(24px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.6) !important;
+  box-shadow: 0 18px 40px rgba(34, 83, 140, 0.10) !important;
+}
+
+/* Specific inner text overrides for Light Theme to ensure readability if previously hardcoded */
+.shlok-management-header h1, .shlok-management-header h2, .shlok-management-header h3, .shlok-form-section h1, .shlok-form-section h2, .shlok-form-section h3, .shlok-item h1, .shlok-item h2, .shlok-item h3, .word-wise-meaning-item h1, .word-wise-meaning-item h2, .word-wise-meaning-item h3, .shlok-management-container h1, .shlok-management-container h2, .shlok-management-container h3, .word-empty-box h1, .word-empty-box h2, .word-empty-box h3, .shlok-list-section h1, .shlok-list-section h2, .shlok-list-section h3 {
+  color: #1e3a8a !important;
+}
+.shlok-management-header p, .shlok-management-header span, .shlok-form-section p, .shlok-form-section span, .shlok-item p, .shlok-item span, .word-wise-meaning-item p, .word-wise-meaning-item span, .shlok-management-container p, .shlok-management-container span, .word-empty-box p, .word-empty-box span, .shlok-list-section p, .shlok-list-section span {
+  color: #334155;
+}
+
+/* Dark Theme Background */
+html[data-theme='dark'] .shlok-management-page,
+.dark .shlok-management-page {
+  background: radial-gradient(circle at top left, rgba(255, 193, 7, 0.07), transparent 35%), 
+              linear-gradient(135deg, #0c1624, #111f31) !important;
+  color: #e7eef8 !important;
+}
+
+/* Dark Theme Cards */
+html[data-theme='dark'] .shlok-management-header, .dark .shlok-management-header,
+html[data-theme='dark'] .shlok-form-section, .dark .shlok-form-section,
+html[data-theme='dark'] .shlok-item, .dark .shlok-item,
+html[data-theme='dark'] .word-wise-meaning-item, .dark .word-wise-meaning-item,
+html[data-theme='dark'] .shlok-management-container, .dark .shlok-management-container,
+html[data-theme='dark'] .word-empty-box, .dark .word-empty-box,
+html[data-theme='dark'] .shlok-list-section, .dark .shlok-list-section {
+  background: rgba(10, 25, 55, 0.55) !important;
+  backdrop-filter: blur(24px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
+  border: 1px solid rgba(96, 165, 250, 0.25) !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45) !important;
+  color: #f8fafc !important;
+}
+
+/* Specific inner text overrides for Dark Theme */
+html[data-theme='dark'] .shlok-management-header h1, html[data-theme='dark'] .shlok-management-header h2, html[data-theme='dark'] .shlok-management-header h3,
+html[data-theme='dark'] .shlok-form-section h1, html[data-theme='dark'] .shlok-form-section h2, html[data-theme='dark'] .shlok-form-section h3,
+html[data-theme='dark'] .shlok-item h1, html[data-theme='dark'] .shlok-item h2, html[data-theme='dark'] .shlok-item h3,
+html[data-theme='dark'] .word-wise-meaning-item h1, html[data-theme='dark'] .word-wise-meaning-item h2, html[data-theme='dark'] .word-wise-meaning-item h3,
+html[data-theme='dark'] .shlok-management-container h1, html[data-theme='dark'] .shlok-management-container h2, html[data-theme='dark'] .shlok-management-container h3,
+html[data-theme='dark'] .word-empty-box h1, html[data-theme='dark'] .word-empty-box h2, html[data-theme='dark'] .word-empty-box h3,
+html[data-theme='dark'] .shlok-list-section h1, html[data-theme='dark'] .shlok-list-section h2, html[data-theme='dark'] .shlok-list-section h3 {
+  color: #bfdbfe !important;
+}
+html[data-theme='dark'] .shlok-management-header p, html[data-theme='dark'] .shlok-management-header span,
+html[data-theme='dark'] .shlok-form-section p, html[data-theme='dark'] .shlok-form-section span,
+html[data-theme='dark'] .shlok-item p, html[data-theme='dark'] .shlok-item span,
+html[data-theme='dark'] .word-wise-meaning-item p, html[data-theme='dark'] .word-wise-meaning-item span,
+html[data-theme='dark'] .shlok-management-container p, html[data-theme='dark'] .shlok-management-container span,
+html[data-theme='dark'] .word-empty-box p, html[data-theme='dark'] .word-empty-box span,
+html[data-theme='dark'] .shlok-list-section p, html[data-theme='dark'] .shlok-list-section span {
+  color: #cbd5e1 !important;
+}
+
+/* Keep action buttons legible */
+.btn-icon {
+  margin-right: 6px;
+  vertical-align: middle;
+}
+
+
+/* =====================================================
+   ADMIN BUTTON FIXES
+===================================================== */
+.back-admin-btn {
+  color: #1e3a8a !important;
+  background: rgba(255, 255, 255, 0.45) !important;
+  border: 1px solid rgba(148, 163, 184, 0.4) !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05) !important;
+}
+.back-admin-btn:hover {
+  background: rgba(255, 255, 255, 0.85) !important;
+}
+
+html[data-theme='dark'] .back-admin-btn,
+.dark .back-admin-btn {
+  color: #e2e8f0 !important;
+  background: rgba(30, 41, 59, 0.5) !important;
+  border-color: rgba(71, 85, 105, 0.5) !important;
+}
+html[data-theme='dark'] .back-admin-btn:hover,
+.dark .back-admin-btn:hover {
+  background: rgba(30, 41, 59, 0.9) !important;
+}
+
+
+/* =====================================================
+   FIX BUTTON SPAN COLORS & TOOLBAR ALIGNMENT
+===================================================== */
+button span {
+  color: inherit !important;
+}
+
+.toolbar-group {
+  display: flex !important;
+  align-items: center !important;
+}
+
+.toolbar-button,
+.toolbar-color-button {
+  vertical-align: middle !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.toolbar-color-button svg {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  pointer-events: none;
+}
+
+
+
+/* =========================================================
+   CHAPTERREADER-STYLE SHLOK BUTTONS IN SHLOK MANAGEMENT
+   ========================================================= */
+
+/* Center the text color icon perfectly */
+.toolbar-color-button {
+  position: relative !important;
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  min-height: 36px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: middle !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
+  cursor: pointer !important;
+  overflow: hidden !important;
+}
+
+.toolbar-color-button svg {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  pointer-events: none !important;
+  z-index: 2 !important;
+  display: block !important;
+}
+
+.toolbar-color-button input[type="color"] {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  opacity: 0 !important;
+  cursor: pointer !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  z-index: 3 !important;
+}
+
+/* SHLOK NUMBER GRID */
+.shlok-number-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)) !important;
+  gap: 12px !important;
+  width: 100% !important;
+}
+
+@media (min-width: 1024px) {
+  .shlok-number-grid {
+    grid-template-columns: repeat(10, minmax(0, 1fr)) !important;
+  }
+}
+
+/* When not expanded, remove inner card container style so button stands alone */
+.shlok-item:not(.expanded) {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+  border-radius: 16px !important;
+}
+
+/* The Shlok Button (ChapterReader style) */
+.shlok-item:not(.expanded) .shlok-number-box {
+  position: relative !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  min-height: 66px !important;
+  aspect-ratio: auto !important;
+  padding: 7px 5px 8px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 1px !important;
+  border: 1px solid #a9cce8 !important;
+  border-radius: 16px !important;
+  cursor: pointer !important;
+  overflow: hidden !important;
+  background: linear-gradient(145deg, #ffffff 0%, #eaf6ff 55%, #d5ecff 100%) !important;
+  color: #286fa9 !important;
+  box-shadow: 0 5px 0 #a8c9e3, 0 9px 16px rgba(37, 103, 161, 0.13), inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.25s ease !important;
+}
+
+/* Shine effect */
+.shlok-item:not(.expanded) .shlok-number-box::before {
+  content: "" !important;
+  position: absolute !important;
+  top: -70% !important;
+  left: -90% !important;
+  width: 55% !important;
+  height: 240% !important;
+  transform: rotate(25deg) !important;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.8), transparent) !important;
+  transition: left 0.5s ease !important;
+  pointer-events: none !important;
+  z-index: 3 !important;
+}
+
+.shlok-item:not(.expanded) .shlok-number-box:hover::before {
+  left: 140% !important;
+}
+
+/* Top decorative line */
+.shlok-item:not(.expanded) .shlok-number-box::after {
+  content: "" !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 12% !important;
+  width: 76% !important;
+  height: 3px !important;
+  border-radius: 0 0 8px 8px !important;
+  background: linear-gradient(90deg, transparent, #62afe7, transparent) !important;
+  opacity: 0.75 !important;
+  right: auto !important;
+  box-shadow: none !important;
+}
+
+/* Hover */
+.shlok-item:not(.expanded) .shlok-number-box:hover {
+  transform: translateY(-5px) scale(1.025) !important;
+  border-color: #68a9d9 !important;
+  background: linear-gradient(145deg, #ffffff, #dff2ff, #c9e7fc) !important;
+  box-shadow: 0 8px 0 #8fb8d8, 0 16px 25px rgba(34, 105, 168, 0.22), inset 0 1px 0 #ffffff !important;
+}
+
+/* Active / Click */
+.shlok-item:not(.expanded) .shlok-number-box:active {
+  transform: translateY(2px) !important;
+  box-shadow: 0 3px 0 #8fb8d8, 0 6px 12px rgba(34, 105, 168, 0.14) !important;
+}
+
+/* Label text */
+.shlok-number-box .shlok-btn-label {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.3px !important;
+  color: #6a91ae !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+  text-transform: none !important;
+}
+
+/* Big number */
+.shlok-number-box strong {
+  font-size: 19px !important;
+  line-height: 1.1 !important;
+  font-weight: 900 !important;
+  color: #216ba7 !important;
+  text-shadow: 0 1px 2px rgba(33, 107, 167, 0.12) !important;
+  margin: 1px 0 !important;
+}
+
+/* Status indicator (ખોલો / બંધ) */
+.shlok-number-box .shlok-btn-status {
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  color: #7b96b2 !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+  opacity: 0.9 !important;
+}
+
+/* =========================================================
+   EXPANDED SHLOK ITEM (WHEN OPENED)
+   ========================================================= */
+
+.shlok-item.expanded {
+  grid-column: 1 / -1 !important;
+  border-radius: 18px !important;
+  border: 1px solid #42a5f5 !important;
+  overflow: hidden !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+  box-shadow: 0 16px 36px rgba(13, 71, 161, 0.15) !important;
+  backdrop-filter: blur(20px) !important;
+  margin-bottom: 10px !important;
+}
+
+.shlok-item.expanded > .shlok-number-box {
+  width: 100% !important;
+  height: 48px !important;
+  min-height: 48px !important;
+  max-height: 48px !important;
+  padding: 0 20px !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  background: linear-gradient(90deg, #1565c0, #1976d2, #2196f3) !important;
+  border: none !important;
+  border-radius: 17px 17px 0 0 !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 12px rgba(21, 101, 192, 0.25) !important;
+}
+
+.shlok-item.expanded > .shlok-number-box .shlok-btn-label {
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+}
+
+.shlok-item.expanded > .shlok-number-box strong {
+  color: #ffffff !important;
+  font-size: 20px !important;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2) !important;
+  margin: 0 12px !important;
+}
+
+.shlok-item.expanded > .shlok-number-box .shlok-btn-status {
+  color: #ffffff !important;
+  font-size: 11px !important;
+  background: rgba(0, 0, 0, 0.18) !important;
+  padding: 4px 12px !important;
+  border-radius: 20px !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+}
+
+/* REFRESH BUTTON */
+.refresh-btn {
+  padding: 8px 16px !important;
+  border-radius: 12px !important;
+  border: 1px solid #a9cce8 !important;
+  background: linear-gradient(145deg, #ffffff 0%, #eaf6ff 55%, #d5ecff 100%) !important;
+  color: #1a568c !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  box-shadow: 0 3px 0 #a8c9e3, 0 6px 12px rgba(37, 103, 161, 0.1) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.refresh-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 5px 0 #8fb8d8, 0 10px 18px rgba(34, 105, 168, 0.18) !important;
+  border-color: #68a9d9 !important;
+}
+
+/* =========================================================
+   DARK THEME BUTTONS
+   ========================================================= */
+
+html[data-theme="dark"] .shlok-item:not(.expanded) .shlok-number-box,
+.dark .shlok-item:not(.expanded) .shlok-number-box {
+  border-color: #315b82 !important;
+  background: linear-gradient(145deg, #173554 0%, #122b48 55%, #0e253f 100%) !important;
+  color: #b8d8f7 !important;
+  box-shadow: 0 5px 0 #214664, 0 9px 16px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+html[data-theme="dark"] .shlok-item:not(.expanded) .shlok-number-box:hover,
+.dark .shlok-item:not(.expanded) .shlok-number-box:hover {
+  background: linear-gradient(145deg, #1d456d, #173b60, #123250) !important;
+  border-color: #4d83b4 !important;
+  box-shadow: 0 8px 0 #28516f, 0 16px 25px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+}
+
+html[data-theme="dark"] .shlok-item:not(.expanded) .shlok-number-box:active,
+.dark .shlok-item:not(.expanded) .shlok-number-box:active {
+  box-shadow: 0 3px 0 #28516f, 0 6px 12px rgba(0, 0, 0, 0.2) !important;
+}
+
+html[data-theme="dark"] .shlok-number-box .shlok-btn-label,
+.dark .shlok-number-box .shlok-btn-label {
+  color: #8fb3d5 !important;
+}
+
+html[data-theme="dark"] .shlok-number-box strong,
+.dark .shlok-number-box strong {
+  color: #90caf9 !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+}
+
+html[data-theme="dark"] .shlok-number-box .shlok-btn-status,
+.dark .shlok-number-box .shlok-btn-status {
+  color: #a4c2df !important;
+}
+
+html[data-theme="dark"] .shlok-item.expanded,
+.dark .shlok-item.expanded {
+  background: rgba(12, 26, 46, 0.88) !important;
+  border-color: #3b74a8 !important;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4) !important;
+}
+
+html[data-theme="dark"] .shlok-item.expanded > .shlok-number-box,
+.dark .shlok-item.expanded > .shlok-number-box {
+  background: linear-gradient(90deg, #0d2847, #15457a, #1a5c9f) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+html[data-theme="dark"] .refresh-btn,
+.dark .refresh-btn {
+  border-color: #315b82 !important;
+  background: linear-gradient(145deg, #173554 0%, #122b48 55%, #0e253f 100%) !important;
+  color: #b8d8f7 !important;
+  box-shadow: 0 3px 0 #214664, 0 6px 12px rgba(0, 0, 0, 0.25) !important;
+}
+
+
+
+/* =====================================================
+   MOBILE TOOLBAR WRAP FIX (NO HORIZONTAL SCROLL)
+===================================================== */
+@media (max-width: 768px) {
+  .rich-toolbar {
+    flex-wrap: wrap !important;
+    overflow-x: visible !important;
+    overflow-y: visible !important;
+    gap: 6px 8px !important;
+    padding: 8px 10px !important;
+    justify-content: flex-start !important;
+  }
+
+  .rich-toolbar::-webkit-scrollbar {
+    display: none !important;
+    height: 0 !important;
+    width: 0 !important;
+  }
+
+  .toolbar-group {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    flex-wrap: nowrap !important;
+    flex-shrink: 0 !important;
+  }
+
+  .toolbar-divider {
+    display: inline-block !important;
+    height: 22px !important;
+    width: 1px !important;
+    margin: 0 2px !important;
+    opacity: 0.35 !important;
+    flex-shrink: 0 !important;
+  }
+
+  .toolbar-button,
+  .toolbar-color-button {
+    width: 34px !important;
+    height: 34px !important;
+    min-width: 34px !important;
+    min-height: 34px !important;
+    border-radius: 9px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .toolbar-button svg,
+  .toolbar-color-button svg {
+    width: 15px !important;
+    height: 15px !important;
+  }
+}

@@ -38,9 +38,9 @@
     ),
     linear-gradient(
       135deg,
-      #eaf4ff 0%,
-      #dcecff 48%,
-      #eef6ff 100%
+      #eef7ff 0%,
+      #dceeff 48%,
+      #f5faff 100%
     );
 
   transition:
@@ -67,20 +67,16 @@
 
   border-radius: 24px;
 
-  border: 1px solid rgba(72, 139, 224, 0.35);
-
-  background:
-    linear-gradient(
-      145deg,
-      #ffffff 0%,
-      #f8fbff 48%,
-      #edf5ff 100%
-    );
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
 
   box-shadow:
-    0 25px 55px rgba(32, 88, 150, 0.18),
-    0 8px 20px rgba(45, 105, 175, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+    0 20px 45px rgba(42, 93, 145, 0.15),
+    0 6px 15px rgba(42, 93, 145, 0.08);
+
+  animation: fadeUp 0.6s ease-out forwards;
 
   transition:
     background 0.3s ease,
@@ -530,41 +526,23 @@
 
 .register-field input {
   width: 100%;
-
   height: 48px;
-
   box-sizing: border-box;
-
   padding: 0 15px;
-
   border-radius: 11px;
-
-  border: 1px solid #bfd5ea;
-
-  outline: none;
-
-  background:
-    linear-gradient(
-      145deg,
-      #ffffff,
-      #f5faff
-    );
-
+  border: 1.5px solid rgba(182, 204, 228, 0.6);
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   color: #244c70;
-
   font-size: 14px;
-
-  box-shadow:
-    inset 0 2px 5px rgba(35, 93, 150, 0.05),
-    0 3px 8px rgba(48, 108, 170, 0.05);
-
+  outline: none;
   transition:
     border-color 0.25s ease,
     box-shadow 0.25s ease,
     transform 0.25s ease,
     background 0.25s ease;
 }
-
 
 /* =====================================================
    PLACEHOLDER
@@ -574,30 +552,27 @@
   color: #9aafc3;
 }
 
-
 /* =====================================================
    INPUT HOVER
 ===================================================== */
 
 .register-field input:hover {
-  border-color: #8db8e2;
+  border-color: #79a5d2;
+  background: rgba(255, 255, 255, 0.65);
 }
-
 
 /* =====================================================
    INPUT FOCUS
 ===================================================== */
 
 .register-field input:focus {
-  border-color: #3b88df;
-
-  background: #ffffff;
-
+  border-color: #4385c7;
+  background: rgba(255, 255, 255, 0.85);
   transform: translateY(-1px);
 
   box-shadow:
-    0 0 0 3px rgba(59, 136, 223, 0.12),
-    0 7px 16px rgba(45, 110, 180, 0.1);
+    0 0 0 3px rgba(67, 133, 199, 0.13),
+    0 6px 15px rgba(67, 133, 199, 0.10);
 }
 
 
@@ -1226,21 +1201,12 @@
 
 .dark .register-card,
 [data-theme="dark"] .register-card {
-  background:
-    linear-gradient(
-      145deg,
-      #102f49 0%,
-      #0d2941 48%,
-      #0a2238 100%
-    );
-
-  border-color: rgba(75, 145, 220, 0.42);
+  background: rgba(10, 25, 55, 0.55) !important;
+  border: 1px solid rgba(100, 181, 246, 0.25) !important;
 
   box-shadow:
-    0 25px 55px rgba(0, 0, 0, 0.52),
-    0 8px 22px rgba(0, 0, 0, 0.38),
-    0 0 30px rgba(39, 111, 184, 0.10),
-    inset 0 1px 0 rgba(111, 174, 230, 0.12);
+    0 25px 50px rgba(0, 0, 0, 0.45),
+    0 8px 20px rgba(0, 0, 0, 0.25) !important;
 }
 
 
@@ -1499,22 +1465,10 @@
 
 .dark .register-field input,
 [data-theme="dark"] .register-field input {
-  border-color: #315b79;
-
-  background:
-    linear-gradient(
-      145deg,
-      #12334e,
-      #0d2a42
-    );
-
-  color: #d3e9fb;
-
-  box-shadow:
-    inset 0 2px 5px rgba(0, 0, 0, 0.28),
-    0 3px 9px rgba(0, 0, 0, 0.22);
+  background: rgba(10, 25, 55, 0.45);
+  border-color: rgba(96, 165, 250, 0.25);
+  color: #e6f3ff;
 }
-
 
 /* =====================================================
    DARK PLACEHOLDER
@@ -1525,16 +1479,15 @@
   color: #7595b0;
 }
 
-
 /* =====================================================
    DARK INPUT HOVER
 ===================================================== */
 
 .dark .register-field input:hover,
 [data-theme="dark"] .register-field input:hover {
+  background: rgba(10, 25, 55, 0.65);
   border-color: #4c84ad;
 }
-
 
 /* =====================================================
    DARK INPUT FOCUS
@@ -1542,14 +1495,8 @@
 
 .dark .register-field input:focus,
 [data-theme="dark"] .register-field input:focus {
+  background: rgba(10, 25, 55, 0.85);
   border-color: #4597d9;
-
-  background:
-    linear-gradient(
-      145deg,
-      #143a58,
-      #0f304a
-    );
 
   box-shadow:
     0 0 0 3px rgba(59, 136, 223, 0.16),
@@ -2065,4 +2012,32 @@
 .dark .password-toggle-button:hover,
 [data-theme="dark"] .password-toggle-button:hover {
   background: rgba(255, 255, 255, 0.10);
+}
+
+/* =====================================================
+   ANIMATION CLASSES
+===================================================== */
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.btn-icon {
+  margin-right: 6px;
+  vertical-align: middle;
 }

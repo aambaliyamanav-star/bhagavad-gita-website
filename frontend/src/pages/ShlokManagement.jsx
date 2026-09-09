@@ -4,6 +4,7 @@ import {
   useState,
 } from "react";
 import { useNavigate } from "react-router-dom";
+import {              BookOpen, Activity, Type, Lightbulb, Trash2, Edit3, Save, FileText, RefreshCw, Archive, Mic, Sparkles, Loader2, Plus , Highlighter , Palette , AlignLeft , AlignCenter , AlignRight , CornerDownLeft , ArrowLeft , List , Undo , Redo , Bold , Italic , Underline } from "lucide-react";
 import "./ShlokManagement.css";
 
 
@@ -150,9 +151,7 @@ function RichTextEditor({
               event.preventDefault();
               formatText("bold");
             }}
-          >
-            <strong>B</strong>
-          </button>
+          > <Bold size={16} /> </button>
 
           <button
             type="button"
@@ -162,9 +161,7 @@ function RichTextEditor({
               event.preventDefault();
               formatText("italic");
             }}
-          >
-            <em>I</em>
-          </button>
+          > <Italic size={16} /> </button>
 
           <button
             type="button"
@@ -174,9 +171,7 @@ function RichTextEditor({
               event.preventDefault();
               formatText("underline");
             }}
-          >
-            <u>U</u>
-          </button>
+          > <Underline size={16} /> </button>
         </div>
 
         <span className="toolbar-divider" />
@@ -191,17 +186,12 @@ function RichTextEditor({
               event.preventDefault();
               highlightText();
             }}
-          >
-            🖍️
-          </button>
+          > <Highlighter size={16} /> </button>
 
           <label
             className="toolbar-color-button"
             title="Text Color"
-          >
-            🎨
-
-            <input
+          > <Palette size={16} /> <input
               type="color"
               value={textColor}
               onChange={
@@ -223,9 +213,7 @@ function RichTextEditor({
               event.preventDefault();
               alignText("left");
             }}
-          >
-            ⬅
-          </button>
+          > <AlignLeft size={16} /> </button>
 
           <button
             type="button"
@@ -235,9 +223,7 @@ function RichTextEditor({
               event.preventDefault();
               alignText("center");
             }}
-          >
-            ↔
-          </button>
+          > <AlignCenter size={16} /> </button>
 
           <button
             type="button"
@@ -247,9 +233,7 @@ function RichTextEditor({
               event.preventDefault();
               alignText("right");
             }}
-          >
-            ➡
-          </button>
+          > <AlignRight size={16} /> </button>
         </div>
 
         <span className="toolbar-divider" />
@@ -267,9 +251,7 @@ function RichTextEditor({
                 "insertUnorderedList"
               );
             }}
-          >
-            •
-          </button>
+          > <List size={16} /> </button>
 
           <button
             type="button"
@@ -279,9 +261,7 @@ function RichTextEditor({
               event.preventDefault();
               addNewLine();
             }}
-          >
-            ↵
-          </button>
+          > <CornerDownLeft size={16} /> </button>
         </div>
 
         <span className="toolbar-divider" />
@@ -296,9 +276,7 @@ function RichTextEditor({
               event.preventDefault();
               handleUndo();
             }}
-          >
-            ↶
-          </button>
+          > <Undo size={16} /> </button>
 
           <button
             type="button"
@@ -308,9 +286,7 @@ function RichTextEditor({
               event.preventDefault();
               handleRedo();
             }}
-          >
-            ↷
-          </button>
+          > <Redo size={16} /> </button>
         </div>
       </div>
 
@@ -1254,7 +1230,7 @@ function ShlokManagement() {
         }
 
         setMessage(
-          "Shlok successfully deleted. 🗑️"
+          "Shlok successfully deleted."
         );
 
         if (
@@ -1308,7 +1284,7 @@ function ShlokManagement() {
         <div className="shlok-management-header">
           <div>
             <h1>
-              📖 Shlok Management
+              Shlok Management
             </h1>
 
             <p>
@@ -1324,7 +1300,7 @@ function ShlokManagement() {
               navigate("/admin")
             }
           >
-            ← Admin Dashboard
+            <ArrowLeft className="btn-icon" size={16} /> Admin Dashboard
           </button>
         </div>
 
@@ -1455,7 +1431,7 @@ function ShlokManagement() {
             {/* SANSKRIT SHLOK */}
             <div className="form-group">
               <label>
-                🕉️ Sanskrit Shlok
+                <Activity className="btn-icon" size={16} /> Sanskrit Shlok
               </label>
 
               <RichTextEditor
@@ -1484,7 +1460,7 @@ function ShlokManagement() {
 
                 <div className="word-wise-title-area">
                   <div className="word-wise-icon">
-                    🔤
+                    <Type className="btn-icon" size={16} />
                   </div>
 
                   <div>
@@ -1505,7 +1481,7 @@ function ShlokManagement() {
 
               {/* INFO */}
               <div className="word-wise-info">
-                💡 Sanskrit Shlokના દરેક
+                <Lightbulb className="btn-icon" size={16} /> Sanskrit Shlokના દરેક
                 word અહીં automatically
                 detect થશે. તમે Gujarati
                 meaning manually લખી શકો છો.
@@ -1660,7 +1636,7 @@ function ShlokManagement() {
                               )
                             }
                           >
-                            🗑️
+                            <Trash2 className="btn-icon" size={16} />
                           </button>
 
                         </div>
@@ -1687,7 +1663,7 @@ function ShlokManagement() {
               )}
 
               <small className="word-translation-help">
-                💡 Sanskrit word તમે
+                <Lightbulb className="btn-icon" size={16} /> Sanskrit word તમે
                 manually edit કરી શકો છો.
                 કોઈ word delete કરી શકો છો
                 અને "Add Word" દ્વારા નવો
@@ -1699,7 +1675,7 @@ function ShlokManagement() {
             {/* TRANSLATION */}
             <div className="form-group">
               <label>
-                📖 Gujarati Translation
+                <BookOpen className="btn-icon" size={16} /> Gujarati Translation
               </label>
 
               <RichTextEditor
@@ -1722,7 +1698,7 @@ function ShlokManagement() {
             {/* MESSAGE */}
             <div className="form-group">
               <label>
-                🌸 Message / Explanation
+                <Sparkles className="btn-icon" size={16} /> Message / Explanation
               </label>
 
               <RichTextEditor
@@ -1752,8 +1728,8 @@ function ShlokManagement() {
                 {saving
                   ? "⏳ Saving..."
                   : editingId
-                  ? "💾 Update Shlok"
-                  : "➕ Add Shlok"}
+                  ? (<span><Save className="btn-icon" size={16}/> Update Shlok</span>)
+                  : (<span><Plus className="btn-icon" size={16}/> Add Shlok</span>)}
               </button>
 
               {editingId && (
@@ -1783,7 +1759,7 @@ function ShlokManagement() {
 
             <div>
               <h2>
-                📜 Chapter{" "}
+                <FileText className="btn-icon" size={16} /> Chapter{" "}
                 {selectedChapter}{" "}
                 Shlokas
               </h2>
@@ -1806,7 +1782,7 @@ function ShlokManagement() {
                 )
               }
             >
-              🔄 Refresh
+              <RefreshCw className="btn-icon" size={16} /> Refresh
             </button>
 
           </div>
@@ -1818,7 +1794,7 @@ function ShlokManagement() {
           ) : shlokas.length ===
             0 ? (
             <div className="empty-box">
-              📭 આ Chapterમાં હજુ કોઈ
+              <Archive className="btn-icon" size={16} /> આ Chapterમાં હજુ કોઈ
               Shlok નથી.
             </div>
           ) : (
@@ -1845,15 +1821,20 @@ function ShlokManagement() {
                       {/* NUMBER BOX */}
                       <button
                         type="button"
-                        className="shlok-number-box"
+                        className={
+                          isExpanded
+                            ? "shlok-number-box active"
+                            : "shlok-number-box"
+                        }
                         onClick={() =>
                           toggleShlok(
                             shlok._id
                           )
                         }
+                        aria-expanded={isExpanded}
                       >
-                        <span>
-                          Shlok
+                        <span className="shlok-btn-label">
+                          શ્લોક
                         </span>
 
                         <strong>
@@ -1862,10 +1843,10 @@ function ShlokManagement() {
                           }
                         </strong>
 
-                        <small>
+                        <small className="shlok-btn-status">
                           {isExpanded
-                            ? "▲ Close"
-                            : "▼ Open"}
+                            ? "▲ બંધ"
+                            : "▼ ખોલો"}
                         </small>
                       </button>
 
@@ -1892,7 +1873,7 @@ function ShlokManagement() {
                               </h3>
 
                               <p>
-                                🎙️{" "}
+                                <Mic className="btn-icon" size={16} />{" "}
                                 {
                                   shlok.speaker
                                 }
@@ -1923,7 +1904,7 @@ function ShlokManagement() {
                                   )
                                 }
                               >
-                                🗑️ Delete
+                                <Trash2 className="btn-icon" size={16} /> Delete
                               </button>
 
                             </div>
@@ -1934,7 +1915,7 @@ function ShlokManagement() {
                           <div className="detail-content sanskrit-detail">
 
                             <h4>
-                              🕉️ સંસ્કૃત શ્લોક
+                              <Activity className="btn-icon" size={16} /> સંસ્કૃત શ્લોક
                             </h4>
 
                             <div
@@ -1952,7 +1933,7 @@ function ShlokManagement() {
                           <div className="detail-content word-meanings-detail">
 
                             <h4>
-                              🔤 Word-wise Gujarati Meaning
+                              <Type className="btn-icon" size={16} /> Word-wise Gujarati Meaning
                             </h4>
 
                             {Array.isArray(
@@ -2016,7 +1997,7 @@ function ShlokManagement() {
                           <div className="detail-content translation-detail">
 
                             <h4>
-                              📖 ગુજરાતી અર્થ
+                              <BookOpen className="btn-icon" size={16} /> ગુજરાતી અર્થ
                             </h4>
 
                             <div
@@ -2034,7 +2015,7 @@ function ShlokManagement() {
                           <div className="detail-content message-detail">
 
                             <h4>
-                              🌸 સંદેશ
+                              <Sparkles className="btn-icon" size={16} /> સંદેશ
                             </h4>
 
                             <div

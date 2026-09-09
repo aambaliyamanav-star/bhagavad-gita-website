@@ -1,11 +1,35 @@
-
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
+import { 
+  Eye, 
+  EyeOff,
+  User,
+  Phone,
+  Mail,
+  Calendar,
+  Lock,
+  Loader2,
+  Sparkles,
+  AlertCircle,
+  CheckCircle,
+  UserPlus,
+  RefreshCw,
+  Hash,
+  ArrowLeft
+} from "lucide-react";
+import { useAuth } from "../context/AuthContext.jsx";
 import "./Register.css";
 
 function Register() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  // If user is already logged in, redirect away from /register
+  useEffect(() => {
+    if (user) {
+      navigate("/", { replace: true });
+    }
+  }, [user, navigate]);
 
   // =====================================================
   // STEP
@@ -658,7 +682,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
           </div>
 
           <div className="register-lotus">
-            🪷
+            <Sparkles size={32} color="#f59e0b" />
           </div>
 
           <h1>
@@ -667,7 +691,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
 
           <p>
             ભગવદ્ ગીતા વેબસાઇટમાં તમારું
-            account બનાવો 🙏
+            account બનાવો
           </p>
 
         </div>
@@ -760,6 +784,11 @@ const [showConfirmPassword, setShowConfirmPassword] =
                 : "register-message error"
             }
           >
+            {messageType === "success" ? (
+              <CheckCircle size={18} className="btn-icon" />
+            ) : (
+              <AlertCircle size={18} className="btn-icon" />
+            )}
             {message}
           </div>
         )}
@@ -784,7 +813,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
               <label htmlFor="name">
 
                 <span className="field-icon purple">
-                  👤
+                  <User size={16} />
                 </span>
 
                 <span>
@@ -812,7 +841,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
               <label htmlFor="mobile">
 
                 <span className="field-icon orange">
-                  📞
+                  <Phone size={16} />
                 </span>
 
                 <span>
@@ -860,7 +889,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
               <label htmlFor="email">
 
                 <span className="field-icon blue">
-                  ✉️
+                  <Mail size={16} />
                 </span>
 
                 <span>
@@ -888,7 +917,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
               <label htmlFor="birthDate">
 
                 <span className="field-icon pink">
-                  🎂
+                  <Calendar size={16} />
                 </span>
 
                 <span>
@@ -927,7 +956,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
                   aria-label="Birth Date Calendar"
                   title="Birth Date પસંદ કરો"
                 >
-                  📅
+                  <Calendar size={18} />
                 </button>
 
                 {/* HIDDEN DATE PICKER */}
@@ -955,9 +984,17 @@ const [showConfirmPassword, setShowConfirmPassword] =
               className="register-submit"
               disabled={loading}
             >
-              {loading
-                ? "Email પર OTP મોકલાઈ રહ્યો છે..."
-                : "✉️ Email પર OTP મોકલો"}
+              {loading ? (
+                <>
+                  <Loader2 className="spinner btn-icon" size={18} />
+                  Email પર OTP મોકલાઈ રહ્યો છે...
+                </>
+              ) : (
+                <>
+                  <Mail className="btn-icon" size={18} />
+                  Email પર OTP મોકલો
+                </>
+              )}
             </button>
 
           </form>
@@ -971,7 +1008,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
           <div className="otp-section">
 
             <div className="otp-icon">
-              🔐
+              <Lock size={32} color="#10b981" />
             </div>
 
             <h2>
@@ -989,7 +1026,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
               <label htmlFor="otp">
 
                 <span className="field-icon purple">
-                  🔢
+                  <Hash size={16} />
                 </span>
 
                 <span>
@@ -1034,9 +1071,17 @@ const [showConfirmPassword, setShowConfirmPassword] =
               onClick={verifyOTP}
               disabled={loading}
             >
-              {loading
-                ? "Verify થઈ રહ્યું છે..."
-                : "✓ OTP Verify કરો"}
+              {loading ? (
+                <>
+                  <Loader2 className="spinner btn-icon" size={18} />
+                  Verify થઈ રહ્યું છે...
+                </>
+              ) : (
+                <>
+                  <CheckCircle className="btn-icon" size={18} />
+                  OTP Verify કરો
+                </>
+              )}
             </button>
 
             {/* RESEND */}
@@ -1047,7 +1092,8 @@ const [showConfirmPassword, setShowConfirmPassword] =
               onClick={resendOTP}
               disabled={loading}
             >
-              🔄 Email પર OTP ફરી મોકલો
+              <RefreshCw className="btn-icon" size={16} />
+              Email પર OTP ફરી મોકલો
             </button>
 
             {/* BACK */}
@@ -1059,7 +1105,8 @@ const [showConfirmPassword, setShowConfirmPassword] =
                 backToPersonalInformation
               }
             >
-              ← માહિતી સુધારો
+              <ArrowLeft className="btn-icon" size={16} />
+              માહિતી સુધારો
             </button>
 
           </div>
@@ -1078,7 +1125,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
             {/* VERIFIED */}
 
             <div className="verified-box">
-              ✓ Email OTP Successfully Verified
+              <CheckCircle className="btn-icon" size={18} /> Email OTP Successfully Verified
             </div>
 
             {/* PASSWORD */}
@@ -1088,7 +1135,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
               <label htmlFor="password">
 
                 <span className="field-icon purple">
-                  🔒
+                  <Lock size={16} />
                 </span>
 
                 <span>
@@ -1144,7 +1191,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
               <label htmlFor="confirmPassword">
 
                 <span className="field-icon purple">
-                  🔐
+                  <Lock size={16} />
                 </span>
 
                 <span>
@@ -1213,9 +1260,17 @@ const [showConfirmPassword, setShowConfirmPassword] =
               className="register-submit"
               disabled={loading}
             >
-              {loading
-                ? "Account બની રહ્યું છે..."
-                : "✓ Create Account"}
+              {loading ? (
+                <>
+                  <Loader2 className="spinner btn-icon" size={18} />
+                  Account બની રહ્યું છે...
+                </>
+              ) : (
+                <>
+                  <UserPlus className="btn-icon" size={18} />
+                  Create Account
+                </>
+              )}
             </button>
 
           </form>

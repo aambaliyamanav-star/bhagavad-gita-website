@@ -31,6 +31,42 @@ body {
   box-sizing: border-box;
 }
 
+/* =====================================================
+   LUCIDE ICONS
+===================================================== */
+
+.btn-icon {
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.title-icon {
+  margin-right: 12px;
+  vertical-align: middle;
+  color: #1976d2;
+}
+
+.msg-icon {
+  margin-right: 8px;
+  vertical-align: text-bottom;
+}
+
+.section-icon {
+  margin-right: 10px;
+  vertical-align: middle;
+  color: #1976d2;
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 
 /* =====================================================
    PAGE BACKGROUND
@@ -68,9 +104,9 @@ body {
     ),
     url("/images/gita-background.png");
 
-  background-size: 100% auto;
+  background-size: 100% 100%;
 
-  background-position: center top;
+  background-position: center center;
 
   background-repeat: no-repeat;
 
@@ -105,6 +141,40 @@ body {
   transition:
     color 0.3s ease,
     background 0.3s ease;
+}
+
+/* =====================================================
+   ANIMATIONS
+===================================================== */
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero {
+  animation: fadeUp 0.8s ease-out forwards;
+}
+
+.home-search {
+  animation: fadeUp 0.8s ease-out 0.2s forwards;
+  opacity: 0;
+}
+
+.today-shlok {
+  animation: fadeUp 0.8s ease-out 0.4s forwards;
+  opacity: 0;
+}
+
+.welcome {
+  animation: fadeUp 0.8s ease-out 0.6s forwards;
+  opacity: 0;
 }
 
 
@@ -142,50 +212,25 @@ body {
 ===================================================== */
 
 .subtitle {
-  margin:
-    0 0 10px;
-
-  color:
-    #0b3d91;
-
-  font-size:
-    21px;
-
-  font-weight:
-    700;
-
-  letter-spacing:
-    1px;
-
-  text-align:
-    center;  
-
-  text-shadow:
-    0 2px 8px rgba(11, 61, 145, 0.20);
+  margin: 0 0 16px;
+  color: #0b3d91;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-align: center;  
+  text-shadow: 0 2px 8px rgba(11, 61, 145, 0.20);
+  opacity: 0.9;
 }
 
-
 .hero h1 {
-  margin:
-    0;
-
-  color:
-    #0b3d91;
-
-  font-size:
-    54px;
-
-  font-weight:
-    800;
-
-  letter-spacing:
-    1px;
-  
-  text-align:
-    center;  
-
-  text-shadow:
-    0 4px 12px rgba(13, 71, 161, 0.20);
+  margin: 0;
+  color: #0b3d91;
+  font-size: 64px;
+  font-weight: 900;
+  letter-spacing: -1px;
+  text-align: center;  
+  text-shadow: 0 4px 12px rgba(13, 71, 161, 0.20);
+  line-height: 1.1;
 }
 
 
@@ -217,6 +262,15 @@ body {
 }
 
 
+.hero-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin: 30px auto 50px;
+}
+
 /* =====================================================
    CONTINUE READING BUTTON
 ===================================================== */
@@ -242,7 +296,7 @@ body {
     58px;
 
   margin:
-    0 auto 14px;
+    0;
 
   padding:
     16px 26px;
@@ -313,82 +367,44 @@ body {
 
 
 /* =====================================================
-   QUIZ BUTTON
+   QUIZ BUTTON (SECONDARY ACTION)
 ===================================================== */
 
 .quiz-button {
-  display:
-    flex;
-
-  align-items:
-    center;
-
-  justify-content:
-    center;
-
-  width:
-    fit-content;  
-
-  min-height:
-    56px;
-
-  margin:
-    0 auto 28px;
-
-  padding:
-    15px 28px;
-
-  border:
-    none;
-
-  border-radius:
-    15px;
-
-  background:
-    linear-gradient(
-      145deg,
-      #42a5f5,
-      #1976d2,
-      #0d47a1
-    );
-
-  color:
-    #ffffff;
-
-  font-size:
-    18px;
-
-  font-weight:
-    700;
-
-  line-height:
-    1.2;
-
-  white-space:
-    nowrap;
-
-  cursor:
-    pointer;
-
-  box-shadow:
-    0 10px 20px rgba(13, 71, 161, 0.25),
-    0 5px 0 rgba(8, 55, 120, 0.25),
-    inset 0 1px 1px rgba(255, 255, 255, 0.35);
-
-  transition:
-    transform 0.25s ease,
-    box-shadow 0.25s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  min-height: 58px;
+  margin: 0;
+  padding: 15px 28px;
+  border-radius: 15px;
+  
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  color: #0b3d91;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+  cursor: pointer;
+  
+  box-shadow: 0 8px 20px rgba(13, 71, 161, 0.1);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.3s ease;
 }
 
-
 .quiz-button:hover {
-  transform:
-    translateY(-4px);
+  transform: translateY(-4px);
+  background: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 12px 24px rgba(13, 71, 161, 0.15);
+}
 
-  box-shadow:
-    0 16px 28px rgba(13, 71, 161, 0.30),
-    0 6px 0 rgba(8, 55, 120, 0.22),
-    inset 0 1px 1px rgba(255, 255, 255, 0.40);
+.quiz-button:active {
+  transform: translateY(1px);
+  box-shadow: 0 4px 10px rgba(13, 71, 161, 0.1);
 }
 
 
@@ -425,19 +441,20 @@ body {
     24px;
 
   background:
-    linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.97),
-      rgba(232, 246, 255, 0.94)
-    );
+    rgba(255, 255, 255, 0.65);
+
+  backdrop-filter:
+    blur(24px) saturate(180%);
+
+  -webkit-backdrop-filter:
+    blur(24px) saturate(180%);
 
   border:
-    1px solid rgba(120, 185, 235, 0.55);
+    1px solid rgba(255, 255, 255, 0.50);
 
   box-shadow:
-    0 22px 40px rgba(21, 101, 160, 0.18),
-    0 8px 0 rgba(83, 153, 207, 0.18),
-    inset 0 1px 1px rgba(255, 255, 255, 0.95);
+    0 22px 40px rgba(10, 40, 90, 0.12),
+    0 1px 0 rgba(255, 255, 255, 0.80) inset;
 
   transition:
     transform 0.3s ease,
@@ -451,10 +468,15 @@ body {
   transform:
     translateY(-4px);
 
+  background:
+    rgba(255, 255, 255, 0.75);
+
+  border-color:
+    rgba(255, 255, 255, 0.70);
+
   box-shadow:
-    0 28px 48px rgba(21, 101, 160, 0.22),
-    0 10px 0 rgba(83, 153, 207, 0.15),
-    inset 0 1px 1px rgba(255, 255, 255, 0.95);
+    0 28px 48px rgba(10, 40, 90, 0.16),
+    0 1px 0 rgba(255, 255, 255, 0.95) inset;
 }
 
 
@@ -562,7 +584,7 @@ body {
     0 16px;
 
   border:
-    1px solid #a8cde9;
+    1px solid rgba(255, 255, 255, 0.40);
 
   border-radius:
     12px;
@@ -571,11 +593,7 @@ body {
     none;
 
   background:
-    linear-gradient(
-      145deg,
-      #ffffff,
-      #f1f9ff
-    );
+    rgba(255, 255, 255, 0.40);
 
   color:
     #163f60;
@@ -584,8 +602,8 @@ body {
     15px;
 
   box-shadow:
-    inset 0 3px 6px rgba(52, 113, 160, 0.08),
-    0 4px 8px rgba(33, 100, 160, 0.08);
+    inset 0 2px 4px rgba(10, 40, 90, 0.04),
+    0 2px 4px rgba(255, 255, 255, 0.50);
 
   transition:
     border 0.25s ease,
@@ -607,12 +625,14 @@ body {
 
 .search-fields input:focus {
   border-color:
-    #1976d2;
+    rgba(21, 101, 192, 0.50);
+
+  background:
+    rgba(255, 255, 255, 0.85);
 
   box-shadow:
-    0 0 0 3px rgba(33, 150, 243, 0.12),
-    inset 0 3px 6px rgba(52, 113, 160, 0.08),
-    0 5px 10px rgba(33, 100, 160, 0.12);
+    0 0 0 3px rgba(33, 150, 243, 0.15),
+    inset 0 1px 2px rgba(10, 40, 90, 0.04);
 }
 
 
@@ -803,35 +823,34 @@ body {
     16px;
 
   background:
-    linear-gradient(
-      145deg,
-      #ffffff,
-      #f1f9ff
-    );
+    rgba(255, 255, 255, 0.55);
 
   border:
-    1px solid #c4dff3;
+    1px solid rgba(255, 255, 255, 0.50);
 
   box-shadow:
-    0 8px 16px rgba(40, 110, 165, 0.10),
-    0 3px 0 rgba(100, 165, 210, 0.12);
+    0 8px 16px rgba(10, 40, 90, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.80);
 
   cursor:
     pointer;
 
   transition:
     transform 0.25s ease,
-    box-shadow 0.25s ease;
+    box-shadow 0.25s ease,
+    background 0.25s ease;
 }
-
 
 .search-result-card:hover {
   transform:
     translateY(-3px);
 
+  background:
+    rgba(255, 255, 255, 0.85);
+
   box-shadow:
-    0 14px 24px rgba(40, 110, 165, 0.15),
-    0 4px 0 rgba(100, 165, 210, 0.12);
+    0 14px 24px rgba(10, 40, 90, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 1);
 }
 
 
@@ -904,19 +923,20 @@ body {
     26px;
 
   background:
-    linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.98),
-      rgba(226, 244, 255, 0.96)
-    );
+    rgba(255, 255, 255, 0.65);
+
+  backdrop-filter:
+    blur(24px) saturate(180%);
+
+  -webkit-backdrop-filter:
+    blur(24px) saturate(180%);
 
   border:
-    1px solid rgba(105, 175, 225, 0.55);
+    1px solid rgba(255, 255, 255, 0.50);
 
   box-shadow:
-    0 25px 45px rgba(21, 101, 160, 0.18),
-    0 9px 0 rgba(83, 153, 207, 0.18),
-    inset 0 1px 1px rgba(255, 255, 255, 0.95);
+    0 25px 45px rgba(10, 40, 90, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.80);
 
   text-align:
     left;
@@ -933,10 +953,15 @@ body {
   transform:
     translateY(-4px);
 
+  background:
+    rgba(255, 255, 255, 0.75);
+
+  border-color:
+    rgba(255, 255, 255, 0.70);
+
   box-shadow:
-    0 30px 52px rgba(21, 101, 160, 0.22),
-    0 10px 0 rgba(83, 153, 207, 0.14),
-    inset 0 1px 1px rgba(255, 255, 255, 0.95);
+    0 30px 52px rgba(10, 40, 90, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
 }
 
 
@@ -1030,6 +1055,9 @@ body {
 
   font-size:
     27px;
+    
+  color:
+    #1976d2;
 
   box-shadow:
     0 8px 15px rgba(33, 100, 160, 0.15),
@@ -1336,19 +1364,20 @@ body {
     26px;
 
   background:
-    linear-gradient(
-      145deg,
-      rgba(255, 255, 255, 0.98),
-      rgba(224, 243, 255, 0.96)
-    );
+    rgba(255, 255, 255, 0.65);
+
+  backdrop-filter:
+    blur(24px) saturate(180%);
+
+  -webkit-backdrop-filter:
+    blur(24px) saturate(180%);
 
   border:
-    1px solid rgba(105, 175, 225, 0.55);
+    1px solid rgba(255, 255, 255, 0.50);
 
   box-shadow:
-    0 24px 42px rgba(21, 101, 160, 0.18),
-    0 9px 0 rgba(83, 153, 207, 0.17),
-    inset 0 1px 1px rgba(255, 255, 255, 0.95);
+    0 22px 40px rgba(10, 40, 90, 0.12),
+    0 1px 0 rgba(255, 255, 255, 0.80) inset;
 
   transition:
     transform 0.3s ease,
@@ -1362,10 +1391,15 @@ body {
   transform:
     translateY(-4px);
 
+  background:
+    rgba(255, 255, 255, 0.75);
+
+  border-color:
+    rgba(255, 255, 255, 0.70);
+
   box-shadow:
-    0 30px 50px rgba(21, 101, 160, 0.22),
-    0 10px 0 rgba(83, 153, 207, 0.13),
-    inset 0 1px 1px rgba(255, 255, 255, 0.95);
+    0 28px 48px rgba(10, 40, 90, 0.16),
+    0 1px 0 rgba(255, 255, 255, 0.95) inset;
 }
 
 
@@ -1499,10 +1533,10 @@ body[data-theme="dark"] .home-page::before {
     url("/images/gita-background.png");
 
   background-size:
-    100% auto;
+    100% 100%;
 
   background-position:
-    center top;
+    center center;
 
   background-repeat:
     no-repeat;
@@ -1546,16 +1580,12 @@ body[data-theme="dark"] .description {
 
 html.dark .hero > button,
 html.dark .continue-reading-button,
-html.dark .quiz-button,
 body.dark .hero > button,
 body.dark .continue-reading-button,
-body.dark .quiz-button,
 html[data-theme="dark"] .hero > button,
 html[data-theme="dark"] .continue-reading-button,
-html[data-theme="dark"] .quiz-button,
 body[data-theme="dark"] .hero > button,
-body[data-theme="dark"] .continue-reading-button,
-body[data-theme="dark"] .quiz-button {
+body[data-theme="dark"] .continue-reading-button {
   background:
     linear-gradient(
       145deg,
@@ -1568,6 +1598,20 @@ body[data-theme="dark"] .quiz-button {
     #ffffff;
 }
 
+html[data-theme="dark"] .quiz-button,
+body[data-theme="dark"] .quiz-button {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(100, 181, 246, 0.3);
+  color: #90caf9;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+html[data-theme="dark"] .quiz-button:hover,
+body[data-theme="dark"] .quiz-button:hover {
+  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+}
+
 
 /* =====================================================
    DARK SEARCH
@@ -1578,19 +1622,20 @@ body.dark .home-search,
 html[data-theme="dark"] .home-search,
 body[data-theme="dark"] .home-search {
   background:
-    linear-gradient(
-      145deg,
-      rgba(18, 51, 78, 0.98),
-      rgba(11, 39, 63, 0.98)
-    );
+    rgba(10, 25, 55, 0.55);
+
+  backdrop-filter:
+    blur(24px) saturate(180%);
+
+  -webkit-backdrop-filter:
+    blur(24px) saturate(180%);
 
   border-color:
-    rgba(100, 181, 246, 0.35);
+    rgba(100, 181, 246, 0.25);
 
   box-shadow:
-    0 22px 40px rgba(0, 0, 0, 0.35),
-    0 8px 0 rgba(0, 0, 0, 0.20),
-    inset 0 1px 1px rgba(255, 255, 255, 0.08);
+    0 22px 40px rgba(0, 0, 0, 0.40),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 
@@ -1602,6 +1647,14 @@ body[data-theme="dark"] .search-title {
     #90caf9;
 }
 
+html[data-theme="dark"] .title-icon,
+body[data-theme="dark"] .title-icon,
+html[data-theme="dark"] .section-icon,
+body[data-theme="dark"] .section-icon {
+  color: #64b5f6;
+}
+
+
 
 /* =====================================================
    DARK INPUT
@@ -1612,21 +1665,17 @@ body.dark .search-fields input,
 html[data-theme="dark"] .search-fields input,
 body[data-theme="dark"] .search-fields input {
   background:
-    linear-gradient(
-      145deg,
-      #102f49,
-      #0b253b
-    );
+    rgba(255, 255, 255, 0.05);
 
   border-color:
-    #315d7d;
+    rgba(255, 255, 255, 0.15);
 
   color:
     #e8f4ff;
 
   box-shadow:
-    inset 0 3px 6px rgba(0, 0, 0, 0.25),
-    0 4px 8px rgba(0, 0, 0, 0.20);
+    inset 0 2px 4px rgba(0, 0, 0, 0.20),
+    0 2px 4px rgba(0, 0, 0, 0.10);
 }
 
 
@@ -1644,12 +1693,14 @@ body.dark .search-fields input:focus,
 html[data-theme="dark"] .search-fields input:focus,
 body[data-theme="dark"] .search-fields input:focus {
   border-color:
-    #42a5f5;
+    rgba(66, 165, 245, 0.60);
+
+  background:
+    rgba(255, 255, 255, 0.10);
 
   box-shadow:
-    0 0 0 3px rgba(66, 165, 245, 0.18),
-    inset 0 3px 6px rgba(0, 0, 0, 0.20),
-    0 5px 10px rgba(0, 0, 0, 0.25);
+    0 0 0 3px rgba(66, 165, 245, 0.20),
+    inset 0 2px 4px rgba(0, 0, 0, 0.15);
 }
 
 
@@ -1694,18 +1745,24 @@ body.dark .search-result-card,
 html[data-theme="dark"] .search-result-card,
 body[data-theme="dark"] .search-result-card {
   background:
-    linear-gradient(
-      145deg,
-      #12344f,
-      #0e2b43
-    );
+    rgba(255, 255, 255, 0.04);
 
   border-color:
-    #315d7d;
+    rgba(255, 255, 255, 0.10);
 
   box-shadow:
-    0 8px 16px rgba(0, 0, 0, 0.28),
-    0 3px 0 rgba(0, 0, 0, 0.20);
+    0 8px 16px rgba(0, 0, 0, 0.20),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+html[data-theme="dark"] .search-result-card:hover,
+body[data-theme="dark"] .search-result-card:hover {
+  background:
+    rgba(255, 255, 255, 0.08);
+
+  box-shadow:
+    0 14px 24px rgba(0, 0, 0, 0.30),
+    inset 0 1px 0 rgba(255, 255, 255, 0.10);
 }
 
 
@@ -1754,19 +1811,20 @@ body.dark .today-shlok,
 html[data-theme="dark"] .today-shlok,
 body[data-theme="dark"] .today-shlok {
   background:
-    linear-gradient(
-      145deg,
-      rgba(18, 53, 80, 0.98),
-      rgba(11, 39, 62, 0.98)
-    );
+    rgba(10, 25, 55, 0.55);
+
+  backdrop-filter:
+    blur(24px) saturate(180%);
+
+  -webkit-backdrop-filter:
+    blur(24px) saturate(180%);
 
   border-color:
-    rgba(100, 181, 246, 0.35);
+    rgba(100, 181, 246, 0.25);
 
   box-shadow:
-    0 25px 45px rgba(0, 0, 0, 0.35),
-    0 9px 0 rgba(0, 0, 0, 0.20),
-    inset 0 1px 1px rgba(255, 255, 255, 0.08);
+    0 25px 45px rgba(0, 0, 0, 0.40),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 
@@ -1805,6 +1863,9 @@ body[data-theme="dark"] .today-shlok-icon {
 
   border-color:
     #315d7d;
+    
+  color:
+    #90caf9;
 
   box-shadow:
     0 8px 15px rgba(0, 0, 0, 0.25),
@@ -1931,20 +1992,18 @@ html.dark .welcome,
 body.dark .welcome,
 html[data-theme="dark"] .welcome,
 body[data-theme="dark"] .welcome {
-  background:
-    linear-gradient(
-      145deg,
-      rgba(18, 53, 80, 0.98),
-      rgba(11, 39, 62, 0.98)
-    );
+  background: rgba(10, 25, 55, 0.55);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border-color: rgba(100, 181, 246, 0.25);
+  box-shadow: 0 25px 45px rgba(0, 0, 0, 0.40), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
 
-  border-color:
-    rgba(100, 181, 246, 0.35);
-
-  box-shadow:
-    0 24px 42px rgba(0, 0, 0, 0.35),
-    0 9px 0 rgba(0, 0, 0, 0.20),
-    inset 0 1px 1px rgba(255, 255, 255, 0.08);
+html[data-theme="dark"] .welcome:hover,
+body[data-theme="dark"] .welcome:hover {
+  background: rgba(10, 25, 55, 0.70);
+  border-color: rgba(100, 181, 246, 0.4);
+  box-shadow: 0 30px 50px rgba(0, 0, 0, 0.50), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 
@@ -2059,138 +2118,60 @@ body[data-theme="dark"] .home-page::before {
   .subtitle {
     margin-bottom:
       8px;
-
     font-size:
       18px;
-
     letter-spacing:
-      0.5px;
-
+      1px;
     text-align:
       center;  
   }
 
-
   .hero h1 {
     font-size:
-      42px;
-
+      48px;
     line-height:
-      1.25;
-
+      1.15;
     text-align:
      center;  
   }
 
-
   .description {
     width:
       calc(100% - 32px);
-
     max-width:
       620px;
-
     margin:
       14px auto 22px;
-
     font-size:
       16px;
-
     line-height:
       1.8;
-
     color:
       #111111;
-
     text-align:
       center;  
-
     text-shadow:
       0 2px 3px rgba(255, 255, 255, 0.75),
       0 3px 8px rgba(0, 0, 0, 0.45);
   }
 
-
   /* -------------------------------------------------
-     CONTINUE READING
-     ONE LINE
+     HERO ACTIONS (MOBILE)
   ------------------------------------------------- */
+
+  .hero-actions {
+    flex-direction: column;
+    gap: 12px;
+    margin: 24px auto 36px;
+  }
 
   .hero > button,
-  .continue-reading-button {
-
-    display:
-      flex;
-
-    align-items:
-      center;
-
-    justify-content:
-      center;
-
-    width:
-      fit-content;
-
-    max-width:
-      calc(100vw - 32px);
-
-    min-height:
-      58px;
-
-    margin:
-      0 auto 22px;
-
-    padding:
-      16px 24px;
-
-    font-size:
-      15px;
-
-    line-height:
-      1.2;
-
-    white-space:
-      nowrap;
-
-    flex-wrap:
-      nowrap;
-  }
-
-
-  /* -------------------------------------------------
-     QUIZ BUTTON
-  ------------------------------------------------- */
-
+  .continue-reading-button,
   .quiz-button {
-
-    display:
-      flex;
-
-    align-items:
-      center;
-
-    justify-content:
-      center;
-
-    width:
-      fit-content;
-
-    min-height:
-      56px;
-
-    margin:
-      0 auto 26px;
-
-    padding:
-      15px 25px;
-
-    font-size:
-      16px;
-
-    white-space:
-      nowrap;
+    width: 100% !important;
+    max-width: calc(100vw - 48px);
+    margin: 0 !important;
   }
-
 
   /* -------------------------------------------------
      SEARCH CARD

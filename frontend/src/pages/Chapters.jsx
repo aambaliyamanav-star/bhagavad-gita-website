@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { BookOpen, Loader2 } from "lucide-react";
 import "./Chapters.css";
 
 const chapters = [
@@ -123,9 +124,13 @@ function Chapters() {
               </h2>
 
               <p>
-                {loading
-                  ? "⏳ Loading..."
-                  : `${databaseCount} શ્લોક`}
+                {loading ? (
+                  <>
+                    <Loader2 className="btn-icon spinner" size={14} /> Loading...
+                  </>
+                ) : (
+                  `${databaseCount} શ્લોક`
+                )}
               </p>
 
               <button
@@ -135,7 +140,7 @@ function Chapters() {
                   )
                 }
               >
-                અધ્યાય વાંચો →
+                <BookOpen className="btn-icon" size={14} /> અધ્યાય વાંચો
               </button>
 
             </div>

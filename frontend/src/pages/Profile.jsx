@@ -1,6 +1,25 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, EyeOff } from "lucide-react";
+import { 
+  Eye, 
+  EyeOff,
+  User,
+  Shield,
+  Edit2,
+  LogOut,
+  Phone,
+  Mail,
+  Calendar,
+  Key,
+  Lock,
+  Unlock,
+  Save,
+  X,
+  CheckCircle,
+  Smartphone,
+  ShieldCheck,
+  Loader2
+} from "lucide-react";
 import { useAuth } from "../context/AuthContext.jsx";
 import "./Profile.css";
 
@@ -855,11 +874,11 @@ const [showNewPassword, setShowNewPassword] =
         ================================================= */}
 
         <div className="profile-avatar">
-          👤
+          <User size={48} className="profile-avatar-icon" />
         </div>
 
         <h1>
-          મારું Profile 🙏
+          મારું Profile
         </h1>
 
         <p className="profile-subtitle">
@@ -951,8 +970,8 @@ const [showNewPassword, setShowNewPassword] =
                   }
                 >
                   {user.role === "admin"
-                    ? "🛡️ Admin"
-                    : "👤 User"}
+                    ? <><Shield className="btn-icon" size={16} /> Admin</>
+                    : <><User className="btn-icon" size={16} /> User</>}
                 </span>
               </div>
 
@@ -984,7 +1003,7 @@ const [showNewPassword, setShowNewPassword] =
               className="profile-edit-btn"
               onClick={handleEdit}
             >
-              ✏️ Edit Profile
+              <Edit2 className="btn-icon" size={18} /> Edit Profile
             </button>
 
             {/* =================================================
@@ -999,7 +1018,7 @@ const [showNewPassword, setShowNewPassword] =
                   navigate("/admin")
                 }
               >
-                🛡️ Admin Panel
+                <ShieldCheck className="btn-icon" size={18} /> Admin Panel
               </button>
             )}
 
@@ -1012,7 +1031,7 @@ const [showNewPassword, setShowNewPassword] =
               className="profile-logout-btn"
               onClick={handleLogout}
             >
-              🚪 Logout
+              <LogOut className="btn-icon" size={18} /> Logout
             </button>
           </>
         )}
@@ -1030,7 +1049,7 @@ const [showNewPassword, setShowNewPassword] =
 
             <div className="profile-edit-field">
               <label>
-                👤 નામ
+                <User size={16} className="btn-icon" /> નામ
               </label>
 
               <input
@@ -1047,7 +1066,7 @@ const [showNewPassword, setShowNewPassword] =
 
             <div className="profile-edit-field">
               <label>
-                📞 Mobile Number
+                <Phone size={16} className="btn-icon" /> Mobile Number
               </label>
 
               <input
@@ -1092,8 +1111,8 @@ const [showNewPassword, setShowNewPassword] =
                   }
                 >
                   {mobileOTPLoading
-                    ? "Email પર OTP મોકલાઈ રહ્યો છે..."
-                    : "📱 Mobile Change માટે Email OTP મોકલો"}
+                    ? <><Loader2 className="spinner btn-icon" size={16} /> Email પર OTP મોકલાઈ રહ્યો છે...</>
+                    : <><Smartphone className="btn-icon" size={16} /> Mobile Change માટે Email OTP મોકલો</>}
                 </button>
               )}
 
@@ -1101,7 +1120,7 @@ const [showNewPassword, setShowNewPassword] =
 
               {mobileOTPVerified && (
                 <div className="otp-success-text">
-                  ✅ Mobile change OTP verified
+                  <CheckCircle className="btn-icon" size={16} /> Mobile change OTP verified
                 </div>
               )}
 
@@ -1112,7 +1131,7 @@ const [showNewPassword, setShowNewPassword] =
                   <div className="profile-otp-box">
 
                     <h3>
-                      🔐 Mobile Change OTP
+                      <Lock className="btn-icon" size={20} /> Mobile Change OTP
                     </h3>
 
                     <p>
@@ -1165,8 +1184,8 @@ const [showNewPassword, setShowNewPassword] =
                       }
                     >
                       {mobileOTPLoading
-                        ? "Verify થઈ રહ્યું છે..."
-                        : "✓ Mobile OTP Verify કરો"}
+                        ? <><Loader2 className="spinner btn-icon" size={16} /> Verify થઈ રહ્યું છે...</>
+                        : <><CheckCircle className="btn-icon" size={16} /> Mobile OTP Verify કરો</>}
                     </button>
                   </div>
                 )}
@@ -1178,7 +1197,7 @@ const [showNewPassword, setShowNewPassword] =
 
             <div className="profile-edit-field">
               <label>
-                ✉️ Email
+                <Mail size={16} className="btn-icon" /> Email
               </label>
 
               <input
@@ -1204,8 +1223,8 @@ const [showNewPassword, setShowNewPassword] =
                   }
                 >
                   {emailOTPLoading
-                    ? "Registered Email પર OTP મોકલાઈ રહ્યો છે..."
-                    : "✉️ Email Change માટે OTP મોકલો"}
+                    ? <><Loader2 className="spinner btn-icon" size={16} /> Registered Email પર OTP મોકલાઈ રહ્યો છે...</>
+                    : <><Mail className="btn-icon" size={16} /> Email Change માટે OTP મોકલો</>}
                 </button>
               )}
 
@@ -1213,7 +1232,7 @@ const [showNewPassword, setShowNewPassword] =
 
               {emailOTPVerified && (
                 <div className="otp-success-text">
-                  ✅ Email change OTP verified
+                  <CheckCircle className="btn-icon" size={16} /> Email change OTP verified
                 </div>
               )}
 
@@ -1224,7 +1243,7 @@ const [showNewPassword, setShowNewPassword] =
                   <div className="profile-otp-box">
 
                     <h3>
-                      🔐 Email Change OTP
+                      <Lock className="btn-icon" size={20} /> Email Change OTP
                     </h3>
 
                     <p>
@@ -1277,8 +1296,8 @@ const [showNewPassword, setShowNewPassword] =
                       }
                     >
                       {emailOTPLoading
-                        ? "Verify થઈ રહ્યું છે..."
-                        : "✓ Email OTP Verify કરો"}
+                        ? <><Loader2 className="spinner btn-icon" size={16} /> Verify થઈ રહ્યું છે...</>
+                        : <><CheckCircle className="btn-icon" size={16} /> Email OTP Verify કરો</>}
                     </button>
                   </div>
                 )}
@@ -1290,7 +1309,7 @@ const [showNewPassword, setShowNewPassword] =
 
             <div className="profile-edit-field">
               <label>
-                🎂 Birth Date
+                <Calendar size={16} className="btn-icon" /> Birth Date
               </label>
 
               <input
@@ -1307,7 +1326,7 @@ const [showNewPassword, setShowNewPassword] =
 
             <div className="profile-edit-field">
               <label>
-                🔑 Current Password
+                <Key size={16} className="btn-icon" /> Current Password
               </label>
 
 <div className="password-input-container">
@@ -1368,7 +1387,7 @@ const [showNewPassword, setShowNewPassword] =
 
             <div className="profile-edit-field">
               <label>
-                🔒 New Password
+                <Lock size={16} className="btn-icon" /> New Password
               </label>
 
 <div className="password-input-container">
@@ -1433,7 +1452,7 @@ const [showNewPassword, setShowNewPassword] =
                   handleForgotPassword
                 }
               >
-                🔐 Password ભૂલી ગયા છો?
+                <Unlock className="btn-icon" size={16} /> Password ભૂલી ગયા છો?
               </button>
             </div>
 
@@ -1450,8 +1469,8 @@ const [showNewPassword, setShowNewPassword] =
                 disabled={loading}
               >
                 {loading
-                  ? "Saving..."
-                  : "💾 Save Changes"}
+                  ? <><Loader2 className="spinner btn-icon" size={18} /> Saving...</>
+                  : <><Save className="btn-icon" size={18} /> Save Changes</>}
               </button>
 
               <button
@@ -1460,7 +1479,7 @@ const [showNewPassword, setShowNewPassword] =
                 onClick={handleCancel}
                 disabled={loading}
               >
-                ✕ Cancel
+                <X className="btn-icon" size={18} /> Cancel
               </button>
 
             </div>
