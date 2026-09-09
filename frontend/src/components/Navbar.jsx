@@ -23,6 +23,7 @@ import {
   Sun,
   X,
   Menu,
+  Compass,
 } from "lucide-react";
 
 import { useAuth } from "../context/AuthContext.jsx";
@@ -100,6 +101,11 @@ function Navbar() {
     // CHAPTERS
     if (path === "/chapters") {
       return "18 અધ્યાય";
+    }
+
+    // LIFE GUIDANCE
+    if (path === "/guidance") {
+      return "જીવન માર્ગદર્શન";
     }
 
     // CHAPTER READER
@@ -407,6 +413,16 @@ function Navbar() {
   const handleNormalNavigation = () => {
     isNavigatingRef.current = false;
     setMenuOpen(false);
+  };
+
+  // =====================================================
+  // GUIDANCE NAVIGATION
+  // =====================================================
+
+  const handleGuidanceNavigation = () => {
+    isNavigatingRef.current = false;
+    setMenuOpen(false);
+    navigate("/guidance");
   };
 
   // =====================================================
@@ -751,6 +767,34 @@ function Navbar() {
             </span>
 
           </Link>
+
+
+          {/* =================================================
+              LIFE GUIDANCE
+          ================================================= */}
+
+          <button
+            type="button"
+            className="side-menu-item side-menu-button"
+            onClick={handleGuidanceNavigation}
+          >
+            <span className="side-menu-icon">
+              <Compass size={20} strokeWidth={1.8} />
+            </span>
+
+            <span className="side-menu-text">
+              <strong>
+                જીવન માર્ગદર્શન
+              </strong>
+              <small>
+                Life Situations & Gita Guide
+              </small>
+            </span>
+
+            <span className="side-menu-arrow">
+              <ChevronRight size={18} strokeWidth={2} />
+            </span>
+          </button>
 
 
           {/* =================================================

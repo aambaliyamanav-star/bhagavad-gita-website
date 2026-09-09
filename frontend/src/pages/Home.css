@@ -1336,6 +1336,44 @@ body {
     inset 0 1px 1px rgba(255, 255, 255, 0.45);
 }
 
+/* =====================================================
+   TODAY SHLOK ACTIONS WRAPPER
+===================================================== */
+
+.today-shlok-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin: 24px auto 0;
+  flex-wrap: wrap;
+}
+
+.today-shlok-actions .today-shlok-button {
+  margin: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.today-shlok-actions .today-share-button {
+  background: linear-gradient(135deg, #d4af37 0%, #b89020 100%);
+  color: #081329;
+  box-shadow: 0 8px 16px rgba(212, 175, 55, 0.25),
+              0 4px 0 rgba(140, 105, 10, 0.3),
+              inset 0 1px 1px rgba(255, 255, 255, 0.5);
+}
+
+.today-shlok-actions .today-share-button:hover {
+  background: linear-gradient(135deg, #f7d274 0%, #d4af37 100%);
+  color: #050e1f;
+  transform: translateY(-3px);
+  box-shadow: 0 13px 22px rgba(212, 175, 55, 0.35),
+              0 5px 0 rgba(140, 105, 10, 0.25),
+              inset 0 1px 1px rgba(255, 255, 255, 0.6);
+}
+
 
 /* =====================================================
    WELCOME / GITA WHY

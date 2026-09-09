@@ -1,0 +1,344 @@
+/* ==========================================================================
+   SHARE SHLOKA MODAL - STYLESHEET
+   Royal Blue 3D Spiritual Aesthetic with Glassmorphism & Gold Accents
+   ========================================================================== */
+
+.share-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(3, 8, 20, 0.78);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 16px;
+  animation: modalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.share-modal-container {
+  position: relative;
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(145deg, rgba(12, 26, 56, 0.96) 0%, rgba(5, 12, 28, 0.98) 100%);
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 22px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75),
+              0 0 40px rgba(212, 175, 55, 0.18),
+              inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  overflow-y: auto;
+  animation: modalZoomIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes modalZoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Custom Scrollbar for container */
+.share-modal-container::-webkit-scrollbar {
+  width: 6px;
+}
+.share-modal-container::-webkit-scrollbar-track {
+  background: rgba(4, 11, 24, 0.5);
+}
+.share-modal-container::-webkit-scrollbar-thumb {
+  background: rgba(212, 175, 55, 0.3);
+  border-radius: 3px;
+}
+
+/* Modal Header */
+.share-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 22px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.2);
+  background: rgba(212, 175, 55, 0.05);
+  border-top-left-radius: 22px;
+  border-top-right-radius: 22px;
+}
+
+.modal-header-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-sparkle-icon {
+  color: #ffd54f;
+  filter: drop-shadow(0 0 6px rgba(255, 213, 79, 0.6));
+}
+
+.modal-header-title h2 {
+  font-size: 1.22rem;
+  font-weight: 700;
+  margin: 0;
+  background: linear-gradient(135deg, #ffffff 30%, #ffd54f 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: 0.3px;
+  line-height: 1.35;
+}
+
+.share-modal-close-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #cbd5e1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.share-modal-close-btn:hover {
+  background: rgba(239, 68, 68, 0.2);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #fca5a5;
+  transform: rotate(90deg);
+}
+
+/* Modal Body */
+.share-modal-body {
+  padding: 18px 22px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Theme Picker */
+.theme-picker-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.picker-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+.picker-label svg {
+  color: #ffd54f;
+}
+
+.theme-options-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.theme-option-pill {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: rgba(18, 32, 64, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 12px;
+  color: #cbd5e1;
+  font-size: 0.84rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.theme-color-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--grad-sample, #0d3c7c);
+  border: 1.5px solid var(--border-gold, #d4af37);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
+  flex-shrink: 0;
+}
+
+.theme-option-pill:hover {
+  background: rgba(30, 58, 110, 0.7);
+  border-color: rgba(212, 175, 55, 0.4);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.theme-option-pill.active {
+  background: linear-gradient(135deg, rgba(26, 54, 110, 0.85), rgba(15, 30, 65, 0.95));
+  border-color: var(--border-gold, #ffd54f);
+  color: #ffd54f;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3),
+              0 0 14px rgba(212, 175, 55, 0.25);
+}
+
+/* Card Preview Wrapper */
+.share-card-preview-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: radial-gradient(circle at center, rgba(15, 35, 75, 0.5) 0%, rgba(4, 9, 20, 0.8) 100%);
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 12px 28px -6px rgba(0, 0, 0, 0.6),
+              inset 0 0 20px rgba(0, 0, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.share-card-preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  transition: transform 0.25s ease;
+}
+
+.preview-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: #ffd54f;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+/* Actions Grid */
+.share-modal-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 12px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  border: none;
+  outline: none;
+}
+
+.action-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Action 1: Download Button (Royal Gold Gradient) */
+.action-btn.download-btn {
+  background: linear-gradient(135deg, #d4af37 0%, #b89020 100%);
+  color: #081329;
+  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.35);
+}
+
+.action-btn.download-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #f7d274 0%, #d4af37 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.5);
+}
+
+/* Action 2: WhatsApp Share Button (WhatsApp Green Glow) */
+.action-btn.whatsapp-btn {
+  background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.3);
+}
+
+.action-btn.whatsapp-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #34e077 0%, #159c8d 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.45);
+}
+
+/* Action 3: Copy Text Button (Deep Blue Glass) */
+.action-btn.copy-btn {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  color: #f1f5f9;
+}
+
+.action-btn.copy-btn:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(212, 175, 55, 0.5);
+  color: #ffd54f;
+  transform: translateY(-2px);
+}
+
+/* Responsive adjustments */
+@media (max-width: 540px) {
+  .share-modal-container {
+    max-height: 94vh;
+    border-radius: 18px;
+  }
+
+  .share-modal-header {
+    padding: 14px 18px;
+  }
+
+  .modal-header-title h2 {
+    font-size: 1.1rem;
+  }
+
+  .share-modal-body {
+    padding: 14px 16px 18px;
+    gap: 14px;
+  }
+
+  .theme-options-grid {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .theme-option-pill {
+    padding: 7px 10px;
+    justify-content: flex-start;
+  }
+
+  .share-modal-actions {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .action-btn {
+    padding: 10px 14px;
+    font-size: 0.9rem;
+  }
+}
+

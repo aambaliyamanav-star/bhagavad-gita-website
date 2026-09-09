@@ -1,4 +1,4 @@
-/* =========================================================
+﻿/* =========================================================
    BHAGAVAD GITA NAVBAR
    MODERN GLASSMORPHISM THEME
    LIGHT + DARK MODE
@@ -395,7 +395,9 @@ body {
 
   font-size: clamp(14px, 2vw, 20px);
   font-weight: 600;
-  line-height: 1.2;
+  line-height: 1.45;
+  padding-top: 4px;
+  padding-bottom: 2px;
 
   /* White on blue navbar */
   color: rgba(255, 255, 255, 0.85);
@@ -747,9 +749,11 @@ body {
   font-size: 20px;
   font-weight: 800;
 
-  line-height: 1.2;
+  line-height: 1.38;
+  padding-top: 3px;
 
   white-space: nowrap;
+  overflow: visible;
 }
 
 .side-menu-title span {
@@ -1048,16 +1052,18 @@ body {
   min-width: 0;
   display: flex;
   flex-direction: column;
+  overflow: visible;
 }
 
 .side-menu-text strong {
   color: #0d3d7c;
   font-size: 15px;
   font-weight: 700;
-  line-height: 1.25;
+  line-height: 1.45;
+  padding-top: 3px;
+  padding-bottom: 1px;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow: visible;
 }
 
 .side-menu-text small {
@@ -1873,7 +1879,9 @@ a:focus-visible {
 .side-menu-title h2 {
   font-size: 16px !important;
   margin: 0 !important;
-  line-height: 1.15 !important;
+  line-height: 1.35 !important;
+  padding-top: 2px !important;
+  overflow: visible !important;
 }
 
 .side-menu-title span {
@@ -1914,8 +1922,8 @@ a:focus-visible {
 
 /* Compact Items */
 .side-menu-item {
-  min-height: 42px !important;
-  height: 44px !important;
+  min-height: 44px !important;
+  height: auto !important;
   padding: 4px 10px !important;
   margin-bottom: 0 !important;
   border-radius: 11px !important;
@@ -1937,17 +1945,21 @@ a:focus-visible {
 .side-menu-text {
   gap: 0 !important;
   justify-content: center !important;
+  overflow: visible !important;
 }
 
 .side-menu-text strong {
   font-size: 13.5px !important;
-  line-height: 1.15 !important;
+  line-height: 1.38 !important;
+  padding-top: 2px !important;
+  padding-bottom: 1px !important;
+  overflow: visible !important;
 }
 
 .side-menu-text small {
   font-size: 9.5px !important;
   margin-top: 1px !important;
-  line-height: 1 !important;
+  line-height: 1.1 !important;
   opacity: 0.8 !important;
 }
 
@@ -1958,8 +1970,8 @@ a:focus-visible {
 
 /* Compact Theme Toggle */
 .side-menu-theme {
-  min-height: 42px !important;
-  height: 44px !important;
+  min-height: 44px !important;
+  height: auto !important;
   padding: 4px 10px !important;
   margin-bottom: 0 !important;
   border-radius: 11px !important;
@@ -2012,11 +2024,18 @@ a:focus-visible {
 @media (max-height: 650px) {
   .side-menu-item,
   .side-menu-theme {
-    min-height: 37px !important;
-    height: 37px !important;
-    padding: 2px 8px !important;
+    min-height: 38px !important;
+    height: auto !important;
+    padding: 3px 8px !important;
   }
   
+  .side-menu-text strong {
+    font-size: 13px !important;
+    line-height: 1.35 !important;
+    padding-top: 2px !important;
+    overflow: visible !important;
+  }
+
   .side-menu-text small {
     display: none !important;
   }

@@ -28,6 +28,7 @@ import QuizCategory from "./pages/QuizCategory.jsx";
 import History from "./pages/History.jsx";
 
 import QuizResult from "./pages/QuizResult";
+import LifeGuidance from "./pages/LifeGuidance.jsx";
 
 // =====================================================
 // PROTECTED ROUTE COMPONENT
@@ -134,6 +135,16 @@ function App() {
             <Route
               path="/chapters"
               element={<Chapters />}
+            />
+
+
+            {/* =================================================
+                LIFE GUIDANCE (PUBLIC)
+            ================================================= */}
+
+            <Route
+              path="/guidance"
+              element={<LifeGuidance />}
             />
 
 
