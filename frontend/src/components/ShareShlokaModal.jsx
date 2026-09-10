@@ -582,7 +582,7 @@ export default function ShareShlokaModal({
     drawDivider(footerDividerY, 440);
 
     // Sleek Website Link Pill (Professional & Prominent)
-    const siteUrl = "https://bhagavad-gita-website.onrender.com";
+    const siteUrl = "bhagavad-gita-website-rk1v.vercel.app";
     const pillText = `🔗 ${siteUrl}`;
     ctx.font = '600 16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
     const pillMetrics = ctx.measureText(pillText);
@@ -625,31 +625,10 @@ export default function ShareShlokaModal({
     const canvas = canvasRef.current;
     const ch = shlokaData.chapterNumber || 1;
     const shl = shlokaData.shlokNumber || 1;
-    const chName = shlokaData.chapterName ? ` (${cleanHtmlText(shlokaData.chapterName)})` : "";
-    const cleanSanskrit = cleanHtmlText(
-      shlokaData.sanskrit || shlokaData.sanskritExcerpt || ""
-    );
-    const cleanTranslation = cleanHtmlText(
-      shlokaData.translation || shlokaData.gujaratiSummary || shlokaData.meaning || ""
-    );
-    const messagePoints = extractMessagePoints(shlokaData.message);
-    const cleanSpeaker = cleanHtmlText(shlokaData.speaker || "");
 
-    const shareTitle = `શ્રીમદ્ભગવદ્ગીતા • અધ્યાય ${ch}${chName} • શ્લોક ${shl}`;
-    let shareText = `॥ श्रीमद्भगवद्गीता ॥\n\n📌 અધ્યાય ${ch}${chName} • શ્લોક ${shl}\n`;
-    if (cleanSpeaker) {
-      shareText += `🎙️ ${cleanSpeaker}\n\n`;
-    }
-    shareText += `🕉️ સંસ્કૃત શ્લોક:\n${cleanSanskrit}\n\n📖 ગુજરાતી અનુવાદ:\n${cleanTranslation}\n`;
-    if (messagePoints.length > 0) {
-      shareText += `\n✨ સંદેશ / સમજણ:\n`;
-      messagePoints.forEach((pt) => {
-        let prefix = "• ";
-        if (/^\d+[.)]/.test(pt) || /^•/.test(pt)) prefix = "";
-        shareText += `${prefix}${pt}\n\n`;
-      });
-    }
-    shareText += `\n👉 આ શ્લોક અને સમગ્ર ગીતા ઑનલાઇન વાંચવા અહીં ક્લિક કરો:\n🔗 https://bhagavad-gita-website.onrender.com/chapter/${ch}?shloka=${shl}\n\n🌐 મુખ્ય વેબસાઇટ: https://bhagavad-gita-website.onrender.com`;
+    const shareUrl = `https://bhagavad-gita-website-rk1v.vercel.app/chapter/${ch}?shloka=${shl}`;
+    const shareTitle = `શ્રીમદ્ભગવદ્ગીતા • અધ્યાય ${ch} • શ્લોક ${shl}`;
+    const shareText = shareUrl;
 
     if (canvas && navigator.canShare) {
       try {
@@ -684,32 +663,9 @@ export default function ShareShlokaModal({
   const handleCopyText = () => {
     const ch = shlokaData.chapterNumber || 1;
     const shl = shlokaData.shlokNumber || 1;
-    const chName = shlokaData.chapterName ? ` (${cleanHtmlText(shlokaData.chapterName)})` : "";
-    const cleanSanskrit = cleanHtmlText(
-      shlokaData.sanskrit || shlokaData.sanskritExcerpt || ""
-    );
-    const cleanTranslation = cleanHtmlText(
-      shlokaData.translation || shlokaData.gujaratiSummary || shlokaData.meaning || ""
-    );
-    const messagePoints = extractMessagePoints(shlokaData.message);
-    const cleanSpeaker = cleanHtmlText(shlokaData.speaker || "");
+    const shareUrl = `https://bhagavad-gita-website-rk1v.vercel.app/chapter/${ch}?shloka=${shl}`;
 
-    let shareText = `॥ श्रीमद्भगवद्गीता ॥\n\n📌 અધ્યાય ${ch}${chName} • શ્લોક ${shl}\n`;
-    if (cleanSpeaker) {
-      shareText += `🎙️ ${cleanSpeaker}\n\n`;
-    }
-    shareText += `🕉️ સંસ્કૃત શ્લોક:\n${cleanSanskrit}\n\n📖 ગુજરાતી અનુવાદ:\n${cleanTranslation}\n`;
-    if (messagePoints.length > 0) {
-      shareText += `\n✨ સંદેશ / સમજણ:\n`;
-      messagePoints.forEach((pt) => {
-        let prefix = "• ";
-        if (/^\d+[.)]/.test(pt) || /^•/.test(pt)) prefix = "";
-        shareText += `${prefix}${pt}\n\n`;
-      });
-    }
-    shareText += `\n👉 આ શ્લોક અને સમગ્ર ગીતા ઑનલાઇન વાંચવા અહીં ક્લિક કરો:\n🔗 https://bhagavad-gita-website.onrender.com/chapter/${ch}?shloka=${shl}\n\n🌐 મુખ્ય વેબસાઇટ: https://bhagavad-gita-website.onrender.com`;
-
-    navigator.clipboard.writeText(shareText);
+    navigator.clipboard.writeText(shareUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2200);
   };
@@ -775,7 +731,7 @@ export default function ShareShlokaModal({
           <div className="share-card-preview-wrapper">
             {previewUrl ? (
               <a
-                href={`https://bhagavad-gita-website.onrender.com/chapter/${shlokaData.chapterNumber || 1}?shloka=${shlokaData.shlokNumber || 1}`}
+                href={`https://bhagavad-gita-website-rk1v.vercel.app/chapter/${shlokaData.chapterNumber || 1}?shloka=${shlokaData.shlokNumber || 1}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="share-card-preview-link"
@@ -797,13 +753,13 @@ export default function ShareShlokaModal({
           {/* CLICKABLE LINK BAR */}
           <div className="share-preview-link-bar">
             <a
-              href={`https://bhagavad-gita-website.onrender.com/chapter/${shlokaData.chapterNumber || 1}?shloka=${shlokaData.shlokNumber || 1}`}
+              href={`https://bhagavad-gita-website-rk1v.vercel.app/chapter/${shlokaData.chapterNumber || 1}?shloka=${shlokaData.shlokNumber || 1}`}
               target="_blank"
               rel="noopener noreferrer"
               className="share-preview-clickable-link"
               title="વેબસાઇટ પર સીધા જવા અહીં ક્લિક કરો"
             >
-              <span>🔗 https://bhagavad-gita-website.onrender.com</span>
+              <span>🔗 bhagavad-gita-website-rk1v.vercel.app</span>
             </a>
           </div>
 
