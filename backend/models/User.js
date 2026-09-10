@@ -97,6 +97,53 @@ const userSchema = new mongoose.Schema(
         default: null,
       },
     },
+
+    // ===================================================
+    // READING TRACKER & GAMIFICATION
+    // ===================================================
+
+    readingProgress: {
+      readShlokas: [
+        {
+          chapterNumber: {
+            type: Number,
+            required: true,
+          },
+          shlokNumber: {
+            type: Number,
+            required: true,
+          },
+          readAt: {
+            type: Date,
+            default: Date.now,
+          },
+        },
+      ],
+      currentStreak: {
+        type: Number,
+        default: 0,
+      },
+      longestStreak: {
+        type: Number,
+        default: 0,
+      },
+      lastReadDate: {
+        type: String,
+        default: null,
+      },
+      unlockedBadges: [
+        {
+          badgeId: {
+            type: String,
+            required: true,
+          },
+          unlockedAt: {
+            type: Date,
+            default: Date.now,
+          },
+        },
+      ],
+    },
   },
 
   // =====================================================

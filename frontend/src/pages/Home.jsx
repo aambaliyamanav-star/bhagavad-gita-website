@@ -7,16 +7,18 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import { 
   BookOpen, 
-  BrainCircuit, 
   Search, 
   Loader2, 
   AlertCircle, 
   TriangleAlert, 
   Sparkles,
-  Share2
+  Share2,
+  Trophy,
+  Flame,
 } from "lucide-react";
 import "./Home.css";
 import ShareShlokaModal from "../components/ShareShlokaModal.jsx";
+import { getLocalProgress } from "../utils/readingTracker.js";
 
 function Home() {
   const navigate = useNavigate();
@@ -51,6 +53,27 @@ function Home() {
 
   const [continueReadingLoading, setContinueReadingLoading] =
     useState(false);
+
+  // =====================================================
+  // READING TRACKER STATS (STREAK & BADGES)
+  // =====================================================
+
+  const [readingStats, setReadingStats] = useState({
+    readCount: 0,
+    currentStreak: 0,
+    badgesCount: 0,
+  });
+
+  useEffect(() => {
+    try {
+      const p = getLocalProgress();
+      setReadingStats({
+        readCount: (p.readShlokas || []).length,
+        currentStreak: p.currentStreak || 0,
+        badgesCount: (p.unlockedBadges || []).length,
+      });
+    } catch (e) {}
+  }, []);
 
   // =====================================================
   // TODAY'S SHLOK STATE
@@ -884,12 +907,19 @@ useEffect(() => {
             </button>
           )}
 
+
           <button
             type="button"
-            className="quiz-home-button quiz-button"
-            onClick={handleQuiz}
+            className="quiz-home-button quiz-button tracker-hero-btn"
+            onClick={() => navigate("/reading-tracker")}
+            title="ગીતા વાંચન પ્રગતિ અને બેજ જુઓ"
           >
-            <BrainCircuit className="btn-icon" size={20} /> Quiz રમો
+            <Trophy className="btn-icon tracker-trophy-blue" size={20} /> વાંચન પ્રગતિ
+            {readingStats.currentStreak > 0 && (
+              <span className="hero-streak-chip">
+                <Flame size={14} className="streak-chip-flame" /> {readingStats.currentStreak}d
+              </span>
+            )}
           </button>
         </div>
 

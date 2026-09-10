@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Loader2, AlertCircle, RefreshCw, ArrowLeft, BookOpen, ChevronRight, ClipboardList, CheckCircle2, XCircle, SkipForward, Clock, PlayCircle } from "lucide-react";
+import { Loader2, AlertCircle, RefreshCw, ArrowLeft, BookOpen, ChevronRight, ClipboardList, CheckCircle2, XCircle, SkipForward, Clock, PlayCircle, Award } from "lucide-react";
 import "./QuizResult.css";
 
 const API_URL = "https://bhagavad-gita-website.onrender.com/api/quiz";
@@ -498,7 +498,17 @@ function QuizResult() {
           <ArrowLeft size={15} className="btn-icon" /> Quiz પર પાછા જાઓ
         </button>
 
-        
+        <button
+          type="button"
+          className="quiz-result-achievements-btn"
+          onClick={() =>
+            navigate("/quiz-achievements")
+          }
+        >
+          <Award size={16} className="btn-icon" />
+          <span>ક્વિઝ સિદ્ધિઓ જુઓ</span>
+        </button>
+
       </div>
 
 

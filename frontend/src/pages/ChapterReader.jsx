@@ -10,6 +10,7 @@ import {
 } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext.jsx";
+import { trackShlokaRead } from "../utils/readingTracker.js";
 
 function ChapterReader() {
   const { chapterNumber } = useParams();
@@ -575,6 +576,128 @@ const response = await fetch(
     user,
     currentChapterNumber,
   ]);
+
+  // =====================================================
+  // TIMED READING TRACKER (30-SECOND MINIMUM READ)
+  // A shloka is only counted as "read" after the user
+  // has stayed on it for at least 30 seconds.
+  // =====================================================
+
+  const READ_TIME_MS = 30_000; // 30 seconds
+
+  // Tracks which (chapter, shloka) pairs have already
+  // been counted so we never double-count in a session.
+  const trackedInSessionRef = useRef(new Set());
+
+  // Progress of the current timer (0–100) for the UI bar
+  const [readTimerProgress, setReadTimerProgress] = useState(0);
+  const [readTimerActive, setReadTimerActive] = useState(false);
+
+  useEffect(() => {
+    if (shlokas.length === 0) return;
+
+    const current = shlokas[currentShloka];
+    if (!current || !current.shlokNumber) return;
+
+    const sessionKey = `${currentChapterNumber}-${current.shlokNumber}`;
+    const alreadyTracked = trackedInSessionRef.current.has(sessionKey);
+
+    // Reset bar for every shloka change
+    setReadTimerProgress(0);
+
+    // If already counted this session, show bar as 100% done (no re-fire)
+    if (alreadyTracked) {
+      setReadTimerActive(false);
+      setReadTimerProgress(100);
+      return;
+    }
+
+    // --- Start the 30-second window ---
+    setReadTimerActive(true);
+
+    const startTime = Date.now();
+    let rafId;
+    let mainTimerId;
+
+    // Animate progress bar smoothly via requestAnimationFrame
+    const tick = () => {
+      const elapsed = Date.now() - startTime;
+      const pct = Math.min(100, Math.round((elapsed / READ_TIME_MS) * 100));
+      setReadTimerProgress(pct);
+      if (pct < 100) {
+        rafId = requestAnimationFrame(tick);
+      }
+    };
+    rafId = requestAnimationFrame(tick);
+
+    // Main timer: fires after 30s to record the read
+    mainTimerId = setTimeout(() => {
+      // Only track if page is visible (user didn't tab away the whole time)
+      if (document.visibilityState === "visible") {
+        const token = localStorage.getItem("token");
+        trackShlokaRead(currentChapterNumber, current.shlokNumber, token);
+        trackedInSessionRef.current.add(sessionKey);
+      }
+      setReadTimerActive(false);
+      setReadTimerProgress(100);
+    }, READ_TIME_MS);
+
+    // Pause timer when tab is hidden; resume when visible again
+    let pausedAt = null;
+    let remainingMs = READ_TIME_MS;
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        // Tab hidden → pause
+        pausedAt = Date.now();
+        clearTimeout(mainTimerId);
+        cancelAnimationFrame(rafId);
+      } else {
+        // Tab visible again → resume with remaining time
+        if (pausedAt !== null) {
+          const pausedDuration = Date.now() - pausedAt;
+          // subtract how much elapsed before pause
+          const elapsedBeforePause = pausedAt - startTime;
+          remainingMs = READ_TIME_MS - elapsedBeforePause;
+          pausedAt = null;
+
+          // re-animate from current position
+          const resumeStart = Date.now();
+          const resumeFrom = Math.min(100, Math.round((elapsedBeforePause / READ_TIME_MS) * 100));
+
+          const resumeTick = () => {
+            const el = resumeFrom + Math.round(((Date.now() - resumeStart) / remainingMs) * (100 - resumeFrom));
+            setReadTimerProgress(Math.min(el, 100));
+            if (el < 100) rafId = requestAnimationFrame(resumeTick);
+          };
+          rafId = requestAnimationFrame(resumeTick);
+
+          mainTimerId = setTimeout(() => {
+            const token = localStorage.getItem("token");
+            trackShlokaRead(currentChapterNumber, current.shlokNumber, token);
+            trackedInSessionRef.current.add(sessionKey);
+            setReadTimerActive(false);
+            setReadTimerProgress(100);
+          }, Math.max(0, remainingMs));
+        }
+      }
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    // Cleanup: user moved away before 30s → cancel
+    return () => {
+      clearTimeout(mainTimerId);
+      cancelAnimationFrame(rafId);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      setReadTimerActive(false);
+    };
+  }, [
+    currentShloka,
+    shlokas,
+    currentChapterNumber,
+  ]);
+
 
   // =====================================================
   // CHECK FAVOURITE
@@ -1410,8 +1533,26 @@ const prepareSanskritLines = () => {
           </div>
 
           {/* =================================================
-              TOP ACTIONS: SHARE CARD & FAVOURITE BUTTON
+              READING TIMER INDICATOR
+              Shows progress toward 30-second minimum read.
+              Disappears once the shloka is fully counted.
           ================================================= */}
+
+          <div className={`read-timer-bar-wrap ${readTimerProgress >= 100 ? "timer-done" : readTimerActive ? "timer-active" : ""}`}>
+            <div className="read-timer-track">
+              <div
+                className="read-timer-fill"
+                style={{ width: `${readTimerProgress}%` }}
+              />
+            </div>
+            <span className="read-timer-label">
+              {readTimerProgress >= 100
+                ? "✓ વાંચ્યું"
+                : `${Math.round((readTimerProgress / 100) * 30)}s / 30s`}
+            </span>
+          </div>
+
+          {/* TOP ACTIONS: SHARE CARD & FAVOURITE BUTTON */}
 
           <div className="shloka-top-actions">
             <button

@@ -3337,3 +3337,79 @@ button:focus-visible {
 
   outline-offset: 3px;
 }
+
+
+/* =========================================================
+   READING TIMER BAR
+   Shown below the shloka-number badge.
+   Fills over 30 seconds; disappears when complete.
+   ========================================================= */
+
+.read-timer-bar-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 6px 0 10px;
+  opacity: 1;
+  transition: opacity 0.4s ease;
+}
+
+/* Hide bar completely once done (after 0.4s fade) */
+.read-timer-bar-wrap.timer-done {
+  /* Keep "✓ વાંચ્યું" briefly visible then fade */
+  opacity: 0.6;
+  animation: timer-fade-out 1.8s ease 0.4s forwards;
+}
+
+@keyframes timer-fade-out {
+  0%   { opacity: 0.6; }
+  60%  { opacity: 0.4; }
+  100% { opacity: 0; pointer-events: none; height: 0; margin: 0; overflow: hidden; }
+}
+
+.read-timer-track {
+  flex: 1;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--reader-progress-bg, rgba(0,0,0,0.08));
+  overflow: hidden;
+}
+
+[data-theme="dark"] .read-timer-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.read-timer-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #2563eb, #06b6d4);
+  transition: width 0.3s linear;
+  will-change: width;
+}
+
+/* When done, turn green */
+.read-timer-bar-wrap.timer-done .read-timer-fill {
+  background: linear-gradient(90deg, #059669, #10b981);
+}
+
+.read-timer-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--reader-muted, #64748b);
+  white-space: nowrap;
+  letter-spacing: 0.3px;
+  min-width: 56px;
+  text-align: right;
+}
+
+.read-timer-bar-wrap.timer-done .read-timer-label {
+  color: #059669;
+}
+
+[data-theme="dark"] .read-timer-label {
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .read-timer-bar-wrap.timer-done .read-timer-label {
+  color: #10b981;
+}

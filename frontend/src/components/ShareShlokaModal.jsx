@@ -16,45 +16,79 @@ const THEMES = [
     id: "royal-blue",
     name: "રોયલ બ્લુ",
     englishName: "Royal Blue",
-    primaryGrad: ["#071936", "#0d3c7c", "#092247"],
-    borderGold: "#d4af37",
-    innerBorder: "rgba(212, 175, 55, 0.40)",
-    headerColor: "#f7d274",
+    primaryGrad: ["#103264", "#1b52a4", "#0c244d"],
+    borderGold: "#f5c542",
+    innerBorder: "rgba(245, 197, 66, 0.45)",
+    headerColor: "#ffe484",
     sanskritColor: "#ffffff",
-    sanskritAccent: "#ffe699",
-    translationColor: "#e6f0ff",
-    footerColor: "#a3c8f7",
-    glowColor: "rgba(21, 101, 192, 0.45)"
+    sanskritAccent: "#ffd54f",
+    sanskritBoxBg: "rgba(255, 255, 255, 0.07)",
+    sanskritBoxBorder: "rgba(245, 197, 66, 0.35)",
+    translationColor: "#f0f5ff",
+    footerColor: "#9bc5fa",
+    glowColor: "rgba(37, 99, 235, 0.55)",
+    sampleColor: "#1b52a4"
   },
   {
     id: "saffron-gold",
     name: "દિવ્ય ભગવો",
     englishName: "Divine Saffron",
-    primaryGrad: ["#2d1104", "#702b00", "#381604"],
-    borderGold: "#ffb74d",
-    innerBorder: "rgba(255, 183, 77, 0.40)",
-    headerColor: "#ffe082",
+    primaryGrad: ["#9e3400", "#cb4903", "#7e2800"],
+    borderGold: "#ffd54f",
+    innerBorder: "rgba(255, 213, 79, 0.5)",
+    headerColor: "#fff0a6",
     sanskritColor: "#ffffff",
-    sanskritAccent: "#ffd54f",
-    translationColor: "#fff3e0",
+    sanskritAccent: "#ffe082",
+    sanskritBoxBg: "rgba(255, 255, 255, 0.08)",
+    sanskritBoxBorder: "rgba(255, 213, 79, 0.4)",
+    translationColor: "#fff9f0",
     footerColor: "#ffcc80",
-    glowColor: "rgba(230, 81, 0, 0.45)"
+    glowColor: "rgba(249, 115, 22, 0.6)",
+    sampleColor: "#cb4903"
   },
   {
-    id: "midnight-dark",
-    name: "મિડનાઇટ ગોલ્ડ",
-    englishName: "Midnight Gold",
-    primaryGrad: ["#090d14", "#121a29", "#090d14"],
-    borderGold: "#e0b06b",
-    innerBorder: "rgba(224, 176, 107, 0.35)",
-    headerColor: "#eed1a1",
+    id: "vedic-maroon",
+    name: "વેદિક મરૂન",
+    englishName: "Vedic Maroon",
+    primaryGrad: ["#6b1120", "#911a2d", "#520915"],
+    borderGold: "#f7d070",
+    innerBorder: "rgba(247, 208, 112, 0.45)",
+    headerColor: "#ffeaa7",
     sanskritColor: "#ffffff",
-    sanskritAccent: "#f3deba",
-    translationColor: "#eceff4",
-    footerColor: "#a2b4cd",
-    glowColor: "rgba(100, 150, 240, 0.25)"
+    sanskritAccent: "#ffd369",
+    sanskritBoxBg: "rgba(255, 255, 255, 0.07)",
+    sanskritBoxBorder: "rgba(247, 208, 112, 0.35)",
+    translationColor: "#fff0f3",
+    footerColor: "#f8b4be",
+    glowColor: "rgba(225, 29, 72, 0.5)",
+    sampleColor: "#911a2d"
   }
 ];
+
+function drawRoundRect(ctx, x, y, w, h, radius, fillStyle, strokeStyle, lineWidth = 1) {
+  ctx.save();
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.lineTo(x + w - radius, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + radius);
+  ctx.lineTo(x + w, y + h - radius);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - radius, y + h);
+  ctx.lineTo(x + radius, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - radius);
+  ctx.lineTo(x, y + radius);
+  ctx.quadraticCurveTo(x, y, x + radius, y);
+  ctx.closePath();
+  if (fillStyle) {
+    ctx.fillStyle = fillStyle;
+    ctx.fill();
+  }
+  if (strokeStyle) {
+    ctx.strokeStyle = strokeStyle;
+    ctx.lineWidth = lineWidth;
+    ctx.stroke();
+  }
+  ctx.restore();
+}
 
 function cleanHtmlText(htmlString) {
   if (!htmlString) return "";
@@ -206,144 +240,16 @@ export default function ShareShlokaModal({
     setIsGenerating(true);
     const ctx = canvas.getContext("2d");
     const width = 1080;
-    const height = 1080;
-    canvas.width = width;
-    canvas.height = height;
 
-    // 1. Background Gradient
-    const bgGrad = ctx.createRadialGradient(
-      width / 2,
-      height / 2,
-      100,
-      width / 2,
-      height / 2,
-      width * 0.72
-    );
-    bgGrad.addColorStop(0, currentTheme.primaryGrad[1]);
-    bgGrad.addColorStop(0.7, currentTheme.primaryGrad[0]);
-    bgGrad.addColorStop(1, currentTheme.primaryGrad[2]);
-    ctx.fillStyle = bgGrad;
-    ctx.fillRect(0, 0, width, height);
-
-    // Subtle corner glows
-    const cornerGlow = ctx.createRadialGradient(
-      width / 2,
-      110,
-      20,
-      width / 2,
-      110,
-      380
-    );
-    cornerGlow.addColorStop(0, currentTheme.glowColor);
-    cornerGlow.addColorStop(1, "transparent");
-    ctx.fillStyle = cornerGlow;
-    ctx.fillRect(0, 0, width, height);
-
-    // 2. Ornamental Borders
-    const margin = 40;
-    const innerMargin = 54;
-
-    // Outer border
-    ctx.strokeStyle = currentTheme.borderGold;
-    ctx.lineWidth = 4;
-    ctx.strokeRect(
-      margin,
-      margin,
-      width - margin * 2,
-      height - margin * 2
-    );
-
-    // Inner hairline border
-    ctx.strokeStyle = currentTheme.innerBorder;
-    ctx.lineWidth = 1.5;
-    ctx.strokeRect(
-      innerMargin,
-      innerMargin,
-      width - innerMargin * 2,
-      height - innerMargin * 2
-    );
-
-    // Corner Ornaments
-    const cornerSize = 20;
-    const drawCornerOrnament = (cx, cy) => {
-      ctx.fillStyle = currentTheme.borderGold;
-      ctx.beginPath();
-      ctx.arc(cx, cy, 5, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.strokeStyle = currentTheme.borderGold;
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(cx - cornerSize, cy);
-      ctx.lineTo(cx + cornerSize, cy);
-      ctx.moveTo(cx, cy - cornerSize);
-      ctx.lineTo(cx, cy + cornerSize);
-      ctx.stroke();
-    };
-
-    drawCornerOrnament(innerMargin, innerMargin);
-    drawCornerOrnament(width - innerMargin, innerMargin);
-    drawCornerOrnament(innerMargin, height - innerMargin);
-    drawCornerOrnament(width - innerMargin, height - innerMargin);
-
-    // 3. Sacred Top Emblem
-    // 3. Sacred Top Emblem (Heading Line 1)
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-
-    ctx.font = 'bold 36px "Noto Sans Devanagari", "Noto Sans Gujarati", serif';
-    ctx.fillStyle = currentTheme.headerColor;
-    ctx.fillText("॥ શ્રીમદ્ભગવદ્ગીતા ॥", width / 2, 88);
-
-    // Chapter & Shlok Banner (Heading Line 2)
+    // 1. Prepare Text & Measurements
     const chNum = shlokaData.chapterNumber || 1;
-    const chName = shlokaData.chapterName ? ` • ${cleanHtmlText(shlokaData.chapterName)}` : "";
+    const chName = shlokaData.chapterName ? cleanHtmlText(shlokaData.chapterName) : "";
     const shlokNum = shlokaData.shlokNumber || 1;
-
-    ctx.font = '600 22px "Noto Sans Gujarati", sans-serif';
-    ctx.fillStyle = currentTheme.footerColor;
-    ctx.fillText(
-      `અધ્યાય ${chNum}${chName} • શ્લોક ${shlokNum}`,
-      width / 2,
-      130
-    );
-
-    // Divider helper
-    const drawDivider = (yPos, widthSpan = 400) => {
-      ctx.strokeStyle = currentTheme.innerBorder;
-      ctx.lineWidth = 1.2;
-      ctx.beginPath();
-      ctx.moveTo(width / 2 - widthSpan / 2, yPos);
-      ctx.lineTo(width / 2 + widthSpan / 2, yPos);
-      ctx.stroke();
-
-      ctx.fillStyle = currentTheme.borderGold;
-      ctx.beginPath();
-      ctx.arc(width / 2, yPos, 4, 0, Math.PI * 2);
-      ctx.fill();
-    };
-
-    // Divider directly below the 2-line heading
-    drawDivider(166, 440);
-
-    // GENEROUS SPACE BELOW THE 2-LINE HEADING BEFORE CONTENT STARTS
-    let currentY = 222;
-
     const cleanSpeaker = cleanHtmlText(shlokaData.speaker || "");
 
-    // Speaker (e.g. ~ ધૃતરાષ્ટ્ર ઉવાચ ~) starts the recitation content
-    if (cleanSpeaker) {
-      ctx.font = 'italic 700 22px "Noto Sans Devanagari", "Noto Sans Gujarati", sans-serif';
-      ctx.fillStyle = currentTheme.sanskritAccent;
-      ctx.fillText(`~ ${cleanSpeaker} ~`, width / 2, currentY);
-      currentY += 42;
-    }
-
-    // 4. Sanskrit Shloka (Pure, clean Sanskrit lines)
     const cleanSanskrit = cleanHtmlText(
       shlokaData.sanskrit || shlokaData.sanskritExcerpt || ""
     );
-
     let rawSanskritLines = cleanSanskrit
       .split("\n")
       .map((l) => l.trim())
@@ -362,105 +268,325 @@ export default function ShareShlokaModal({
       }
     }
 
-    const maxTextWidth = width - 160;
+    // Measure Sanskrit
+    const sanskritBoxW = width - 150; // 930px
+    const sanskritMaxW = sanskritBoxW - 60; // 870px
     ctx.font = 'bold 26px "Noto Sans Devanagari", "Noto Sans Gujarati", serif';
-    ctx.fillStyle = currentTheme.sanskritColor;
 
     const wrappedSanskrit = [];
     if (rawSanskritLines.length > 0) {
       rawSanskritLines.forEach((line) => {
-        wrappedSanskrit.push(...wrapText(ctx, line, maxTextWidth));
+        wrappedSanskrit.push(...wrapText(ctx, line, sanskritMaxW));
       });
     } else {
-      wrappedSanskrit.push(...wrapText(ctx, cleanSanskrit, maxTextWidth));
+      wrappedSanskrit.push(...wrapText(ctx, cleanSanskrit, sanskritMaxW));
     }
+    const sanskritToDisplay = wrappedSanskrit.slice(0, 4);
 
-    const sanskritToDisplay = wrappedSanskrit.slice(0, 3);
-    sanskritToDisplay.forEach((line) => {
-      ctx.fillText(line, width / 2, currentY);
-      currentY += 38;
-    });
-
-    // Divider after Sanskrit
-    currentY += 10;
-    drawDivider(currentY);
-    currentY += 30;
-
-    // 5. Gujarati Translation / Meaning Section
+    // Measure Translation
     const cleanTranslation = cleanHtmlText(
       shlokaData.translation ||
       shlokaData.gujaratiSummary ||
       shlokaData.meaning ||
       ""
     );
-
     const messagePoints = extractMessagePoints(shlokaData.message);
     const hasMessage = messagePoints.length > 0;
 
-    ctx.font = 'bold 20px "Noto Sans Gujarati", sans-serif';
-    ctx.fillStyle = currentTheme.headerColor;
-    ctx.fillText("• ગુજરાતી અનુવાદ •", width / 2, currentY);
-    currentY += 32;
-
-    ctx.font = '500 21px "Noto Sans Gujarati", sans-serif';
-    ctx.fillStyle = currentTheme.translationColor;
-
-    const wrappedTranslation = wrapText(ctx, cleanTranslation, maxTextWidth);
-    const maxTransLines = hasMessage ? 3 : 7;
+    const mainTextMaxW = width - 170; // 910px
+    ctx.font = '500 22px "Noto Sans Gujarati", sans-serif';
+    const wrappedTranslation = wrapText(ctx, cleanTranslation, mainTextMaxW);
+    const maxTransLines = hasMessage ? 4 : 8;
     const translationToDisplay = wrappedTranslation.slice(0, maxTransLines);
 
-    translationToDisplay.forEach((line) => {
-      ctx.fillText(line, width / 2, currentY);
-      currentY += 32;
-    });
-
-    // 6. Divine Message / Understanding Section (સંદેશ / સમજણ)
+    // Measure Message Points
+    ctx.font = '400 20px "Noto Sans Gujarati", sans-serif';
+    const wrappedMessagePoints = [];
     if (hasMessage) {
-      currentY += 8;
-      drawDivider(currentY);
-      currentY += 28;
-
-      ctx.font = 'bold 20px "Noto Sans Gujarati", sans-serif';
-      ctx.fillStyle = currentTheme.sanskritAccent;
-      ctx.fillText("✨ સંદેશ / સમજણ ✨", width / 2, currentY);
-      currentY += 34;
-
-      ctx.font = '400 19px "Noto Sans Gujarati", sans-serif';
-      ctx.fillStyle = currentTheme.translationColor;
-
-      messagePoints.forEach((point, pIdx) => {
-        let prefix = "• ";
-        if (/^\d+[.)]/.test(point) || /^•/.test(point)) {
+      messagePoints.slice(0, 3).forEach((point) => {
+        let prefix = "✦ ";
+        if (/^\d+[.)]/.test(point) || /^•/.test(point) || /^✦/.test(point)) {
           prefix = "";
         }
         const pointText = `${prefix}${point}`;
-        const wrappedPt = wrapText(ctx, pointText, maxTextWidth);
-
-        const linesToDraw = wrappedPt.slice(0, 3);
-        linesToDraw.forEach((line) => {
-          if (currentY < 960) {
-            ctx.fillText(line, width / 2, currentY);
-            currentY += 29;
-          }
-        });
-
-        // Add clear spacing between point 1 and point 2!
-        if (pIdx < messagePoints.length - 1) {
-          currentY += 14;
+        const lines = wrapText(ctx, pointText, mainTextMaxW).slice(0, 3);
+        if (lines.length > 0) {
+          wrappedMessagePoints.push(lines);
         }
       });
     }
 
-    // 7. Footer Branding & Watermark
-    drawDivider(980, 420);
+    // 2. Pre-calculate Heights
+    const topMargin = 45;
+    const headerTitleH = 46;
+    const chapterBadgeH = 38;
+    const headerDividerH = 22;
+    const totalHeaderH = topMargin + headerTitleH + chapterBadgeH + headerDividerH; // ~151px
+
+    const speakerH = cleanSpeaker ? 44 : 0;
+
+    const sanskritLineH = 40;
+    const sanskritBoxInnerPad = 34;
+    const sanskritBoxH = sanskritBoxInnerPad + sanskritToDisplay.length * sanskritLineH;
+    const sanskritDividerH = 22;
+    const totalSanskritH = sanskritBoxH + sanskritDividerH;
+
+    const transTitleH = 32;
+    const transLineH = 34;
+    const transContentH = translationToDisplay.length * transLineH;
+    const transDividerH = hasMessage ? 22 : 0;
+    const totalTranslationH = transTitleH + transContentH + transDividerH;
+
+    let totalMessageH = 0;
+    const msgLineH = 30;
+    if (wrappedMessagePoints.length > 0) {
+      const msgTitleH = 34;
+      let totalMsgLines = 0;
+      wrappedMessagePoints.forEach((lines) => {
+        totalMsgLines += lines.length;
+      });
+      const pointsGaps = (wrappedMessagePoints.length - 1) * 12;
+      totalMessageH = msgTitleH + (totalMsgLines * msgLineH) + pointsGaps + 20;
+    }
+
+    const footerH = 125; // divider + "॥ ૐ તત્સત્ ॥" + website link + bottom margin
+    const baseContentH = totalHeaderH + speakerH + totalSanskritH + totalTranslationH + totalMessageH + footerH;
+
+    // Set proportional card height (min 820px, clean multiple of 20)
+    const cardHeight = Math.max(820, Math.ceil(baseContentH / 20) * 20);
+    canvas.width = width;
+    canvas.height = cardHeight;
+
+    // Distribute remaining slack evenly across sections
+    const slack = Math.max(0, cardHeight - baseContentH);
+    const numGaps = (hasMessage ? 4 : 3) + (cleanSpeaker ? 1 : 0);
+    const bonusGap = Math.floor(slack / numGaps);
+
+    // 3. Render Background & Frames
+    // Radial Gradient
+    const bgGrad = ctx.createRadialGradient(
+      width / 2,
+      cardHeight / 2,
+      60,
+      width / 2,
+      cardHeight / 2,
+      Math.max(width, cardHeight) * 0.75
+    );
+    bgGrad.addColorStop(0, currentTheme.primaryGrad[1]);
+    bgGrad.addColorStop(0.55, currentTheme.primaryGrad[0]);
+    bgGrad.addColorStop(1, currentTheme.primaryGrad[2]);
+    ctx.fillStyle = bgGrad;
+    ctx.fillRect(0, 0, width, cardHeight);
+
+    // Celestial Ambient Glow (Top Center)
+    const topGlow = ctx.createRadialGradient(
+      width / 2,
+      110,
+      10,
+      width / 2,
+      110,
+      width * 0.45
+    );
+    topGlow.addColorStop(0, currentTheme.glowColor);
+    topGlow.addColorStop(1, "transparent");
+    ctx.fillStyle = topGlow;
+    ctx.fillRect(0, 0, width, cardHeight);
+
+    // Ornamental Borders
+    const outerMargin = 38;
+    const innerMargin = 50;
+
+    // Outer gold border
+    ctx.strokeStyle = currentTheme.borderGold;
+    ctx.lineWidth = 3.5;
+    ctx.strokeRect(
+      outerMargin,
+      outerMargin,
+      width - outerMargin * 2,
+      cardHeight - outerMargin * 2
+    );
+
+    // Inner hairline gold border
+    ctx.strokeStyle = currentTheme.innerBorder;
+    ctx.lineWidth = 1.4;
+    ctx.strokeRect(
+      innerMargin,
+      innerMargin,
+      width - innerMargin * 2,
+      cardHeight - innerMargin * 2
+    );
+
+    // Corner Ornaments
+    const cornerSize = 22;
+    const drawCornerOrnament = (cx, cy) => {
+      ctx.fillStyle = currentTheme.borderGold;
+      ctx.beginPath();
+      ctx.arc(cx, cy, 4.5, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.strokeStyle = currentTheme.borderGold;
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.moveTo(cx - cornerSize, cy);
+      ctx.lineTo(cx + cornerSize, cy);
+      ctx.moveTo(cx, cy - cornerSize);
+      ctx.lineTo(cx, cy + cornerSize);
+      ctx.stroke();
+    };
+
+    drawCornerOrnament(innerMargin, innerMargin);
+    drawCornerOrnament(width - innerMargin, innerMargin);
+    drawCornerOrnament(innerMargin, cardHeight - innerMargin);
+    drawCornerOrnament(width - innerMargin, cardHeight - innerMargin);
+
+    // Ornamental Divider Helper
+    const drawDivider = (yPos, widthSpan = 420) => {
+      ctx.strokeStyle = currentTheme.innerBorder;
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(width / 2 - widthSpan / 2, yPos);
+      ctx.lineTo(width / 2 + widthSpan / 2, yPos);
+      ctx.stroke();
+
+      // Diamond ornament at center
+      ctx.fillStyle = currentTheme.borderGold;
+      ctx.beginPath();
+      ctx.moveTo(width / 2, yPos - 4.5);
+      ctx.lineTo(width / 2 + 5, yPos);
+      ctx.lineTo(width / 2, yPos + 4.5);
+      ctx.lineTo(width / 2 - 5, yPos);
+      ctx.closePath();
+      ctx.fill();
+    };
+
+    // 4. Render Sacred Header
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    let currY = topMargin + 38;
+
+    // Sacred Heading
+    ctx.font = 'bold 36px "Noto Sans Devanagari", "Noto Sans Gujarati", serif';
+    ctx.fillStyle = currentTheme.headerColor;
+    ctx.fillText("॥ શ્રીમદ્ભગવદ્ગીતા ॥", width / 2, currY);
+    currY += 40;
+
+    // Chapter & Shlok Badge Pill
+    const badgeText = chName
+      ? `અધ્યાય ${chNum} (${chName}) • શ્લોક ${shlokNum}`
+      : `અધ્યાય ${chNum} • શ્લોક ${shlokNum}`;
+    ctx.font = '600 20px "Noto Sans Gujarati", sans-serif';
+    const badgeMetrics = ctx.measureText(badgeText);
+    const badgeW = Math.min(width - 240, Math.max(260, badgeMetrics.width + 36));
+    const badgeH = 34;
+
+    drawRoundRect(
+      ctx,
+      width / 2 - badgeW / 2,
+      currY - badgeH / 2,
+      badgeW,
+      badgeH,
+      17,
+      "rgba(0, 0, 0, 0.28)",
+      currentTheme.innerBorder,
+      1.2
+    );
+
+    ctx.fillStyle = currentTheme.footerColor;
+    ctx.fillText(badgeText, width / 2, currY);
+    currY += 30;
+
+    // Header Divider
+    drawDivider(currY, 440);
+    currY += 16 + bonusGap;
+
+    // 5. Speaker (if present)
+    if (cleanSpeaker) {
+      ctx.font = 'italic 700 22px "Noto Sans Devanagari", "Noto Sans Gujarati", sans-serif';
+      ctx.fillStyle = currentTheme.sanskritAccent;
+      ctx.fillText(`~ ${cleanSpeaker} ~`, width / 2, currY + 12);
+      currY += speakerH + bonusGap;
+    }
+
+    // 6. Sanskrit Shloka Box (Luminous Sacred Frame)
+    const boxX = (width - sanskritBoxW) / 2;
+    const boxY = currY;
+
+    drawRoundRect(
+      ctx,
+      boxX,
+      boxY,
+      sanskritBoxW,
+      sanskritBoxH,
+      18,
+      currentTheme.sanskritBoxBg || "rgba(255, 255, 255, 0.07)",
+      currentTheme.sanskritBoxBorder || "rgba(245, 197, 66, 0.35)",
+      1.5
+    );
+
+    ctx.font = 'bold 26px "Noto Sans Devanagari", "Noto Sans Gujarati", serif';
+    ctx.fillStyle = currentTheme.sanskritColor;
+
+    let sLineY = boxY + 28;
+    sanskritToDisplay.forEach((line) => {
+      ctx.fillText(line, width / 2, sLineY);
+      sLineY += sanskritLineH;
+    });
+
+    currY = boxY + sanskritBoxH + 14;
+    drawDivider(currY, 400);
+    currY += 16 + bonusGap;
+
+    // 7. Gujarati Translation / Meaning Section
+    ctx.font = 'bold 20px "Noto Sans Gujarati", sans-serif';
+    ctx.fillStyle = currentTheme.headerColor;
+    ctx.fillText("• ગુજરાતી ભાવાર્થ •", width / 2, currY + 10);
+    currY += transTitleH;
+
+    ctx.font = '500 21px "Noto Sans Gujarati", sans-serif';
+    ctx.fillStyle = currentTheme.translationColor;
+
+    translationToDisplay.forEach((line) => {
+      ctx.fillText(line, width / 2, currY + 12);
+      currY += transLineH;
+    });
+
+    // 8. Divine Message / Understanding (if present)
+    if (hasMessage && wrappedMessagePoints.length > 0) {
+      currY += 8;
+      drawDivider(currY, 380);
+      currY += 16 + bonusGap;
+
+      ctx.font = 'bold 20px "Noto Sans Gujarati", sans-serif';
+      ctx.fillStyle = currentTheme.sanskritAccent;
+      ctx.fillText("✨ દિવ્ય સંદેશ / જીવન બોધ ✨", width / 2, currY + 10);
+      currY += 34;
+
+      ctx.font = '400 19px "Noto Sans Gujarati", sans-serif';
+      ctx.fillStyle = currentTheme.translationColor;
+
+      wrappedMessagePoints.forEach((lines, pIdx) => {
+        lines.forEach((line) => {
+          ctx.fillText(line, width / 2, currY + 10);
+          currY += msgLineH;
+        });
+        if (pIdx < wrappedMessagePoints.length - 1) {
+          currY += 12;
+        }
+      });
+    }
+
+    // 9. Footer Branding & Website Watermark (Firmly Anchored at Bottom)
+    const footerDividerY = cardHeight - innerMargin - 46;
+    drawDivider(footerDividerY, 420);
 
     ctx.font = '600 19px "Noto Sans Gujarati", sans-serif';
     ctx.fillStyle = currentTheme.footerColor;
-    ctx.fillText("॥ ૐ તત્સત્ ॥ • શ્રીમદ્ભગવદ્ગીતા", width / 2, 1012);
+    ctx.fillText("॥ ૐ તત્સત્ ॥ • શ્રીમદ્ભગવદ્ગીતા", width / 2, footerDividerY + 24);
 
     ctx.font = '500 15px sans-serif';
     ctx.fillStyle = currentTheme.innerBorder;
-    ctx.fillText("bhagavad-gita-website.onrender.com", width / 2, 1038);
+    ctx.fillText("bhagavad-gita-website.onrender.com", width / 2, footerDividerY + 46);
 
     // Generate preview data URL
     const dataUrl = canvas.toDataURL("image/png");

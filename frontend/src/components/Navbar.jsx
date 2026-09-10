@@ -108,6 +108,11 @@ function Navbar() {
       return "જીવન માર્ગદર્શન";
     }
 
+    // READING TRACKER
+    if (path === "/reading-tracker") {
+      return "વાંચન પ્રગતિ";
+    }
+
     // CHAPTER READER
     if (path.startsWith("/chapter/")) {
       const chapterNumber =
@@ -795,6 +800,7 @@ function Navbar() {
               <ChevronRight size={18} strokeWidth={2} />
             </span>
           </button>
+
 
 
           {/* =================================================

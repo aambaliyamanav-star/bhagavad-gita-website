@@ -133,14 +133,14 @@
   margin-top: -0.28em;
   margin-bottom: -0.12em;
   vertical-align: baseline;
-  background: linear-gradient(135deg, #e65100 0%, #ff9800 50%, #f57c00 100%);
+  background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 50%, #0284c7 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 [data-theme="dark"] .highlight-text {
-  background: linear-gradient(135deg, #ffb74d 0%, #ffe082 100%);
+  background: linear-gradient(135deg, #60a5fa 0%, #93c5fd 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -452,32 +452,32 @@
   color: #8dafc9;
 }
 
-/* SANSKRIT BLOCK */
+/* SANSKRIT BLOCK (ROYAL BLUE THEME) */
 
 .card-sanskrit-block {
-  background: #fdfaf3;
-  border-left: 3.5px solid #f57c00;
+  background: #f0f7ff;
+  border-left: 3.5px solid #2563eb;
   border-radius: 0 14px 14px 0;
   padding: 14px 16px;
   margin-bottom: 16px;
 }
 
 [data-theme="dark"] .card-sanskrit-block {
-  background: #17273d;
-  border-left-color: #ffb74d;
+  background: #13233a;
+  border-left-color: #60a5fa;
 }
 
 .sanskrit-text {
   font-size: 0.98rem;
   line-height: 1.55;
-  color: #c0392b;
+  color: #1e3a8a;
   font-style: italic;
   font-weight: 650;
   margin: 0;
 }
 
 [data-theme="dark"] .sanskrit-text {
-  color: #ffcc80;
+  color: #93c5fd;
 }
 
 /* MEANING BLOCK */

@@ -1,0 +1,688 @@
+/* =====================================================
+   QUIZ ACHIEVEMENTS & MULTIPLIER BADGES CSS
+   Pure Royal Blue Theme
+   Supports Light & Dark Modes
+   ===================================================== */
+
+.quiz-achievements-page {
+  min-height: 100vh;
+  padding: 35px 20px 60px;
+  box-sizing: border-box;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(173, 216, 255, 0.45), transparent 35%),
+    radial-gradient(circle at 85% 80%, rgba(200, 235, 255, 0.55), transparent 40%),
+    linear-gradient(135deg, #f4fbff 0%, #e5f5ff 45%, #d8efff 100%);
+  color: #183153;
+  transition: background 0.35s ease, color 0.35s ease;
+}
+
+[data-theme="dark"] .quiz-achievements-page,
+.dark .quiz-achievements-page {
+  background:
+    radial-gradient(circle at 15% 20%, rgba(30, 58, 138, 0.25), transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(29, 78, 216, 0.2), transparent 45%),
+    linear-gradient(135deg, #0b1528 0%, #0d1b33 45%, #081120 100%);
+  color: #e2e8f0;
+}
+
+.qa-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* =====================================================
+   HEADER & NAVIGATION
+   ===================================================== */
+
+.qa-header {
+  margin-bottom: 30px;
+}
+
+.qa-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(37, 99, 235, 0.2);
+  color: #1d4ed8;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08);
+  backdrop-filter: blur(12px);
+  transition: all 0.25s ease;
+  margin-bottom: 20px;
+}
+
+.qa-back-btn:hover {
+  background: #1d4ed8;
+  color: #ffffff;
+  transform: translateX(-4px);
+  box-shadow: 0 6px 16px rgba(29, 78, 216, 0.25);
+}
+
+[data-theme="dark"] .qa-back-btn,
+.dark .qa-back-btn {
+  background: rgba(15, 23, 42, 0.7);
+  border-color: rgba(96, 165, 250, 0.25);
+  color: #60a5fa;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] .qa-back-btn:hover,
+.dark .qa-back-btn:hover {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.qa-header-title-box {
+  text-align: center;
+  padding: 15px 10px;
+}
+
+.qa-sacred-subtitle {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #2563eb;
+  margin-bottom: 8px;
+}
+
+[data-theme="dark"] .qa-sacred-subtitle,
+.dark .qa-sacred-subtitle {
+  color: #93c5fd;
+}
+
+.qa-main-title {
+  font-size: 32px;
+  font-weight: 900;
+  color: #1e3a8a;
+  margin: 0 0 10px 0;
+  line-height: 1.3;
+}
+
+[data-theme="dark"] .qa-main-title,
+.dark .qa-main-title {
+  color: #bfdbfe;
+}
+
+.qa-subtitle {
+  font-size: 15px;
+  color: #475569;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+[data-theme="dark"] .qa-subtitle,
+.dark .qa-subtitle {
+  color: #94a3b8;
+}
+
+/* =====================================================
+   STATS RIBBON
+   ===================================================== */
+
+.qa-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-bottom: 30px;
+}
+
+.qa-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(191, 219, 254, 0.8);
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.08);
+  backdrop-filter: blur(16px);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.qa-stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 28px rgba(37, 99, 235, 0.15);
+}
+
+[data-theme="dark"] .qa-stat-card,
+.dark .qa-stat-card {
+  background: rgba(15, 23, 42, 0.65);
+  border-color: rgba(96, 165, 250, 0.2);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.qa-stat-icon-wrapper {
+  width: 50px;
+  height: 50px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 6px 14px rgba(37, 99, 235, 0.3);
+}
+
+.qa-stat-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.qa-stat-value {
+  font-size: 22px;
+  font-weight: 900;
+  color: #1e3a8a;
+  line-height: 1.2;
+}
+
+[data-theme="dark"] .qa-stat-value,
+.dark .qa-stat-value {
+  color: #bfdbfe;
+}
+
+.qa-stat-label {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 600;
+  margin-top: 3px;
+}
+
+[data-theme="dark"] .qa-stat-label,
+.dark .qa-stat-label {
+  color: #94a3b8;
+}
+
+/* =====================================================
+   TABS BAR
+   ===================================================== */
+
+.qa-tabs-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 28px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+}
+
+.qa-tab-btn {
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: 1px solid rgba(191, 219, 254, 0.8);
+  background: rgba(255, 255, 255, 0.7);
+  color: #334155;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.qa-tab-btn:hover {
+  background: rgba(219, 234, 254, 0.7);
+  color: #1d4ed8;
+}
+
+.qa-tab-btn.active {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  border-color: #1d4ed8;
+  color: #ffffff;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+}
+
+[data-theme="dark"] .qa-tab-btn,
+.dark .qa-tab-btn {
+  background: rgba(15, 23, 42, 0.6);
+  border-color: rgba(96, 165, 250, 0.2);
+  color: #cbd5e1;
+}
+
+[data-theme="dark"] .qa-tab-btn:hover,
+.dark .qa-tab-btn:hover {
+  background: rgba(30, 58, 138, 0.5);
+  color: #93c5fd;
+}
+
+[data-theme="dark"] .qa-tab-btn.active,
+.dark .qa-tab-btn.active {
+  background: linear-gradient(135deg, #2563eb, #1e40af);
+  border-color: #3b82f6;
+  color: #ffffff;
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.4);
+}
+
+/* =====================================================
+   STATES: LOADING & ERROR
+   ===================================================== */
+
+.qa-loading-state,
+.qa-error-state {
+  text-align: center;
+  padding: 60px 20px;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 20px;
+  border: 1px solid rgba(191, 219, 254, 0.8);
+  margin-top: 20px;
+}
+
+[data-theme="dark"] .qa-loading-state,
+.dark .qa-loading-state,
+[data-theme="dark"] .qa-error-state,
+.dark .qa-error-state {
+  background: rgba(15, 23, 42, 0.6);
+  border-color: rgba(96, 165, 250, 0.2);
+}
+
+.qa-spinner {
+  animation: spin 1s linear infinite;
+  color: #2563eb;
+  margin-bottom: 12px;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.qa-retry-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 15px;
+  padding: 10px 20px;
+  border-radius: 10px;
+  background: #2563eb;
+  color: #ffffff;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* =====================================================
+   BADGES GRID (COMPACT & 4 COLUMNS)
+   ===================================================== */
+
+.qa-badges-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+
+.qa-badge-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 220px;
+  border-radius: 14px;
+  padding: 13px 14px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1.5px solid rgba(191, 219, 254, 0.85);
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.06);
+  backdrop-filter: blur(14px);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.25s ease;
+}
+
+.qa-badge-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.14);
+  border-color: #3b82f6;
+}
+
+/* Unlocked Card Styling */
+.qa-badge-card.unlocked {
+  border-color: rgba(37, 99, 235, 0.45);
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.1);
+}
+
+.qa-badge-card.unlocked::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8, #0ea5e9);
+}
+
+/* Locked Card Styling */
+.qa-badge-card.locked {
+  background: rgba(248, 250, 252, 0.85);
+  border-color: rgba(203, 213, 225, 0.7);
+  opacity: 0.88;
+}
+
+[data-theme="dark"] .qa-badge-card,
+.dark .qa-badge-card {
+  background: rgba(15, 23, 42, 0.7);
+  border-color: rgba(96, 165, 250, 0.2);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="dark"] .qa-badge-card.locked,
+.dark .qa-badge-card.locked {
+  background: rgba(15, 23, 42, 0.45);
+  border-color: rgba(51, 65, 85, 0.6);
+  opacity: 0.75;
+}
+
+[data-theme="dark"] .qa-badge-card:hover,
+.dark .qa-badge-card:hover {
+  border-color: #60a5fa;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.45);
+}
+
+/* Card Top Row */
+.qa-badge-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.qa-badge-type-tag {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  padding: 2px 7px;
+  border-radius: 12px;
+  background: rgba(219, 234, 254, 0.8);
+  color: #1d4ed8;
+}
+
+[data-theme="dark"] .qa-badge-type-tag,
+.dark .qa-badge-type-tag {
+  background: rgba(30, 58, 138, 0.6);
+  color: #93c5fd;
+}
+
+/* Multiplier Counter Pill (e.g. ×3, ×5) */
+.qa-multiplier-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 900;
+  padding: 2px 8px;
+  border-radius: 12px;
+  letter-spacing: 0.3px;
+  transition: all 0.25s ease;
+}
+
+.qa-multiplier-pill.active {
+  background: linear-gradient(135deg, #1d4ed8, #2563eb);
+  color: #ffffff;
+  box-shadow: 0 3px 8px rgba(29, 78, 216, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.qa-multiplier-pill.inactive {
+  background: rgba(226, 232, 240, 0.8);
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .qa-multiplier-pill.inactive,
+.dark .qa-multiplier-pill.inactive {
+  background: rgba(30, 41, 59, 0.8);
+  color: #64748b;
+}
+
+/* Milestone Status Pill */
+.qa-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 12px;
+}
+
+.qa-status-pill.completed {
+  background: rgba(219, 234, 254, 0.9);
+  color: #1d4ed8;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.qa-status-pill.in-progress {
+  background: rgba(241, 245, 249, 0.85);
+  color: #64748b;
+}
+
+[data-theme="dark"] .qa-status-pill.completed,
+.dark .qa-status-pill.completed {
+  background: rgba(30, 58, 138, 0.6);
+  color: #93c5fd;
+  border-color: rgba(96, 165, 250, 0.3);
+}
+
+[data-theme="dark"] .qa-status-pill.in-progress,
+.dark .qa-status-pill.in-progress {
+  background: rgba(30, 41, 59, 0.7);
+  color: #94a3b8;
+}
+
+/* Icon Disc Holder */
+.qa-badge-icon-holder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 7px;
+}
+
+.qa-badge-icon-disc {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+  transition: transform 0.25s ease;
+}
+
+.qa-badge-card:hover .qa-badge-icon-disc {
+  transform: scale(1.08);
+}
+
+.qa-badge-card.locked .qa-badge-icon-disc {
+  background: #cbd5e1 !important;
+  color: #64748b;
+  box-shadow: none;
+}
+
+[data-theme="dark"] .qa-badge-card.locked .qa-badge-icon-disc,
+.dark .qa-badge-card.locked .qa-badge-icon-disc {
+  background: #1e293b !important;
+  color: #475569;
+}
+
+/* Badge Info Typography */
+.qa-badge-info {
+  text-align: center;
+  margin-bottom: 8px;
+  flex: 1;
+}
+
+.qa-badge-title {
+  font-size: 15px;
+  font-weight: 800;
+  color: #1e3a8a;
+  margin: 0 0 5px 0;
+  line-height: 1.25;
+}
+
+[data-theme="dark"] .qa-badge-title,
+.dark .qa-badge-title {
+  color: #e2e8f0;
+}
+
+.qa-badge-description {
+  font-size: 11.5px;
+  color: #475569;
+  line-height: 1.4;
+  margin: 0;
+}
+
+[data-theme="dark"] .qa-badge-description,
+.dark .qa-badge-description {
+  color: #94a3b8;
+}
+
+/* Footer Section: Multiplier & Milestone */
+.qa-badge-footer {
+  border-top: 1px solid rgba(219, 234, 254, 0.8);
+  padding-top: 8px;
+  margin-top: 4px;
+}
+
+[data-theme="dark"] .qa-badge-footer,
+.dark .qa-badge-footer {
+  border-top-color: rgba(51, 65, 85, 0.6);
+}
+
+/* Multiplier Footer */
+.qa-multiplier-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.qa-criteria-text {
+  font-size: 10.5px;
+  color: #64748b;
+  font-weight: 600;
+}
+
+[data-theme="dark"] .qa-criteria-text,
+.dark .qa-criteria-text {
+  color: #94a3b8;
+}
+
+.qa-count-summary {
+  font-size: 11.5px;
+  color: #1d4ed8;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+[data-theme="dark"] .qa-count-summary,
+.dark .qa-count-summary {
+  color: #60a5fa;
+}
+
+.qa-locked-text {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Milestone Footer */
+.qa-milestone-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.qa-progress-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.qa-progress-numbers {
+  font-size: 11px;
+  font-weight: 800;
+  color: #1d4ed8;
+}
+
+[data-theme="dark"] .qa-progress-numbers,
+.dark .qa-progress-numbers {
+  color: #60a5fa;
+}
+
+.qa-progress-track {
+  width: 100%;
+  height: 5px;
+  background: rgba(226, 232, 240, 0.8);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .qa-progress-track,
+.dark .qa-progress-track {
+  background: rgba(30, 41, 59, 0.8);
+}
+
+.qa-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+  border-radius: 8px;
+  transition: width 0.4s ease;
+}
+
+/* =====================================================
+   RESPONSIVE DESIGN
+   ===================================================== */
+
+@media (max-width: 1150px) {
+  .qa-badges-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 860px) {
+  .qa-badges-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .qa-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 580px) {
+  .quiz-achievements-page {
+    padding: 20px 14px 40px;
+  }
+
+  .qa-main-title {
+    font-size: 24px;
+  }
+
+  .qa-stats-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .qa-badges-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .qa-badge-card {
+    min-height: auto;
+  }
+}
+

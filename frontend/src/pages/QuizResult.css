@@ -240,6 +240,49 @@
     0 6px 13px rgba(0, 0, 0, 0.30);
 }
 
+.quiz-result-actions button.quiz-result-achievements-btn,
+.quiz-result-achievements-btn {
+  background: linear-gradient(145deg, #2563eb, #1d4ed8) !important;
+  border: 1px solid rgba(255, 255, 255, 0.45) !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  padding: 11px 22px !important;
+  border-radius: 12px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  cursor: pointer !important;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35) !important;
+  transition: all 0.25s ease !important;
+}
+
+.quiz-result-actions button.quiz-result-achievements-btn span,
+.quiz-result-achievements-btn span {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  display: inline-block !important;
+}
+
+.quiz-result-actions button.quiz-result-achievements-btn svg,
+.quiz-result-achievements-btn svg {
+  color: #ffffff !important;
+  stroke: #ffffff !important;
+  flex-shrink: 0 !important;
+}
+
+.quiz-result-actions button.quiz-result-achievements-btn:hover,
+.quiz-result-achievements-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 22px rgba(37, 99, 235, 0.45) !important;
+  background: linear-gradient(145deg, #1d4ed8, #1e40af) !important;
+  color: #ffffff !important;
+}
+
 
 /* =====================================================
    NEW QUIZ BUTTON
