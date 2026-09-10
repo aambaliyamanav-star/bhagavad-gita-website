@@ -1849,18 +1849,19 @@ a:focus-visible {
 
 /* =====================================================
    FLOATING ROUNDED MENU (વળાંક વાળું ચોરસ) - STYLES & ANIMATIONS
+   NO SCROLL - AUTO EXPANDS WHEN BUTTONS ARE ADDED
 ===================================================== */
 
-/* Floating container enforcement: only fits options, beautiful rounded card */
+/* Floating container: auto height, fits all options with NO scroll */
 .navbar-side-menu {
   position: fixed !important;
-  top: 74px !important;
-  right: 18px !important;
-  width: 320px !important;
+  top: 72px !important;
+  right: 16px !important;
+  width: 310px !important;
   max-width: calc(100vw - 24px) !important;
   height: auto !important;
-  max-height: calc(100dvh - 90px) !important;
-  border-radius: 24px !important;
+  max-height: none !important;
+  border-radius: 22px !important;
   display: flex !important;
   flex-direction: column !important;
   overflow: hidden !important;
@@ -1902,13 +1903,13 @@ a:focus-visible {
 
 /* Compact Header */
 .side-menu-header {
-  min-height: 50px !important;
-  max-height: 52px !important;
-  height: 50px !important;
-  padding: 8px 14px !important;
+  min-height: 46px !important;
+  max-height: 48px !important;
+  height: 46px !important;
+  padding: 6px 12px !important;
   flex: 0 0 auto !important;
-  border-top-left-radius: 24px !important;
-  border-top-right-radius: 24px !important;
+  border-top-left-radius: 22px !important;
+  border-top-right-radius: 22px !important;
   background: linear-gradient(
     135deg,
     rgba(14, 64, 142, 0.94) 0%,
@@ -1917,46 +1918,46 @@ a:focus-visible {
 }
 
 .side-menu-title {
-  gap: 10px !important;
+  gap: 9px !important;
 }
 
 .side-menu-logo {
-  width: 32px !important;
-  height: 32px !important;
-  flex: 0 0 32px !important;
-  border-radius: 9px !important;
+  width: 30px !important;
+  height: 30px !important;
+  flex: 0 0 30px !important;
+  border-radius: 8px !important;
 }
 
 .side-menu-logo svg {
-  width: 17px !important;
-  height: 17px !important;
+  width: 16px !important;
+  height: 16px !important;
 }
 
 .side-menu-title h2 {
-  font-size: 15px !important;
+  font-size: 14.5px !important;
   margin: 0 !important;
-  line-height: 1.35 !important;
+  line-height: 1.3 !important;
   padding-top: 1px !important;
   overflow: visible !important;
 }
 
 .side-menu-title span {
-  font-size: 10px !important;
+  font-size: 9.5px !important;
   margin-top: 1px !important;
-  max-width: 170px !important;
+  max-width: 160px !important;
 }
 
 .side-menu-close {
-  width: 28px !important;
-  height: 28px !important;
-  flex: 0 0 28px !important;
-  border-radius: 8px !important;
+  width: 26px !important;
+  height: 26px !important;
+  flex: 0 0 26px !important;
+  border-radius: 7px !important;
   transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1), background 0.18s ease !important;
 }
 
 .side-menu-close svg {
-  width: 15px !important;
-  height: 15px !important;
+  width: 14px !important;
+  height: 14px !important;
 }
 
 .side-menu-close:hover {
@@ -1964,39 +1965,37 @@ a:focus-visible {
   background: rgba(255, 255, 255, 0.25) !important;
 }
 
-/* Compact Scrollable Content */
+/* NO SCROLL Content: fits all options naturally and auto-expands */
 .side-menu-content {
-  flex: 1 1 auto !important;
-  padding: 8px 10px 10px !important;
+  flex: 0 0 auto !important;
+  height: auto !important;
+  max-height: none !important;
+  padding: 6px 8px 8px !important;
   display: flex !important;
   flex-direction: column !important;
   justify-content: flex-start !important;
-  gap: 4px !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  scrollbar-width: thin !important;
-  scrollbar-color: rgba(80, 150, 220, 0.3) transparent !important;
+  gap: 3px !important;
+  overflow: visible !important;
+  overflow-y: visible !important;
+  scrollbar-width: none !important;
 }
 
 .side-menu-content::-webkit-scrollbar {
-  width: 4px !important;
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
-.side-menu-content::-webkit-scrollbar-thumb {
-  background: rgba(80, 150, 220, 0.35) !important;
-  border-radius: 4px !important;
-}
-
-/* Sleek Menu Items */
+/* Sleek Menu Items - Compact & readable */
 .side-menu-item {
-  min-height: 42px !important;
+  min-height: 36px !important;
   height: auto !important;
-  padding: 5px 10px !important;
+  padding: 3px 8px !important;
   margin-bottom: 0 !important;
-  border-radius: 12px !important;
-  gap: 10px !important;
-  background: rgba(255, 255, 255, 0.60) !important;
-  border: 1px solid rgba(255, 255, 255, 0.80) !important;
+  border-radius: 10px !important;
+  gap: 8px !important;
+  background: rgba(255, 255, 255, 0.65) !important;
+  border: 1px solid rgba(255, 255, 255, 0.85) !important;
   transition:
     transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
     background 0.18s ease,
@@ -2025,10 +2024,10 @@ a:focus-visible {
 }
 
 .side-menu-icon {
-  width: 30px !important;
-  height: 30px !important;
-  flex: 0 0 30px !important;
-  border-radius: 8px !important;
+  width: 27px !important;
+  height: 27px !important;
+  flex: 0 0 27px !important;
+  border-radius: 7px !important;
   transition: transform 0.18s ease !important;
 }
 
@@ -2037,8 +2036,8 @@ a:focus-visible {
 }
 
 .side-menu-icon svg {
-  width: 16px !important;
-  height: 16px !important;
+  width: 15px !important;
+  height: 15px !important;
 }
 
 .side-menu-text {
@@ -2048,23 +2047,23 @@ a:focus-visible {
 }
 
 .side-menu-text strong {
-  font-size: 13.5px !important;
-  line-height: 1.38 !important;
+  font-size: 13px !important;
+  line-height: 1.32 !important;
   padding-top: 1px !important;
-  padding-bottom: 1px !important;
+  padding-bottom: 0 !important;
   overflow: visible !important;
 }
 
 .side-menu-text small {
-  font-size: 9px !important;
-  margin-top: 1px !important;
-  line-height: 1.1 !important;
+  font-size: 8.5px !important;
+  margin-top: 0 !important;
+  line-height: 1 !important;
   opacity: 0.8 !important;
 }
 
 .side-menu-arrow svg {
-  width: 14px !important;
-  height: 14px !important;
+  width: 13px !important;
+  height: 13px !important;
   transition: transform 0.18s ease !important;
 }
 
@@ -2074,13 +2073,13 @@ a:focus-visible {
 
 /* Compact Theme Toggle */
 .side-menu-theme {
-  min-height: 42px !important;
+  min-height: 36px !important;
   height: auto !important;
-  padding: 5px 10px !important;
+  padding: 3px 8px !important;
   margin-bottom: 0 !important;
-  border-radius: 12px !important;
-  background: rgba(255, 255, 255, 0.60) !important;
-  border: 1px solid rgba(255, 255, 255, 0.80) !important;
+  border-radius: 10px !important;
+  background: rgba(255, 255, 255, 0.65) !important;
+  border: 1px solid rgba(255, 255, 255, 0.85) !important;
   transition:
     transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
     background 0.18s ease,
@@ -2105,41 +2104,45 @@ a:focus-visible {
 }
 
 .theme-left {
-  gap: 10px !important;
+  gap: 8px !important;
 }
 
 .theme-icon {
-  width: 30px !important;
-  height: 30px !important;
-  flex: 0 0 30px !important;
-  border-radius: 8px !important;
+  width: 27px !important;
+  height: 27px !important;
+  flex: 0 0 27px !important;
+  border-radius: 7px !important;
 }
 
 .theme-icon svg {
-  width: 16px !important;
-  height: 16px !important;
-}
-
-.theme-switch {
-  width: 36px !important;
-  height: 20px !important;
-  padding: 2px !important;
-}
-
-.theme-switch-dot {
   width: 15px !important;
   height: 15px !important;
 }
 
+.theme-switch {
+  width: 34px !important;
+  height: 18px !important;
+  padding: 2px !important;
+}
+
+.theme-switch-dot {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+.theme-switch-dot.dark {
+  transform: translateX(16px) !important;
+}
+
 /* Compact Logout Button */
 .side-menu-logout {
-  min-height: 35px !important;
-  height: 36px !important;
-  padding: 4px 10px !important;
-  margin-top: 2px !important;
+  min-height: 32px !important;
+  height: 32px !important;
+  padding: 2px 8px !important;
+  margin-top: 1px !important;
   margin-bottom: 0 !important;
-  border-radius: 12px !important;
-  font-size: 12.5px !important;
+  border-radius: 10px !important;
+  font-size: 12px !important;
   transition: transform 0.18s ease, background 0.18s ease !important;
 }
 
@@ -2148,18 +2151,18 @@ a:focus-visible {
 }
 
 .logout-icon svg {
-  width: 15px !important;
-  height: 15px !important;
+  width: 14px !important;
+  height: 14px !important;
 }
 
 /* Compact Footer */
 .side-menu-footer {
-  min-height: 36px !important;
-  max-height: 38px !important;
-  height: 36px !important;
-  padding: 5px 12px !important;
-  border-bottom-left-radius: 24px !important;
-  border-bottom-right-radius: 24px !important;
+  min-height: 32px !important;
+  max-height: 34px !important;
+  height: 32px !important;
+  padding: 4px 10px !important;
+  border-bottom-left-radius: 22px !important;
+  border-bottom-right-radius: 22px !important;
   background: rgba(210, 235, 255, 0.65) !important;
 }
 
@@ -2168,30 +2171,34 @@ a:focus-visible {
 }
 
 .side-menu-footer span {
-  font-size: 15px !important;
+  font-size: 14px !important;
 }
 
 .side-menu-footer p {
-  font-size: 11px !important;
+  font-size: 10.5px !important;
 }
 
-/* Mobile Responsiveness */
+/* Mobile Responsiveness - No scroll, auto expands */
 @media (max-width: 600px) {
   .navbar-side-menu {
-    top: 68px !important;
+    top: 66px !important;
     right: 10px !important;
-    width: min(320px, calc(100vw - 20px)) !important;
+    width: min(310px, calc(100vw - 20px)) !important;
     max-width: calc(100vw - 20px) !important;
-    border-radius: 22px !important;
+    height: auto !important;
+    max-height: none !important;
+    border-radius: 20px !important;
   }
 }
 
 @media (max-width: 400px) {
   .navbar-side-menu {
-    top: 64px !important;
+    top: 62px !important;
     right: 8px !important;
     width: calc(100vw - 16px) !important;
     max-width: calc(100vw - 16px) !important;
-    border-radius: 20px !important;
+    height: auto !important;
+    max-height: none !important;
+    border-radius: 18px !important;
   }
 }
