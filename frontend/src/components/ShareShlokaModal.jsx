@@ -323,9 +323,9 @@ export default function ShareShlokaModal({
       const translationToDisplay = wrappedTranslation.slice(0, maxTransLines);
 
       // Measure Message Points (Slightly larger as requested, keeping comfortable space above website link)
-      let msgFontSize = 37;
-      let msgLineH = 65;
-      let msgPointGap = 26;
+      let msgFontSize = 39.5;
+      let msgLineH = 68;
+      let msgPointGap = 28;
       const msgTitleH = 58;
       ctx.font = `bold ${msgFontSize}px "Noto Sans Gujarati", sans-serif`;
       let wrappedMessagePoints = [];
