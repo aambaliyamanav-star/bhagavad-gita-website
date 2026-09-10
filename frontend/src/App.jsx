@@ -29,6 +29,8 @@ import History from "./pages/History.jsx";
 
 import QuizResult from "./pages/QuizResult";
 import LifeGuidance from "./pages/LifeGuidance.jsx";
+import ReadingTracker from "./pages/ReadingTracker.jsx";
+import QuizAchievements from "./pages/QuizAchievements.jsx";
 
 // =====================================================
 // PROTECTED ROUTE COMPONENT
@@ -145,6 +147,16 @@ function App() {
             <Route
               path="/guidance"
               element={<LifeGuidance />}
+            />
+
+
+            {/* =================================================
+                READING TRACKER & GAMIFICATION (PUBLIC)
+            ================================================= */}
+
+            <Route
+              path="/reading-tracker"
+              element={<ReadingTracker />}
             />
 
 
@@ -311,6 +323,19 @@ function App() {
               element={
                 <ProtectedRoute message="Quiz Results જોવા માટે Login કરવું જરૂરી છે.">
                   <QuizResult />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* =================================================
+                QUIZ ACHIEVEMENTS (PROTECTED)
+            ================================================= */}
+
+            <Route
+              path="/quiz-achievements"
+              element={
+                <ProtectedRoute message="ક્વિઝ સિદ્ધિઓ જોવા માટે Login કરવું જરૂરી છે.">
+                  <QuizAchievements />
                 </ProtectedRoute>
               }
             />

@@ -25,9 +25,9 @@ const GUIDANCE_TOPICS = [
     title: "ક્રોધ અને આવેગ",
     englishTitle: "Anger & Impatience",
     icon: Flame,
-    color: "#e65100",
-    bgColor: "rgba(230, 81, 0, 0.14)",
-    borderColor: "rgba(230, 81, 0, 0.35)",
+    color: "#1d4ed8",
+    bgColor: "rgba(29, 78, 216, 0.10)",
+    borderColor: "rgba(29, 78, 216, 0.28)",
     essence: "ક્રોધથી મનુષ્યની બુદ્ધિ ભ્રમિત થાય છે અને વિચારવાની શક્તિ નષ્ટ થઈ જાય છે. શાંત મન જ સાચો નિર્ણય લઈ શકે છે.",
     shlokas: [
       {
@@ -61,9 +61,9 @@ const GUIDANCE_TOPICS = [
     title: "ચિંતા અને તણાવ",
     englishTitle: "Anxiety & Stress",
     icon: CloudRain,
-    color: "#0288d1",
-    bgColor: "rgba(2, 136, 209, 0.14)",
-    borderColor: "rgba(2, 136, 209, 0.35)",
+    color: "#0284c7",
+    bgColor: "rgba(2, 132, 199, 0.10)",
+    borderColor: "rgba(2, 132, 199, 0.28)",
     essence: "જે પરિસ્થિતિ તમારા હાથમાં નથી તેની ચિંતા ન કરો. માત્ર તમારા શ્રેષ્ઠ પ્રયાસ પર ધ્યાન કેન્દ્રિત કરો, પરિણામ ઈશ્વર પર છોડો.",
     shlokas: [
       {
@@ -97,9 +97,9 @@ const GUIDANCE_TOPICS = [
     title: "મનની અશાંતિ & એકાગ્રતા",
     englishTitle: "Restless Mind & Focus",
     icon: Target,
-    color: "#7b1fa2",
-    bgColor: "rgba(123, 31, 162, 0.14)",
-    borderColor: "rgba(123, 31, 162, 0.35)",
+    color: "#2563eb",
+    bgColor: "rgba(37, 99, 235, 0.10)",
+    borderColor: "rgba(37, 99, 235, 0.28)",
     essence: "મન વાયુની જેમ ચંચળ છે, પરંતુ દૈનિક સાધના, અભ્યાસ અને વૈરાગ્ય દ્વારા તેને એકાગ્ર કરી શકાય છે.",
     shlokas: [
       {
@@ -133,9 +133,9 @@ const GUIDANCE_TOPICS = [
     title: "નિષ્ફળતા અને ડર",
     englishTitle: "Fear & Dealing with Failure",
     icon: ShieldAlert,
-    color: "#c2185b",
-    bgColor: "rgba(194, 24, 91, 0.14)",
-    borderColor: "rgba(194, 24, 91, 0.35)",
+    color: "#1e40af",
+    bgColor: "rgba(30, 64, 175, 0.10)",
+    borderColor: "rgba(30, 64, 175, 0.28)",
     essence: "હારી જવાનો ડર મનુષ્યને સાચો પ્રયાસ પણ કરવા દેતો નથી. જય અને પરાજય બંને જીવનના પાઠ છે, અંત નથી.",
     shlokas: [
       {
@@ -169,9 +169,9 @@ const GUIDANCE_TOPICS = [
     title: "નિર્ણય લેવાની મૂંઝવણ",
     englishTitle: "Confusion & Right Choice",
     icon: Scale,
-    color: "#f57c00",
-    bgColor: "rgba(245, 124, 0, 0.14)",
-    borderColor: "rgba(245, 124, 0, 0.35)",
+    color: "#0369a1",
+    bgColor: "rgba(3, 105, 161, 0.10)",
+    borderColor: "rgba(3, 105, 161, 0.28)",
     essence: "જ્યારે બે માર્ગ વચ્ચે મૂંઝવણ થાય, ત્યારે સરળ માર્ગને બદલે તમારા સાચા કર્તવ્ય અને નૈતિક મૂલ્યોવાળા માર્ગને પસંદ કરો.",
     shlokas: [
       {
@@ -205,9 +205,9 @@ const GUIDANCE_TOPICS = [
     title: "એકલતા અને આંતરિક શાંતિ",
     englishTitle: "Loneliness & Inner Peace",
     icon: HeartHandshake,
-    color: "#00897b",
-    bgColor: "rgba(0, 137, 123, 0.14)",
-    borderColor: "rgba(0, 137, 123, 0.35)",
+    color: "#0ea5e9",
+    bgColor: "rgba(14, 165, 233, 0.10)",
+    borderColor: "rgba(14, 165, 233, 0.28)",
     essence: "તમે ક્યારેય એકલા નથી. પરમાત્મા દરેક પળે તમારા અંતરમાં બિરાજેલા છે. સાચી શાંતિ બહારની દુનિયામાં નહીં, ભીતરમાં છે.",
     shlokas: [
       {
@@ -241,9 +241,9 @@ const GUIDANCE_TOPICS = [
     title: "શોક અને વિયોગ",
     englishTitle: "Grief, Loss & Sorrow",
     icon: HeartCrack,
-    color: "#7b1fa2",
-    bgColor: "rgba(123, 31, 162, 0.14)",
-    borderColor: "rgba(123, 31, 162, 0.35)",
+    color: "#1e3a8a",
+    bgColor: "rgba(30, 58, 138, 0.10)",
+    borderColor: "rgba(30, 58, 138, 0.28)",
     essence: "મૃત્યુ કે વિયોગ એ માત્ર શરીરનું રૂપાંતરણ છે, આત્મા સદા અજર-અમર છે. પ્રકૃતિના અનિવાર્ય સત્યને સ્વીકારીને આત્માની અમરતામાં સ્થિર થાઓ.",
     shlokas: [
       {
@@ -277,9 +277,9 @@ const GUIDANCE_TOPICS = [
     title: "આળસ અને પ્રમાદ",
     englishTitle: "Laziness & Procrastination",
     icon: Zap,
-    color: "#d84315",
-    bgColor: "rgba(216, 67, 21, 0.14)",
-    borderColor: "rgba(216, 67, 21, 0.35)",
+    color: "#2563eb",
+    bgColor: "rgba(37, 99, 235, 0.10)",
+    borderColor: "rgba(37, 99, 235, 0.28)",
     essence: "આળસ અને વિલંબ (procrastination) આત્માના તેજ અને પ્રતિભાને ઢાંકી દે છે. કર્મશીલ બનીને ઉત્સાહપૂર્વક કર્તવ્યમાં લાગી જાઓ.",
     shlokas: [
       {
@@ -313,9 +313,9 @@ const GUIDANCE_TOPICS = [
     title: "અહંકાર અને અભિમાન",
     englishTitle: "Ego & Pride",
     icon: Award,
-    color: "#ad1457",
-    bgColor: "rgba(173, 20, 87, 0.14)",
-    borderColor: "rgba(173, 20, 87, 0.35)",
+    color: "#1d4ed8",
+    bgColor: "rgba(29, 78, 216, 0.10)",
+    borderColor: "rgba(29, 78, 216, 0.28)",
     essence: "'હું જ બધું કરું છું' એવો અહંકાર સર્વ પતનનું મૂળ છે. નમ્રતા, સરળતા અને ઈશ્વરાર્પણ ભાવના જ સાચી મુક્તિ અને આંતરિક શાંતિ આપે છે.",
     shlokas: [
       {
@@ -349,9 +349,9 @@ const GUIDANCE_TOPICS = [
     title: "મોહ અને વાસના",
     englishTitle: "Attachment, Desire & Greed",
     icon: Gem,
-    color: "#c67d00",
-    bgColor: "rgba(198, 125, 0, 0.14)",
-    borderColor: "rgba(198, 125, 0, 0.35)",
+    color: "#0284c7",
+    bgColor: "rgba(2, 132, 199, 0.10)",
+    borderColor: "rgba(2, 132, 199, 0.28)",
     essence: "વસ્તુઓ કે વ્યક્તિઓ પ્રત્યે અતિશય આસક્તિ મનુષ્યને બંધનમાં રાખે છે. અનાસક્ત ભાવે જીવવાથી જ સાચો સંતોષ અને પરમ આનંદ મળે છે.",
     shlokas: [
       {
@@ -385,9 +385,9 @@ const GUIDANCE_TOPICS = [
     title: "શંકા અને શ્રદ્ધાનો અભાવ",
     englishTitle: "Doubt & Lack of Faith",
     icon: Sunrise,
-    color: "#00acc1",
-    bgColor: "rgba(0, 172, 193, 0.14)",
-    borderColor: "rgba(0, 172, 193, 0.35)",
+    color: "#0891b2",
+    bgColor: "rgba(8, 145, 178, 0.10)",
+    borderColor: "rgba(8, 145, 178, 0.28)",
     essence: "સંશય મનુષ્યની ક્ષમતાઓ અને શાંતિને કોરી ખાય છે. ઈશ્વર અને પોતાના સત્કર્મ પર અતૂટ શ્રદ્ધા જ જીવનની નૌકા પાર ઉતારે છે.",
     shlokas: [
       {
@@ -421,9 +421,9 @@ const GUIDANCE_TOPICS = [
     title: "સંબંધોમાં તણાવ અને ક્ષમા",
     englishTitle: "Relationship Conflicts & Forgiveness",
     icon: Users,
-    color: "#43a047",
-    bgColor: "rgba(67, 160, 71, 0.14)",
-    borderColor: "rgba(67, 160, 71, 0.35)",
+    color: "#3b82f6",
+    bgColor: "rgba(59, 130, 246, 0.10)",
+    borderColor: "rgba(59, 130, 246, 0.28)",
     essence: "સામેવાળામાં પણ પરમાત્માનો અંશ છે તે સમજીને ક્ષમા અને સહાનુભૂતિ કેળવો. મધુર વાણી સંબંધોનું અમૃત છે.",
     shlokas: [
       {

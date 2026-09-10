@@ -665,9 +665,15 @@ background:
     5px 6px 12px rgba(0, 0, 0, 0.30),
     inset 0 1px 2px rgba(255, 255, 255, 0.04);
 }
+[data-theme="dark"] .history-option-icon svg,
+.dark .history-option-icon svg {
+  color: #7cb4f5;
+  stroke: #7cb4f5;
+}
 
 
 /* =====================================================
+
    DARK CONTENT
 ===================================================== */
 

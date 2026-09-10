@@ -416,6 +416,56 @@ body {
     0 5px 10px rgba(13, 71, 161, 0.25);
 }
 
+/* TRACKER BUTTON & STREAK CHIP (ROYAL BLUE THEME) */
+.tracker-hero-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-color: rgba(37, 99, 235, 0.35);
+}
+
+.tracker-trophy-blue,
+.tracker-trophy-gold {
+  color: #2563eb;
+}
+
+html[data-theme="dark"] .tracker-trophy-blue,
+body[data-theme="dark"] .tracker-trophy-blue,
+html[data-theme="dark"] .tracker-trophy-gold,
+body[data-theme="dark"] .tracker-trophy-gold {
+  color: #60a5fa;
+}
+
+.hero-streak-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(37, 99, 235, 0.12);
+  border: 1px solid rgba(37, 99, 235, 0.28);
+  color: #1d4ed8;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 13px;
+  font-weight: 700;
+  margin-left: 4px;
+}
+
+html[data-theme="dark"] .hero-streak-chip,
+body[data-theme="dark"] .hero-streak-chip {
+  background: rgba(59, 130, 246, 0.18);
+  color: #93c5fd;
+  border-color: rgba(96, 165, 250, 0.32);
+}
+
+.streak-chip-flame {
+  color: #0284c7;
+}
+
+html[data-theme="dark"] .streak-chip-flame,
+body[data-theme="dark"] .streak-chip-flame {
+  color: #38bdf8;
+}
+
 
 /* =====================================================
    SEARCH BOX

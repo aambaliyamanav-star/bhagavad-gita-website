@@ -3,7 +3,7 @@ import {
   useNavigate,
   useSearchParams,
 } from "react-router-dom";
-import { ArrowLeft, Star, Loader2, BookOpen, AlertCircle, RefreshCw, Trophy, PlayCircle, Check, X, Lightbulb, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, Star, Loader2, BookOpen, AlertCircle, RefreshCw, Trophy, PlayCircle, Check, X, Lightbulb, ChevronLeft, ChevronRight, Award } from "lucide-react";
 import "./Quiz.css";
 
 
@@ -39,6 +39,12 @@ function Quiz() {
 
   const [quizCompleted, setQuizCompleted] =
     useState(false);
+
+  const [startTime, setStartTime] =
+    useState(Date.now());
+
+  const [earnedBadges, setEarnedBadges] =
+    useState([]);
 
   // =====================================================
   // URL PARAMETERS
@@ -118,6 +124,8 @@ function Quiz() {
         setAnswers([]);
         setScore(0);
         setQuizCompleted(false);
+        setStartTime(Date.now());
+        setEarnedBadges([]);
 
         // =================================================
         // AUTH
@@ -865,6 +873,11 @@ function Quiz() {
       // SUBMIT DATA
       // =================================================
 
+      const durationSeconds = Math.max(
+        1,
+        Math.round((Date.now() - (startTime || Date.now())) / 1000)
+      );
+
       const submitData = {
         category:
           resultCategory,
@@ -888,7 +901,7 @@ function Quiz() {
             })
           ),
 
-        timeTaken: 0,
+        timeTaken: durationSeconds,
       };
 
       console.log(
@@ -963,6 +976,57 @@ function Quiz() {
       setAnswers(
         finalAnswers
       );
+
+      // =================================================
+      // EVALUATE EARNED BADGES FOR CELEBRATION
+      // =================================================
+
+      const finalPercentage = Math.round(
+        (finalResultScore / (questions.length || 1)) * 100
+      );
+
+      const triggered = [];
+
+      if (finalPercentage === 100) {
+        triggered.push({
+          name: "અર્જુન દ્રષ્ટિ",
+          desc: "૧૦૦% પરફેક્ટ સ્કોર મેળવવા બદલ કાઉન્ટ વધ્યો!",
+        });
+      }
+
+      const allowedHalfTime = Math.max(15, questions.length * 15);
+      if (finalPercentage >= 80 && durationSeconds <= allowedHalfTime) {
+        triggered.push({
+          name: "ચપળ મતિ",
+          desc: "અડધા સમયમાં ૮૦%+ સ્કોર સાથે ઝડપી વિજય!",
+        });
+      }
+
+      if (categoryParam === "chapter" && finalPercentage >= 90) {
+        triggered.push({
+          name: "વિજયી પંથ",
+          desc: `અધ્યાય ${chapterParam || ""} ની ક્વિઝમાં ૯૦%+ ગુણ પ્રાપ્ત કર્યા!`,
+        });
+      }
+
+      if (categoryParam === "mahabharata" && finalPercentage >= 85) {
+        triggered.push({
+          name: "મહાભારત મહારથી",
+          desc: "મહાભારત ક્વિઝમાં ૮૫%+ સ્કોર સાથે વિજય!",
+        });
+      }
+
+      const currentHour = new Date().getHours();
+      const currentMin = new Date().getMinutes();
+      const timeInMins = currentHour * 60 + currentMin;
+      if (finalPercentage >= 80 && timeInMins >= 300 && timeInMins <= 510) {
+        triggered.push({
+          name: "બ્રહ્મ મુહૂર્ત સાધક",
+          desc: "સવારના પાવન સમયે ૮૦%+ સ્કોર પ્રાપ્ત!",
+        });
+      }
+
+      setEarnedBadges(triggered);
 
       // =================================================
       // COMPLETE QUIZ
@@ -1283,6 +1347,26 @@ function Quiz() {
 
           </div>
 
+          {/* =================================================
+              EARNED BADGES CELEBRATION BANNER
+          ================================================= */}
+
+          {earnedBadges.length > 0 && (
+            <div className="quiz-earned-badges-banner">
+              <div className="quiz-earned-badges-header">
+                <Award size={18} />
+                <span>નવી સિદ્ધિ / બેજ અપડેટ!</span>
+              </div>
+              <div className="quiz-earned-badges-list">
+                {earnedBadges.map((b, idx) => (
+                  <div key={idx} className="quiz-earned-badge-chip">
+                    <strong>{b.name}:</strong> <span>{b.desc}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <div className="quiz-complete-actions">
 
             <button
@@ -1290,6 +1374,14 @@ function Quiz() {
               onClick={retryQuiz}
             >
               <RefreshCw size={15} className="btn-icon" /> ફરી Quiz આપો
+            </button>
+
+            <button
+              type="button"
+              className="quiz-achievements-btn"
+              onClick={() => navigate("/quiz-achievements")}
+            >
+              <Award size={15} className="btn-icon" /> ક્વિઝ સિદ્ધિઓ જુઓ
             </button>
 
             <button
