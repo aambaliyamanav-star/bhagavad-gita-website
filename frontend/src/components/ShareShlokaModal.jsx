@@ -230,7 +230,11 @@ export default function ShareShlokaModal({
   useEffect(() => {
     if (!isOpen || !shlokaData) return;
 
-    renderCanvasCard();
+    const timer = setTimeout(() => {
+      renderCanvasCard();
+    }, 16);
+
+    return () => clearTimeout(timer);
   }, [isOpen, shlokaData, selectedThemeId]);
 
   const renderCanvasCard = () => {
@@ -238,90 +242,92 @@ export default function ShareShlokaModal({
     if (!canvas) return;
 
     setIsGenerating(true);
-    const ctx = canvas.getContext("2d");
-    const width = 1080;
+    try {
+      const ctx = canvas.getContext("2d");
+      const width = 1080;
 
-    // 1. Prepare Text & Measurements
-    const chNum = shlokaData.chapterNumber || 1;
-    const chName = shlokaData.chapterName ? cleanHtmlText(shlokaData.chapterName) : "";
-    const shlokNum = shlokaData.shlokNumber || 1;
-    const cleanSpeaker = cleanHtmlText(shlokaData.speaker || "");
+      // 1. Prepare Text & Measurements
+      const chNum = shlokaData.chapterNumber || 1;
+      const chName = shlokaData.chapterName ? cleanHtmlText(shlokaData.chapterName) : "";
+      const shlokNum = shlokaData.shlokNumber || 1;
+      const cleanSpeaker = cleanHtmlText(shlokaData.speaker || "");
 
-    const cleanSanskrit = cleanHtmlText(
-      shlokaData.sanskrit || shlokaData.sanskritExcerpt || ""
-    );
-    let rawSanskritLines = cleanSanskrit
-      .split("\n")
-      .map((l) => l.trim())
-      .filter(Boolean);
+      // Measure Translation & Message FIRST so hasMessage is available everywhere
+      const cleanTranslation = cleanHtmlText(
+        shlokaData.translation ||
+        shlokaData.gujaratiSummary ||
+        shlokaData.meaning ||
+        ""
+      );
+      const messagePoints = extractMessagePoints(shlokaData.message);
+      const hasMessage = messagePoints.length > 0;
 
-    if (
-      rawSanskritLines.length === 1 &&
-      (rawSanskritLines[0].includes("।") || rawSanskritLines[0].includes("|"))
-    ) {
-      const parts = rawSanskritLines[0]
-        .split(/(?<=[।|]+)/g)
-        .map((s) => s.trim())
+      const cleanSanskrit = cleanHtmlText(
+        shlokaData.sanskrit || shlokaData.sanskritExcerpt || ""
+      );
+      let rawSanskritLines = cleanSanskrit
+        .split("\n")
+        .map((l) => l.trim())
         .filter(Boolean);
-      if (parts.length > 1) {
-        rawSanskritLines = parts;
+
+      if (
+        rawSanskritLines.length === 1 &&
+        (rawSanskritLines[0].includes("।") || rawSanskritLines[0].includes("|"))
+      ) {
+        const parts = rawSanskritLines[0]
+          .split(/(?<=[।|]+)/g)
+          .map((s) => s.trim())
+          .filter(Boolean);
+        if (parts.length > 1) {
+          rawSanskritLines = parts;
+        }
       }
-    }
 
-    // Measure Sanskrit
-    const sanskritBoxW = width - 140; // 940px
-    const sanskritMaxW = sanskritBoxW - 64; // 876px
-    const sanskritFontSize = hasMessage ? 30 : 34;
-    const sanskritLineH = hasMessage ? 54 : 62;
-    const sanskritVerticalPadding = hasMessage ? 38 : 48;
-    ctx.font = `bold ${sanskritFontSize}px "Noto Sans Devanagari", "Noto Sans Gujarati", serif`;
+      // Measure Sanskrit
+      const sanskritBoxW = width - 140; // 940px
+      const sanskritMaxW = sanskritBoxW - 64; // 876px
+      const sanskritFontSize = hasMessage ? 30 : 34;
+      const sanskritLineH = hasMessage ? 54 : 62;
+      const sanskritVerticalPadding = hasMessage ? 38 : 48;
+      ctx.font = `bold ${sanskritFontSize}px "Noto Sans Devanagari", "Noto Sans Gujarati", serif`;
 
-    const wrappedSanskrit = [];
-    if (rawSanskritLines.length > 0) {
-      rawSanskritLines.forEach((line) => {
-        wrappedSanskrit.push(...wrapText(ctx, line, sanskritMaxW));
-      });
-    } else {
-      wrappedSanskrit.push(...wrapText(ctx, cleanSanskrit, sanskritMaxW));
-    }
-    const sanskritToDisplay = wrappedSanskrit.slice(0, 4);
+      const wrappedSanskrit = [];
+      if (rawSanskritLines.length > 0) {
+        rawSanskritLines.forEach((line) => {
+          wrappedSanskrit.push(...wrapText(ctx, line, sanskritMaxW));
+        });
+      } else {
+        wrappedSanskrit.push(...wrapText(ctx, cleanSanskrit, sanskritMaxW));
+      }
+      const sanskritToDisplay = wrappedSanskrit.slice(0, 4);
 
-    // Measure Translation
-    const cleanTranslation = cleanHtmlText(
-      shlokaData.translation ||
-      shlokaData.gujaratiSummary ||
-      shlokaData.meaning ||
-      ""
-    );
-    const messagePoints = extractMessagePoints(shlokaData.message);
-    const hasMessage = messagePoints.length > 0;
+      // Measure Translation
+      const mainTextMaxW = width - 150; // 930px
+      const transFontSize = hasMessage ? 24 : 27;
+      const transLineH = hasMessage ? 46 : 52;
+      ctx.font = `500 ${transFontSize}px "Noto Sans Gujarati", sans-serif`;
+      const wrappedTranslation = wrapText(ctx, cleanTranslation, mainTextMaxW);
+      const maxTransLines = hasMessage ? 6 : 10;
+      const translationToDisplay = wrappedTranslation.slice(0, maxTransLines);
 
-    const mainTextMaxW = width - 150; // 930px
-    const transFontSize = hasMessage ? 24 : 27;
-    const transLineH = hasMessage ? 46 : 52;
-    ctx.font = `500 ${transFontSize}px "Noto Sans Gujarati", sans-serif`;
-    const wrappedTranslation = wrapText(ctx, cleanTranslation, mainTextMaxW);
-    const maxTransLines = hasMessage ? 6 : 10;
-    const translationToDisplay = wrappedTranslation.slice(0, maxTransLines);
-
-    // Measure Message Points
-    const msgFontSize = 22;
-    const msgLineH = 40;
-    ctx.font = `400 ${msgFontSize}px "Noto Sans Gujarati", sans-serif`;
-    const wrappedMessagePoints = [];
-    if (hasMessage) {
-      messagePoints.slice(0, 3).forEach((point) => {
-        let prefix = "✦ ";
-        if (/^\d+[.)]/.test(point) || /^•/.test(point) || /^✦/.test(point)) {
-          prefix = "";
-        }
-        const pointText = `${prefix}${point}`;
-        const lines = wrapText(ctx, pointText, mainTextMaxW).slice(0, 3);
-        if (lines.length > 0) {
-          wrappedMessagePoints.push(lines);
-        }
-      });
-    }
+      // Measure Message Points
+      const msgFontSize = 22;
+      const msgLineH = 40;
+      ctx.font = `400 ${msgFontSize}px "Noto Sans Gujarati", sans-serif`;
+      const wrappedMessagePoints = [];
+      if (hasMessage) {
+        messagePoints.slice(0, 3).forEach((point) => {
+          let prefix = "✦ ";
+          if (/^\d+[.)]/.test(point) || /^•/.test(point) || /^✦/.test(point)) {
+            prefix = "";
+          }
+          const pointText = `${prefix}${point}`;
+          const lines = wrapText(ctx, pointText, mainTextMaxW).slice(0, 3);
+          if (lines.length > 0) {
+            wrappedMessagePoints.push(lines);
+          }
+        });
+      }
 
     // 2. Pre-calculate Heights for 9:16 Aspect Ratio (1080 x 1920)
     const cardHeight = 1920;
@@ -614,7 +620,11 @@ export default function ShareShlokaModal({
     const dataUrl = canvas.toDataURL("image/png");
     setPreviewUrl(dataUrl);
     setIsGenerating(false);
-  };
+  } catch (err) {
+    console.error("Error generating canvas card:", err);
+    setIsGenerating(false);
+  }
+};
 
   const handleDownload = () => {
     if (!previewUrl) return;
