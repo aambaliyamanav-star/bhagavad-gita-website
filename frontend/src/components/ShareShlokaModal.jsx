@@ -325,9 +325,10 @@ export default function ShareShlokaModal({
 
     const speakerH = cleanSpeaker ? 44 : 0;
 
-    const sanskritLineH = 40;
-    const sanskritBoxInnerPad = 34;
-    const sanskritBoxH = sanskritBoxInnerPad + sanskritToDisplay.length * sanskritLineH;
+    const sanskritLineH = 42;
+    const sanskritVerticalPadding = 26;
+    const totalSanskritLinesH = (sanskritToDisplay.length - 1) * sanskritLineH;
+    const sanskritBoxH = totalSanskritLinesH + sanskritVerticalPadding * 2;
     const sanskritDividerH = 22;
     const totalSanskritH = sanskritBoxH + sanskritDividerH;
 
@@ -349,11 +350,11 @@ export default function ShareShlokaModal({
       totalMessageH = msgTitleH + (totalMsgLines * msgLineH) + pointsGaps + 20;
     }
 
-    const footerH = 125; // divider + "॥ ૐ તત્સત્ ॥" + website link + bottom margin
+    const footerH = 95; // divider + website link pill + bottom margin
     const baseContentH = totalHeaderH + speakerH + totalSanskritH + totalTranslationH + totalMessageH + footerH;
 
-    // Set proportional card height (min 820px, clean multiple of 20)
-    const cardHeight = Math.max(820, Math.ceil(baseContentH / 20) * 20);
+    // Set proportional card height (min 800px, clean multiple of 20)
+    const cardHeight = Math.max(800, Math.ceil(baseContentH / 20) * 20);
     canvas.width = width;
     canvas.height = cardHeight;
 
@@ -527,7 +528,7 @@ export default function ShareShlokaModal({
     ctx.font = 'bold 26px "Noto Sans Devanagari", "Noto Sans Gujarati", serif';
     ctx.fillStyle = currentTheme.sanskritColor;
 
-    let sLineY = boxY + 28;
+    let sLineY = boxY + sanskritVerticalPadding;
     sanskritToDisplay.forEach((line) => {
       ctx.fillText(line, width / 2, sLineY);
       sLineY += sanskritLineH;
@@ -578,15 +579,31 @@ export default function ShareShlokaModal({
 
     // 9. Footer Branding & Website Watermark (Firmly Anchored at Bottom)
     const footerDividerY = cardHeight - innerMargin - 46;
-    drawDivider(footerDividerY, 420);
+    drawDivider(footerDividerY, 440);
 
-    ctx.font = '600 19px "Noto Sans Gujarati", sans-serif';
-    ctx.fillStyle = currentTheme.footerColor;
-    ctx.fillText("॥ ૐ તત્સત્ ॥ • શ્રીમદ્ભગવદ્ગીતા", width / 2, footerDividerY + 24);
+    // Sleek Website Link Pill (Professional & Prominent)
+    const siteUrl = "https://bhagavad-gita-website.onrender.com";
+    const pillText = `🔗 ${siteUrl}`;
+    ctx.font = '600 16px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    const pillMetrics = ctx.measureText(pillText);
+    const pillW = Math.min(width - 240, pillMetrics.width + 44);
+    const pillH = 34;
+    const pillY = footerDividerY + 24;
 
-    ctx.font = '500 15px sans-serif';
-    ctx.fillStyle = currentTheme.innerBorder;
-    ctx.fillText("bhagavad-gita-website.onrender.com", width / 2, footerDividerY + 46);
+    drawRoundRect(
+      ctx,
+      width / 2 - pillW / 2,
+      pillY - pillH / 2,
+      pillW,
+      pillH,
+      17,
+      "rgba(0, 0, 0, 0.35)",
+      currentTheme.innerBorder,
+      1.2
+    );
+
+    ctx.fillStyle = currentTheme.headerColor;
+    ctx.fillText(pillText, width / 2, pillY);
 
     // Generate preview data URL
     const dataUrl = canvas.toDataURL("image/png");
@@ -632,7 +649,7 @@ export default function ShareShlokaModal({
         shareText += `${prefix}${pt}\n\n`;
       });
     }
-    shareText += `🌐 સંપૂર્ણ અધ્યાય વાંચો:\nhttps://bhagavad-gita-website.onrender.com/chapter/${ch}?shloka=${shl}`;
+    shareText += `\n👉 આ શ્લોક અને સમગ્ર ગીતા ઑનલાઇન વાંચવા અહીં ક્લિક કરો:\n🔗 https://bhagavad-gita-website.onrender.com/chapter/${ch}?shloka=${shl}\n\n🌐 મુખ્ય વેબસાઇટ: https://bhagavad-gita-website.onrender.com`;
 
     if (canvas && navigator.canShare) {
       try {
@@ -690,7 +707,7 @@ export default function ShareShlokaModal({
         shareText += `${prefix}${pt}\n\n`;
       });
     }
-    shareText += `🌐 સંપૂર્ણ અધ્યાય વાંચો:\nhttps://bhagavad-gita-website.onrender.com/chapter/${ch}?shloka=${shl}`;
+    shareText += `\n👉 આ શ્લોક અને સમગ્ર ગીતા ઑનલાઇન વાંચવા અહીં ક્લિક કરો:\n🔗 https://bhagavad-gita-website.onrender.com/chapter/${ch}?shloka=${shl}\n\n🌐 મુખ્ય વેબસાઇટ: https://bhagavad-gita-website.onrender.com`;
 
     navigator.clipboard.writeText(shareText);
     setCopied(true);
@@ -757,16 +774,37 @@ export default function ShareShlokaModal({
           {/* CARD PREVIEW */}
           <div className="share-card-preview-wrapper">
             {previewUrl ? (
-              <img
-                src={previewUrl}
-                alt="Bhagavad Gita Shloka Card Preview"
-                className="share-card-preview-img"
-              />
+              <a
+                href={`https://bhagavad-gita-website.onrender.com/chapter/${shlokaData.chapterNumber || 1}?shloka=${shlokaData.shlokNumber || 1}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="share-card-preview-link"
+                title="વેબસાઇટ પર આ શ્લોક ખોલવા ક્લિક કરો"
+              >
+                <img
+                  src={previewUrl}
+                  alt="Bhagavad Gita Shloka Card Preview"
+                  className="share-card-preview-img"
+                />
+              </a>
             ) : (
               <div className="preview-loading">
                 <span>કાર્ડ તૈયાર થઈ રહ્યું છે...</span>
               </div>
             )}
+          </div>
+
+          {/* CLICKABLE LINK BAR */}
+          <div className="share-preview-link-bar">
+            <a
+              href={`https://bhagavad-gita-website.onrender.com/chapter/${shlokaData.chapterNumber || 1}?shloka=${shlokaData.shlokNumber || 1}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="share-preview-clickable-link"
+              title="વેબસાઇટ પર સીધા જવા અહીં ક્લિક કરો"
+            >
+              <span>🔗 https://bhagavad-gita-website.onrender.com</span>
+            </a>
           </div>
 
           {/* ACTION BUTTONS */}
