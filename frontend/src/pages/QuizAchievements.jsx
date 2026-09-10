@@ -378,6 +378,15 @@ export default function QuizAchievements() {
                       </div>
                     )}
                   </div>
+
+                  {/* Big Professional Centered Lock Overlay for locked cards */}
+                  {!isUnlocked && (
+                    <div className="qa-badge-locked-overlay">
+                      <div className="qa-badge-locked-emblem">
+                        <Lock size={26} strokeWidth={2.4} className="qa-big-lock-icon" />
+                      </div>
+                    </div>
+                  )}
                 </div>
               );
             })}

@@ -361,9 +361,66 @@
 
 /* Locked Card Styling */
 .qa-badge-card.locked {
-  background: rgba(248, 250, 252, 0.85);
-  border-color: rgba(203, 213, 225, 0.7);
-  opacity: 0.88;
+  background: rgba(241, 245, 249, 0.45);
+  border: 1.5px dashed rgba(203, 213, 225, 0.75);
+  opacity: 0.52;
+  position: relative;
+}
+
+[data-theme="dark"] .qa-badge-card.locked,
+.dark .qa-badge-card.locked {
+  background: rgba(15, 23, 42, 0.35);
+  border: 1.5px dashed rgba(51, 65, 85, 0.6);
+  opacity: 0.5;
+}
+
+.qa-badge-card.locked .qa-badge-top-row,
+.qa-badge-card.locked .qa-badge-icon-holder,
+.qa-badge-card.locked .qa-badge-info,
+.qa-badge-card.locked .qa-badge-footer {
+  opacity: 0.35;
+  filter: grayscale(0.85);
+}
+
+.qa-badge-card.locked:hover {
+  opacity: 0.78;
+  transform: translateY(-2px);
+  border-color: #3b82f6;
+}
+
+/* Big Professional Centered Lock Overlay */
+.qa-badge-locked-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.qa-badge-locked-emblem {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(15, 23, 42, 0.82);
+  border: 2px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f1f5f9;
+  transition: transform 0.22s ease, background 0.22s ease, border-color 0.22s ease, color 0.22s ease;
+}
+
+.qa-badge-card.locked:hover .qa-badge-locked-emblem {
+  transform: scale(1.12);
+  background: rgba(30, 58, 138, 0.9);
+  border-color: rgba(96, 165, 250, 0.7);
+  color: #ffd54f;
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.45);
 }
 
 [data-theme="dark"] .qa-badge-card,
@@ -371,13 +428,6 @@
   background: rgba(15, 23, 42, 0.7);
   border-color: rgba(96, 165, 250, 0.2);
   box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
-}
-
-[data-theme="dark"] .qa-badge-card.locked,
-.dark .qa-badge-card.locked {
-  background: rgba(15, 23, 42, 0.45);
-  border-color: rgba(51, 65, 85, 0.6);
-  opacity: 0.75;
 }
 
 [data-theme="dark"] .qa-badge-card:hover,
