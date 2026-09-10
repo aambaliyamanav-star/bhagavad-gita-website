@@ -320,22 +320,22 @@ export default function QuizAchievements() {
                   {/* Badge Icon */}
                   <div className="qa-badge-icon-holder">
                     <div
-                      className="qa-badge-icon-disc"
+                      className={`qa-badge-icon-disc ${isUnlocked ? "unlocked" : "locked"}`}
                       style={{
                         background: isUnlocked
                           ? badge.gradient
-                          : "var(--qa-locked-icon-bg, #1e293b)",
+                          : undefined,
                       }}
                     >
                       {isUnlocked ? (
-                        renderBadgeIcon(badge.icon, 20)
+                        renderBadgeIcon(badge.icon, 22)
                       ) : (
-                        <Lock size={18} className="qa-locked-disc-icon" />
+                        <Lock size={22} strokeWidth={2.4} className="qa-locked-disc-icon" />
                       )}
                     </div>
                   </div>
 
-                  {/* Badge Info */}
+                  {/* Badge Info - 100% Clear & Unblocked */}
                   <div className="qa-badge-info">
                     <h3 className="qa-badge-title">{badge.title}</h3>
                     <p className="qa-badge-description">
@@ -355,7 +355,7 @@ export default function QuizAchievements() {
                             <strong>કુલ {badge.count} વખત પ્રાપ્ત</strong>
                           ) : (
                             <span className="qa-locked-text">
-                              <Lock size={12} /> હજી પ્રાપ્ત થયું નથી
+                              <Lock size={12} /> અનલોક કરવા ક્વિઝ રમો
                             </span>
                           )}
                         </span>
@@ -382,15 +382,6 @@ export default function QuizAchievements() {
                       </div>
                     )}
                   </div>
-
-                  {/* Big Professional Centered Lock Overlay for locked cards */}
-                  {!isUnlocked && (
-                    <div className="qa-badge-locked-overlay">
-                      <div className="qa-badge-locked-emblem">
-                        <Lock size={26} strokeWidth={2.4} className="qa-big-lock-icon" />
-                      </div>
-                    </div>
-                  )}
                 </div>
               );
             })}
