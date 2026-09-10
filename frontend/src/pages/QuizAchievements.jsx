@@ -327,7 +327,11 @@ export default function QuizAchievements() {
                           : "var(--qa-locked-icon-bg, #1e293b)",
                       }}
                     >
-                      {renderBadgeIcon(badge.icon, 20)}
+                      {isUnlocked ? (
+                        renderBadgeIcon(badge.icon, 20)
+                      ) : (
+                        <Lock size={18} className="qa-locked-disc-icon" />
+                      )}
                     </div>
                   </div>
 
