@@ -283,13 +283,25 @@ export default function ShareShlokaModal({
         }
       }
 
-      // Measure Sanskrit (Maximum prominent size)
-      const sanskritBoxW = width - 120; // 960px
-      const sanskritMaxW = sanskritBoxW - 60; // 900px
-      const sanskritFontSize = hasMessage ? 54 : 60;
-      const sanskritLineH = hasMessage ? 94 : 106;
-      const sanskritVerticalPadding = hasMessage ? 56 : 66;
+      // Measure Sanskrit (Auto-adjusted to fit strictly in 2 lines)
+      const sanskritBoxW = width - 110; // 970px
+      const sanskritMaxW = sanskritBoxW - 50; // 920px
+      let sanskritFontSize = hasMessage ? 44 : 50;
+      let sanskritLineH = hasMessage ? 78 : 90;
+      let sanskritVerticalPadding = hasMessage ? 42 : 52;
       ctx.font = `bold ${sanskritFontSize}px "Noto Sans Devanagari", "Noto Sans Gujarati", serif`;
+
+      // Auto-fit check: if any line exceeds sanskritMaxW, step down font size until it fits cleanly in 1 line
+      if (rawSanskritLines.length > 0) {
+        let maxLineW = Math.max(...rawSanskritLines.map((l) => ctx.measureText(l).width));
+        while (maxLineW > sanskritMaxW && sanskritFontSize > 28) {
+          sanskritFontSize -= 1;
+          ctx.font = `bold ${sanskritFontSize}px "Noto Sans Devanagari", "Noto Sans Gujarati", serif`;
+          maxLineW = Math.max(...rawSanskritLines.map((l) => ctx.measureText(l).width));
+        }
+        sanskritLineH = Math.round(sanskritFontSize * 1.78);
+        sanskritVerticalPadding = Math.round(sanskritFontSize * 0.95);
+      }
 
       const wrappedSanskrit = [];
       if (rawSanskritLines.length > 0) {
@@ -299,23 +311,23 @@ export default function ShareShlokaModal({
       } else {
         wrappedSanskrit.push(...wrapText(ctx, cleanSanskrit, sanskritMaxW));
       }
-      const sanskritToDisplay = wrappedSanskrit.slice(0, 4);
+      const sanskritToDisplay = wrappedSanskrit.slice(0, 2);
 
-      // Measure Translation (Maximum large reading font)
+      // Measure Translation (Large, clear reading font)
       const mainTextMaxW = width - 140; // 940px
-      const transFontSize = hasMessage ? 48 : 54;
-      const transLineH = hasMessage ? 88 : 96;
+      const transFontSize = hasMessage ? 42 : 48;
+      const transLineH = hasMessage ? 76 : 86;
       ctx.font = `bold ${transFontSize}px "Noto Sans Gujarati", sans-serif`;
       const wrappedTranslation = wrapText(ctx, cleanTranslation, mainTextMaxW);
       const maxTransLines = hasMessage ? 8 : 12;
       const translationToDisplay = wrappedTranslation.slice(0, maxTransLines);
 
-      // Measure Message Points (Maximum large font)
-      const msgFontSize = 42;
-      const msgLineH = 78;
-      const msgPointGap = 36;
+      // Measure Message Points (Slightly smaller to stay comfortably above website link)
+      let msgFontSize = 34;
+      let msgLineH = 60;
+      let msgPointGap = 24;
       ctx.font = `bold ${msgFontSize}px "Noto Sans Gujarati", sans-serif`;
-      const wrappedMessagePoints = [];
+      let wrappedMessagePoints = [];
       if (hasMessage) {
         messagePoints.slice(0, 3).forEach((point) => {
           let prefix = "✦ ";
@@ -351,12 +363,12 @@ export default function ShareShlokaModal({
       const sanskritDividerH = 18;
       const totalSanskritH = sanskritBoxH + sanskritDividerH;
 
-      const transTitleH = 68;
+      const transTitleH = 60;
       const transContentH = translationToDisplay.length * transLineH;
       const totalTranslationH = transTitleH + transContentH;
 
       let totalMessageH = 0;
-      const msgTitleH = 68;
+      const msgTitleH = 56;
       if (wrappedMessagePoints.length > 0) {
         let totalMsgLines = 0;
         wrappedMessagePoints.forEach((lines) => {
@@ -368,15 +380,46 @@ export default function ShareShlokaModal({
       }
 
       const footerDividerY = cardHeight - innerMargin - 66; // 1802px
-      const availableBottom = footerDividerY - 24; // 1778px
-      const availableH = availableBottom - headerDividerY; // ~1441px
+      // Ensure comfortable breathing space ABOVE the footer divider and website link
+      const targetContentBottom = footerDividerY - 70; // 1732px
+      const availableH = targetContentBottom - headerDividerY; // ~1395px
 
-      const totalBodyContentH = totalSanskritH + totalTranslationH + totalMessageH;
+      let totalBodyContentH = totalSanskritH + totalTranslationH + totalMessageH;
+
+      // Safety check: if message is long, automatically step down font size to prevent ANY overflow
+      if (hasMessage && totalBodyContentH + 80 > availableH) {
+        while (totalBodyContentH + 80 > availableH && msgFontSize > 26) {
+          msgFontSize -= 1;
+          msgLineH = Math.round(msgFontSize * 1.68);
+          msgPointGap = Math.max(16, Math.round(msgPointGap * 0.9));
+          ctx.font = `bold ${msgFontSize}px "Noto Sans Gujarati", sans-serif`;
+          wrappedMessagePoints = [];
+          messagePoints.slice(0, 3).forEach((point) => {
+            let prefix = "✦ ";
+            if (/^\d+[.)]/.test(point) || /^•/.test(point) || /^✦/.test(point)) {
+              prefix = "";
+            }
+            const pointText = `${prefix}${point}`;
+            const lines = wrapText(ctx, pointText, mainTextMaxW).slice(0, 5);
+            if (lines.length > 0) {
+              wrappedMessagePoints.push(lines);
+            }
+          });
+          let totalMsgLines = 0;
+          wrappedMessagePoints.forEach((lines) => {
+            totalMsgLines += lines.length;
+          });
+          const pointsGaps = (wrappedMessagePoints.length - 1) * msgPointGap;
+          totalMessageH = 18 + msgTitleH + (totalMsgLines * msgLineH) + pointsGaps;
+          totalBodyContentH = totalSanskritH + totalTranslationH + totalMessageH;
+        }
+      }
+
       const totalSlack = Math.max(0, availableH - totalBodyContentH);
-      const numGaps = hasMessage ? 4 : 3;
+      const numGaps = hasMessage ? 3 : 2;
 
-      // Distribute slack evenly so the entire card is filled naturally without large voids at bottom
-      const sectionGap = Math.max(28, Math.min(68, Math.floor(totalSlack / numGaps)));
+      // Distribute slack evenly so there is comfortable space above the website link
+      const sectionGap = Math.max(28, Math.min(56, Math.floor(totalSlack / (numGaps + 1))));
 
     // 3. Render Background & Frames
     // Radial Gradient
@@ -545,7 +588,7 @@ export default function ShareShlokaModal({
     currY += sectionGap;
 
     // 6. Gujarati Translation / Meaning Section (Right below Sanskrit)
-    ctx.font = 'bold 44px "Noto Sans Gujarati", sans-serif';
+    ctx.font = 'bold 40px "Noto Sans Gujarati", sans-serif';
     ctx.fillStyle = currentTheme.headerColor;
     ctx.fillText("• ગુજરાતી ભાવાર્થ •", width / 2, currY + 12);
     currY += transTitleH;
@@ -564,7 +607,7 @@ export default function ShareShlokaModal({
       drawDivider(currY, 480);
       currY += sectionGap;
 
-      ctx.font = 'bold 42px "Noto Sans Gujarati", sans-serif';
+      ctx.font = 'bold 38px "Noto Sans Gujarati", sans-serif';
       ctx.fillStyle = currentTheme.sanskritAccent;
       ctx.fillText("✨ દિવ્ય સંદેશ / જીવન બોધ ✨", width / 2, currY + 12);
       currY += msgTitleH;
