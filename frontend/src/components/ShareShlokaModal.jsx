@@ -322,10 +322,11 @@ export default function ShareShlokaModal({
       const maxTransLines = hasMessage ? 8 : 12;
       const translationToDisplay = wrappedTranslation.slice(0, maxTransLines);
 
-      // Measure Message Points (Slightly smaller to stay comfortably above website link)
-      let msgFontSize = 34;
-      let msgLineH = 60;
-      let msgPointGap = 24;
+      // Measure Message Points (Slightly larger as requested, keeping comfortable space above website link)
+      let msgFontSize = 37;
+      let msgLineH = 65;
+      let msgPointGap = 26;
+      const msgTitleH = 58;
       ctx.font = `bold ${msgFontSize}px "Noto Sans Gujarati", sans-serif`;
       let wrappedMessagePoints = [];
       if (hasMessage) {
@@ -368,7 +369,6 @@ export default function ShareShlokaModal({
       const totalTranslationH = transTitleH + transContentH;
 
       let totalMessageH = 0;
-      const msgTitleH = 56;
       if (wrappedMessagePoints.length > 0) {
         let totalMsgLines = 0;
         wrappedMessagePoints.forEach((lines) => {
@@ -390,7 +390,7 @@ export default function ShareShlokaModal({
       if (hasMessage && totalBodyContentH + 80 > availableH) {
         while (totalBodyContentH + 80 > availableH && msgFontSize > 26) {
           msgFontSize -= 1;
-          msgLineH = Math.round(msgFontSize * 1.68);
+          msgLineH = Math.round(msgFontSize * 1.7);
           msgPointGap = Math.max(16, Math.round(msgPointGap * 0.9));
           ctx.font = `bold ${msgFontSize}px "Noto Sans Gujarati", sans-serif`;
           wrappedMessagePoints = [];
