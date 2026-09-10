@@ -343,6 +343,20 @@
   border-color: #3b82f6;
 }
 
+/* Card Base Styling */
+[data-theme="dark"] .qa-badge-card,
+.dark .qa-badge-card {
+  background: rgba(15, 23, 42, 0.7);
+  border-color: rgba(96, 165, 250, 0.2);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+}
+
+[data-theme="dark"] .qa-badge-card:hover,
+.dark .qa-badge-card:hover {
+  border-color: #60a5fa;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.45);
+}
+
 /* Unlocked Card Styling */
 .qa-badge-card.unlocked {
   border-color: rgba(37, 99, 235, 0.45);
@@ -359,33 +373,34 @@
   background: linear-gradient(90deg, #3b82f6, #1d4ed8, #0ea5e9);
 }
 
-/* Locked Card Styling */
+/* Locked Card Styling - Faint Box */
 .qa-badge-card.locked {
-  background: rgba(241, 245, 249, 0.45);
-  border: 1.5px dashed rgba(203, 213, 225, 0.75);
-  opacity: 0.52;
+  background: rgba(241, 245, 249, 0.45) !important;
+  border: 1.5px dashed rgba(148, 163, 184, 0.6) !important;
+  opacity: 0.45 !important;
+  box-shadow: none !important;
   position: relative;
 }
 
 [data-theme="dark"] .qa-badge-card.locked,
 .dark .qa-badge-card.locked {
-  background: rgba(15, 23, 42, 0.35);
-  border: 1.5px dashed rgba(51, 65, 85, 0.6);
-  opacity: 0.5;
+  background: rgba(15, 23, 42, 0.25) !important;
+  border: 1.5px dashed rgba(71, 85, 105, 0.6) !important;
+  opacity: 0.42 !important;
 }
 
 .qa-badge-card.locked .qa-badge-top-row,
 .qa-badge-card.locked .qa-badge-icon-holder,
 .qa-badge-card.locked .qa-badge-info,
 .qa-badge-card.locked .qa-badge-footer {
-  opacity: 0.35;
-  filter: grayscale(0.85);
+  opacity: 0.3 !important;
+  filter: grayscale(0.9);
 }
 
 .qa-badge-card.locked:hover {
-  opacity: 0.78;
+  opacity: 0.75 !important;
   transform: translateY(-2px);
-  border-color: #3b82f6;
+  border-color: #3b82f6 !important;
 }
 
 /* Big Professional Centered Lock Overlay */
@@ -400,12 +415,12 @@
 }
 
 .qa-badge-locked-emblem {
-  width: 52px;
-  height: 52px;
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
-  background: rgba(15, 23, 42, 0.82);
-  border: 2px solid rgba(255, 255, 255, 0.22);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.45);
+  background: rgba(15, 23, 42, 0.85);
+  border: 2px solid rgba(255, 255, 255, 0.24);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
   -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
   display: flex;
@@ -417,23 +432,19 @@
 
 .qa-badge-card.locked:hover .qa-badge-locked-emblem {
   transform: scale(1.12);
-  background: rgba(30, 58, 138, 0.9);
-  border-color: rgba(96, 165, 250, 0.7);
+  background: rgba(30, 58, 138, 0.92);
+  border-color: rgba(96, 165, 250, 0.8);
   color: #ffd54f;
-  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.45);
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.5);
 }
 
-[data-theme="dark"] .qa-badge-card,
-.dark .qa-badge-card {
-  background: rgba(15, 23, 42, 0.7);
-  border-color: rgba(96, 165, 250, 0.2);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35);
+.qa-locked-disc-icon {
+  color: #94a3b8;
 }
 
-[data-theme="dark"] .qa-badge-card:hover,
-.dark .qa-badge-card:hover {
-  border-color: #60a5fa;
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.45);
+[data-theme="dark"] .qa-locked-disc-icon,
+.dark .qa-locked-disc-icon {
+  color: #64748b;
 }
 
 /* Card Top Row */
