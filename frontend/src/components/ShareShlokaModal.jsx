@@ -623,18 +623,17 @@ export default function ShareShlokaModal({
 
   const handleShareWhatsApp = async () => {
     const canvas = canvasRef.current;
-    const ch = shlokaData.chapterNumber || 1;
-    const shl = shlokaData.shlokNumber || 1;
-
-    const shareUrl = `https://bhagavad-gita-website-rk1v.vercel.app/chapter/${ch}?shloka=${shl}`;
-    const shareTitle = `શ્રીમદ્ભગવદ્ગીતા • અધ્યાય ${ch} • શ્લોક ${shl}`;
-    const shareText = shareUrl;
+    const websiteUrl = "https://bhagavad-gita-website-rk1v.vercel.app";
+    const shareTitle = "શ્રીમદ્ભગવદ્ગીતા";
+    const shareText = websiteUrl;
 
     if (canvas && navigator.canShare) {
       try {
         const blob = await new Promise((resolve) =>
           canvas.toBlob(resolve, "image/png")
         );
+        const ch = shlokaData.chapterNumber || 1;
+        const shl = shlokaData.shlokNumber || 1;
         const file = new File(
           [blob],
           `Bhagavad_Gita_Ch${ch}_Shlok${shl}.png`,
@@ -661,11 +660,8 @@ export default function ShareShlokaModal({
   };
 
   const handleCopyText = () => {
-    const ch = shlokaData.chapterNumber || 1;
-    const shl = shlokaData.shlokNumber || 1;
-    const shareUrl = `https://bhagavad-gita-website-rk1v.vercel.app/chapter/${ch}?shloka=${shl}`;
-
-    navigator.clipboard.writeText(shareUrl);
+    const websiteUrl = "https://bhagavad-gita-website-rk1v.vercel.app";
+    navigator.clipboard.writeText(websiteUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2200);
   };
@@ -731,11 +727,11 @@ export default function ShareShlokaModal({
           <div className="share-card-preview-wrapper">
             {previewUrl ? (
               <a
-                href={`https://bhagavad-gita-website-rk1v.vercel.app/chapter/${shlokaData.chapterNumber || 1}?shloka=${shlokaData.shlokNumber || 1}`}
+                href="https://bhagavad-gita-website-rk1v.vercel.app"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="share-card-preview-link"
-                title="વેબસાઇટ પર આ શ્લોક ખોલવા ક્લિક કરો"
+                title="વેબસાઇટ ખોલવા ક્લિક કરો"
               >
                 <img
                   src={previewUrl}
@@ -753,7 +749,7 @@ export default function ShareShlokaModal({
           {/* CLICKABLE LINK BAR */}
           <div className="share-preview-link-bar">
             <a
-              href={`https://bhagavad-gita-website-rk1v.vercel.app/chapter/${shlokaData.chapterNumber || 1}?shloka=${shlokaData.shlokNumber || 1}`}
+              href="https://bhagavad-gita-website-rk1v.vercel.app"
               target="_blank"
               rel="noopener noreferrer"
               className="share-preview-clickable-link"
