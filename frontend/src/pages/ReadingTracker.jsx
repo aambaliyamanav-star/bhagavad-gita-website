@@ -389,15 +389,7 @@ function ReadingTracker() {
                       : <span className="rt-badge-tag rt-tag-locked"><Lock size={11} /> {badge.criteriaText}</span>
                     }
                   </div>
-                  {isUnlocked ? (
-                    <div className="rt-badge-shimmer" />
-                  ) : (
-                    <div className="rt-badge-locked-overlay">
-                      <div className="rt-badge-locked-emblem">
-                        <Lock size={22} strokeWidth={2.4} className="rt-big-lock-icon" />
-                      </div>
-                    </div>
-                  )}
+                  {isUnlocked && <div className="rt-badge-shimmer" />}
                 </div>
               );
             })}

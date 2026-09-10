@@ -527,67 +527,48 @@
 }
 
 .rt-badge-card.rt-badge-locked {
-  background: rgba(240, 244, 255, 0.45);
-  border: 1.5px dashed var(--rt-border);
-  opacity: 0.5;
+  background: rgba(248, 250, 252, 0.95);
+  border: 1.5px solid var(--rt-border);
   position: relative;
 }
 
 [data-theme="dark"] .rt-badge-card.rt-badge-locked {
-  background: rgba(15, 23, 42, 0.35);
-  border: 1.5px dashed rgba(100, 116, 139, 0.4);
-  opacity: 0.48;
+  background: rgba(15, 23, 42, 0.85);
+  border: 1.5px solid var(--rt-border);
 }
 
 .rt-badge-card.rt-badge-locked .rt-badge-icon {
-  opacity: 0.35;
-  filter: grayscale(0.9);
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border: 1.5px solid #ffd54f;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+  color: #ffd54f;
 }
 
-.rt-badge-card.rt-badge-locked .rt-badge-info {
-  opacity: 0.35;
-  filter: grayscale(0.85);
+[data-theme="dark"] .rt-badge-card.rt-badge-locked .rt-badge-icon {
+  background: linear-gradient(135deg, #1e293b 0%, #0b132b 100%);
+  border-color: #ffd54f;
+  color: #ffd54f;
+}
+
+.rt-badge-card.rt-badge-locked .rt-badge-name {
+  color: var(--rt-text-primary);
+  font-weight: 700;
+}
+
+.rt-badge-card.rt-badge-locked .rt-badge-sub {
+  color: var(--rt-text-secondary);
 }
 
 .rt-badge-card.rt-badge-locked:hover {
-  opacity: 0.78;
   transform: translateY(-2px);
   border-color: var(--rt-blue-mid);
+  box-shadow: var(--rt-shadow-sm);
 }
 
-/* Big Professional Centered Lock Overlay */
-.rt-badge-locked-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  pointer-events: none;
-  z-index: 2;
-}
-
-.rt-badge-locked-emblem {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: rgba(15, 23, 42, 0.82);
-  border: 1.5px solid rgba(255, 255, 255, 0.22);
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
-  -webkit-backdrop-filter: blur(4px);
-  backdrop-filter: blur(4px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #f1f5f9;
-  transition: transform 0.22s ease, background 0.22s ease, border-color 0.22s ease, color 0.22s ease;
-}
-
-.rt-badge-card.rt-badge-locked:hover .rt-badge-locked-emblem {
-  transform: scale(1.12);
-  background: rgba(30, 58, 138, 0.9);
-  border-color: rgba(96, 165, 250, 0.7);
-  color: #ffd54f;
-  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45);
+.rt-badge-card.rt-badge-locked:hover .rt-badge-icon {
+  transform: scale(1.08);
+  border-color: #ffe082;
+  box-shadow: 0 4px 14px rgba(255, 213, 79, 0.35);
 }
 
 .rt-badge-icon {
