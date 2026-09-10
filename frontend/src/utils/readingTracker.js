@@ -33,7 +33,6 @@ export const SPIRITUAL_BADGES = [
   {
     id: "first_step",
     title: "પ્રથમ પગલું",
-    subtitle: "First Step",
     description: "ભગવદ્ ગીતાનો પ્રથમ શ્લોક વાંચીને દિવ્ય યાત્રા શરૂ કરી.",
     icon: "Sparkles",
     color: "#2563eb",
@@ -44,7 +43,6 @@ export const SPIRITUAL_BADGES = [
   {
     id: "streak_3",
     title: "નિષ્ઠાવાન સાધક",
-    subtitle: "3-Day Devotee",
     description: "સતત ૩ દિવસ સુધી ગીતા વાંચનનો નિયમ જાળવી રાખ્યો.",
     icon: "Flame",
     color: "#1d4ed8",
@@ -55,7 +53,6 @@ export const SPIRITUAL_BADGES = [
   {
     id: "streak_7",
     title: "અભ્યાસી યોગી",
-    subtitle: "7-Day Yogi",
     description: "સતત ૧ સપ્તાહ (૭ દિવસ) નિયમિત ગીતા સ્વાધ્યાય પૂર્ણ કર્યો.",
     icon: "Zap",
     color: "#0284c7",
@@ -66,7 +63,6 @@ export const SPIRITUAL_BADGES = [
   {
     id: "chapter_1",
     title: "અર્જુન વિષાદ મુક્ત",
-    subtitle: "Arjuna's Awakening",
     description: "અધ્યાય ૧ ના તમામ ૪૭ શ્લોક વાંચીને જીવનના સંશયો દૂર કરવાનો આરંભ કર્યો.",
     icon: "Shield",
     color: "#3b82f6",
@@ -77,7 +73,6 @@ export const SPIRITUAL_BADGES = [
   {
     id: "chapter_3",
     title: "કર્મયોગી બેજ",
-    subtitle: "True Karmayogi",
     description: "અધ્યાય ૩ પૂર્ણ કરી નિષ્કામ કર્મનો દિવ્ય ઉપદેશ આત્મસાત કર્યો.",
     icon: "Compass",
     color: "#0ea5e9",
@@ -88,7 +83,6 @@ export const SPIRITUAL_BADGES = [
   {
     id: "chapter_4",
     title: "જ્ઞાનયોગી બેજ",
-    subtitle: "Jnana Seeker",
     description: "અધ્યાય ૪ પૂર્ણ કરી જ્ઞાનરૂપી અગ્નિથી પાપો ભસ્મ કરવાનો માર્ગ સમજ્યા.",
     icon: "Brain",
     color: "#4f46e5",
@@ -99,7 +93,6 @@ export const SPIRITUAL_BADGES = [
   {
     id: "chapter_12",
     title: "ભક્તિયોગી બેજ",
-    subtitle: "Supreme Devotion",
     description: "અધ્યાય ૧૨ પૂર્ણ કરી ભગવાન શ્રીકૃષ્ણના પરમ ભક્ત બનવાનો માર્ગ જાણ્યો.",
     icon: "Heart",
     color: "#2563eb",
@@ -110,7 +103,6 @@ export const SPIRITUAL_BADGES = [
   {
     id: "century",
     title: "શતક સાધક",
-    subtitle: "Century Reader",
     description: "ગીતાના ૧૦૦ થી વધુ દિવ્ય શ્લોકોનું સફળતાપૂર્વક વાંચન પૂર્ણ કર્યું.",
     icon: "Award",
     color: "#0891b2",
@@ -121,7 +113,6 @@ export const SPIRITUAL_BADGES = [
   {
     id: "halfway",
     title: "ગીતા પારંગત",
-    subtitle: "Halfway Scholar",
     description: "ગીતાનો અડધો ભાગ (૩૫૦+ શ્લોક - ૫૦%) પૂર્ણ વાંચીને આધ્યાત્મિક પરિપક્વતા મેળવી.",
     icon: "Star",
     color: "#1e40af",
@@ -132,7 +123,6 @@ export const SPIRITUAL_BADGES = [
   {
     id: "gita_siddha",
     title: "ગીતા સિદ્ધ શિરોમણી",
-    subtitle: "Gita Master (Complete)",
     description: "અદ્ભુત! આપે શ્રીમદ્ભગવદ્ગીતાના તમામ ૧૮ અધ્યાય અને ૭૦૦ શ્લોક સંપૂર્ણ વાંચ્યા છે.",
     icon: "Crown",
     color: "#1e3a8a",

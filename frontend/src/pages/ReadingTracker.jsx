@@ -383,10 +383,9 @@ function ReadingTracker() {
                   </div>
                   <div className="rt-badge-info">
                     <h4 className="rt-badge-name">{badge.title}</h4>
-                    <span className="rt-badge-sub">{badge.subtitle}</span>
                     {isUnlocked
-                      ? <span className="rt-badge-tag rt-tag-unlocked"><CheckCircle2 size={11} /> સિદ્ધ</span>
-                      : <span className="rt-badge-tag rt-tag-locked"><Lock size={11} /> {badge.criteriaText}</span>
+                      ? <span className="rt-badge-tag rt-tag-unlocked"><CheckCircle2 size={12} /> સિદ્ધ</span>
+                      : <span className="rt-badge-tag rt-tag-locked"><Lock size={12} /> {badge.criteriaText}</span>
                     }
                   </div>
                   {isUnlocked && <div className="rt-badge-shimmer" />}
@@ -526,7 +525,6 @@ function ReadingTracker() {
               }
             </div>
             <h3 className="rt-modal-title">{selectedBadge.title}</h3>
-            <p className="rt-modal-subtitle">{selectedBadge.subtitle}</p>
             <div className="rt-modal-desc">{selectedBadge.description}</div>
             <div className="rt-modal-criteria">
               <span className="rt-criteria-label">પ્રાપ્તિ શરત</span>

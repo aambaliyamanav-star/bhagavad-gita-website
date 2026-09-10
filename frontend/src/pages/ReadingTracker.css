@@ -492,20 +492,20 @@
 
 .rt-badges-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
 }
 
 .rt-badge-card {
   position: relative;
   background: var(--rt-surface-2);
   border: 1px solid var(--rt-border-subtle);
-  border-radius: 14px;
-  padding: 14px 14px;
+  border-radius: 16px;
+  padding: 16px 16px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  height: 86px;
+  gap: 14px;
+  min-height: 94px;
   box-sizing: border-box;
   cursor: pointer;
   overflow: hidden;
@@ -555,10 +555,6 @@
   font-weight: 700;
 }
 
-.rt-badge-card.rt-badge-locked .rt-badge-sub {
-  color: var(--rt-text-secondary);
-}
-
 .rt-badge-card.rt-badge-locked:hover {
   transform: translateY(-2px);
   border-color: var(--rt-blue-mid);
@@ -574,7 +570,7 @@
 .rt-badge-icon {
   width: 48px;
   height: 48px;
-  border-radius: 12px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -593,31 +589,32 @@
 .rt-badge-info {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .rt-badge-name {
-  font-size: 0.92rem;
+  font-size: 0.98rem;
   font-weight: 700;
   color: var(--rt-text-primary);
-  margin: 0 0 2px 0;
-  line-height: 1.3;
-}
-
-.rt-badge-sub {
-  display: block;
-  font-size: 0.73rem;
-  color: var(--rt-text-muted);
-  margin-bottom: 6px;
+  margin: 0 0 6px 0;
+  line-height: 1.45;
+  padding-top: 1px;
+  padding-bottom: 1px;
+  word-break: break-word;
 }
 
 .rt-badge-tag {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  font-size: 0.7rem;
+  gap: 5px;
+  font-size: 0.72rem;
   font-weight: 600;
-  padding: 2px 7px;
+  padding: 3px 9px;
   border-radius: 9999px;
+  width: fit-content;
+  line-height: 1.35;
 }
 
 .rt-tag-unlocked {
@@ -1028,13 +1025,8 @@
   font-size: 1.3rem;
   font-weight: 800;
   color: var(--rt-text-primary);
-  margin: 0 0 4px;
-}
-
-.rt-modal-subtitle {
-  font-size: 0.85rem;
-  color: var(--rt-text-muted);
-  margin: 0 0 16px;
+  margin: 0 0 14px;
+  line-height: 1.4;
 }
 
 .rt-modal-desc {
@@ -1117,8 +1109,8 @@
   .rt-section-head { flex-direction: column; align-items: flex-start; }
 
   .rt-badges-grid {
-    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 12px;
   }
 
   .rt-chapters-grid {
