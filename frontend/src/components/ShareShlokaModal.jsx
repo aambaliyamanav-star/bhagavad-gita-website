@@ -316,52 +316,58 @@ export default function ShareShlokaModal({
       });
     }
 
-    // 2. Pre-calculate Heights
-    const topMargin = 45;
-    const headerTitleH = 46;
-    const chapterBadgeH = 38;
-    const headerDividerH = 22;
-    const totalHeaderH = topMargin + headerTitleH + chapterBadgeH + headerDividerH; // ~151px
+    // 2. Pre-calculate Heights for 9:16 Aspect Ratio (1080 x 1920)
+    const cardHeight = 1920;
+    canvas.width = width;
+    canvas.height = cardHeight;
 
-    const speakerH = cleanSpeaker ? 44 : 0;
+    const outerMargin = 38;
+    const innerMargin = 52;
 
-    const sanskritLineH = 42;
-    const sanskritVerticalPadding = 26;
+    const headerTitleH = 50;
+    const chapterBadgeH = 44;
+    const headerDividerH = 26;
+    const totalHeaderH = headerTitleH + chapterBadgeH + headerDividerH; // ~120px
+
+    const speakerH = cleanSpeaker ? 48 : 0;
+
+    const sanskritLineH = 46;
+    const sanskritVerticalPadding = 30;
     const totalSanskritLinesH = (sanskritToDisplay.length - 1) * sanskritLineH;
     const sanskritBoxH = totalSanskritLinesH + sanskritVerticalPadding * 2;
-    const sanskritDividerH = 22;
+    const sanskritDividerH = 26;
     const totalSanskritH = sanskritBoxH + sanskritDividerH;
 
-    const transTitleH = 32;
-    const transLineH = 34;
+    const transTitleH = 38;
+    const transLineH = 38;
     const transContentH = translationToDisplay.length * transLineH;
-    const transDividerH = hasMessage ? 22 : 0;
+    const transDividerH = hasMessage ? 26 : 0;
     const totalTranslationH = transTitleH + transContentH + transDividerH;
 
     let totalMessageH = 0;
-    const msgLineH = 30;
+    const msgLineH = 34;
     if (wrappedMessagePoints.length > 0) {
-      const msgTitleH = 34;
+      const msgTitleH = 40;
       let totalMsgLines = 0;
       wrappedMessagePoints.forEach((lines) => {
         totalMsgLines += lines.length;
       });
-      const pointsGaps = (wrappedMessagePoints.length - 1) * 12;
-      totalMessageH = msgTitleH + (totalMsgLines * msgLineH) + pointsGaps + 20;
+      const pointsGaps = (wrappedMessagePoints.length - 1) * 14;
+      totalMessageH = msgTitleH + (totalMsgLines * msgLineH) + pointsGaps + 12;
     }
 
-    const footerH = 95; // divider + website link pill + bottom margin
-    const baseContentH = totalHeaderH + speakerH + totalSanskritH + totalTranslationH + totalMessageH + footerH;
+    const footerDividerY = cardHeight - innerMargin - 60; // anchored near bottom
+    const availableTop = innerMargin + 28;
+    const availableBottom = footerDividerY - 32;
+    const totalAvailableH = availableBottom - availableTop;
 
-    // Set proportional card height (min 800px, clean multiple of 20)
-    const cardHeight = Math.max(800, Math.ceil(baseContentH / 20) * 20);
-    canvas.width = width;
-    canvas.height = cardHeight;
-
-    // Distribute remaining slack evenly across sections
-    const slack = Math.max(0, cardHeight - baseContentH);
+    const totalContentH = totalHeaderH + speakerH + totalSanskritH + totalTranslationH + totalMessageH;
+    const totalSlack = Math.max(0, totalAvailableH - totalContentH);
     const numGaps = (hasMessage ? 4 : 3) + (cleanSpeaker ? 1 : 0);
-    const bonusGap = Math.floor(slack / numGaps);
+
+    const sectionGap = Math.min(60, Math.max(32, Math.floor((totalSlack * 0.42) / numGaps)));
+    const remainingSlack = totalSlack - (sectionGap * numGaps);
+    const topOffset = availableTop + Math.floor(remainingSlack / 2);
 
     // 3. Render Background & Frames
     // Radial Gradient
@@ -394,9 +400,6 @@ export default function ShareShlokaModal({
     ctx.fillRect(0, 0, width, cardHeight);
 
     // Ornamental Borders
-    const outerMargin = 38;
-    const innerMargin = 50;
-
     // Outer gold border
     ctx.strokeStyle = currentTheme.borderGold;
     ctx.lineWidth = 3.5;
@@ -464,7 +467,7 @@ export default function ShareShlokaModal({
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
-    let currY = topMargin + 38;
+    let currY = topOffset;
 
     // Sacred Heading
     ctx.font = 'bold 36px "Noto Sans Devanagari", "Noto Sans Gujarati", serif';
@@ -499,14 +502,14 @@ export default function ShareShlokaModal({
 
     // Header Divider
     drawDivider(currY, 440);
-    currY += 16 + bonusGap;
+    currY += 16 + sectionGap;
 
     // 5. Speaker (if present)
     if (cleanSpeaker) {
       ctx.font = 'italic 700 22px "Noto Sans Devanagari", "Noto Sans Gujarati", sans-serif';
       ctx.fillStyle = currentTheme.sanskritAccent;
       ctx.fillText(`~ ${cleanSpeaker} ~`, width / 2, currY + 12);
-      currY += speakerH + bonusGap;
+      currY += speakerH + sectionGap;
     }
 
     // 6. Sanskrit Shloka Box (Luminous Sacred Frame)
@@ -536,7 +539,7 @@ export default function ShareShlokaModal({
 
     currY = boxY + sanskritBoxH + 14;
     drawDivider(currY, 400);
-    currY += 16 + bonusGap;
+    currY += 16 + sectionGap;
 
     // 7. Gujarati Translation / Meaning Section
     ctx.font = 'bold 20px "Noto Sans Gujarati", sans-serif';
@@ -556,7 +559,7 @@ export default function ShareShlokaModal({
     if (hasMessage && wrappedMessagePoints.length > 0) {
       currY += 8;
       drawDivider(currY, 380);
-      currY += 16 + bonusGap;
+      currY += 16 + sectionGap;
 
       ctx.font = 'bold 20px "Noto Sans Gujarati", sans-serif';
       ctx.fillStyle = currentTheme.sanskritAccent;
@@ -578,7 +581,6 @@ export default function ShareShlokaModal({
     }
 
     // 9. Footer Branding & Website Watermark (Firmly Anchored at Bottom)
-    const footerDividerY = cardHeight - innerMargin - 46;
     drawDivider(footerDividerY, 440);
 
     // Sleek Website Link Pill (Professional & Prominent)
@@ -588,7 +590,7 @@ export default function ShareShlokaModal({
     const pillMetrics = ctx.measureText(pillText);
     const pillW = Math.min(width - 240, pillMetrics.width + 44);
     const pillH = 34;
-    const pillY = footerDividerY + 24;
+    const pillY = footerDividerY + 28;
 
     drawRoundRect(
       ctx,
@@ -660,8 +662,43 @@ export default function ShareShlokaModal({
   };
 
   const handleCopyText = () => {
-    const websiteUrl = "https://bhagavad-gita-website-rk1v.vercel.app";
-    navigator.clipboard.writeText(websiteUrl);
+    const ch = shlokaData.chapterNumber || 1;
+    const shl = shlokaData.shlokNumber || 1;
+    const chName = shlokaData.chapterName ? ` (${cleanHtmlText(shlokaData.chapterName)})` : "";
+    const cleanSpeaker = cleanHtmlText(shlokaData.speaker || "");
+    const cleanSanskrit = cleanHtmlText(shlokaData.sanskrit || shlokaData.sanskritExcerpt || "");
+    const cleanTranslation = cleanHtmlText(
+      shlokaData.translation ||
+      shlokaData.gujaratiSummary ||
+      shlokaData.meaning ||
+      ""
+    );
+    const messagePoints = extractMessagePoints(shlokaData.message);
+
+    let copyText = `॥ શ્રીમદ્ભગવદ્ગીતા ॥\n📌 અધ્યાય ${ch}${chName} • શ્લોક ${shl}\n\n`;
+    if (cleanSpeaker) {
+      copyText += `🎙️ ~ ${cleanSpeaker} ~\n\n`;
+    }
+    if (cleanSanskrit) {
+      copyText += `🕉️ સંસ્કૃત શ્લોક:\n${cleanSanskrit}\n\n`;
+    }
+    if (cleanTranslation) {
+      copyText += `📖 ગુજરાતી ભાવાર્થ:\n${cleanTranslation}\n\n`;
+    }
+    if (messagePoints && messagePoints.length > 0) {
+      copyText += `✨ દિવ્ય સંદેશ / જીવન બોધ:\n`;
+      messagePoints.forEach((point) => {
+        let prefix = "• ";
+        if (/^\d+[.)]/.test(point) || /^•/.test(point) || /^✦/.test(point)) {
+          prefix = "";
+        }
+        copyText += `${prefix}${point}\n`;
+      });
+      copyText += `\n`;
+    }
+    copyText += `🔗 https://bhagavad-gita-website-rk1v.vercel.app`;
+
+    navigator.clipboard.writeText(copyText);
     setCopied(true);
     setTimeout(() => setCopied(false), 2200);
   };
