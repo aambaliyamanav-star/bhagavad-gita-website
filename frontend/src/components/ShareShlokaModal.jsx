@@ -284,11 +284,11 @@ export default function ShareShlokaModal({
       }
 
       // Measure Sanskrit
-      const sanskritBoxW = width - 140; // 940px
-      const sanskritMaxW = sanskritBoxW - 64; // 876px
-      const sanskritFontSize = hasMessage ? 30 : 34;
-      const sanskritLineH = hasMessage ? 54 : 62;
-      const sanskritVerticalPadding = hasMessage ? 38 : 48;
+      const sanskritBoxW = width - 180; // 900px
+      const sanskritMaxW = sanskritBoxW - 64; // 836px
+      const sanskritFontSize = hasMessage ? 34 : 36;
+      const sanskritLineH = hasMessage ? 62 : 66;
+      const sanskritVerticalPadding = hasMessage ? 44 : 52;
       ctx.font = `bold ${sanskritFontSize}px "Noto Sans Devanagari", "Noto Sans Gujarati", serif`;
 
       const wrappedSanskrit = [];
@@ -301,18 +301,19 @@ export default function ShareShlokaModal({
       }
       const sanskritToDisplay = wrappedSanskrit.slice(0, 4);
 
-      // Measure Translation
-      const mainTextMaxW = width - 150; // 930px
-      const transFontSize = hasMessage ? 24 : 27;
-      const transLineH = hasMessage ? 46 : 52;
+      // Measure Translation (comfortable reading width & larger font)
+      const mainTextMaxW = width - 260; // 820px (prevents overly wide 1-liners)
+      const transFontSize = hasMessage ? 30 : 32;
+      const transLineH = hasMessage ? 54 : 58;
       ctx.font = `500 ${transFontSize}px "Noto Sans Gujarati", sans-serif`;
       const wrappedTranslation = wrapText(ctx, cleanTranslation, mainTextMaxW);
-      const maxTransLines = hasMessage ? 6 : 10;
+      const maxTransLines = hasMessage ? 8 : 12;
       const translationToDisplay = wrappedTranslation.slice(0, maxTransLines);
 
-      // Measure Message Points
-      const msgFontSize = 22;
-      const msgLineH = 40;
+      // Measure Message Points (larger font, comfortable multi-line wrapping)
+      const msgFontSize = 26;
+      const msgLineH = 48;
+      const msgPointGap = 26;
       ctx.font = `400 ${msgFontSize}px "Noto Sans Gujarati", sans-serif`;
       const wrappedMessagePoints = [];
       if (hasMessage) {
@@ -322,61 +323,61 @@ export default function ShareShlokaModal({
             prefix = "";
           }
           const pointText = `${prefix}${point}`;
-          const lines = wrapText(ctx, pointText, mainTextMaxW).slice(0, 3);
+          const lines = wrapText(ctx, pointText, mainTextMaxW).slice(0, 5);
           if (lines.length > 0) {
             wrappedMessagePoints.push(lines);
           }
         });
       }
 
-    // 2. Pre-calculate Heights for 9:16 Aspect Ratio (1080 x 1920)
-    const cardHeight = 1920;
-    canvas.width = width;
-    canvas.height = cardHeight;
+      // 2. Pre-calculate Heights for 9:16 Aspect Ratio (1080 x 1920)
+      const cardHeight = 1920;
+      canvas.width = width;
+      canvas.height = cardHeight;
 
-    const outerMargin = 38;
-    const innerMargin = 52;
+      const outerMargin = 38;
+      const innerMargin = 52;
 
-    const headerTitleH = 50;
-    const chapterBadgeH = 44;
-    const totalHeaderH = headerTitleH + chapterBadgeH + 16; // ~110px
+      const headerTitleH = 54;
+      const chapterBadgeH = 46;
+      const totalHeaderH = headerTitleH + chapterBadgeH + 18; // ~118px
 
-    const speakerH = cleanSpeaker ? 46 : 0;
+      const speakerH = cleanSpeaker ? 50 : 0;
 
-    const totalSanskritLinesH = (sanskritToDisplay.length - 1) * sanskritLineH;
-    const sanskritBoxH = totalSanskritLinesH + sanskritVerticalPadding * 2;
-    const sanskritDividerH = 20;
-    const totalSanskritH = sanskritBoxH + sanskritDividerH;
+      const totalSanskritLinesH = (sanskritToDisplay.length - 1) * sanskritLineH;
+      const sanskritBoxH = totalSanskritLinesH + sanskritVerticalPadding * 2;
+      const sanskritDividerH = 20;
+      const totalSanskritH = sanskritBoxH + sanskritDividerH;
 
-    const transTitleH = 46;
-    const transContentH = translationToDisplay.length * transLineH;
-    const totalTranslationH = transTitleH + transContentH;
+      const transTitleH = 50;
+      const transContentH = translationToDisplay.length * transLineH;
+      const totalTranslationH = transTitleH + transContentH;
 
-    let totalMessageH = 0;
-    const msgTitleH = 48;
-    if (wrappedMessagePoints.length > 0) {
-      let totalMsgLines = 0;
-      wrappedMessagePoints.forEach((lines) => {
-        totalMsgLines += lines.length;
-      });
-      const pointsGaps = (wrappedMessagePoints.length - 1) * 18;
-      const msgDividerH = 16;
-      totalMessageH = msgDividerH + msgTitleH + (totalMsgLines * msgLineH) + pointsGaps;
-    }
+      let totalMessageH = 0;
+      const msgTitleH = 50;
+      if (wrappedMessagePoints.length > 0) {
+        let totalMsgLines = 0;
+        wrappedMessagePoints.forEach((lines) => {
+          totalMsgLines += lines.length;
+        });
+        const pointsGaps = (wrappedMessagePoints.length - 1) * msgPointGap;
+        const msgDividerH = 20;
+        totalMessageH = msgDividerH + msgTitleH + (totalMsgLines * msgLineH) + pointsGaps;
+      }
 
-    const footerDividerY = cardHeight - innerMargin - 68; // 1800px
-    const availableTop = innerMargin + 46; // 98px
-    const availableBottom = footerDividerY - 38; // 1762px
-    const totalAvailableH = availableBottom - availableTop; // 1664px
+      const footerDividerY = cardHeight - innerMargin - 66; // 1802px
+      const availableTop = innerMargin + 42; // 94px
+      const availableBottom = footerDividerY - 32; // 1770px
+      const totalAvailableH = availableBottom - availableTop; // 1676px
 
-    const totalContentH = totalHeaderH + speakerH + totalSanskritH + totalTranslationH + totalMessageH;
-    const totalSlack = Math.max(0, totalAvailableH - totalContentH);
-    const numGaps = (hasMessage ? 3 : 2) + (cleanSpeaker ? 1 : 0);
+      const totalContentH = totalHeaderH + speakerH + totalSanskritH + totalTranslationH + totalMessageH;
+      const totalSlack = Math.max(0, totalAvailableH - totalContentH);
+      const numGaps = (hasMessage ? 3 : 2) + (cleanSpeaker ? 1 : 0);
 
-    // Evenly distribute spacing so the page is filled from top to bottom
-    const sectionGap = Math.min(130, Math.floor(totalSlack / (numGaps + 0.6)));
-    const remainingSlack = totalSlack - (sectionGap * numGaps);
-    const topOffset = availableTop + Math.floor(remainingSlack / 2);
+      // Distribute spacing so content fills the canvas from top to bottom
+      const sectionGap = Math.min(150, Math.floor((totalSlack * 0.85) / numGaps));
+      const remainingSlack = totalSlack - (sectionGap * numGaps);
+      const topOffset = availableTop + Math.floor(remainingSlack / 2);
 
     // 3. Render Background & Frames
     // Radial Gradient
@@ -479,7 +480,7 @@ export default function ShareShlokaModal({
     let currY = topOffset;
 
     // Sacred Heading
-    ctx.font = 'bold 42px "Noto Sans Devanagari", "Noto Sans Gujarati", serif';
+    ctx.font = 'bold 44px "Noto Sans Devanagari", "Noto Sans Gujarati", serif';
     ctx.fillStyle = currentTheme.headerColor;
     ctx.fillText("॥ શ્રીમદ્ભગવદ્ગીતા ॥", width / 2, currY);
     currY += headerTitleH;
@@ -488,9 +489,9 @@ export default function ShareShlokaModal({
     const badgeText = chName
       ? `અધ્યાય ${chNum} (${chName}) • શ્લોક ${shlokNum}`
       : `અધ્યાય ${chNum} • શ્લોક ${shlokNum}`;
-    ctx.font = '600 22px "Noto Sans Gujarati", sans-serif';
+    ctx.font = '600 23px "Noto Sans Gujarati", sans-serif';
     const badgeMetrics = ctx.measureText(badgeText);
-    const badgeW = Math.min(width - 200, Math.max(280, badgeMetrics.width + 44));
+    const badgeW = Math.min(width - 200, Math.max(280, badgeMetrics.width + 48));
     const badgeH = chapterBadgeH;
 
     drawRoundRect(
@@ -499,7 +500,7 @@ export default function ShareShlokaModal({
       currY - badgeH / 2,
       badgeW,
       badgeH,
-      22,
+      23,
       "rgba(0, 0, 0, 0.32)",
       currentTheme.innerBorder,
       1.3
@@ -507,7 +508,7 @@ export default function ShareShlokaModal({
 
     ctx.fillStyle = currentTheme.footerColor;
     ctx.fillText(badgeText, width / 2, currY);
-    currY += badgeH / 2 + 16;
+    currY += badgeH / 2 + 18;
 
     // Header Divider
     drawDivider(currY, 460);
@@ -515,7 +516,7 @@ export default function ShareShlokaModal({
 
     // 5. Speaker (if present)
     if (cleanSpeaker) {
-      ctx.font = 'italic 700 25px "Noto Sans Devanagari", "Noto Sans Gujarati", sans-serif';
+      ctx.font = 'italic 700 27px "Noto Sans Devanagari", "Noto Sans Gujarati", sans-serif';
       ctx.fillStyle = currentTheme.sanskritAccent;
       ctx.fillText(`~ ${cleanSpeaker} ~`, width / 2, currY + 12);
       currY += speakerH + sectionGap;
@@ -551,7 +552,7 @@ export default function ShareShlokaModal({
     currY += sectionGap;
 
     // 7. Gujarati Translation / Meaning Section
-    ctx.font = 'bold 26px "Noto Sans Gujarati", sans-serif';
+    ctx.font = 'bold 28px "Noto Sans Gujarati", sans-serif';
     ctx.fillStyle = currentTheme.headerColor;
     ctx.fillText("• ગુજરાતી ભાવાર્થ •", width / 2, currY + 12);
     currY += transTitleH;
@@ -570,7 +571,7 @@ export default function ShareShlokaModal({
       drawDivider(currY, 420);
       currY += sectionGap;
 
-      ctx.font = 'bold 25px "Noto Sans Gujarati", sans-serif';
+      ctx.font = 'bold 28px "Noto Sans Gujarati", sans-serif';
       ctx.fillStyle = currentTheme.sanskritAccent;
       ctx.fillText("✨ દિવ્ય સંદેશ / જીવન બોધ ✨", width / 2, currY + 12);
       currY += msgTitleH;
@@ -584,7 +585,7 @@ export default function ShareShlokaModal({
           currY += msgLineH;
         });
         if (pIdx < wrappedMessagePoints.length - 1) {
-          currY += 18;
+          currY += msgPointGap;
         }
       });
     }
