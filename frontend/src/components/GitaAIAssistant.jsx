@@ -210,12 +210,17 @@ export default function GitaAIAssistant() {
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
-  // Auto-close if user logs out
+  // Auto-close if user logs out or if user enters quiz or auth page
   useEffect(() => {
-    if (!user && isOpen) {
+    const isRestrictedPage =
+      location.pathname === "/login" ||
+      location.pathname === "/register" ||
+      location.pathname.startsWith("/quiz");
+
+    if ((!user || isRestrictedPage) && isOpen) {
       setIsOpen(false);
     }
-  }, [user, isOpen]);
+  }, [user, location.pathname, isOpen]);
 
   // Auto-scroll to bottom of messages
   const scrollToBottom = () => {
@@ -470,8 +475,12 @@ export default function GitaAIAssistant() {
     setIsOpen(true);
   };
 
-  // Login અથવા Register પેજ પર Floating AI બટન બતાવવાની જરૂર નથી
-  if (location.pathname === "/login" || location.pathname === "/register") {
+  // Login, Register અથવા Quiz રમતી વખતે Floating AI બટન બતાવવાની જરૂર નથી
+  if (
+    location.pathname === "/login" ||
+    location.pathname === "/register" ||
+    location.pathname.startsWith("/quiz")
+  ) {
     return null;
   }
 
