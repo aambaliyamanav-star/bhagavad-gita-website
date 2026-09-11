@@ -545,14 +545,19 @@ exports.askGitaAI = async (req, res) => {
             parts: [{ text: trimmedMsg }]
           });
 
+          const cleanKey = String(apiKey || "").trim();
           const response = await fetch(
-            `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`,
+            `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(cleanKey)}`,
             {
               method: "POST",
               headers: {
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                "x-goog-api-key": cleanKey
               },
               body: JSON.stringify({
+                system_instruction: {
+                  parts: [{ text: GITA_SYSTEM_PROMPT }]
+                },
                 contents,
                 generationConfig: {
                   temperature: 0.5,
@@ -573,9 +578,12 @@ exports.askGitaAI = async (req, res) => {
                 source: "gemini"
               });
             }
+          } else {
+            const errText = await response.text();
+            console.warn(`Gemini (${modelName}) HTTP ${response.status}:`, errText);
           }
         } catch (geminiError) {
-          console.warn(`Gemini (${modelName}) failed:`, geminiError.message);
+          console.warn(`Gemini (${modelName}) network/parsing error:`, geminiError.message);
         }
       }
     }
