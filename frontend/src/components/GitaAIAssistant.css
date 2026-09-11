@@ -460,46 +460,50 @@
   color: #2563eb;
 }
 
-/* Typing indicator */
+/* Typing indicator (only animated dots) */
 .typing-bubble {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  padding: 11px 16px;
+  min-width: 52px;
+  width: fit-content;
 }
 
 .gita-typing-dots {
   display: flex;
-  gap: 4px;
+  align-items: center;
+  gap: 5px;
 }
 
 .gita-typing-dots span {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: #f59e0b;
-  animation: typingBounce 1.4s infinite ease-in-out both;
+  background: #2563eb;
+  animation: typingBounce 1.3s infinite ease-in-out both;
+}
+
+.gita-ai-wrapper.dark .gita-typing-dots span {
+  background: #60a5fa;
 }
 
 .gita-typing-dots span:nth-child(1) { animation-delay: -0.32s; }
 .gita-typing-dots span:nth-child(2) { animation-delay: -0.16s; }
 
 @keyframes typingBounce {
-  0%, 80%, 100% { transform: scale(0); }
-  40% { transform: scale(1); }
-}
-
-.gita-typing-label {
-  font-size: 0.8rem;
-  color: #64748b;
-  font-style: italic;
-}
-
-.gita-ai-wrapper.dark .gita-typing-label {
-  color: #94a3b8;
+  0%, 80%, 100% {
+    transform: scale(0.4);
+    opacity: 0.4;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 /* =========================================================
-   SUGGESTIONS BAR
+   SUGGESTIONS BAR (LIGHT/SOFT CHIPS)
    ========================================================= */
 
 .gita-suggestions-bar {
@@ -516,30 +520,60 @@
 .gita-suggestion-chip {
   display: flex;
   align-items: center;
-  gap: 7px;
-  padding: 7px 12px;
-  border-radius: 12px;
-  border: 1px solid rgba(27, 82, 164, 0.2);
-  background: rgba(255, 255, 255, 0.85);
-  color: #103264;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(37, 99, 235, 0.16);
+  background: rgba(239, 246, 255, 0.75);
+  color: #1e40af;
   font-size: 0.82rem;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
   text-align: left;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  backdrop-filter: blur(4px);
 }
 
-.gita-ai-wrapper.dark .gita-suggestion-chip {
-  background: rgba(16, 38, 76, 0.65);
-  border-color: rgba(80, 150, 255, 0.25);
-  color: #93c5fd;
+.gita-suggestion-icon {
+  flex-shrink: 0;
+  color: #3b82f6;
+  transition: transform 0.2s ease;
 }
 
 .gita-suggestion-chip:hover {
-  background: #1b52a4;
+  background: rgba(219, 234, 254, 0.95);
+  border-color: rgba(37, 99, 235, 0.35);
+  color: #1d4ed8;
+  transform: translateX(4px);
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
+}
+
+.gita-suggestion-chip:hover .gita-suggestion-icon {
+  transform: scale(1.15);
+  color: #1d4ed8;
+}
+
+/* Dark Mode - Soft translucent glass appearance */
+.gita-ai-wrapper.dark .gita-suggestion-chip {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(147, 197, 253, 0.16);
+  color: #bfdbfe;
+}
+
+.gita-ai-wrapper.dark .gita-suggestion-icon {
+  color: #60a5fa;
+}
+
+.gita-ai-wrapper.dark .gita-suggestion-chip:hover {
+  background: rgba(59, 130, 246, 0.16);
+  border-color: rgba(147, 197, 253, 0.35);
   color: #ffffff;
-  transform: translateX(3px);
-  border-color: #1b52a4;
+  transform: translateX(4px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.gita-ai-wrapper.dark .gita-suggestion-chip:hover .gita-suggestion-icon {
+  color: #93c5fd;
 }
 
 /* =========================================================
