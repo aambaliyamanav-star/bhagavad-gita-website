@@ -219,9 +219,9 @@ background:
 
   width: 100%;
 
-  min-height: 105px;
+  min-height: 80px;
 
-  padding: 20px 24px;
+  padding: 16px 24px;
 
   display: flex;
 
@@ -388,7 +388,7 @@ background:
 
 
 .history-option-content h2 {
-  margin: 0 0 7px;
+  margin: 0;
 
   color: #1b5fb4;
 
@@ -693,9 +693,9 @@ background:
   }
 
   .history-option-card {
-    min-height: 95px;
+    min-height: 72px;
 
-    padding: 17px;
+    padding: 14px 16px;
 
     gap: 14px;
 
@@ -768,9 +768,9 @@ background:
   }
 
   .history-option-card {
-    min-height: 88px;
+    min-height: 66px;
 
-    padding: 13px;
+    padding: 12px 14px;
 
     gap: 11px;
   }
@@ -787,7 +787,7 @@ background:
   .history-option-content h2 {
     font-size: 17px;
 
-    margin-bottom: 4px;
+    margin: 0;
   }
 
   .history-option-content p {
