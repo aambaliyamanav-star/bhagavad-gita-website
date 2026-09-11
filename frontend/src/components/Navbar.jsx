@@ -80,10 +80,29 @@ function Navbar() {
       "/history",
       "/profile",
       "/admin",
+      "/guidance",
+      "/jivan-margdarshan",
+      "/gita-ai-history",
     ];
-    return protectedPrefixes.some(
-      (prefix) => cleanPath === prefix || cleanPath.startsWith(prefix + "/")
-    );
+    if (
+      protectedPrefixes.some(
+        (prefix) => cleanPath === prefix || cleanPath.startsWith(prefix + "/")
+      )
+    ) {
+      return true;
+    }
+
+    // Check if chapter shloka > 5
+    if (cleanPath.startsWith("/chapter/")) {
+      const queryPart = path.includes("?") ? path.split("?")[1] : "";
+      const params = new URLSearchParams(queryPart);
+      const shlokaNum = Number(params.get("shloka"));
+      if (shlokaNum > 5) {
+        return true;
+      }
+    }
+
+    return false;
   };
 
   // =====================================================
@@ -104,7 +123,7 @@ function Navbar() {
     }
 
     // LIFE GUIDANCE
-    if (path === "/guidance") {
+    if (path === "/guidance" || path === "/jivan-margdarshan") {
       return "જીવન માર્ગદર્શન";
     }
 
@@ -427,7 +446,10 @@ function Navbar() {
   const handleGuidanceNavigation = () => {
     isNavigatingRef.current = false;
     setMenuOpen(false);
-    navigate("/guidance");
+    handleProtectedNavigation(
+      "/guidance",
+      "જીવન માર્ગદર્શન મેળવવા માટે Login કરવું જરૂરી છે."
+    );
   };
 
   // =====================================================

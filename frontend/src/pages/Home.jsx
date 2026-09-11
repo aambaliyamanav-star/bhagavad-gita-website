@@ -417,9 +417,70 @@ useEffect(() => {
       return;
     }
 
+    const shlokNum = Number(todayShlok.shlokNumber);
+
+    // Logout user માટે: જો શ્લોક 5 થી વધુ હોય તો સીધા Login page પર મોકલો
+    if (!user && shlokNum > 5) {
+      const redirectPath = `/chapter/${todayShlok.chapterNumber}?shloka=${todayShlok.shlokNumber}`;
+      const redirectMsg = `અધ્યાય ${todayShlok.chapterNumber} ના શ્લોક ${todayShlok.shlokNumber} વાંચવા માટે Login કરવું જરૂરી છે.`;
+
+      localStorage.setItem("pendingChapter", String(todayShlok.chapterNumber));
+      localStorage.setItem("pendingShloka", String(todayShlok.shlokNumber));
+
+      sessionStorage.setItem(
+        "authRedirect",
+        JSON.stringify({
+          from: redirectPath,
+          message: redirectMsg,
+        })
+      );
+
+      navigate("/login", {
+        state: {
+          from: redirectPath,
+          message: redirectMsg,
+        },
+      });
+      return;
+    }
+
     navigate(
       `/chapter/${todayShlok.chapterNumber}?shloka=${todayShlok.shlokNumber}`
     );
+  };
+
+  // =====================================================
+  // SHARE TODAY'S SHLOK (1 થી 5 સિવાય Login જરૂરી)
+  // =====================================================
+
+  const handleShareTodayShlok = () => {
+    if (!todayShlok) return;
+
+    const shlokNum = Number(todayShlok.shlokNumber);
+
+    // જો user login ન હોય અને શ્લોક 1 થી 5 સિવાયનો હોય
+    if (!user && (shlokNum < 1 || shlokNum > 5)) {
+      const redirectPath = "/";
+      const redirectMsg = `અધ્યાય ${todayShlok.chapterNumber} ના શ્લોક ${todayShlok.shlokNumber} શેર કરવા માટે Login કરવું જરૂરી છે.`;
+
+      sessionStorage.setItem(
+        "authRedirect",
+        JSON.stringify({
+          from: redirectPath,
+          message: redirectMsg,
+        })
+      );
+
+      navigate("/login", {
+        state: {
+          from: redirectPath,
+          message: redirectMsg,
+        },
+      });
+      return;
+    }
+
+    setShareModalOpen(true);
   };
 
   // =====================================================
@@ -788,6 +849,30 @@ useEffect(() => {
   // =====================================================
 
   const openShloka = (item) => {
+    if (!user && Number(item.shlokNumber) > 5) {
+      const redirectPath = `/chapter/${item.chapterNumber}?shloka=${item.shlokNumber}`;
+      const redirectMsg = `અધ્યાય ${item.chapterNumber} ના શ્લોક ${item.shlokNumber} વાંચવા માટે Login કરવું જરૂરી છે.`;
+
+      localStorage.setItem("pendingChapter", String(item.chapterNumber));
+      localStorage.setItem("pendingShloka", String(item.shlokNumber));
+
+      sessionStorage.setItem(
+        "authRedirect",
+        JSON.stringify({
+          from: redirectPath,
+          message: redirectMsg,
+        })
+      );
+
+      navigate("/login", {
+        state: {
+          from: redirectPath,
+          message: redirectMsg,
+        },
+      });
+      return;
+    }
+
     navigate(
       `/chapter/${item.chapterNumber}?shloka=${item.shlokNumber}`
     );
@@ -1229,7 +1314,7 @@ useEffect(() => {
             <button
               type="button"
               className="today-shlok-button today-share-button"
-              onClick={() => setShareModalOpen(true)}
+              onClick={handleShareTodayShlok}
               title="શ્લોક કાર્ડ શેર કરો / ડાઉનલોડ કરો"
             >
               <Share2 className="btn-icon" size={18} /> શ્લોક કાર્ડ શેર કરો

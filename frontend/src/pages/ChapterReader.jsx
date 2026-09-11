@@ -353,6 +353,7 @@ const response = await fetch(
             );
 
             navigate("/login", {
+              replace: true,
               state: {
                 from: redirectPath,
                 message: redirectMsg,
@@ -814,6 +815,7 @@ if (
   );
 
   navigate("/login", {
+    replace: true,
     state: {
       from: redirectPath,
       message: redirectMsg,
@@ -1039,6 +1041,7 @@ if (
   );
 
   navigate("/login", {
+    replace: true,
     state: {
       from: redirectPath,
       message: redirectMsg,

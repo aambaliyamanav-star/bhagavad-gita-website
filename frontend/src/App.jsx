@@ -143,12 +143,25 @@ function App() {
 
 
             {/* =================================================
-                LIFE GUIDANCE (PUBLIC)
+                LIFE GUIDANCE (PROTECTED)
             ================================================= */}
 
             <Route
               path="/guidance"
-              element={<LifeGuidance />}
+              element={
+                <ProtectedRoute message="જીવન માર્ગદર્શન મેળવવા માટે Login કરવું જરૂરી છે.">
+                  <LifeGuidance />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/jivan-margdarshan"
+              element={
+                <ProtectedRoute message="જીવન માર્ગદર્શન મેળવવા માટે Login કરવું જરૂરી છે.">
+                  <LifeGuidance />
+                </ProtectedRoute>
+              }
             />
 
 
