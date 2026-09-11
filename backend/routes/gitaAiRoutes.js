@@ -6,3 +6,4 @@ const { askGitaAI } = require("../controllers/gitaAiController");
 router.post("/ask", askGitaAI);
 
 module.exports = router;
+
