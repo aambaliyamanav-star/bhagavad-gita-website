@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   Flame,
@@ -457,6 +457,7 @@ const GUIDANCE_TOPICS = [
 function LifeGuidance() {
   const navigate = useNavigate();
   const [selectedTopicId, setSelectedTopicId] = useState(GUIDANCE_TOPICS[0].id);
+  const shlokasSectionRef = useRef(null);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -464,6 +465,20 @@ function LifeGuidance() {
 
   const currentTopic =
     GUIDANCE_TOPICS.find((t) => t.id === selectedTopicId) || GUIDANCE_TOPICS[0];
+
+  const handleSelectTopic = (topicId) => {
+    setSelectedTopicId(topicId);
+
+    // Automatically scroll down to the related shlokas section
+    setTimeout(() => {
+      if (shlokasSectionRef.current) {
+        const yOffset = window.innerWidth <= 768 ? -70 : -85;
+        const element = shlokasSectionRef.current;
+        const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
+      }
+    }, 60);
+  };
 
   const handleReadFullShlok = (chapterNumber, shlokNumber) => {
     navigate(`/chapter/${chapterNumber}?shloka=${shlokNumber}`);
@@ -493,7 +508,7 @@ function LifeGuidance() {
                   key={topic.id}
                   type="button"
                   className={`topic-pill-btn ${isSelected ? "active" : ""}`}
-                  onClick={() => setSelectedTopicId(topic.id)}
+                  onClick={() => handleSelectTopic(topic.id)}
                   style={{
                     "--topic-accent": topic.color,
                     "--topic-bg": topic.bgColor,
@@ -515,7 +530,7 @@ function LifeGuidance() {
       </header>
 
       {/* CONTENT WRAPPER */}
-      <section className="guidance-content-container">
+      <section className="guidance-content-container" ref={shlokasSectionRef}>
         {/* DIVINE ESSENCE BANNER */}
         <div
           className="divine-essence-card"
