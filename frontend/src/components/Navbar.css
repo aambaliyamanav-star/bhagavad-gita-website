@@ -52,6 +52,11 @@ body {
   display: flex;
   align-items: center;
 
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+
   /* Solid royal blue — matches site theme */
   background:
     linear-gradient(
@@ -675,6 +680,12 @@ body {
   justify-content: space-between;
 
   box-sizing: border-box;
+
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  cursor: default;
 
   background:
     linear-gradient(
@@ -1569,6 +1580,12 @@ body {
 
   box-sizing: border-box;
 
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  cursor: default;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1865,6 +1882,10 @@ a:focus-visible {
   display: flex !important;
   flex-direction: column !important;
   overflow: hidden !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
   box-shadow:
     0 20px 60px rgba(0, 30, 90, 0.32),
     0 4px 16px rgba(0, 0, 0, 0.10),
@@ -1910,6 +1931,11 @@ a:focus-visible {
   flex: 0 0 auto !important;
   border-top-left-radius: 22px !important;
   border-top-right-radius: 22px !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  cursor: default !important;
   background: linear-gradient(
     135deg,
     rgba(14, 64, 142, 0.94) 0%,
@@ -1952,6 +1978,7 @@ a:focus-visible {
   height: 26px !important;
   flex: 0 0 26px !important;
   border-radius: 7px !important;
+  cursor: pointer !important;
   transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1), background 0.18s ease !important;
 }
 
@@ -2166,7 +2193,23 @@ a:focus-visible {
   padding: 4px 10px !important;
   border-bottom-left-radius: 22px !important;
   border-bottom-right-radius: 22px !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  cursor: default !important;
   background: rgba(210, 235, 255, 0.65) !important;
+}
+
+.side-menu-header,
+.side-menu-header *,
+.side-menu-footer,
+.side-menu-footer * {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  -webkit-user-drag: none !important;
 }
 
 [data-theme="dark"] .side-menu-footer {
@@ -2175,10 +2218,16 @@ a:focus-visible {
 
 .side-menu-footer span {
   font-size: 14px !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  cursor: default !important;
 }
 
 .side-menu-footer p {
   font-size: 10.5px !important;
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  cursor: default !important;
 }
 
 /* Mobile Responsiveness - No scroll, auto expands */
