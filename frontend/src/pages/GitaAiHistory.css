@@ -5,12 +5,16 @@
 
 .gita-ai-history-page {
   min-height: 100vh;
-  padding: 86px 20px 60px;
+  padding: 68px 20px 40px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   align-items: center;
   transition: background 0.3s ease, color 0.3s ease;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 /* Light Mode Background */
@@ -32,7 +36,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 24px;
+  margin-bottom: 14px;
 }
 
 .gah-back-btn {
@@ -86,32 +90,32 @@
 .gah-header {
   text-align: center;
   max-width: 680px;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 .gah-header-icon-box {
-  width: 64px;
-  height: 64px;
-  border-radius: 20px;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
   background: linear-gradient(135deg, #103264 0%, #1b52a4 60%, #2563eb 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   color: #ffd54f;
-  margin-bottom: 12px;
-  box-shadow: 0 8px 24px rgba(27, 82, 164, 0.35);
+  margin-bottom: 8px;
+  box-shadow: 0 6px 20px rgba(27, 82, 164, 0.3);
 }
 
 .gah-sacred-subtitle {
   font-family: "Noto Sans Devanagari", serif;
-  font-size: 0.95rem;
+  font-size: 0.88rem;
   font-weight: 600;
   letter-spacing: 1px;
   color: #c98800;
-  margin: 0 0 4px 0;
+  margin: 0 0 2px 0;
 }
 
 .gita-ai-history-page.dark .gah-sacred-subtitle {
@@ -119,9 +123,9 @@
 }
 
 .gah-header h1 {
-  font-size: 1.85rem;
+  font-size: 1.65rem;
   font-weight: 800;
-  margin: 0 0 8px 0;
+  margin: 0 0 6px 0;
   color: #0d3d7c;
 }
 
@@ -130,7 +134,7 @@
 }
 
 .gah-desc {
-  font-size: 0.95rem;
+  font-size: 0.92rem;
   line-height: 1.5;
   color: #4b6b94;
   margin: 0;
@@ -182,6 +186,8 @@
   outline: none;
   transition: all 0.2s ease;
   box-sizing: border-box;
+  user-select: text;
+  -webkit-user-select: text;
 }
 
 .gita-ai-history-page.dark .gah-search-input {
@@ -244,48 +250,50 @@
 
 .gah-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-  gap: 18px;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 14px;
 }
 
-/* Card */
+/* Compact History Card */
 .gah-card {
   position: relative;
   display: flex;
   flex-direction: column;
-  padding: 18px 20px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.85);
+  padding: 13px 15px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.88);
   border: 1.5px solid rgba(27, 82, 164, 0.16);
-  box-shadow: 0 4px 16px rgba(16, 50, 100, 0.08);
+  box-shadow: 0 3px 12px rgba(16, 50, 100, 0.06);
   cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   box-sizing: border-box;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .gita-ai-history-page.dark .gah-card {
-  background: rgba(14, 32, 70, 0.75);
+  background: rgba(14, 32, 70, 0.78);
   border-color: rgba(80, 150, 255, 0.22);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
 }
 
 .gah-card:hover {
-  transform: translateY(-4px);
+  transform: translateY(-3px);
   border-color: #2563eb;
-  box-shadow: 0 10px 28px rgba(37, 99, 235, 0.22);
+  box-shadow: 0 8px 22px rgba(37, 99, 235, 0.2);
 }
 
 .gah-card-header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 12px;
+  gap: 10px;
+  margin-bottom: 8px;
 }
 
 .gah-card-icon {
-  width: 38px;
-  height: 38px;
-  border-radius: 11px;
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
   background: linear-gradient(135deg, #103264, #1b52a4);
   color: #ffd54f;
   display: flex;
@@ -298,36 +306,26 @@
   flex: 1;
   min-width: 0;
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  align-items: center;
 }
 
 .gah-card-time {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
   font-size: 0.76rem;
   color: #64748b;
+  font-weight: 500;
 }
 
 .gita-ai-history-page.dark .gah-card-time {
   color: #94a3b8;
 }
 
-.gah-card-count {
-  font-size: 0.76rem;
-  font-weight: 700;
-  color: #1b52a4;
-}
-
-.gita-ai-history-page.dark .gah-card-count {
-  color: #60a5fa;
-}
-
 .gah-card-del-btn {
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
   background: transparent;
   border: 1px solid transparent;
   color: #94a3b8;
@@ -345,73 +343,21 @@
 }
 
 .gah-card-title {
-  font-size: 1.05rem;
+  font-size: 0.98rem;
   font-weight: 700;
-  margin: 0 0 8px 0;
+  margin: 0;
   color: #0f2c59;
-  line-height: 1.4;
+  line-height: 1.35;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .gita-ai-history-page.dark .gah-card-title {
   color: #f1f5f9;
-}
-
-.gah-card-preview {
-  font-size: 0.86rem;
-  line-height: 1.45;
-  color: #475569;
-  margin: 0 0 14px 0;
-  flex: 1;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.gita-ai-history-page.dark .gah-card-preview {
-  color: #94a3b8;
-}
-
-.gah-card-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-top: 10px;
-  border-top: 1px solid rgba(27, 82, 164, 0.1);
-}
-
-.gita-ai-history-page.dark .gah-card-footer {
-  border-top-color: rgba(255, 255, 255, 0.08);
-}
-
-.gah-resume-tag {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: #1d4ed8;
-}
-
-.gita-ai-history-page.dark .gah-resume-tag {
-  color: #60a5fa;
-}
-
-.gah-arrow {
-  color: #1d4ed8;
-  transition: transform 0.2s ease;
-}
-
-.gita-ai-history-page.dark .gah-arrow {
-  color: #60a5fa;
-}
-
-.gah-card:hover .gah-arrow {
-  transform: translateX(3px);
 }
 
 /* Empty State */

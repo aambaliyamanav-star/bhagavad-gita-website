@@ -7,7 +7,6 @@ import {
   Sparkles,
   MessageSquareText,
   Clock,
-  ChevronRight,
   X,
   Bot,
   Compass
@@ -99,7 +98,7 @@ export default function GitaAiHistory() {
           title="પાછા જાઓ"
         >
           <ArrowLeft size={18} />
-          <span>ઇતિહાસ મેનુ</span>
+          <span>History</span>
         </button>
 
         <div className="gah-badge">
@@ -161,69 +160,40 @@ export default function GitaAiHistory() {
       <section className="gah-list-section">
         {filteredConversations.length > 0 ? (
           <div className="gah-grid">
-            {filteredConversations.map((conv) => {
-              const lastMsg =
-                conv.messages && conv.messages.length > 0
-                  ? conv.messages[conv.messages.length - 1]
-                  : null;
-
-              return (
-                <div
-                  key={conv.id}
-                  className="gah-card"
-                  onClick={() => handleResumeChat(conv.id)}
-                  title="આ સંવાદમાં આગળ વાતચીત ચાલુ કરો"
-                >
-                  <div className="gah-card-header">
-                    <div className="gah-card-icon">
-                      <MessageSquareText size={20} />
-                    </div>
-
-                    <div className="gah-card-meta">
-                      <span className="gah-card-time">
-                        <Clock size={12} />
-                        <span>{formatDate(conv.updatedAt)}</span>
-                      </span>
-                      <span className="gah-card-count">
-                        {conv.messages?.length || 0} સંદેશાઓ
-                      </span>
-                    </div>
-
-                    <button
-                      type="button"
-                      className="gah-card-del-btn"
-                      onClick={(e) => handleDeleteOne(e, conv.id)}
-                      title="આ સંવાદ ડીલીટ કરો"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+            {filteredConversations.map((conv) => (
+              <div
+                key={conv.id}
+                className="gah-card"
+                onClick={() => handleResumeChat(conv.id)}
+                title="આ સંવાદમાં આગળ વાતચીત ચાલુ કરો"
+              >
+                <div className="gah-card-header">
+                  <div className="gah-card-icon">
+                    <MessageSquareText size={20} />
                   </div>
 
-                  <h3 className="gah-card-title">
-                    {conv.title || "આધ્યાત્મિક માર્ગદર્શન"}
-                  </h3>
-
-                  {lastMsg && (
-                    <p className="gah-card-preview">
-                      <strong>
-                        {lastMsg.sender === "user" ? "તમે: " : "ગીતા AI: "}
-                      </strong>
-                      {lastMsg.text?.length > 130
-                        ? `${lastMsg.text.slice(0, 130)}...`
-                        : lastMsg.text}
-                    </p>
-                  )}
-
-                  <div className="gah-card-footer">
-                    <span className="gah-resume-tag">
-                      <Sparkles size={13} />
-                      <span>આગળ ચેટ ચાલુ કરો</span>
+                  <div className="gah-card-meta">
+                    <span className="gah-card-time">
+                      <Clock size={13} />
+                      <span>{formatDate(conv.updatedAt)}</span>
                     </span>
-                    <ChevronRight size={16} className="gah-arrow" />
                   </div>
+
+                  <button
+                    type="button"
+                    className="gah-card-del-btn"
+                    onClick={(e) => handleDeleteOne(e, conv.id)}
+                    title="આ સંવાદ ડીલીટ કરો"
+                  >
+                    <Trash2 size={16} />
+                  </button>
                 </div>
-              );
-            })}
+
+                <h3 className="gah-card-title">
+                  {conv.title || "આધ્યાત્મિક માર્ગદર્શન"}
+                </h3>
+              </div>
+            ))}
           </div>
         ) : (
           <div className="gah-empty-state">

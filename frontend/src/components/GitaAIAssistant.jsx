@@ -219,9 +219,8 @@ export default function GitaAIAssistant() {
         >
           <div className="gita-ai-fab-glow" />
           <div className="gita-ai-fab-icon-box">
-            <Sparkles size={22} className="gita-fab-sparkle" />
+            <Sparkles size={24} className="gita-fab-sparkle" />
           </div>
-          <span className="gita-ai-fab-label">ગીતા AI</span>
         </button>
       )}
 
