@@ -1496,7 +1496,7 @@ const prepareSanskritLines = () => {
               type="button"
               className={
                 isFavorite(shloka)
-                  ? "favorite-shloka-button favorited"
+                  ? "favorite-shloka-button favorited active"
                   : "favorite-shloka-button"
               }
               onClick={

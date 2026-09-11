@@ -2602,42 +2602,64 @@ button:focus-visible {
 
 
 /* =========================================================
-   FAVOURITE ACTIVE
+   FAVOURITE ACTIVE (RED BUTTON IN LIGHT/DARK THEME)
    ========================================================= */
 
-.favorite-shloka-button.active {
-  color: #ffffff;
-
-  border: 2px solid #2563eb;
-
-  background:
-    linear-gradient(
-      145deg,
-      #60a5fa,
-      #2563eb
-    );
-
+.favorite-shloka-button.active,
+.favorite-shloka-button.favorited {
+  color: #ffffff !important;
+  border: 2px solid #ef4444 !important;
+  background: linear-gradient(
+    145deg,
+    #ef4444,
+    #dc2626
+  ) !important;
   box-shadow:
-    0 7px 17px rgba(37, 99, 235, 0.30),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4);
-
+    0 7px 18px rgba(239, 68, 68, 0.40),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
   animation: favoritePulse 0.35s ease;
 }
 
-
-.favorite-shloka-button.active:hover {
-  color: #ffffff;
-
+.favorite-shloka-button.active:hover,
+.favorite-shloka-button.favorited:hover {
+  color: #ffffff !important;
   transform:
     translateY(-3px)
     scale(1.07);
+  background: linear-gradient(
+    145deg,
+    #f87171,
+    #ef4444
+  ) !important;
+  border-color: #f87171 !important;
+  box-shadow: 0 10px 22px rgba(239, 68, 68, 0.50) !important;
+}
 
-  background:
-    linear-gradient(
-      145deg,
-      #60a5fa,
-      #2563eb
-    );
+[data-theme="dark"] .favorite-shloka-button.active,
+[data-theme="dark"] .favorite-shloka-button.favorited,
+.dark .favorite-shloka-button.active,
+.dark .favorite-shloka-button.favorited {
+  color: #ffffff !important;
+  border: 2px solid #ef4444 !important;
+  background: linear-gradient(
+    145deg,
+    #ef4444,
+    #b91c1c
+  ) !important;
+  box-shadow: 0 7px 20px rgba(239, 68, 68, 0.50) !important;
+}
+
+[data-theme="dark"] .favorite-shloka-button.active:hover,
+[data-theme="dark"] .favorite-shloka-button.favorited:hover,
+.dark .favorite-shloka-button.active:hover,
+.dark .favorite-shloka-button.favorited:hover {
+  background: linear-gradient(
+    145deg,
+    #f87171,
+    #dc2626
+  ) !important;
+  border-color: #f87171 !important;
+  box-shadow: 0 10px 26px rgba(239, 68, 68, 0.60) !important;
 }
 
 
