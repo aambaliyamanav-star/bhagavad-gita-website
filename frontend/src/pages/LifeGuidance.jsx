@@ -481,34 +481,36 @@ function LifeGuidance() {
           તમારી વર્તમાન મનોસ્થિતિ કે પડકાર પસંદ કરો અને ભગવાન શ્રીકૃષ્ણના અમૃતમય શબ્દોમાંથી પ્રેરણા, સાચો નિર્ણય અને આંતરિક શાંતિ પ્રાપ્ત કરો.
         </p>
 
-        {/* TOPIC SELECTOR GRID (PERFECT ROWS & COLUMNS) */}
-        <div className="guidance-topics-grid">
-          {GUIDANCE_TOPICS.map((topic) => {
-            const IconComponent = topic.icon;
-            const isSelected = topic.id === selectedTopicId;
+        {/* TOPIC SELECTOR GRID (HORIZONTAL SCROLL ON MOBILE) */}
+        <div className="guidance-topics-scroll-wrapper">
+          <div className="guidance-topics-grid">
+            {GUIDANCE_TOPICS.map((topic) => {
+              const IconComponent = topic.icon;
+              const isSelected = topic.id === selectedTopicId;
 
-            return (
-              <button
-                key={topic.id}
-                type="button"
-                className={`topic-pill-btn ${isSelected ? "active" : ""}`}
-                onClick={() => setSelectedTopicId(topic.id)}
-                style={{
-                  "--topic-accent": topic.color,
-                  "--topic-bg": topic.bgColor,
-                  "--topic-border": topic.borderColor
-                }}
-              >
-                <span className="pill-icon">
-                  <IconComponent size={18} strokeWidth={2.2} />
-                </span>
-                <span className="pill-text">
-                  <strong>{topic.title}</strong>
-                  <small>{topic.englishTitle}</small>
-                </span>
-              </button>
-            );
-          })}
+              return (
+                <button
+                  key={topic.id}
+                  type="button"
+                  className={`topic-pill-btn ${isSelected ? "active" : ""}`}
+                  onClick={() => setSelectedTopicId(topic.id)}
+                  style={{
+                    "--topic-accent": topic.color,
+                    "--topic-bg": topic.bgColor,
+                    "--topic-border": topic.borderColor
+                  }}
+                >
+                  <span className="pill-icon">
+                    <IconComponent size={18} strokeWidth={2.2} />
+                  </span>
+                  <span className="pill-text">
+                    <strong>{topic.title}</strong>
+                    <small>{topic.englishTitle}</small>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </header>
 
