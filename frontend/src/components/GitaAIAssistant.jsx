@@ -32,6 +32,165 @@ const SUGGESTIONS = [
   "સાચો અને ધર્મયુક્ત નિર્ણય કેવી રીતે લેવો?"
 ];
 
+// Helper to format inline markdown tokens into bold / highlighted words without raw symbols
+function formatInlineText(text) {
+  if (!text) return null;
+
+  // Match bold/highlight/italic/code:
+  // ***word***, **word**, __word__, ==word==, `word`, *word*, _word_
+  const tokenRegex = /(\*\*\*[^*]+?\*\*\*|\*\*[^*]+?\*\*|__[^_]+?__|==[^=]+?==|`[^`]+?`|\*[^*\s][^*]*?[^*\s]\*|(?<!\w)_[^_\s][^_]*?[^_\s]_(?!\w))/g;
+  const parts = text.split(tokenRegex);
+
+  return parts.map((part, index) => {
+    if (!part) return null;
+
+    // Bold + Italic: ***text***
+    if (part.startsWith("***") && part.endsWith("***") && part.length > 6) {
+      return (
+        <strong key={index} className="gita-inline-highlight">
+          {part.slice(3, -3)}
+        </strong>
+      );
+    }
+
+    // Bold: **text**
+    if (part.startsWith("**") && part.endsWith("**") && part.length > 4) {
+      return (
+        <strong key={index} className="gita-inline-highlight">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+
+    // Underscore bold: __text__
+    if (part.startsWith("__") && part.endsWith("__") && part.length > 4) {
+      return (
+        <strong key={index} className="gita-inline-highlight">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+
+    // Highlight: ==text==
+    if (part.startsWith("==") && part.endsWith("==") && part.length > 4) {
+      return (
+        <strong key={index} className="gita-inline-highlight">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+
+    // Code/Pill: `text`
+    if (part.startsWith("`") && part.endsWith("`") && part.length > 2) {
+      return (
+        <strong key={index} className="gita-inline-highlight">
+          {part.slice(1, -1)}
+        </strong>
+      );
+    }
+
+    // Italic / single asterisk: *text*
+    if (part.startsWith("*") && part.endsWith("*") && part.length > 2) {
+      return (
+        <strong key={index} className="gita-inline-highlight">
+          {part.slice(1, -1)}
+        </strong>
+      );
+    }
+
+    // Italic / single underscore: _text_
+    if (part.startsWith("_") && part.endsWith("_") && part.length > 2) {
+      return (
+        <strong key={index} className="gita-inline-highlight">
+          {part.slice(1, -1)}
+        </strong>
+      );
+    }
+
+    // Strip any remaining unclosed asterisks or markdown artifacts
+    const cleaned = part.replace(/\*\*/g, "").replace(/\*/g, "");
+    return cleaned;
+  });
+}
+
+// Helper to render entire AI/User message with clean lists, headings, quotes, and highlighted inline words
+function renderMessageContent(rawText) {
+  if (!rawText) return null;
+  const lines = rawText.split("\n");
+
+  return lines.map((line, idx) => {
+    const trimmed = line.trim();
+
+    if (!trimmed) {
+      return <div key={idx} className="gita-msg-spacer" />;
+    }
+
+    // Heading: ### Heading or ## Heading
+    if (/^#{1,4}\s+/.test(trimmed)) {
+      const headingText = trimmed.replace(/^#{1,4}\s+/, "");
+      return (
+        <h5 key={idx} className="gita-msg-heading">
+          {formatInlineText(headingText)}
+        </h5>
+      );
+    }
+
+    // Full bold line: **Heading/Important line**
+    if (trimmed.startsWith("**") && trimmed.endsWith("**") && trimmed.length > 4) {
+      return (
+        <strong key={idx} className="gita-highlight-line">
+          {formatInlineText(trimmed.slice(2, -2))}
+        </strong>
+      );
+    }
+
+    // Quote / Shloka: > *શ્લોક* or > શ્લોક
+    if (trimmed.startsWith(">")) {
+      const quoteText = trimmed
+        .replace(/^>\s*/, "")
+        .replace(/^\*+|\*+$/g, "");
+      return (
+        <blockquote key={idx} className="gita-shloka-quote">
+          {formatInlineText(quoteText)}
+        </blockquote>
+      );
+    }
+
+    // Numbered list item: 1. or 1)
+    const numMatch = trimmed.match(/^(\d+[\.\)])\s+(.*)$/);
+    if (numMatch) {
+      return (
+        <div key={idx} className="gita-msg-list-item">
+          <span className="gita-list-num">{numMatch[1]}</span>
+          <span className="gita-list-content">
+            {formatInlineText(numMatch[2])}
+          </span>
+        </div>
+      );
+    }
+
+    // Bullet list item: * or - or •
+    if (/^[-*•]\s+/.test(trimmed)) {
+      const bulletContent = trimmed.replace(/^[-*•]\s+/, "");
+      return (
+        <div key={idx} className="gita-msg-list-item">
+          <span className="gita-list-bullet">•</span>
+          <span className="gita-list-content">
+            {formatInlineText(bulletContent)}
+          </span>
+        </div>
+      );
+    }
+
+    // Regular paragraph
+    return (
+      <p key={idx} className="gita-msg-para">
+        {formatInlineText(line)}
+      </p>
+    );
+  });
+}
+
 export default function GitaAIAssistant() {
   const navigate = useNavigate();
   const { theme } = useTheme();
@@ -217,7 +376,18 @@ export default function GitaAIAssistant() {
   };
 
   const handleCopyText = (id, text) => {
-    navigator.clipboard.writeText(text);
+    const cleanText = text
+      .replace(/\*\*\*(.*?)\*\*\*/g, "$1")
+      .replace(/\*\*(.*?)\*\*/g, "$1")
+      .replace(/__(.*?)__/g, "$1")
+      .replace(/==(.*?)==/g, "$1")
+      .replace(/`(.*?)`/g, "$1")
+      .replace(/\*(.*?)\*/g, "$1")
+      .replace(/_(.*?)_/g, "$1")
+      .replace(/^#{1,4}\s+/gm, "")
+      .replace(/^>\s*/gm, "");
+
+    navigator.clipboard.writeText(cleanText);
     setCopiedId(id);
     setTimeout(() => setCopiedId(null), 2000);
   };
@@ -328,27 +498,7 @@ export default function GitaAIAssistant() {
 
                 <div className="gita-msg-bubble">
                   <div className="gita-msg-text">
-                    {msg.text.split("\n").map((line, idx) => {
-                      if (line.startsWith("**") && line.endsWith("**")) {
-                        return (
-                          <strong key={idx} className="gita-highlight-line">
-                            {line.replace(/\*\*/g, "")}
-                          </strong>
-                        );
-                      }
-                      if (line.startsWith("> *") || line.startsWith(">*")) {
-                        return (
-                          <blockquote key={idx} className="gita-shloka-quote">
-                            {line.replace(/^>\s*\*/, "").replace(/\*$/, "")}
-                          </blockquote>
-                        );
-                      }
-                      return (
-                        <p key={idx} className="gita-msg-para">
-                          {line}
-                        </p>
-                      );
-                    })}
+                    {renderMessageContent(msg.text)}
                   </div>
 
                   {msg.sender === "ai" && (

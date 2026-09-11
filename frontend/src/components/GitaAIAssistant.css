@@ -392,6 +392,93 @@
   margin: 0;
 }
 
+/* Inline Highlighted / Bold Words */
+.gita-inline-highlight {
+  font-weight: 750;
+  color: #1e40af;
+  background-color: rgba(37, 99, 235, 0.10);
+  padding: 1px 5px;
+  border-radius: 4px;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+.gita-ai-wrapper.dark .gita-inline-highlight {
+  color: #ffd54f;
+  background-color: rgba(245, 197, 66, 0.16);
+}
+
+.user-row .gita-inline-highlight {
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.22);
+}
+
+/* Headings inside messages */
+.gita-msg-heading {
+  margin: 6px 0 2px 0;
+  font-size: 0.98rem;
+  font-weight: 750;
+  color: #1b52a4;
+  line-height: 1.4;
+}
+
+.gita-ai-wrapper.dark .gita-msg-heading {
+  color: #ffd54f;
+}
+
+.user-row .gita-msg-heading {
+  color: #ffffff;
+}
+
+/* List Items */
+.gita-msg-list-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin: 2px 0;
+  line-height: 1.5;
+}
+
+.gita-list-bullet {
+  color: #2563eb;
+  font-weight: 800;
+  font-size: 1.1rem;
+  line-height: 1.25;
+  flex-shrink: 0;
+}
+
+.gita-ai-wrapper.dark .gita-list-bullet {
+  color: #f59e0b;
+}
+
+.user-row .gita-list-bullet {
+  color: #ffffff;
+}
+
+.gita-list-num {
+  font-weight: 750;
+  color: #1e40af;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.gita-ai-wrapper.dark .gita-list-num {
+  color: #ffd54f;
+}
+
+.user-row .gita-list-num {
+  color: #ffffff;
+}
+
+.gita-list-content {
+  flex: 1;
+}
+
+.gita-msg-spacer {
+  height: 4px;
+}
+
 .gita-highlight-line {
   color: #1b52a4;
   font-weight: 700;
