@@ -58,70 +58,56 @@
 }
 
 /* =====================================================
-   HEADER BOX
+   HEADER BOX (REMOVED BOX - DIRECT ON BACKGROUND WITH SHADOW)
 ===================================================== */
 
 .favourite-header {
   text-align: center;
   max-width: 1050px;
-  margin: 0 auto 35px;
-  padding: 30px 25px;
+  margin: 0 auto 30px;
+  padding: 10px 20px 20px;
 
-  background: rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  background: transparent;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  border-radius: 20px;
-  box-shadow: 0 10px 28px rgba(35, 91, 135, 0.08);
+  border: none;
+  box-shadow: none;
   box-sizing: border-box;
-  
+
   animation: fadeUp 0.8s ease-out forwards;
 }
 
 .favourite-om {
-
   font-size: 58px;
-
   line-height: 1;
-
   margin-bottom: 10px;
-
   color: #216da5;
-
-  text-shadow:
-    0 2px 4px rgba(35, 100, 150, 0.18);
+  filter: drop-shadow(0 4px 14px rgba(33, 109, 165, 0.28));
+  text-shadow: 0 3px 12px rgba(35, 100, 150, 0.25);
 }
 
 .favourite-sacred-title {
-
   margin: 0 0 10px;
-
   font-size: 20px;
-
   font-weight: 600;
-
   color: #286d9f;
+  text-shadow: 0 2px 10px rgba(40, 109, 159, 0.20);
 }
 
 .favourite-header h1 {
-
   margin: 8px 0;
-
   font-size: 36px;
-
   font-weight: 800;
-
   color: #174a76;
+  text-shadow: 0 4px 18px rgba(23, 74, 118, 0.22), 0 1px 2px rgba(255, 255, 255, 0.85);
 }
 
 .favourite-header p:last-child {
-
-  margin-top: 10px;
-
+  margin-top: 8px;
   font-size: 16px;
-
   color: #52718b;
+  text-shadow: 0 2px 8px rgba(35, 91, 135, 0.15);
 }
 
 
@@ -767,7 +753,14 @@
    DARK HEADER & TOP BAR & CARDS
 ===================================================== */
 
-[data-theme="dark"] .favourite-header,
+[data-theme="dark"] .favourite-header {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
 [data-theme="dark"] .favourite-top-bar,
 [data-theme="dark"] .favourite-card,
 [data-theme="dark"] .favourite-empty-card {
@@ -778,20 +771,23 @@
 
 [data-theme="dark"] .favourite-om {
   color: #71b8ed !important;
-  text-shadow: 0 3px 10px rgba(60, 155, 220, 0.35) !important;
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.5));
+  text-shadow: 0 4px 16px rgba(113, 184, 237, 0.40) !important;
 }
 
 [data-theme="dark"] .favourite-sacred-title {
   color: #76b8e5 !important;
+  text-shadow: 0 2px 12px rgba(118, 184, 229, 0.35);
 }
 
 [data-theme="dark"] .favourite-header h1 {
   color: #9bd1f5 !important;
-  text-shadow: 0 2px 8px rgba(50, 140, 205, 0.20) !important;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6), 0 2px 10px rgba(155, 209, 245, 0.35) !important;
 }
 
 [data-theme="dark"] .favourite-header p:last-child {
   color: #9abbd3 !important;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 [data-theme="dark"] .favourite-count strong {
