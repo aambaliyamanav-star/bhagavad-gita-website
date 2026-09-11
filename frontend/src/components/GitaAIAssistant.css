@@ -1,0 +1,602 @@
+/* =========================================================
+   GITA AI ASSISTANT WIDGET
+   ROYAL BLUE THEME (LIGHT + DARK MODE)
+   ========================================================= */
+
+.gita-ai-wrapper {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  font-family: inherit;
+  pointer-events: none;
+}
+
+.gita-ai-wrapper * {
+  box-sizing: border-box;
+}
+
+/* =========================================================
+   FLOATING ACTION BUTTON (FAB)
+   ========================================================= */
+
+.gita-ai-fab {
+  pointer-events: auto;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 52px;
+  padding: 0 20px 0 14px;
+  border-radius: 28px;
+  border: 1.5px solid rgba(255, 215, 0, 0.45);
+  background: linear-gradient(135deg, #0a3d8f 0%, #1155cc 55%, #1a6be0 100%);
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow:
+    0 8px 24px rgba(10, 61, 143, 0.45),
+    0 2px 8px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  outline: none;
+}
+
+.gita-ai-fab-glow {
+  position: absolute;
+  top: -3px;
+  left: -3px;
+  right: -3px;
+  bottom: -3px;
+  border-radius: 30px;
+  background: linear-gradient(135deg, rgba(245, 197, 66, 0.4), rgba(37, 99, 235, 0.4));
+  z-index: -1;
+  opacity: 0.6;
+  filter: blur(8px);
+  animation: fabPulse 2.5s infinite ease-in-out;
+}
+
+@keyframes fabPulse {
+  0%, 100% {
+    transform: scale(0.98);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.06);
+    opacity: 0.85;
+  }
+}
+
+.gita-ai-fab-icon-box {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffd54f;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.gita-fab-sparkle {
+  animation: sparkleSpin 4s infinite linear;
+}
+
+@keyframes sparkleSpin {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(15deg); }
+  75% { transform: rotate(-15deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.gita-ai-fab-label {
+  font-size: 0.98rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.gita-ai-fab:hover {
+  transform: translateY(-3px) scale(1.03);
+  box-shadow:
+    0 12px 30px rgba(17, 85, 204, 0.55),
+    0 4px 12px rgba(0, 0, 0, 0.3);
+  border-color: #ffd54f;
+}
+
+/* =========================================================
+   CHAT WINDOW MODAL
+   ========================================================= */
+
+.gita-ai-window {
+  pointer-events: auto;
+  width: 400px;
+  max-width: calc(100vw - 32px);
+  height: 600px;
+  max-height: calc(100vh - 100px);
+  display: flex;
+  flex-direction: column;
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow:
+    0 24px 64px rgba(5, 25, 65, 0.45),
+    0 4px 18px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  animation: windowSlideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: all 0.3s ease;
+}
+
+@keyframes windowSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Light Mode Window */
+.gita-ai-wrapper.light .gita-ai-window {
+  background: #f8fafc;
+  border: 1.5px solid rgba(27, 82, 164, 0.28);
+  color: #0d3d7c;
+}
+
+/* Dark Mode Window */
+.gita-ai-wrapper.dark .gita-ai-window {
+  background: #08162f;
+  border: 1.5px solid rgba(80, 160, 255, 0.3);
+  color: #f1f5f9;
+}
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.gita-ai-header {
+  flex: 0 0 auto;
+  height: 64px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, #0a3d8f 0%, #1155cc 55%, #1a6be0 100%);
+  color: #ffffff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 2px 10px rgba(0, 30, 90, 0.25);
+}
+
+.gita-ai-header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.gita-ai-avatar {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 215, 0, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffd54f;
+}
+
+.gita-ai-online-dot {
+  position: absolute;
+  bottom: -2px;
+  right: -2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #10b981;
+  border: 2px solid #0a3d8f;
+}
+
+.gita-ai-header-titles {
+  display: flex;
+  flex-direction: column;
+}
+
+.gita-ai-header-titles h3 {
+  font-size: 1.02rem;
+  font-weight: 700;
+  margin: 0;
+  color: #ffffff;
+  line-height: 1.2;
+}
+
+.gita-ai-header-titles span {
+  font-size: 0.76rem;
+  color: #ffe082;
+  font-family: "Noto Sans Devanagari", serif;
+  margin-top: 2px;
+}
+
+.gita-ai-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.gita-ai-icon-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.gita-ai-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.28);
+  transform: scale(1.05);
+}
+
+.gita-ai-icon-btn.close-btn:hover {
+  background: rgba(239, 68, 68, 0.7);
+}
+
+/* =========================================================
+   BODY / MESSAGES
+   ========================================================= */
+
+.gita-ai-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.gita-ai-body::-webkit-scrollbar {
+  width: 5px;
+}
+
+.gita-ai-body::-webkit-scrollbar-thumb {
+  background: rgba(27, 82, 164, 0.3);
+  border-radius: 10px;
+}
+
+.gita-msg-row {
+  display: flex;
+  gap: 10px;
+  max-width: 88%;
+}
+
+.gita-msg-row.user-row {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.gita-msg-row.ai-row {
+  align-self: flex-start;
+}
+
+.gita-msg-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #103264, #1b52a4);
+  color: #ffd54f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+.gita-msg-bubble {
+  position: relative;
+  padding: 12px 15px;
+  border-radius: 16px;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+/* User Bubble */
+.user-row .gita-msg-bubble {
+  background: linear-gradient(135deg, #18458b 0%, #2563eb 100%);
+  color: #ffffff;
+  border-bottom-right-radius: 4px;
+  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.25);
+}
+
+/* AI Bubble - Light */
+.gita-ai-wrapper.light .ai-row .gita-msg-bubble {
+  background: #ffffff;
+  color: #0f2c59;
+  border: 1px solid rgba(27, 82, 164, 0.16);
+  border-left: 3.5px solid #2563eb;
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 3px 12px rgba(16, 50, 100, 0.08);
+}
+
+/* AI Bubble - Dark */
+.gita-ai-wrapper.dark .ai-row .gita-msg-bubble {
+  background: rgba(16, 38, 76, 0.85);
+  color: #e2e8f0;
+  border: 1px solid rgba(80, 160, 255, 0.22);
+  border-left: 3.5px solid #f59e0b;
+  border-bottom-left-radius: 4px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+.gita-msg-text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.gita-msg-para {
+  margin: 0;
+}
+
+.gita-highlight-line {
+  color: #1b52a4;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.gita-ai-wrapper.dark .gita-highlight-line {
+  color: #ffd54f;
+}
+
+.user-row .gita-highlight-line {
+  color: #ffffff;
+}
+
+.gita-shloka-quote {
+  margin: 4px 0;
+  padding: 6px 10px;
+  border-left: 2.5px solid #f59e0b;
+  background: rgba(245, 197, 66, 0.12);
+  border-radius: 0 6px 6px 0;
+  font-style: italic;
+  font-family: "Noto Sans Devanagari", serif;
+  font-size: 0.94rem;
+  color: #b45309;
+}
+
+.gita-ai-wrapper.dark .gita-shloka-quote {
+  color: #fde68a;
+  background: rgba(245, 197, 66, 0.16);
+}
+
+.user-row .gita-shloka-quote {
+  color: #fff8e1;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.gita-msg-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 6px;
+  padding-top: 4px;
+}
+
+.gita-copy-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 6px;
+  border: none;
+  background: rgba(27, 82, 164, 0.08);
+  color: #4b6b94;
+  font-size: 0.74rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.gita-ai-wrapper.dark .gita-copy-btn {
+  background: rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+}
+
+.gita-copy-btn:hover {
+  background: rgba(37, 99, 235, 0.2);
+  color: #2563eb;
+}
+
+/* Typing indicator */
+.typing-bubble {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.gita-typing-dots {
+  display: flex;
+  gap: 4px;
+}
+
+.gita-typing-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #f59e0b;
+  animation: typingBounce 1.4s infinite ease-in-out both;
+}
+
+.gita-typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+.gita-typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes typingBounce {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
+}
+
+.gita-typing-label {
+  font-size: 0.8rem;
+  color: #64748b;
+  font-style: italic;
+}
+
+.gita-ai-wrapper.dark .gita-typing-label {
+  color: #94a3b8;
+}
+
+/* =========================================================
+   SUGGESTIONS BAR
+   ========================================================= */
+
+.gita-suggestions-bar {
+  flex: 0 0 auto;
+  padding: 0 14px 10px;
+}
+
+.gita-suggestions-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.gita-suggestion-chip {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(27, 82, 164, 0.2);
+  background: rgba(255, 255, 255, 0.85);
+  color: #103264;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.gita-ai-wrapper.dark .gita-suggestion-chip {
+  background: rgba(16, 38, 76, 0.65);
+  border-color: rgba(80, 150, 255, 0.25);
+  color: #93c5fd;
+}
+
+.gita-suggestion-chip:hover {
+  background: #1b52a4;
+  color: #ffffff;
+  transform: translateX(3px);
+  border-color: #1b52a4;
+}
+
+/* =========================================================
+   FOOTER INPUT BAR
+   ========================================================= */
+
+.gita-ai-footer {
+  flex: 0 0 auto;
+  padding: 10px 14px 14px;
+  border-top: 1px solid rgba(27, 82, 164, 0.12);
+}
+
+.gita-ai-wrapper.dark .gita-ai-footer {
+  border-top-color: rgba(255, 255, 255, 0.08);
+}
+
+.gita-input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px 6px 14px;
+  border-radius: 18px;
+  border: 1.5px solid rgba(27, 82, 164, 0.25);
+  background: rgba(255, 255, 255, 0.95);
+  transition: all 0.2s ease;
+}
+
+.gita-ai-wrapper.dark .gita-input-wrapper {
+  background: rgba(14, 32, 68, 0.85);
+  border-color: rgba(80, 150, 255, 0.3);
+}
+
+.gita-input-wrapper:focus-within {
+  border-color: #2563eb;
+  box-shadow: 0 0 12px rgba(37, 99, 235, 0.25);
+}
+
+.gita-ai-textarea {
+  flex: 1;
+  border: none;
+  background: transparent;
+  outline: none;
+  resize: none;
+  font-size: 0.92rem;
+  color: #0d3d7c;
+  font-family: inherit;
+  line-height: 1.4;
+  max-height: 80px;
+}
+
+.gita-ai-wrapper.dark .gita-ai-textarea {
+  color: #f1f5f9;
+}
+
+.gita-ai-textarea::placeholder {
+  color: #94a3b8;
+}
+
+.gita-ai-send-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #103264, #1b52a4);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(27, 82, 164, 0.35);
+}
+
+.gita-ai-send-btn:hover:not(:disabled) {
+  transform: scale(1.08);
+  background: linear-gradient(135deg, #1b52a4, #2563eb);
+}
+
+.gita-ai-send-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 600px) {
+  .gita-ai-wrapper {
+    bottom: 16px;
+    right: 16px;
+  }
+
+  .gita-ai-fab {
+    height: 48px;
+    padding: 0 16px 0 12px;
+  }
+
+  .gita-ai-window {
+    width: calc(100vw - 24px);
+    height: min(580px, 84vh);
+    bottom: 12px;
+    right: 12px;
+    border-radius: 20px;
+  }
+}

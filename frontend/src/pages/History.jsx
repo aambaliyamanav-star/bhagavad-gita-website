@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { History as HistoryIcon, ClipboardList, ChevronRight, BookMarked, Award } from "lucide-react";
+import { History as HistoryIcon, ClipboardList, ChevronRight, BookMarked, Award, Sparkles } from "lucide-react";
 
 import "./History.css";
 
@@ -148,6 +148,39 @@ function History() {
             <p>
               તમારા ૭૦૦ શ્લોકોનું અધ્યયન, દૈનિક વાંચન સ્ટ્રીક
               અને આધ્યાત્મિક સિદ્ધિઓ જુઓ.
+            </p>
+
+          </div>
+
+          <div className="history-option-arrow">
+            <ChevronRight />
+          </div>
+
+        </button>
+
+        {/* =================================================
+            GITA AI CHAT HISTORY (ગીતા AI સંવાદ ઇતિહાસ)
+        ================================================= */}
+
+        <button
+          type="button"
+          className="history-option-card gita-ai-history-card"
+          onClick={() => navigate("/gita-ai-history")}
+        >
+
+          <div className="history-option-icon gita-ai-option-icon">
+            <Sparkles />
+          </div>
+
+          <div className="history-option-content">
+
+            <h2>
+              ગીતા AI સંવાદ ઇતિહાસ
+            </h2>
+
+            <p>
+              ભગવાન શ્રીકૃષ્ણ અને ગીતા AI સાથે કરેલી તમામ આધ્યાત્મિક
+              વાતચીત અને પ્રશ્નોત્તરી જુઓ.
             </p>
 
           </div>

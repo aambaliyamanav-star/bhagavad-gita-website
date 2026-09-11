@@ -31,6 +31,8 @@ import QuizResult from "./pages/QuizResult";
 import LifeGuidance from "./pages/LifeGuidance.jsx";
 import ReadingTracker from "./pages/ReadingTracker.jsx";
 import QuizAchievements from "./pages/QuizAchievements.jsx";
+import GitaAiHistory from "./pages/GitaAiHistory.jsx";
+import GitaAIAssistant from "./components/GitaAIAssistant.jsx";
 
 // =====================================================
 // PROTECTED ROUTE COMPONENT
@@ -340,7 +342,21 @@ function App() {
               }
             />
 
+            {/* =================================================
+                GITA AI CHAT HISTORY
+            ================================================= */}
+
+            <Route
+              path="/gita-ai-history"
+              element={<GitaAiHistory />}
+            />
+
           </Routes>
+
+          {/* =================================================
+              GITA AI ASSISTANT (FLOATING BOTTOM-RIGHT WIDGET)
+          ================================================= */}
+          <GitaAIAssistant />
         </BrowserRouter>
       </AuthProvider>
     </ThemeProvider>
