@@ -64,21 +64,21 @@ const THEMES = [
     sampleColor: "#801627"
   },
   {
-    id: "peacock-emerald",
-    name: "મયૂર હરિત",
-    englishName: "Peacock Emerald",
-    primaryGrad: ["#093527", "#0f523d", "#052219"],
-    borderGold: "#f6d878",
-    innerBorder: "rgba(246, 216, 120, 0.45)",
-    headerColor: "#e6fbee",
+    id: "surya-gold",
+    name: "સૂર્ય પીતાંબર",
+    englishName: "Surya Pitambar",
+    primaryGrad: ["#5e3a00", "#8a5700", "#422800"],
+    borderGold: "#ffe57f",
+    innerBorder: "rgba(255, 229, 127, 0.45)",
+    headerColor: "#fff8d6",
     sanskritColor: "#ffffff",
-    sanskritAccent: "#7eeec0",
-    sanskritBoxBg: "rgba(255, 255, 255, 0.07)",
-    sanskritBoxBorder: "rgba(126, 238, 192, 0.35)",
-    translationColor: "#f0fbf5",
-    footerColor: "#a7f3d0",
-    glowColor: "rgba(16, 185, 129, 0.55)",
-    sampleColor: "#0f523d"
+    sanskritAccent: "#ffe082",
+    sanskritBoxBg: "rgba(255, 255, 255, 0.08)",
+    sanskritBoxBorder: "rgba(255, 229, 127, 0.35)",
+    translationColor: "#fffdf2",
+    footerColor: "#ffe57f",
+    glowColor: "rgba(245, 158, 11, 0.55)",
+    sampleColor: "#8a5700"
   },
   {
     id: "royal-purple",
@@ -98,21 +98,21 @@ const THEMES = [
     sampleColor: "#541b77"
   },
   {
-    id: "classic-onyx",
-    name: "ક્લાસિક ઓનિક્સ",
-    englishName: "Classic Onyx",
-    primaryGrad: ["#141720", "#212634", "#0b0d13"],
-    borderGold: "#e8c37d",
-    innerBorder: "rgba(232, 195, 125, 0.45)",
-    headerColor: "#fef3c7",
+    id: "lotus-rose",
+    name: "દિવ્ય પદ્મ",
+    englishName: "Divine Lotus",
+    primaryGrad: ["#570b28", "#7d133c", "#3b0519"],
+    borderGold: "#f9d276",
+    innerBorder: "rgba(249, 210, 118, 0.45)",
+    headerColor: "#ffe4ec",
     sanskritColor: "#ffffff",
-    sanskritAccent: "#fcd34d",
-    sanskritBoxBg: "rgba(255, 255, 255, 0.06)",
-    sanskritBoxBorder: "rgba(232, 195, 125, 0.35)",
-    translationColor: "#f8fafc",
-    footerColor: "#cbd5e1",
-    glowColor: "rgba(245, 158, 11, 0.45)",
-    sampleColor: "#212634"
+    sanskritAccent: "#fbcfe8",
+    sanskritBoxBg: "rgba(255, 255, 255, 0.07)",
+    sanskritBoxBorder: "rgba(249, 210, 118, 0.35)",
+    translationColor: "#fff0f5",
+    footerColor: "#f472b6",
+    glowColor: "rgba(225, 29, 100, 0.55)",
+    sampleColor: "#7d133c"
   },
   {
     id: "mystic-copper",
@@ -875,7 +875,7 @@ export default function ShareShlokaModal({
                     }}
                   >
                     {isActive && (
-                      <Check size={16} strokeWidth={3} className="theme-btn-check" />
+                      <Check size={14} strokeWidth={3} className="theme-btn-check" />
                     )}
                   </button>
                 );

@@ -150,40 +150,44 @@
 }
 
 .theme-options-grid {
-  display: grid;
-  grid-template-columns: repeat(7, 1fr);
-  gap: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
   width: 100%;
+  padding: 2px 0 4px;
 }
 
 .theme-color-btn {
   position: relative;
-  height: 38px;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--btn-bg, #18458b);
-  border: 1.5px solid rgba(255, 255, 255, 0.25);
-  border-radius: 10px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
   cursor: pointer;
   padding: 0;
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
   outline: none;
 }
 
 .theme-color-btn:hover {
-  transform: translateY(-2px) scale(1.05);
+  transform: scale(1.15);
   border-color: var(--border-gold, #f5c542);
-  box-shadow: 0 4px 12px var(--glow-color, rgba(0, 0, 0, 0.4));
+  box-shadow: 0 0 10px var(--glow-color, rgba(0, 0, 0, 0.5));
 }
 
 .theme-color-btn.active {
-  border: 2px solid var(--border-gold, #f5c542);
+  border: 2.5px solid var(--border-gold, #f5c542);
   box-shadow:
-    0 0 14px var(--glow-color, rgba(245, 197, 66, 0.5)),
-    0 4px 10px rgba(0, 0, 0, 0.45);
-  transform: scale(1.04);
+    0 0 14px var(--glow-color, rgba(245, 197, 66, 0.6)),
+    0 3px 8px rgba(0, 0, 0, 0.5);
+  transform: scale(1.2);
 }
 
 .theme-btn-check {
@@ -380,13 +384,15 @@
   }
 
   .theme-options-grid {
-    grid-template-columns: repeat(7, 1fr);
-    gap: 5px;
+    gap: 9px;
+    justify-content: center;
   }
 
   .theme-color-btn {
-    height: 34px;
-    border-radius: 8px;
+    width: 28px;
+    height: 28px;
+    flex: 0 0 28px;
+    border-radius: 50%;
   }
 
   .share-modal-actions {
