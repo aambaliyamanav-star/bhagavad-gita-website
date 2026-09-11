@@ -25,13 +25,6 @@ import "./GitaAIAssistant.css";
 
 const API_BASE = "https://bhagavad-gita-website.onrender.com";
 
-const INITIAL_GREETING = {
-  id: "greeting",
-  sender: "ai",
-  text: "જય શ્રી કૃષ્ણ! 🙏 હું તમારો ગીતા AI માર્ગદર્શક છું.\n\nતમારા જીવનની કોઈપણ મુંઝવણ, ચિંતા, કર્મ કે અધ્યાત્મ વિશે પ્રશ્ન પૂછો. હું તમને શ્રીમદ્ ભગવદ્ ગીતાના પવિત્ર શ્લોકો અને ભગવાન શ્રીકૃષ્ણના ઉપદેશો દ્વારા સચોટ માર્ગદર્શન આપીશ.",
-  timestamp: new Date().toISOString()
-};
-
 const SUGGESTIONS = [
   "મનને એકાગ્ર અને શાંત કેવી રીતે રાખવું?",
   "કર્મણ્યેવાધિકારસ્તે શ્લોકનો સાચો અર્થ શું છે?",
@@ -44,7 +37,7 @@ export default function GitaAIAssistant() {
   const { theme } = useTheme();
 
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState([INITIAL_GREETING]);
+  const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [copiedId, setCopiedId] = useState(null);
@@ -280,6 +273,16 @@ export default function GitaAIAssistant() {
 
           {/* CHAT MESSAGES BODY */}
           <div className="gita-ai-body">
+            {messages.length === 0 && !isLoading && (
+              <div className="gita-empty-chat-state">
+                <div className="gita-empty-chat-icon">
+                  <Sparkles size={26} />
+                </div>
+                <h4>ગીતા AI માર્ગદર્શક</h4>
+                <p>તમારો કોઈપણ પ્રશ્ન પૂછો અથવા નીચે આપેલા પ્રશ્નોમાંથી પસંદ કરો</p>
+              </div>
+            )}
+
             {messages.map((msg) => (
               <div
                 key={msg.id}
@@ -318,7 +321,7 @@ export default function GitaAIAssistant() {
                     })}
                   </div>
 
-                  {msg.sender === "ai" && msg.id !== "greeting" && (
+                  {msg.sender === "ai" && (
                     <div className="gita-msg-actions">
                       <button
                         type="button"
