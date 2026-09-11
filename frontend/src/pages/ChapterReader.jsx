@@ -1515,7 +1515,7 @@ const prepareSanskritLines = () => {
               }
             >
               {isFavorite(shloka)
-                ? <Heart fill="currentColor" size={20} />
+                ? <Heart fill="#ef4444" color="#ef4444" size={20} />
                 : <Heart size={20} />}
             </button>
           </div>

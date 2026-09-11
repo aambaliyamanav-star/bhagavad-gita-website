@@ -657,7 +657,7 @@ function FavouriteShlokas() {
                     title="Favourite દૂર કરો"
                     aria-label="Favourite દૂર કરો"
                   >
-                    <Heart fill="currentColor" size={20} />
+                    <Heart fill="#ef4444" color="#ef4444" size={20} />
                   </button>
 
                 </div>

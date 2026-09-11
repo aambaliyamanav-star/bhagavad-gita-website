@@ -2600,66 +2600,106 @@ button:focus-visible {
     scale(0.96);
 }
 
+.dark .favorite-shloka-button,
+[data-theme="dark"] .favorite-shloka-button {
+  background: linear-gradient(145deg, #173455, #122b48);
+  border-color: rgba(96, 165, 250, 0.28);
+  color: #93c5fd;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35);
+}
+
+.dark .favorite-shloka-button:hover,
+[data-theme="dark"] .favorite-shloka-button:hover {
+  background: linear-gradient(145deg, #1d406a, #153254);
+  border-color: #ef4444;
+  color: #ef4444;
+  box-shadow: 0 0 18px rgba(239, 68, 68, 0.25);
+}
+
 
 /* =========================================================
-   FAVOURITE ACTIVE (RED BUTTON IN LIGHT/DARK THEME)
+   FAVOURITE ACTIVE (RED HEART ICON INSIDE CIRCLE)
    ========================================================= */
 
 .favorite-shloka-button.active,
 .favorite-shloka-button.favorited {
-  color: #ffffff !important;
-  border: 2px solid #ef4444 !important;
-  background: linear-gradient(
-    145deg,
-    #ef4444,
-    #dc2626
-  ) !important;
+  color: #ef4444 !important;
+  border-color: #60a5fa !important;
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #edf6ff
+    ) !important;
   box-shadow:
-    0 7px 18px rgba(239, 68, 68, 0.40),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+    0 6px 14px rgba(37, 99, 235, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
   animation: favoritePulse 0.35s ease;
+}
+
+.favorite-shloka-button.active svg,
+.favorite-shloka-button.favorited svg {
+  fill: #ef4444 !important;
+  color: #ef4444 !important;
 }
 
 .favorite-shloka-button.active:hover,
 .favorite-shloka-button.favorited:hover {
-  color: #ffffff !important;
   transform:
     translateY(-3px)
-    scale(1.07);
-  background: linear-gradient(
-    145deg,
-    #f87171,
-    #ef4444
-  ) !important;
-  border-color: #f87171 !important;
-  box-shadow: 0 10px 22px rgba(239, 68, 68, 0.50) !important;
+    scale(1.06);
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #e7f2ff
+    ) !important;
+  border-color: #ef4444 !important;
+  color: #dc2626 !important;
+  box-shadow: 0 10px 20px rgba(239, 68, 68, 0.18) !important;
+}
+
+.favorite-shloka-button.active:hover svg,
+.favorite-shloka-button.favorited:hover svg {
+  fill: #dc2626 !important;
+  color: #dc2626 !important;
 }
 
 [data-theme="dark"] .favorite-shloka-button.active,
 [data-theme="dark"] .favorite-shloka-button.favorited,
 .dark .favorite-shloka-button.active,
 .dark .favorite-shloka-button.favorited {
-  color: #ffffff !important;
-  border: 2px solid #ef4444 !important;
-  background: linear-gradient(
-    145deg,
-    #ef4444,
-    #b91c1c
-  ) !important;
-  box-shadow: 0 7px 20px rgba(239, 68, 68, 0.50) !important;
+  background: linear-gradient(145deg, #173455, #122b48) !important;
+  border-color: rgba(96, 165, 250, 0.35) !important;
+  color: #ef4444 !important;
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.35) !important;
+}
+
+[data-theme="dark"] .favorite-shloka-button.active svg,
+[data-theme="dark"] .favorite-shloka-button.favorited svg,
+.dark .favorite-shloka-button.active svg,
+.dark .favorite-shloka-button.favorited svg {
+  fill: #ef4444 !important;
+  color: #ef4444 !important;
 }
 
 [data-theme="dark"] .favorite-shloka-button.active:hover,
 [data-theme="dark"] .favorite-shloka-button.favorited:hover,
 .dark .favorite-shloka-button.active:hover,
 .dark .favorite-shloka-button.favorited:hover {
-  background: linear-gradient(
-    145deg,
-    #f87171,
-    #dc2626
-  ) !important;
-  border-color: #f87171 !important;
-  box-shadow: 0 10px 26px rgba(239, 68, 68, 0.60) !important;
+  background: linear-gradient(145deg, #1d406a, #153254) !important;
+  border-color: #ef4444 !important;
+  color: #f87171 !important;
+  transform: translateY(-3px) scale(1.06);
+  box-shadow: 0 10px 22px rgba(239, 68, 68, 0.25) !important;
+}
+
+[data-theme="dark"] .favorite-shloka-button.active:hover svg,
+[data-theme="dark"] .favorite-shloka-button.favorited:hover svg,
+.dark .favorite-shloka-button.active:hover svg,
+.dark .favorite-shloka-button.favorited:hover svg {
+  fill: #f87171 !important;
+  color: #f87171 !important;
 }
 
 
