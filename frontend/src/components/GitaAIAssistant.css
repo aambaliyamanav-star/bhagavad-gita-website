@@ -669,8 +669,13 @@
   }
 
   .gita-ai-fab {
-    height: 48px;
-    padding: 0 16px 0 12px;
+    width: 50px;
+    height: 50px;
+    min-width: 50px;
+    min-height: 50px;
+    padding: 0;
+    border-radius: 50%;
+    aspect-ratio: 1 / 1;
   }
 
   .gita-ai-window {
