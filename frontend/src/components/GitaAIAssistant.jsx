@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   Sparkles,
   Bot,
@@ -14,6 +14,7 @@ import {
   MessageSquareText
 } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
+import { useAuth } from "../context/AuthContext.jsx";
 import {
   getAllConversations,
   saveConversation,
@@ -193,7 +194,9 @@ function renderMessageContent(rawText) {
 
 export default function GitaAIAssistant() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { theme } = useTheme();
+  const { user } = useAuth();
 
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
@@ -206,6 +209,13 @@ export default function GitaAIAssistant() {
 
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+
+  // Auto-close if user logs out
+  useEffect(() => {
+    if (!user && isOpen) {
+      setIsOpen(false);
+    }
+  }, [user, isOpen]);
 
   // Auto-scroll to bottom of messages
   const scrollToBottom = () => {
@@ -309,6 +319,28 @@ export default function GitaAIAssistant() {
     const query = (typeof textToSend === "string" ? textToSend : inputText).trim();
     if (!query || isLoading) return;
 
+    if (!user) {
+      setIsOpen(false);
+      const targetPath = location.pathname + location.search;
+      const redirectMsg = "ગીતા AI માર્ગદર્શકનો ઉપયોગ કરવા માટે Login કરવું જરૂરી છે.";
+
+      sessionStorage.setItem(
+        "authRedirect",
+        JSON.stringify({
+          from: targetPath,
+          message: redirectMsg,
+        })
+      );
+
+      navigate("/login", {
+        state: {
+          from: targetPath,
+          message: redirectMsg,
+        },
+      });
+      return;
+    }
+
     const userMessage = {
       id: `user_${Date.now()}`,
       sender: "user",
@@ -394,8 +426,54 @@ export default function GitaAIAssistant() {
 
   const handleOpenHistory = () => {
     setIsOpen(false);
+    if (!user) {
+      const redirectMsg = "તમારી AI History જોવા માટે Login કરવું જરૂરી છે.";
+      sessionStorage.setItem(
+        "authRedirect",
+        JSON.stringify({
+          from: "/gita-ai-history",
+          message: redirectMsg,
+        })
+      );
+      navigate("/login", {
+        state: {
+          from: "/gita-ai-history",
+          message: redirectMsg,
+        },
+      });
+      return;
+    }
     navigate("/gita-ai-history");
   };
+
+  const handleFabClick = () => {
+    if (!user) {
+      const targetPath = location.pathname + location.search;
+      const redirectMsg = "ગીતા AI માર્ગદર્શકનો ઉપયોગ કરવા માટે Login કરવું જરૂરી છે.";
+
+      sessionStorage.setItem(
+        "authRedirect",
+        JSON.stringify({
+          from: targetPath,
+          message: redirectMsg,
+        })
+      );
+
+      navigate("/login", {
+        state: {
+          from: targetPath,
+          message: redirectMsg,
+        },
+      });
+      return;
+    }
+    setIsOpen(true);
+  };
+
+  // Login અથવા Register પેજ પર Floating AI બટન બતાવવાની જરૂર નથી
+  if (location.pathname === "/login" || location.pathname === "/register") {
+    return null;
+  }
 
   return (
     <aside className={`gita-ai-wrapper ${theme}`} aria-label="Gita AI Assistant">
@@ -406,7 +484,7 @@ export default function GitaAIAssistant() {
         <button
           type="button"
           className="gita-ai-fab"
-          onClick={() => setIsOpen(true)}
+          onClick={handleFabClick}
           title="ગીતા AI માર્ગદર્શક સાથે વાત કરો"
           aria-label="ગીતા AI ખોલો"
         >

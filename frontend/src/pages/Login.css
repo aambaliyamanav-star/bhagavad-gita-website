@@ -63,6 +63,37 @@
   animation: loginCardShow 0.6s ease-out forwards;
 }
 
+.auth-back-top-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(37, 99, 235, 0.08);
+  border: 1px solid rgba(37, 99, 235, 0.18);
+  color: #2563eb;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 8px;
+  transition: all 0.2s ease;
+}
+
+.auth-back-top-btn:hover {
+  background: rgba(37, 99, 235, 0.16);
+  transform: translateX(-2px);
+}
+
+[data-theme="dark"] .auth-back-top-btn {
+  background: rgba(96, 165, 250, 0.12);
+  border-color: rgba(96, 165, 250, 0.25);
+  color: #93c5fd;
+}
+
+[data-theme="dark"] .auth-back-top-btn:hover {
+  background: rgba(96, 165, 250, 0.20);
+}
+
 
 /* =====================================================
    TOP GRADIENT LINE

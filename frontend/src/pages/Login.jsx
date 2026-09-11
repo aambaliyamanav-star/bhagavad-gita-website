@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Eye, EyeOff, Lock, Mail, LogIn, Loader2, CheckCircle, AlertCircle, Sparkles } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail, LogIn, Loader2, CheckCircle, AlertCircle, Sparkles, ArrowLeft } from "lucide-react";
 
 import {
   Link,
@@ -296,6 +296,23 @@ setTimeout(() => {
     <main className="auth-page">
 
       <div className="auth-card">
+        {/* BACK BUTTON */}
+        <button
+          type="button"
+          className="auth-back-top-btn"
+          onClick={() => {
+            if (window.history.length > 1) {
+              navigate(-1);
+            } else {
+              navigate("/");
+            }
+          }}
+          title="પાછા જાઓ"
+          aria-label="પાછા જાઓ"
+        >
+          <ArrowLeft size={16} />
+          <span>પાછા જાઓ</span>
+        </button>
 
         {/* =================================================
             HEADER
