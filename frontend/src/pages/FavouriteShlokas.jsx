@@ -663,36 +663,32 @@ function FavouriteShlokas() {
                 </div>
 
                 {/* =================================================
-                    CHAPTER
+                    CARD BODY (CHAPTER ON LEFT, BUTTON ON RIGHT)
                 ================================================= */}
 
-                <div className="favourite-chapter">
+                <div className="favourite-card-body">
+                  <div className="favourite-chapter">
+                    અધ્યાય{" "}
+                    {chapterNumber}
 
-                  અધ્યાય{" "}
-                  {chapterNumber}
+                    {chapterName && (
+                      <>
+                        {" • "}
+                        {chapterName}
+                      </>
+                    )}
+                  </div>
 
-                  {chapterName && (
-                    <>
-                      {" • "}
-                      {chapterName}
-                    </>
-                  )}
-
+                  <button
+                    type="button"
+                    className="read-favourite-btn"
+                    onClick={() =>
+                      openShloka(item)
+                    }
+                  >
+                    <BookOpen className="btn-icon" size={15} /> શ્લોક વાંચો
+                  </button>
                 </div>
-
-                {/* =================================================
-                    OPEN SHLOKA BUTTON
-                ================================================= */}
-
-                <button
-                  type="button"
-                  className="read-favourite-btn"
-                  onClick={() =>
-                    openShloka(item)
-                  }
-                >
-                  <BookOpen className="btn-icon" size={16} /> શ્લોક વાંચો
-                </button>
 
               </article>
             );

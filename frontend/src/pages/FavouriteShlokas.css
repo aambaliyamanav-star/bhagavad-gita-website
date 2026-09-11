@@ -335,8 +335,15 @@
 
 
 /* =====================================================
-   CHAPTER
+   CARD BODY (CHAPTER ON LEFT, BUTTON ON RIGHT)
 ===================================================== */
+
+.favourite-card-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
 
 .favourite-chapter {
   margin: 0;
@@ -344,6 +351,18 @@
   font-weight: 700;
   color: #3175a7;
   line-height: 1.4;
+  flex: 1 1 auto;
+}
+
+@media (max-width: 480px) {
+  .favourite-card-body {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .read-favourite-btn {
+    align-self: flex-end;
+  }
 }
 
 
@@ -435,9 +454,9 @@
 
 .read-favourite-btn {
   width: fit-content;
-  align-self: flex-start;
-  margin-top: 4px;
+  margin: 0;
   padding: 8px 16px;
+  flex-shrink: 0;
   border: none;
   border-radius: 10px;
   background: linear-gradient(
