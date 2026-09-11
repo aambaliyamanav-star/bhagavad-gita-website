@@ -405,6 +405,32 @@ useEffect(() => {
   };
 
   // =====================================================
+  // READING TRACKER BUTTON (LOGIN REQUIRED FOR LOGGED-OUT USERS)
+  // =====================================================
+
+  const handleReadingTracker = () => {
+    if (!user) {
+      sessionStorage.setItem(
+        "authRedirect",
+        JSON.stringify({
+          from: "/reading-tracker",
+          message: "વાંચન પ્રગતિ જોવા માટે Login કરવું જરૂરી છે.",
+        })
+      );
+
+      navigate("/login", {
+        state: {
+          from: "/reading-tracker",
+          message: "વાંચન પ્રગતિ જોવા માટે Login કરવું જરૂરી છે.",
+        },
+      });
+      return;
+    }
+
+    navigate("/reading-tracker");
+  };
+
+  // =====================================================
   // OPEN TODAY'S SHLOK
   // =====================================================
 
@@ -996,7 +1022,7 @@ useEffect(() => {
           <button
             type="button"
             className="quiz-home-button quiz-button tracker-hero-btn"
-            onClick={() => navigate("/reading-tracker")}
+            onClick={handleReadingTracker}
             title="ગીતા વાંચન પ્રગતિ અને બેજ જુઓ"
           >
             <Trophy className="btn-icon tracker-trophy-blue" size={20} /> વાંચન પ્રગતિ
@@ -1102,14 +1128,17 @@ useEffect(() => {
                 handleSearch
               }
               disabled={loading}
+              title="શ્લોક શોધો"
             >
               {loading ? (
                 <>
-                  <Loader2 className="btn-icon spinner" size={18} /> Loading...
+                  <Loader2 className="btn-icon spinner" size={18} />
+                  <span className="search-btn-text">Loading...</span>
                 </>
               ) : (
                 <>
-                  <Search className="btn-icon" size={18} /> શોધો
+                  <Search className="btn-icon" size={18} />
+                  <span className="search-btn-text">શોધો</span>
                 </>
               )}
             </button>
