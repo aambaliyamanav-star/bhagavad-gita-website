@@ -151,49 +151,56 @@
 
 .theme-options-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(7, 1fr);
   gap: 8px;
+  width: 100%;
 }
 
-.theme-option-pill {
+.theme-color-btn {
+  position: relative;
+  height: 38px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  padding: 8px 10px;
-  background: rgba(18, 34, 68, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 12px;
-  color: #cbd5e1;
-  font-size: 0.84rem;
-  font-weight: 600;
+  background: var(--btn-bg, #18458b);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
+  border-radius: 10px;
   cursor: pointer;
+  padding: 0;
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  outline: none;
 }
 
-.theme-color-dot {
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: var(--grad-sample, #1b52a4);
-  border: 1.5px solid var(--border-gold, #f5c542);
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
-  flex-shrink: 0;
+.theme-color-btn:hover {
+  transform: translateY(-2px) scale(1.05);
+  border-color: var(--border-gold, #f5c542);
+  box-shadow: 0 4px 12px var(--glow-color, rgba(0, 0, 0, 0.4));
 }
 
-.theme-option-pill:hover {
-  background: rgba(30, 60, 115, 0.75);
-  border-color: rgba(245, 197, 66, 0.45);
+.theme-color-btn.active {
+  border: 2px solid var(--border-gold, #f5c542);
+  box-shadow:
+    0 0 14px var(--glow-color, rgba(245, 197, 66, 0.5)),
+    0 4px 10px rgba(0, 0, 0, 0.45);
+  transform: scale(1.04);
+}
+
+.theme-btn-check {
   color: #ffffff;
-  transform: translateY(-1px);
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8));
+  animation: checkPop 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.theme-option-pill.active {
-  background: linear-gradient(135deg, rgba(28, 58, 115, 0.9), rgba(16, 32, 70, 0.95));
-  border-color: var(--border-gold, #ffd54f);
-  color: #ffd54f;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35),
-              0 0 14px rgba(245, 197, 66, 0.25);
+@keyframes checkPop {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 /* Card Preview Wrapper - Flexible Sizing (No Dead Space) */
@@ -373,13 +380,13 @@
   }
 
   .theme-options-grid {
-    grid-template-columns: 1fr;
-    gap: 6px;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 5px;
   }
 
-  .theme-option-pill {
-    padding: 7px 10px;
-    justify-content: flex-start;
+  .theme-color-btn {
+    height: 34px;
+    border-radius: 8px;
   }
 
   .share-modal-actions {

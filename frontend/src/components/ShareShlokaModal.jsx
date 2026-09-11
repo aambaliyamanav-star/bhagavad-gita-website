@@ -16,7 +16,7 @@ const THEMES = [
     id: "royal-blue",
     name: "રોયલ બ્લુ",
     englishName: "Royal Blue",
-    primaryGrad: ["#103264", "#1b52a4", "#0c244d"],
+    primaryGrad: ["#0f2b5c", "#18458b", "#0a1d40"],
     borderGold: "#f5c542",
     innerBorder: "rgba(245, 197, 66, 0.45)",
     headerColor: "#ffe484",
@@ -27,13 +27,13 @@ const THEMES = [
     translationColor: "#f0f5ff",
     footerColor: "#9bc5fa",
     glowColor: "rgba(37, 99, 235, 0.55)",
-    sampleColor: "#1b52a4"
+    sampleColor: "#18458b"
   },
   {
     id: "saffron-gold",
     name: "દિવ્ય ભગવો",
     englishName: "Divine Saffron",
-    primaryGrad: ["#9e3400", "#cb4903", "#7e2800"],
+    primaryGrad: ["#8f2c00", "#b83d02", "#661f00"],
     borderGold: "#ffd54f",
     innerBorder: "rgba(255, 213, 79, 0.5)",
     headerColor: "#fff0a6",
@@ -44,13 +44,13 @@ const THEMES = [
     translationColor: "#fff9f0",
     footerColor: "#ffcc80",
     glowColor: "rgba(249, 115, 22, 0.6)",
-    sampleColor: "#cb4903"
+    sampleColor: "#b83d02"
   },
   {
     id: "vedic-maroon",
     name: "વેદિક મરૂન",
     englishName: "Vedic Maroon",
-    primaryGrad: ["#6b1120", "#911a2d", "#520915"],
+    primaryGrad: ["#5e0d1b", "#801627", "#420610"],
     borderGold: "#f7d070",
     innerBorder: "rgba(247, 208, 112, 0.45)",
     headerColor: "#ffeaa7",
@@ -61,7 +61,75 @@ const THEMES = [
     translationColor: "#fff0f3",
     footerColor: "#f8b4be",
     glowColor: "rgba(225, 29, 72, 0.5)",
-    sampleColor: "#911a2d"
+    sampleColor: "#801627"
+  },
+  {
+    id: "peacock-emerald",
+    name: "મયૂર હરિત",
+    englishName: "Peacock Emerald",
+    primaryGrad: ["#093527", "#0f523d", "#052219"],
+    borderGold: "#f6d878",
+    innerBorder: "rgba(246, 216, 120, 0.45)",
+    headerColor: "#e6fbee",
+    sanskritColor: "#ffffff",
+    sanskritAccent: "#7eeec0",
+    sanskritBoxBg: "rgba(255, 255, 255, 0.07)",
+    sanskritBoxBorder: "rgba(126, 238, 192, 0.35)",
+    translationColor: "#f0fbf5",
+    footerColor: "#a7f3d0",
+    glowColor: "rgba(16, 185, 129, 0.55)",
+    sampleColor: "#0f523d"
+  },
+  {
+    id: "royal-purple",
+    name: "રાજવી પર્પલ",
+    englishName: "Royal Purple",
+    primaryGrad: ["#381150", "#541b77", "#240835"],
+    borderGold: "#fde047",
+    innerBorder: "rgba(253, 224, 71, 0.45)",
+    headerColor: "#fae8ff",
+    sanskritColor: "#ffffff",
+    sanskritAccent: "#e9d5ff",
+    sanskritBoxBg: "rgba(255, 255, 255, 0.07)",
+    sanskritBoxBorder: "rgba(253, 224, 71, 0.35)",
+    translationColor: "#faf5ff",
+    footerColor: "#d8b4fe",
+    glowColor: "rgba(168, 85, 247, 0.55)",
+    sampleColor: "#541b77"
+  },
+  {
+    id: "classic-onyx",
+    name: "ક્લાસિક ઓનિક્સ",
+    englishName: "Classic Onyx",
+    primaryGrad: ["#141720", "#212634", "#0b0d13"],
+    borderGold: "#e8c37d",
+    innerBorder: "rgba(232, 195, 125, 0.45)",
+    headerColor: "#fef3c7",
+    sanskritColor: "#ffffff",
+    sanskritAccent: "#fcd34d",
+    sanskritBoxBg: "rgba(255, 255, 255, 0.06)",
+    sanskritBoxBorder: "rgba(232, 195, 125, 0.35)",
+    translationColor: "#f8fafc",
+    footerColor: "#cbd5e1",
+    glowColor: "rgba(245, 158, 11, 0.45)",
+    sampleColor: "#212634"
+  },
+  {
+    id: "mystic-copper",
+    name: "દિવ્ય તાંબ્ર",
+    englishName: "Mystic Copper",
+    primaryGrad: ["#4e2810", "#6f3a18", "#381c09"],
+    borderGold: "#ffd54f",
+    innerBorder: "rgba(255, 213, 79, 0.45)",
+    headerColor: "#fff2cd",
+    sanskritColor: "#ffffff",
+    sanskritAccent: "#f6c343",
+    sanskritBoxBg: "rgba(255, 255, 255, 0.08)",
+    sanskritBoxBorder: "rgba(255, 213, 79, 0.35)",
+    translationColor: "#fef8f0",
+    footerColor: "#fcd34d",
+    glowColor: "rgba(234, 88, 12, 0.55)",
+    sampleColor: "#6f3a18"
   }
 ];
 
@@ -790,23 +858,28 @@ export default function ShareShlokaModal({
               <span>કાર્ડની થીમ પસંદ કરો:</span>
             </label>
             <div className="theme-options-grid">
-              {THEMES.map((theme) => (
-                <button
-                  key={theme.id}
-                  type="button"
-                  className={`theme-option-pill ${
-                    selectedThemeId === theme.id ? "active" : ""
-                  }`}
-                  onClick={() => setSelectedThemeId(theme.id)}
-                  style={{
-                    "--grad-sample": theme.primaryGrad[1],
-                    "--border-gold": theme.borderGold
-                  }}
-                >
-                  <span className="theme-color-dot" />
-                  <span className="theme-pill-name">{theme.name}</span>
-                </button>
-              ))}
+              {THEMES.map((theme) => {
+                const isActive = selectedThemeId === theme.id;
+                return (
+                  <button
+                    key={theme.id}
+                    type="button"
+                    className={`theme-color-btn ${isActive ? "active" : ""}`}
+                    onClick={() => setSelectedThemeId(theme.id)}
+                    title={theme.name}
+                    aria-label={theme.name}
+                    style={{
+                      "--btn-bg": `linear-gradient(135deg, ${theme.primaryGrad[0]}, ${theme.primaryGrad[1]})`,
+                      "--border-gold": theme.borderGold,
+                      "--glow-color": theme.glowColor
+                    }}
+                  >
+                    {isActive && (
+                      <Check size={16} strokeWidth={3} className="theme-btn-check" />
+                    )}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
