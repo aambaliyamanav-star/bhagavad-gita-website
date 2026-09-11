@@ -721,15 +721,9 @@ function Navbar() {
             </span>
 
             <span className="side-menu-text">
-
               <strong>
                 હોમ
               </strong>
-
-              <small>
-                Home
-              </small>
-
             </span>
 
             <span className="side-menu-arrow">
@@ -756,15 +750,9 @@ function Navbar() {
             </span>
 
             <span className="side-menu-text">
-
               <strong>
                 18 અધ્યાય
               </strong>
-
-              <small>
-                Bhagavad Gita Chapters
-              </small>
-
             </span>
 
             <span className="side-menu-arrow">
@@ -791,9 +779,6 @@ function Navbar() {
               <strong>
                 જીવન માર્ગદર્શન
               </strong>
-              <small>
-                Life Situations & Gita Guide
-              </small>
             </span>
 
             <span className="side-menu-arrow">
@@ -825,9 +810,6 @@ function Navbar() {
               <strong>
                 મનપસંદ શ્લોક
               </strong>
-              <small>
-                Favourite Shlokas
-              </small>
             </span>
 
             <span className="side-menu-arrow">
@@ -858,9 +840,6 @@ function Navbar() {
               <strong>
                 Quiz
               </strong>
-              <small>
-                Test Your Knowledge
-              </small>
             </span>
 
             <span className="side-menu-arrow">
@@ -891,9 +870,6 @@ function Navbar() {
               <strong>
                 History
               </strong>
-              <small>
-                Your Quiz History
-              </small>
             </span>
 
             <span className="side-menu-arrow">
@@ -924,9 +900,6 @@ function Navbar() {
               <strong>
                 Profile
               </strong>
-              <small>
-                Your Account
-              </small>
             </span>
 
             <span className="side-menu-arrow">
@@ -955,9 +928,6 @@ function Navbar() {
                 <strong>
                   Admin
                 </strong>
-                <small>
-                  Admin Dashboard
-                </small>
               </span>
 
               <span className="side-menu-arrow">
@@ -985,9 +955,6 @@ function Navbar() {
                 <strong>
                   લોગિન
                 </strong>
-                <small>
-                  Login to your account
-                </small>
               </span>
 
               <span className="side-menu-arrow">
@@ -1015,15 +982,9 @@ function Navbar() {
               </span>
 
               <span className="side-menu-text">
-
                 <strong>
                   રજીસ્ટર
                 </strong>
-
-                <small>
-                  Create new account
-                </small>
-
               </span>
 
               <span className="side-menu-arrow">
@@ -1053,17 +1014,11 @@ function Navbar() {
               </span>
 
               <span className="side-menu-text">
-
                 <strong>
                   {theme === "light"
                     ? "Dark Theme"
                     : "Light Theme"}
                 </strong>
-
-                <small>
-                  Change appearance
-                </small>
-
               </span>
 
             </span>

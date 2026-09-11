@@ -1414,16 +1414,16 @@ body {
    ========================================================= */
 
 .theme-switch {
-  width: 50px;
-  height: 28px;
+  width: 26px;
+  height: 15px;
 
-  flex: 0 0 50px;
+  flex: 0 0 26px;
 
-  padding: 3px;
+  padding: 2px;
 
   box-sizing: border-box;
 
-  border-radius: 20px;
+  border-radius: 10px;
 
   background:
     #93b4d0;
@@ -1440,15 +1440,15 @@ body {
 }
 
 .theme-switch-dot {
-  width: 22px;
-  height: 22px;
+  width: 11px;
+  height: 11px;
 
   border-radius: 50%;
 
   background: white;
 
   box-shadow:
-    0 2px 6px
+    0 1px 4px
       rgba(0, 0, 0, 0.22);
 
   transform: translateX(0);
@@ -1457,7 +1457,7 @@ body {
 }
 
 .theme-switch-dot.dark {
-  transform: translateX(22px);
+  transform: translateX(11px);
 }
 
 
@@ -2120,18 +2120,21 @@ a:focus-visible {
 }
 
 .theme-switch {
-  width: 34px !important;
-  height: 18px !important;
+  width: 26px !important;
+  max-width: 26px !important;
+  height: 15px !important;
+  flex: 0 0 26px !important;
   padding: 2px !important;
+  border-radius: 10px !important;
 }
 
 .theme-switch-dot {
-  width: 14px !important;
-  height: 14px !important;
+  width: 11px !important;
+  height: 11px !important;
 }
 
 .theme-switch-dot.dark {
-  transform: translateX(16px) !important;
+  transform: translateX(11px) !important;
 }
 
 /* Compact Logout Button */
