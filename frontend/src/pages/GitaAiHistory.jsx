@@ -1,7 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import {
-  ArrowLeft,
   Search,
   Trash2,
   Sparkles,
@@ -21,7 +19,6 @@ import {
 import "./GitaAiHistory.css";
 
 export default function GitaAiHistory() {
-  const navigate = useNavigate();
   const { theme } = useTheme();
 
   const [conversations, setConversations] = useState([]);
@@ -89,24 +86,6 @@ export default function GitaAiHistory() {
 
   return (
     <main className={`gita-ai-history-page ${theme}`}>
-      {/* Top Breadcrumb / Back Bar */}
-      <section className="gah-top-bar">
-        <button
-          type="button"
-          className="gah-back-btn"
-          onClick={() => navigate("/history")}
-          title="પાછા જાઓ"
-        >
-          <ArrowLeft size={18} />
-          <span>History</span>
-        </button>
-
-        <div className="gah-badge">
-          <Sparkles size={14} />
-          <span>શ્રીમદ્ ભગવદ્ ગીતા AI</span>
-        </div>
-      </section>
-
       {/* Main Header */}
       <section className="gah-header">
         <div className="gah-header-icon-box">
@@ -114,10 +93,6 @@ export default function GitaAiHistory() {
         </div>
         <p className="gah-sacred-subtitle">॥ श्रीमद्भगवद्गीता संवाद ॥</p>
         <h1>ગીતા AI સંવાદ ઇતિહાસ</h1>
-        <p className="gah-desc">
-          તમે ગીતા AI માર્ગદર્શક સાથે કરેલી તમામ આધ્યાત્મિક ચર્ચાઓ અને શ્રીકૃષ્ણના
-          ઉપદેશોનો સંગ્રહ.
-        </p>
       </section>
 
       {/* Search & Actions Toolbar */}
