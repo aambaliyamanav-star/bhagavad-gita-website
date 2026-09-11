@@ -166,12 +166,16 @@ function App() {
 
 
             {/* =================================================
-                READING TRACKER & GAMIFICATION (PUBLIC)
+                READING TRACKER & GAMIFICATION (PROTECTED)
             ================================================= */}
 
             <Route
               path="/reading-tracker"
-              element={<ReadingTracker />}
+              element={
+                <ProtectedRoute message="વાંચન પ્રગતિ જોવા માટે Login કરવું જરૂરી છે.">
+                  <ReadingTracker />
+                </ProtectedRoute>
+              }
             />
 
 
