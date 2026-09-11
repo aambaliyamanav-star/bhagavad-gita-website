@@ -46,35 +46,19 @@ background:
 
 
 /* =====================================================
-   HEADER
+   HEADER (REMOVED BOX - DIRECT ON BACKGROUND WITH SHADOW)
 ===================================================== */
 
 .history-header {
   max-width: 1000px;
-
   margin: 0 auto 30px;
-
-  padding: 30px 25px;
-
+  padding: 10px 20px 20px;
   text-align: center;
-
-  border-radius: 25px;
-
-  background: rgba(255, 255, 255, 0.65);
-
-  border: 1px solid rgba(255, 255, 255, 0.6);
-
-  box-shadow:
-    0 18px 40px rgba(34, 83, 140, 0.10),
-    inset 0 1px 0 rgba(255, 255, 255, 0.95);
-
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-
-  transition:
-    background 0.35s ease,
-    border 0.35s ease,
-    box-shadow 0.35s ease;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 
@@ -174,14 +158,11 @@ background:
 
 .history-sacred-title {
   margin: 0 0 8px;
-
   color: #8a6500;
-
   font-size: 15px;
-
   font-weight: 800;
-
   letter-spacing: 0.5px;
+  text-shadow: 0 2px 10px rgba(138, 101, 0, 0.18);
 }
 
 
@@ -191,12 +172,10 @@ background:
 
 .history-header h1 {
   margin: 0 0 8px;
-
   color: #175bb5;
-
-  font-size: 32px;
-
+  font-size: 34px;
   font-weight: 900;
+  text-shadow: 0 4px 18px rgba(23, 91, 181, 0.22), 0 1px 2px rgba(255, 255, 255, 0.85);
 }
 
 
@@ -206,14 +185,11 @@ background:
 
 .history-header > p:last-child {
   margin: 0;
-
   color: #58708d;
-
   font-size: 15px;
-
   font-weight: 600;
-
   line-height: 1.6;
+  text-shadow: 0 2px 8px rgba(33, 102, 186, 0.12);
 }
 
 
@@ -539,16 +515,11 @@ background:
 
 [data-theme="dark"] .history-header,
 .dark .history-header {
-  background: rgba(10, 25, 55, 0.55);
-
-  border-color: rgba(96, 165, 250, 0.25);
-
-  box-shadow:
-    0 18px 45px rgba(0, 0, 0, 0.30),
-    inset 0 1px 0 rgba(255, 255, 255, 0.035);
-
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
 }
 
 
@@ -587,6 +558,7 @@ background:
 [data-theme="dark"] .history-sacred-title,
 .dark .history-sacred-title {
   color: #e2c65d;
+  text-shadow: 0 2px 12px rgba(226, 198, 93, 0.35);
 }
 
 
@@ -597,6 +569,7 @@ background:
 [data-theme="dark"] .history-header h1,
 .dark .history-header h1 {
   color: #70aaf2;
+  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.65), 0 2px 10px rgba(112, 170, 242, 0.35);
 }
 
 
@@ -607,6 +580,7 @@ background:
 [data-theme="dark"] .history-header > p:last-child,
 .dark .history-header > p:last-child {
   color: #9bb0c7;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
 }
 
 
