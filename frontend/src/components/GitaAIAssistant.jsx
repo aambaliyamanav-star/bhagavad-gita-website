@@ -43,6 +43,8 @@ export default function GitaAIAssistant() {
   const [copiedId, setCopiedId] = useState(null);
   const [activeConvId, setActiveConvId] = useState(null);
 
+  const hasUserMessages = messages.some((m) => m.sender === "user");
+
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -66,8 +68,20 @@ export default function GitaAIAssistant() {
       if (conv && conv.messages && conv.messages.length > 0) {
         setMessages(conv.messages);
         setActiveConvId(conv.id);
+        return;
       }
     }
+
+    // Default welcome prompt for new chat
+    setMessages([
+      {
+        id: `greeting_${Date.now()}`,
+        sender: "ai",
+        text: "જય શ્રી કૃષ્ણ! 🙏 નવી વાતચીત માટે હું તૈયાર છું. તમારો નવો પ્રશ્ન પૂછો.",
+        timestamp: new Date().toISOString(),
+        isGreetingPrompt: true
+      }
+    ]);
 
     // Listen for custom event from History page to resume specific conversation
     const handleOpenConversation = (e) => {
@@ -88,10 +102,17 @@ export default function GitaAIAssistant() {
     };
   }, []);
 
-  // Save conversation automatically whenever messages change (after greeting)
+  // Save conversation automatically whenever messages change (excluding temporary greeting)
   useEffect(() => {
-    if (messages.length > 1) {
-      const firstUserMsg = messages.find((m) => m.sender === "user");
+    const realMessages = messages.filter(
+      (m) =>
+        !m.isGreetingPrompt &&
+        !m.id?.startsWith("greeting_") &&
+        !m.text?.includes("નવી વાતચીત માટે હું તૈયાર છું")
+    );
+
+    if (realMessages.length > 0) {
+      const firstUserMsg = realMessages.find((m) => m.sender === "user");
       const title = firstUserMsg
         ? firstUserMsg.text.slice(0, 45) + (firstUserMsg.text.length > 45 ? "..." : "")
         : "આધ્યાત્મિક સંવાદ";
@@ -104,7 +125,7 @@ export default function GitaAIAssistant() {
       saveConversation({
         id: convId,
         title,
-        messages
+        messages: realMessages
       });
     }
   }, [messages, activeConvId]);
@@ -118,14 +139,15 @@ export default function GitaAIAssistant() {
         id: `greeting_${Date.now()}`,
         sender: "ai",
         text: "જય શ્રી કૃષ્ણ! 🙏 નવી વાતચીત માટે હું તૈયાર છું. તમારો નવો પ્રશ્ન પૂછો.",
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        isGreetingPrompt: true
       }
     ]);
   };
 
   // Send message
   const handleSendMessage = async (textToSend) => {
-    const query = (textToSend || inputText).trim();
+    const query = (typeof textToSend === "string" ? textToSend : inputText).trim();
     if (!query || isLoading) return;
 
     const userMessage = {
@@ -135,7 +157,15 @@ export default function GitaAIAssistant() {
       timestamp: new Date().toISOString()
     };
 
-    const newMessages = [...messages, userMessage];
+    // Remove any initial greeting so it vanishes from the top when user asks a question
+    const activeMessages = messages.filter(
+      (m) =>
+        !m.isGreetingPrompt &&
+        !m.id?.startsWith("greeting_") &&
+        !m.text?.includes("નવી વાતચીત માટે હું તૈયાર છું")
+    );
+
+    const newMessages = [...activeMessages, userMessage];
     setMessages(newMessages);
     setInputText("");
     setIsLoading(true);
@@ -359,9 +389,6 @@ export default function GitaAIAssistant() {
                     <span />
                     <span />
                   </div>
-                  <span className="gita-typing-label">
-                    ગીતામાંથી દિવ્ય માર્ગદર્શન મેળવી રહ્યા છીએ...
-                  </span>
                 </div>
               </div>
             )}
@@ -370,7 +397,7 @@ export default function GitaAIAssistant() {
           </div>
 
           {/* QUICK SUGGESTIONS */}
-          {messages.length <= 2 && !isLoading && (
+          {!hasUserMessages && !isLoading && (
             <div className="gita-suggestions-bar">
               <div className="gita-suggestions-scroll">
                 {SUGGESTIONS.map((sug, i) => (
@@ -380,7 +407,7 @@ export default function GitaAIAssistant() {
                     className="gita-suggestion-chip"
                     onClick={() => handleSendMessage(sug)}
                   >
-                    <Sparkles size={12} />
+                    <Sparkles size={13} className="gita-suggestion-icon" />
                     <span>{sug}</span>
                   </button>
                 ))}
