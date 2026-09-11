@@ -515,7 +515,14 @@ exports.askGitaAI = async (req, res) => {
     // 2. If Gemini API Key is configured, use live Google Gemini API
     const apiKey = process.env.GEMINI_API_KEY;
     if (apiKey) {
-      const modelsToTry = ["gemini-1.5-flash", "gemini-2.5-flash", "gemini-2.0-flash"];
+      const modelsToTry = [
+        "gemini-3.6-flash",
+        "gemini-3.5-flash",
+        "gemini-3.8-flash",
+        "gemini-flash-latest",
+        "gemini-2.0-flash",
+        "gemini-1.5-flash"
+      ];
       for (const modelName of modelsToTry) {
         try {
           const contents = [];
@@ -560,8 +567,8 @@ exports.askGitaAI = async (req, res) => {
                 },
                 contents,
                 generationConfig: {
-                  temperature: 0.5,
-                  maxOutputTokens: 1000
+                  temperature: 0.6,
+                  maxOutputTokens: 1200
                 }
               })
             }
@@ -569,12 +576,16 @@ exports.askGitaAI = async (req, res) => {
 
           if (response.ok) {
             const data = await response.json();
-            const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+            const reply = data?.candidates?.[0]?.content?.parts
+              ?.filter((p) => p.text)
+              ?.map((p) => p.text)
+              ?.join("\n")
+              ?.trim();
 
-            if (reply && reply.trim()) {
+            if (reply) {
               return res.json({
                 success: true,
-                answer: reply.trim(),
+                answer: reply,
                 source: "gemini"
               });
             }
