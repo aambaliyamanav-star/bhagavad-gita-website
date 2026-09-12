@@ -199,10 +199,6 @@ function Admin() {
             <h1>
               <Shield className="btn-icon" size={28} /> Admin Dashboard
             </h1>
-
-            <p>
-              Bhagavad Gita Website Management
-            </p>
           </div>
 
           {/* ADMIN LOGOUT */}
@@ -243,10 +239,6 @@ function Admin() {
                   Manage Shlokas
                 </h2>
 
-                <p>
-                  Add, edit and delete Bhagavad Gita shlokas
-                </p>
-
               </div>
 
               <div className="management-arrow"><ArrowRight size={22} className="management-arrow-icon" /></div>
@@ -272,10 +264,6 @@ function Admin() {
                 <h2>
                   Manage Quiz
                 </h2>
-
-                <p>
-                  Add, edit and delete quiz questions
-                </p>
 
               </div>
 
