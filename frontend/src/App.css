@@ -29,10 +29,13 @@
 
 .home-fixed-bg {
   position: fixed;
-  inset: 0;
+  top: 68px;
+  left: 0;
+  right: 0;
+  bottom: 0;
   width: 100vw;
-  height: 100vh;
-  height: 100dvh;
+  height: calc(100vh - 68px);
+  height: calc(100dvh - 68px);
   z-index: 0;
   pointer-events: none;
   background-image:
@@ -44,7 +47,7 @@
     ),
     url("/images/gita-background.png");
   background-size: cover;
-  background-position: center center;
+  background-position: center top;
   background-repeat: no-repeat;
 }
 
@@ -61,7 +64,7 @@ body[data-theme="dark"] .home-fixed-bg {
     ),
     url("/images/gita-background.png");
   background-size: cover;
-  background-position: center center;
+  background-position: center top;
   background-repeat: no-repeat;
 }
 
@@ -95,6 +98,22 @@ body[data-theme="dark"] .home-fixed-bg {
     background-size: cover;
     background-position: center top;
     background-repeat: no-repeat;
+  }
+}
+
+@media (max-width: 600px) {
+  .home-fixed-bg {
+    top: 62px;
+    height: calc(100vh - 62px);
+    height: calc(100dvh - 62px);
+  }
+}
+
+@media (max-width: 400px) {
+  .home-fixed-bg {
+    top: 58px;
+    height: calc(100vh - 58px);
+    height: calc(100dvh - 58px);
   }
 }
 
