@@ -8,15 +8,11 @@ import {
   X,
   History,
   Copy,
-  Check,
-  ChevronDown,
-  BookOpen,
-  MessageSquareText
+  Check
 } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext.jsx";
 import {
-  getAllConversations,
   saveConversation,
   getActiveConversationId,
   setActiveConversationId,

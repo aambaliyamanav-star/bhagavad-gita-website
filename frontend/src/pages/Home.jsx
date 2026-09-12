@@ -10,7 +10,6 @@ import {
   Search, 
   Loader2, 
   AlertCircle, 
-  TriangleAlert, 
   Sparkles,
   Share2,
   Trophy,

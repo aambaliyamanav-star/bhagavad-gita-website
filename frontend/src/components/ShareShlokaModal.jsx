@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from "react";
 import {
   X,
   Download,
-  Share2,
   Copy,
   Check,
   Sparkles,

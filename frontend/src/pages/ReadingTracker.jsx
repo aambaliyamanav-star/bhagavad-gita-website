@@ -22,8 +22,6 @@ import {
   X,
   RefreshCw,
   Clock,
-  RotateCcw,
-  CircleCheck,
   BookMarked,
   LogIn,
 } from "lucide-react";
