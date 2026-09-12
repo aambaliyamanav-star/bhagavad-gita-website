@@ -365,7 +365,38 @@ const getAllShlokas = async (
         .sort({
           chapterNumber: 1,
           shlokNumber: 1,
-        });
+        })
+        .lean();
+
+    // =====================================================
+    // LOGGED-OUT USER: RESTRICT CONTENT FOR SHLOKAS 6+
+    // =====================================================
+
+    if (!req.user) {
+      const publicShlokas = shlokas.map((shloka) => {
+        // Shlok 1–5 → Full content
+        if (Number(shloka.shlokNumber) <= 5) {
+          return shloka;
+        }
+
+        // Shlok 6+ → Only metadata (safe for chapter counts / shlok selectors)
+        return {
+          _id: shloka._id,
+          chapterNumber: shloka.chapterNumber,
+          chapterName: shloka.chapterName,
+          shlokNumber: shloka.shlokNumber,
+        };
+      });
+
+      return res.status(200).json({
+        success: true,
+        shlokas: publicShlokas,
+      });
+    }
+
+    // =====================================================
+    // LOGGED-IN USER: FULL ACCESS
+    // =====================================================
 
     res.status(200).json({
       success: true,
