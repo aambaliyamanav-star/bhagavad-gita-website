@@ -117,6 +117,7 @@ function AdminRoute({ children }) {
 
 function AnimatedRoutes() {
   const location = useLocation();
+  const isHome = location.pathname === "/";
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
@@ -124,6 +125,7 @@ function AnimatedRoutes() {
 
   return (
     <>
+      {isHome && <div className="home-fixed-bg" aria-hidden="true" />}
       <div key={`glow-${location.pathname}`} className="page-transition-glow" />
       <div key={location.pathname} className="page-transition-wrapper">
         <Routes location={location}>
