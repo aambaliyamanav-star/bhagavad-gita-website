@@ -187,7 +187,6 @@ function ReadingTracker() {
             </div>
             <div>
               <h1 className="rt-page-title">વાંચન પ્રગતિ</h1>
-              <p className="rt-page-subtitle">ગીતાના ૭૦૦ શ્લોકોનું વ્યક્તિગત અધ્યયન અહેવાલ</p>
             </div>
           </div>
 
@@ -402,7 +401,6 @@ function ReadingTracker() {
               <BookOpen size={20} className="rt-section-icon rt-icon-blue-text" />
               <div>
                 <h2 className="rt-section-title">૧૮ અધ્યાય – પ્રગતિ</h2>
-                <p className="rt-section-desc">અધ્યાય-સ્તરીય અધ્યયન અહેવાલ</p>
               </div>
             </div>
 
@@ -467,7 +465,6 @@ function ReadingTracker() {
                       </div>
                       <div className="rt-ch-names">
                         <h4 className="rt-ch-guj" title={item.name}>{item.name}</h4>
-                        <span className="rt-ch-eng" title={item.englishName}>{item.englishName}</span>
                       </div>
                       <div className={`rt-ch-pill ${isCompleted ? "rt-pill-done-ch" : isInProgress ? "rt-pill-prog-ch" : "rt-pill-unread-ch"}`}>
                         {isCompleted ? "સંપૂર્ણ" : isInProgress ? `${percent}%` : "બાકી"}

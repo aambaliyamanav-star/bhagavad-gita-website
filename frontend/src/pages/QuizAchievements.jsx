@@ -157,9 +157,6 @@ export default function QuizAchievements() {
           <div className="qa-header-title-box">
             <span className="qa-sacred-subtitle">॥ सिद्धिर्भवति कर्मजा ॥</span>
             <h1 className="qa-main-title">ક્વિઝ સિદ્ધિઓ અને સન્માન</h1>
-            <p className="qa-subtitle">
-              ભગવદ્ ગીતા ક્વિઝ જ્ઞાન કસોટીમાં તમારી પ્રગતિ, કાઉન્ટ ગુણકો અને દિવ્ય માઈલસ્ટોન્સ
-            </p>
           </div>
         </header>
 

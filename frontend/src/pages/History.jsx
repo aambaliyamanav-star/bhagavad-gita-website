@@ -46,11 +46,6 @@ function History() {
         <h1>
           History
         </h1>
-
-        <p>
-          તમારી પ્રવૃત્તિઓનો ઇતિહાસ
-        </p>
-
       </section>
 
 

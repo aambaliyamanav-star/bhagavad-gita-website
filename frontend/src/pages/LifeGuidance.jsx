@@ -520,7 +520,6 @@ function LifeGuidance() {
                   </span>
                   <span className="pill-text">
                     <strong>{topic.title}</strong>
-                    <small>{topic.englishTitle}</small>
                   </span>
                 </button>
               );
@@ -545,9 +544,6 @@ function LifeGuidance() {
             <Sparkles size={22} color="#ffffff" />
           </div>
           <div className="essence-info">
-            <span className="essence-tag" style={{ color: currentTopic.color }}>
-              શ્રીકૃષ્ણનો મુખ્ય ઉપદેશ • {currentTopic.title}
-            </span>
             <h3>{currentTopic.essence}</h3>
           </div>
         </div>

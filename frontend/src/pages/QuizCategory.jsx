@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Brain, Target, BookOpen, Sword, History, BookMarked, Hash, Shuffle, PlayCircle, Loader2, BookText, Flame, Trophy } from "lucide-react";
+import { Brain, Target, BookOpen, Sword, History, BookMarked, Hash, PlayCircle, Loader2 } from "lucide-react";
 import "./QuizCategory.css";
 
 
@@ -413,11 +413,6 @@ function QuizCategory() {
               ગીતા ક્વિઝ
             </h1>
 
-            <p className="quiz-category-description">
-              ભગવદ્ ગીતા અને મહાભારતના પ્રશ્નો દ્વારા
-              તમારું જ્ઞાન ચકાસો.
-            </p>
-
           </div>
 
         </div>
@@ -449,10 +444,6 @@ function QuizCategory() {
             <h2>
               તમારી ક્વિઝ પસંદ કરો
             </h2>
-
-            <p>
-              Quiz શરૂ કરતા પહેલા તમારી પસંદગી કરો.
-            </p>
 
           </div>
 
@@ -494,10 +485,6 @@ function QuizCategory() {
                   બધા અધ્યાય
                 </strong>
 
-                <small>
-                  18 અધ્યાયમાંથી પ્રશ્નો
-                </small>
-
               </span>
 
             </button>
@@ -528,10 +515,6 @@ function QuizCategory() {
                   અધ્યાય પ્રમાણે
                 </strong>
 
-                <small>
-                  કોઈ એક અધ્યાયમાંથી
-                </small>
-
               </span>
 
             </button>
@@ -561,10 +544,6 @@ function QuizCategory() {
                 <strong>
                   મહાભારત
                 </strong>
-
-                <small>
-                  મહાભારત આધારિત પ્રશ્નો
-                </small>
 
               </span>
 
@@ -689,54 +668,6 @@ function QuizCategory() {
         )}
 
         {/* =================================================
-            QUIZ SUMMARY
-        ================================================= */}
-
-        <div className="quiz-setup-summary">
-
-          <div className="quiz-summary-item">
-
-            <span>
-              Quiz
-            </span>
-
-            <strong>
-              {quizType === "all"
-                ? "બધા અધ્યાય"
-                : quizType === "chapter"
-                ? `અધ્યાય ${selectedChapter || "-"}`
-                : "મહાભારત"}
-            </strong>
-
-          </div>
-
-          <div className="quiz-summary-item">
-
-            <span>
-              પ્રશ્નો
-            </span>
-
-            <strong>
-              {questionCount || "-"}
-            </strong>
-
-          </div>
-
-          <div className="quiz-summary-item">
-
-            <span>
-              Mode
-            </span>
-
-            <strong>
-              <Shuffle size={13} className="btn-icon" /> Random
-            </strong>
-
-          </div>
-
-        </div>
-
-        {/* =================================================
             START BUTTON
         ================================================= */}
 
@@ -758,68 +689,6 @@ function QuizCategory() {
         >
           <PlayCircle size={18} className="btn-icon" /> Quiz શરૂ કરો
         </button>
-
-      </section>
-
-      {/* =================================================
-          INFO
-      ================================================= */}
-
-      <section className="quiz-category-info">
-
-        <div className="quiz-info-item">
-
-          <div className="quiz-info-icon">
-            <BookText size={24} color="#2563eb" />
-          </div>
-
-          <div>
-            <strong>
-              જ્ઞાનની સફર
-            </strong>
-
-            <span>
-              ભગવદ્ ગીતાના જ્ઞાનને પ્રશ્નો દ્વારા જાણો.
-            </span>
-          </div>
-
-        </div>
-
-        <div className="quiz-info-item">
-
-          <div className="quiz-info-icon">
-            <Flame size={24} color="#2563eb" />
-          </div>
-
-          <div>
-            <strong>
-              વિચાર અને સમજણ
-            </strong>
-
-            <span>
-              ગીતા ના ઉપદેશોને પ્રશ્નોના માધ્યમથી સમજવાનો પ્રયાસ કરો.
-            </span>
-          </div>
-
-        </div>
-
-        <div className="quiz-info-item">
-
-          <div className="quiz-info-icon">
-            <Trophy size={24} color="#2563eb" />
-          </div>
-
-          <div>
-            <strong>
-              પરિણામ મેળવો
-            </strong>
-
-            <span>
-              તમારી ક્વિઝ પૂર્ણ કરીને તમારું પરિણામ જાણો.
-            </span>
-          </div>
-
-        </div>
 
       </section>
 

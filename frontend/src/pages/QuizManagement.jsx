@@ -857,11 +857,6 @@ function QuizManagement() {
     <h1>
       Quiz Management
     </h1>
-
-    <p>
-      Quiz questions Add, Edit અને Delete કરો.
-    </p>
-
   </div>
 
   <button

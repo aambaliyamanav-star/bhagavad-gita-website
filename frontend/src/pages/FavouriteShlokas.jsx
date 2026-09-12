@@ -498,10 +498,6 @@ function FavouriteShlokas() {
             <Heart className="btn-icon" size={28} /> Favourite શ્લોક
           </h1>
 
-          <p>
-            તમારા પસંદ કરેલા શ્લોક અહીં જોવા મળશે.
-          </p>
-
         </section>
 
         {/* =================================================
@@ -517,11 +513,6 @@ function FavouriteShlokas() {
           <h2>
             હજુ કોઈ Favourite શ્લોક નથી
           </h2>
-
-          <p>
-            તમને ગમતા શ્લોકને Favourite કરો,
-            તે અહીં સાચવવામાં આવશે.
-          </p>
 
           <button
             type="button"

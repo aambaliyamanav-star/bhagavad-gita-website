@@ -474,11 +474,6 @@ function QuizResult() {
         <h1>
           Quiz Results
         </h1>
-
-        <p>
-          તમારા Quiz Performance નો રેકોર્ડ
-        </p>
-
       </section>
 
 
@@ -797,9 +792,6 @@ function QuizResult() {
                       </h2>
 
                       <div className="quiz-result-chapter-desc">
-                        <p className="quiz-result-subheading">
-                          {targetInfo.subtitle}
-                        </p>
                         {formattedDate && (
                           <span className="quiz-result-timestamp">
                             <Clock size={12} /> {formattedDate}
@@ -1001,36 +993,6 @@ function QuizResult() {
 
       </section>
 
-
-      {/* =================================================
-          BOTTOM SECTION
-      ================================================= */}
-
-      <section className="quiz-result-bottom">
-
-        <div className="quiz-result-bottom-icon">
-          <BookOpen size={36} color="#2563eb" />
-        </div>
-
-        <h2>
-          જ્ઞાન એ જ સાચી શક્તિ છે
-        </h2>
-
-        <p>
-          ભગવદ્ ગીતાના જ્ઞાનને વધુ ઊંડાણથી
-          સમજવા માટે નિયમિત Quiz આપો.
-        </p>
-
-        <button
-          type="button"
-          onClick={() =>
-            navigate("/quiz")
-          }
-        >
-          ફરી Quiz આપો <ChevronRight size={16} />
-        </button>
-
-      </section>
 
     </main>
   );

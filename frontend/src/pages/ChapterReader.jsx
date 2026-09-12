@@ -1717,10 +1717,6 @@ const prepareSanskritLines = () => {
             <h2>
               બધા શ્લોક
             </h2>
-
-            <p>
-              કોઈપણ શ્લોક પસંદ કરો
-            </p>
           </div>
 
           <div className="selector-count">

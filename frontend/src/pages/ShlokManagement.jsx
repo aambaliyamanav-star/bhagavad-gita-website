@@ -1286,11 +1286,6 @@ function ShlokManagement() {
             <h1>
               Shlok Management
             </h1>
-
-            <p>
-              Admin Panelમાંથી Bhagavad
-              Gitaના Shlok manage કરો
-            </p>
           </div>
 
           <button
@@ -1330,11 +1325,6 @@ function ShlokManagement() {
                   ? "✏️ Edit Shlok"
                   : "➕ Add New Shlok"}
               </h2>
-
-              <p>
-                Shlokની સંપૂર્ણ માહિતી
-                અહીંથી manage કરો
-              </p>
             </div>
           </div>
 
@@ -1510,13 +1500,6 @@ function ShlokManagement() {
                     Sanskrit words અહીં
                     દેખાશે
                   </h3>
-
-                  <p>
-                    ઉપર Sanskrit Shlok
-                    boxમાં શ્લોક લખો.
-                    તેના દરેક word અહીં
-                    automatically આવી જશે.
-                  </p>
 
                 </div>
               ) : (

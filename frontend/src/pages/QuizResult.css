@@ -1657,143 +1657,6 @@
 
 
 /* =====================================================
-   BOTTOM SECTION
-   ===================================================== */
-
-.quiz-result-bottom {
-  width: 100%;
-  max-width: 850px;
-
-  margin: 45px auto 0;
-
-  padding: 32px 28px;
-
-  box-sizing: border-box;
-
-  text-align: center;
-
-  border-radius: 23px;
-
-  border: 1px solid rgba(255, 255, 255, 0.6);
-
-  background: rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-
-  box-shadow: 0 15px 35px rgba(30, 64, 175, 0.10);
-}
-
-
-.quiz-result-bottom-icon {
-  font-size: 30px;
-
-  margin-bottom: 7px;
-}
-
-
-.quiz-result-bottom h2 {
-  margin: 0 0 9px;
-
-  color: #1e3a8a;
-
-  font-family:
-    "Noto Serif Gujarati",
-    Georgia,
-    serif;
-}
-
-
-.quiz-result-bottom p {
-  max-width: 600px;
-
-  margin: 0 auto 20px;
-
-  color: #475569;
-
-  line-height: 1.6;
-}
-
-
-.quiz-result-bottom button {
-  position: relative;
-
-  padding: 12px 27px;
-
-  border: none;
-
-  border-radius: 11px;
-
-  background:
-    linear-gradient(
-      145deg,
-      #087fe5,
-      #0755ad
-    );
-
-  color: #ffffff;
-
-  font-weight: 800;
-
-  cursor: pointer;
-
-  box-shadow:
-    0 5px 0 #043b7a,
-    0 11px 23px rgba(0, 100, 210, 0.25);
-
-  overflow: hidden;
-
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-
-.quiz-result-bottom button::before {
-  content: "";
-
-  position: absolute;
-
-  top: 0;
-  left: -120%;
-
-  width: 60%;
-  height: 100%;
-
-  background:
-    linear-gradient(
-      110deg,
-      transparent,
-      rgba(255, 255, 255, 0.35),
-      transparent
-    );
-
-  transform: skewX(-20deg);
-
-  transition: left 0.65s ease;
-}
-
-
-.quiz-result-bottom button:hover::before {
-  left: 140%;
-}
-
-
-.quiz-result-bottom button:hover {
-  transform: translateY(-3px);
-
-  box-shadow:
-    0 8px 0 #043b7a,
-    0 17px 30px rgba(0, 100, 210, 0.35);
-}
-
-
-.quiz-result-bottom button:active {
-  transform: translateY(3px);
-
-  box-shadow:
-    0 2px 0 #043b7a,
-    0 6px 13px rgba(0, 100, 210, 0.25);
-}
 
 
 /* =====================================================
@@ -2004,29 +1867,6 @@ body.light .quiz-result-date {
 }
 
 
-[data-theme="light"] .quiz-result-bottom,
-.light-theme .quiz-result-bottom,
-body.light .quiz-result-bottom {
-  background:
-    linear-gradient(
-      145deg,
-      #f2f9ff,
-      #e1f0fb
-    );
-
-  border-color:
-    rgba(35, 125, 205, 0.22);
-
-  box-shadow:
-    0 15px 35px rgba(50, 110, 150, 0.16);
-}
-
-
-[data-theme="light"] .quiz-result-bottom p,
-.light-theme .quiz-result-bottom p,
-body.light .quiz-result-bottom p {
-  color: #688aa2;
-}
 
 
 /* =====================================================
@@ -2360,12 +2200,6 @@ body.light .quiz-result-bottom p {
     font-size: 9px;
   }
 
-
-  .quiz-result-bottom {
-    margin-top: 35px;
-
-    padding: 26px 16px;
-  }
 }
 
 
@@ -2489,7 +2323,6 @@ body.light .quiz-result-bottom p {
 
 .quiz-history-button:focus-visible,
 .quiz-result-actions button:focus-visible,
-.quiz-result-bottom button:focus-visible,
 .quiz-result-empty button:focus-visible,
 .quiz-result-error-actions button:focus-visible {
   outline:
@@ -2536,8 +2369,7 @@ html[data-theme='dark'] .quiz-result-page {
 html[data-theme='dark'] .quiz-history-button,
 html[data-theme='dark'] .quiz-result-card,
 html[data-theme='dark'] .quiz-result-empty,
-html[data-theme='dark'] .quiz-result-error,
-html[data-theme='dark'] .quiz-result-bottom {
+html[data-theme='dark'] .quiz-result-error {
   background: rgba(10, 25, 55, 0.55) !important;
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
@@ -2557,16 +2389,14 @@ html[data-theme='dark'] .quiz-history-button h3,
 html[data-theme='dark'] .quiz-history-title,
 html[data-theme='dark'] .quiz-result-card-info h2,
 html[data-theme='dark'] .quiz-result-title,
-html[data-theme='dark'] .quiz-result-header h1,
-html[data-theme='dark'] .quiz-result-bottom h2 {
+html[data-theme='dark'] .quiz-result-header h1 {
   color: #bfdbfe;
 }
 
 html[data-theme='dark'] .quiz-history-button p,
 html[data-theme='dark'] .quiz-history-subtitle,
 html[data-theme='dark'] .quiz-result-card-info p,
-html[data-theme='dark'] .quiz-result-subheading,
-html[data-theme='dark'] .quiz-result-bottom p {
+html[data-theme='dark'] .quiz-result-subheading {
   color: #94a3b8;
 }
 
