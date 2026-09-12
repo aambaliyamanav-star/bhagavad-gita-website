@@ -367,10 +367,12 @@ export default function GitaAIAssistant() {
     setIsLoading(true);
 
     try {
+      const token = localStorage.getItem("token");
       const response = await fetch(`${API_BASE}/api/gita-ai/ask`, {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
         },
         body: JSON.stringify({
           message: query,

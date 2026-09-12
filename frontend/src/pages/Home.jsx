@@ -182,7 +182,10 @@ useEffect(() => {
         setLoading(true);
         setMessage("");
 
-        const response = await fetch(API_URL);
+        const token = localStorage.getItem("token");
+        const response = await fetch(API_URL, {
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
+        });
 
         const data = await response.json();
 
@@ -252,7 +255,7 @@ useEffect(() => {
     };
 
     fetchAllShlokas();
-  }, []);
+  }, [user]);
 
   // =====================================================
   // LOAD CONTINUE READING

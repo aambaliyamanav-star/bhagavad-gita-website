@@ -12,6 +12,7 @@ const {
 const {
   protect,
   optionalAuth,
+  adminOnly,
 } = require("../middleware/authMiddleware");
 
 const router = express.Router();
@@ -21,22 +22,25 @@ const router = express.Router();
 // =====================================================
 
 // -----------------------------------------------------
-// ADD NEW SHLOK
+// ADD NEW SHLOK (ADMIN ONLY)
 // POST /api/shloks
 // -----------------------------------------------------
 
 router.post(
   "/",
+  protect,
+  adminOnly,
   addShlok
 );
 
 // -----------------------------------------------------
-// GET ALL SHLOKAS
+// GET ALL SHLOKAS (OPTIONAL AUTH: 1-5 PUBLIC, 6+ METADATA FOR GUESTS)
 // GET /api/shloks
 // -----------------------------------------------------
 
 router.get(
   "/",
+  optionalAuth,
   getAllShlokas
 );
 
@@ -62,22 +66,26 @@ router.get(
 );
 
 // -----------------------------------------------------
-// UPDATE SHLOK
+// UPDATE SHLOK (ADMIN ONLY)
 // PUT /api/shloks/:id
 // -----------------------------------------------------
 
 router.put(
   "/:id",
+  protect,
+  adminOnly,
   updateShlok
 );
 
 // -----------------------------------------------------
-// DELETE SHLOK
+// DELETE SHLOK (ADMIN ONLY)
 // DELETE /api/shloks/:id
 // -----------------------------------------------------
 
 router.delete(
   "/:id",
+  protect,
+  adminOnly,
   deleteShlok
 );
 
