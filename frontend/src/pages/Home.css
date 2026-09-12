@@ -1087,20 +1087,6 @@ body[data-theme="dark"] .streak-chip-flame {
 }
 
 
-.today-shlok-header p {
-  margin:
-    5px 0 0;
-
-  color:
-    #52718b;
-
-  font-size:
-    14px;
-
-  line-height:
-    1.6;
-}
-
 
 /* =====================================================
    TODAY META
@@ -1711,14 +1697,6 @@ body[data-theme="dark"] .today-shlok-header h2 {
 }
 
 
-html.dark .today-shlok-header p,
-body.dark .today-shlok-header p,
-html[data-theme="dark"] .today-shlok-header p,
-body[data-theme="dark"] .today-shlok-header p {
-  color:
-    #9ebbd0;
-}
-
 
 /* =====================================================
    DARK TODAY ICON
@@ -2143,14 +2121,6 @@ body[data-theme="dark"] .today-message div {
   }
 
 
-  .today-shlok-header p {
-    font-size:
-      13px;
-
-    line-height:
-      1.6;
-  }
-
 
   .today-shlok-meta {
     gap:
@@ -2467,10 +2437,6 @@ body[data-theme="dark"] .today-message div {
   }
 
 
-  .today-shlok-header p {
-    font-size:
-      12px;
-  }
 
 
   .today-shlok-meta span {
