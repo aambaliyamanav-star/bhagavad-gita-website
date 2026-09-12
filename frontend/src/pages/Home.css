@@ -131,44 +131,6 @@ body {
   }
 }
 
-@keyframes sacredAuraGlow {
-  0%, 100% {
-    text-shadow: 0 2px 10px rgba(11, 61, 145, 0.25), 0 0 16px rgba(245, 158, 11, 0.2);
-  }
-  50% {
-    text-shadow: 0 2px 16px rgba(11, 61, 145, 0.4), 0 0 30px rgba(245, 158, 11, 0.55);
-  }
-}
-
-@keyframes buttonShimmerSweep {
-  0% {
-    left: -120%;
-  }
-  25%, 100% {
-    left: 140%;
-  }
-}
-
-@keyframes flameFlicker {
-  0%, 100% {
-    transform: scale(1);
-    filter: drop-shadow(0 0 2px #f97316);
-  }
-  50% {
-    transform: scale(1.22) rotate(-6deg);
-    filter: drop-shadow(0 0 6px #ef4444);
-  }
-}
-
-@keyframes cardGlowPulse {
-  0%, 100% {
-    box-shadow: 0 15px 35px rgba(42, 93, 145, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.6);
-  }
-  50% {
-    box-shadow: 0 20px 45px rgba(42, 93, 145, 0.18), 0 0 22px rgba(212, 175, 55, 0.22), 0 0 0 1px rgba(212, 175, 55, 0.35);
-  }
-}
-
 .hero {
   animation: fadeUp 0.8s ease-out forwards;
 }
@@ -179,7 +141,7 @@ body {
 }
 
 .today-shlok {
-  animation: fadeUp 0.8s ease-out 0.4s forwards, cardGlowPulse 6s ease-in-out infinite;
+  animation: fadeUp 0.8s ease-out 0.4s forwards;
   opacity: 0;
 }
 
@@ -231,7 +193,6 @@ body {
   text-align: center;  
   text-shadow: 0 2px 8px rgba(11, 61, 145, 0.20);
   opacity: 0.95;
-  animation: sacredAuraGlow 4.5s ease-in-out infinite;
 }
 
 .hero h1 {
@@ -357,56 +318,28 @@ body {
     inset 0 1px 1px rgba(255, 255, 255, 0.35);
 
   transition:
-    transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
-    box-shadow 0.2s ease;
-}
-
-.continue-reading-button::before {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -120%;
-  width: 50%;
-  height: 200%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.32),
-    transparent
-  );
-  transform: rotate(25deg);
-  pointer-events: none;
-  animation: buttonShimmerSweep 5s ease-in-out infinite;
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .hero > button:hover,
 .continue-reading-button:hover {
   transform:
-    translateY(-4px) scale(1.02);
+    translateY(-3px);
 
   box-shadow:
-    0 16px 32px rgba(13, 71, 161, 0.35),
-    0 6px 0 rgba(8, 55, 120, 0.22),
-    0 0 22px rgba(66, 165, 245, 0.4),
+    0 13px 22px rgba(13, 71, 161, 0.35),
+    0 5px 0 rgba(8, 55, 120, 0.20),
     inset 0 1px 1px rgba(255, 255, 255, 0.45);
-}
-
-.continue-reading-button:hover .btn-icon {
-  transform: rotate(-8deg) scale(1.18);
-  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .hero > button:active,
 .continue-reading-button:active {
   transform:
-    translateY(2px) scale(0.96) !important;
+    translateY(1px);
 
   box-shadow:
-    0 4px 8px rgba(13, 71, 161, 0.25) !important;
-
-  transition:
-    transform 0.08s ease,
-    box-shadow 0.08s ease;
+    0 5px 10px rgba(13, 71, 161, 0.25);
 }
 
 
@@ -437,19 +370,18 @@ body {
   cursor: pointer;
   
   box-shadow: 0 8px 20px rgba(13, 71, 161, 0.1);
-  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, background 0.3s ease;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.3s ease;
 }
 
 .quiz-button:hover {
-  transform: translateY(-4px) scale(1.02);
+  transform: translateY(-4px);
   background: rgba(255, 255, 255, 0.3);
-  box-shadow: 0 12px 24px rgba(13, 71, 161, 0.18);
+  box-shadow: 0 12px 24px rgba(13, 71, 161, 0.15);
 }
 
 .quiz-button:active {
-  transform: translateY(2px) scale(0.96) !important;
-  box-shadow: 0 4px 8px rgba(13, 71, 161, 0.15) !important;
-  transition: transform 0.08s ease, box-shadow 0.08s ease;
+  transform: translateY(1px);
+  box-shadow: 0 4px 10px rgba(13, 71, 161, 0.1);
 }
 
 /* TRACKER BUTTON & STREAK CHIP (ROYAL BLUE THEME) */
@@ -458,32 +390,11 @@ body {
   align-items: center;
   gap: 8px;
   border-color: rgba(37, 99, 235, 0.35);
-  position: relative;
-  overflow: hidden;
-}
-
-.tracker-hero-btn:hover {
-  transform: translateY(-4px) scale(1.02);
-  background: rgba(37, 99, 235, 0.12);
-  border-color: rgba(37, 99, 235, 0.6);
-  box-shadow: 0 14px 28px rgba(37, 99, 235, 0.22), 0 0 20px rgba(37, 99, 235, 0.25);
-}
-
-.tracker-hero-btn:active {
-  transform: translateY(2px) scale(0.96) !important;
-  box-shadow: 0 4px 8px rgba(37, 99, 235, 0.2) !important;
-  transition: transform 0.08s ease, box-shadow 0.08s ease;
-}
-
-.tracker-hero-btn:hover .tracker-trophy-blue {
-  transform: scale(1.22) rotate(10deg);
-  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .tracker-trophy-blue,
 .tracker-trophy-gold {
   color: #2563eb;
-  transition: transform 0.25s ease;
 }
 
 html[data-theme="dark"] .tracker-trophy-blue,
@@ -516,15 +427,11 @@ body[data-theme="dark"] .hero-streak-chip {
 
 .streak-chip-flame {
   color: #0284c7;
-  animation: flameFlicker 1.8s ease-in-out infinite;
-  transform-origin: bottom center;
 }
 
 html[data-theme="dark"] .streak-chip-flame,
 body[data-theme="dark"] .streak-chip-flame {
   color: #38bdf8;
-  animation: flameFlicker 1.8s ease-in-out infinite;
-  transform-origin: bottom center;
 }
 
 
@@ -810,45 +717,34 @@ body[data-theme="dark"] .streak-chip-flame {
   cursor:
     pointer;
 
-  position:
-    relative;
-
-  overflow:
-    hidden;
-
   box-shadow:
     0 8px 16px rgba(13, 71, 161, 0.24),
     0 4px 0 rgba(8, 55, 120, 0.25),
     inset 0 1px 1px rgba(255, 255, 255, 0.40);
 
   transition:
-    transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
-    box-shadow 0.2s ease;
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 
 .search-button:hover {
   transform:
-    translateY(-3px) scale(1.03);
+    translateY(-3px);
 
   box-shadow:
-    0 14px 26px rgba(13, 71, 161, 0.32),
+    0 13px 22px rgba(13, 71, 161, 0.30),
     0 5px 0 rgba(8, 55, 120, 0.20),
-    0 0 16px rgba(66, 165, 245, 0.35),
     inset 0 1px 1px rgba(255, 255, 255, 0.45);
 }
 
 
 .search-button:active {
   transform:
-    translateY(2px) scale(0.94) !important;
+    translateY(1px);
 
   box-shadow:
-    0 4px 8px rgba(13, 71, 161, 0.22) !important;
-
-  transition:
-    transform 0.08s ease,
-    box-shadow 0.08s ease;
+    0 5px 10px rgba(13, 71, 161, 0.22);
 }
 
 
@@ -957,41 +853,22 @@ body[data-theme="dark"] .streak-chip-flame {
   cursor:
     pointer;
 
-  position:
-    relative;
-
-  overflow:
-    hidden;
-
   transition:
-    transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.25s ease,
     box-shadow 0.25s ease,
-    background 0.25s ease,
-    border-color 0.25s ease;
+    background 0.25s ease;
 }
 
 .search-result-card:hover {
   transform:
-    translateY(-4px) scale(1.01);
+    translateY(-3px);
 
   background:
-    rgba(255, 255, 255, 0.90);
-
-  border-color:
-    rgba(245, 158, 11, 0.45);
+    rgba(255, 255, 255, 0.85);
 
   box-shadow:
-    0 16px 28px rgba(10, 40, 90, 0.14),
-    0 0 16px rgba(245, 158, 11, 0.18),
+    0 14px 24px rgba(10, 40, 90, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 1);
-}
-
-.search-result-card:active {
-  transform:
-    translateY(1px) scale(0.98) !important;
-
-  transition:
-    transform 0.08s ease;
 }
 
 
@@ -1460,66 +1337,25 @@ body[data-theme="dark"] .streak-chip-flame {
   cursor:
     pointer;
 
-  position:
-    relative;
-
-  overflow:
-    hidden;
-
   box-shadow:
     0 8px 16px rgba(13, 71, 161, 0.23),
     0 4px 0 rgba(8, 55, 120, 0.22),
     inset 0 1px 1px rgba(255, 255, 255, 0.40);
 
   transition:
-    transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1),
-    box-shadow 0.2s ease;
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
-.today-shlok-button::before {
-  content: "";
-  position: absolute;
-  top: -50%;
-  left: -120%;
-  width: 50%;
-  height: 200%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.3),
-    transparent
-  );
-  transform: rotate(25deg);
-  pointer-events: none;
-  animation: buttonShimmerSweep 5.5s ease-in-out infinite;
-}
 
 .today-shlok-button:hover {
   transform:
-    translateY(-3px) scale(1.02);
+    translateY(-3px);
 
   box-shadow:
-    0 14px 24px rgba(13, 71, 161, 0.32),
+    0 13px 22px rgba(13, 71, 161, 0.28),
     0 5px 0 rgba(8, 55, 120, 0.18),
-    0 0 16px rgba(66, 165, 245, 0.35),
     inset 0 1px 1px rgba(255, 255, 255, 0.45);
-}
-
-.today-shlok-button:active {
-  transform:
-    translateY(2px) scale(0.96) !important;
-
-  box-shadow:
-    0 4px 8px rgba(13, 71, 161, 0.2) !important;
-
-  transition:
-    transform 0.08s ease,
-    box-shadow 0.08s ease;
-}
-
-.today-shlok-button:hover .btn-icon {
-  transform: scale(1.2) rotate(6deg);
-  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* =====================================================
@@ -1549,28 +1385,15 @@ body[data-theme="dark"] .streak-chip-flame {
   box-shadow: 0 8px 16px rgba(212, 175, 55, 0.25),
               0 4px 0 rgba(140, 105, 10, 0.3),
               inset 0 1px 1px rgba(255, 255, 255, 0.5);
-  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
 }
 
 .today-shlok-actions .today-share-button:hover {
   background: linear-gradient(135deg, #f7d274 0%, #d4af37 100%);
   color: #050e1f;
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 14px 24px rgba(212, 175, 55, 0.35),
+  transform: translateY(-3px);
+  box-shadow: 0 13px 22px rgba(212, 175, 55, 0.35),
               0 5px 0 rgba(140, 105, 10, 0.25),
-              0 0 16px rgba(245, 158, 11, 0.4),
               inset 0 1px 1px rgba(255, 255, 255, 0.6);
-}
-
-.today-shlok-actions .today-share-button:active {
-  transform: translateY(2px) scale(0.96) !important;
-  box-shadow: 0 4px 8px rgba(140, 105, 10, 0.25) !important;
-  transition: transform 0.08s ease;
-}
-
-.today-shlok-actions .today-share-button:hover .btn-icon {
-  transform: scale(1.22) rotate(-8deg);
-  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 
