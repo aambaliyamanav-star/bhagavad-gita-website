@@ -220,6 +220,8 @@ body {
   cursor: pointer;
 
   transition:
+    width 0.25s ease,
+    height 0.25s ease,
     transform 0.20s ease,
     box-shadow 0.20s ease,
     background 0.20s ease,
@@ -448,6 +450,8 @@ body {
   z-index: 1100;
 
   transition:
+    width 0.25s ease,
+    height 0.25s ease,
     transform 0.20s ease,
     box-shadow 0.20s ease,
     background 0.20s ease;
@@ -1693,6 +1697,36 @@ a:focus-visible {
     min-height: 62px;
   }
 
+  .navbar.scrolled {
+    height: 50px !important;
+    min-height: 50px !important;
+  }
+
+  .navbar.scrolled .history-btn {
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 8px;
+  }
+
+  .navbar.scrolled .logo {
+    font-size: 17px !important;
+    margin-left: 8px;
+  }
+
+  .navbar.scrolled .logo-icon {
+    transform: scale(0.85);
+  }
+
+  .navbar.scrolled .hamburger-btn {
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: 9px;
+  }
+
+  .navbar.scrolled .current-page-title {
+    font-size: clamp(11px, 3.2vw, 14px);
+  }
+
   .navbar-spacer {
     height: 62px;
   }
@@ -1794,6 +1828,32 @@ a:focus-visible {
   .navbar {
     height: 58px;
     min-height: 58px;
+  }
+
+  .navbar.scrolled {
+    height: 46px !important;
+    min-height: 46px !important;
+  }
+
+  .navbar.scrolled .history-btn {
+    width: 29px !important;
+    height: 29px !important;
+    border-radius: 7px;
+  }
+
+  .navbar.scrolled .logo {
+    font-size: 15px !important;
+    margin-left: 6px;
+  }
+
+  .navbar.scrolled .logo-icon {
+    transform: scale(0.78);
+  }
+
+  .navbar.scrolled .hamburger-btn {
+    width: 31px !important;
+    height: 31px !important;
+    border-radius: 8px;
   }
 
   .navbar-spacer {

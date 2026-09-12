@@ -276,10 +276,20 @@ function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
+      const scrollPos =
+        window.pageYOffset ||
+        document.documentElement.scrollTop ||
+        window.scrollY ||
+        0;
+      setScrolled(scrollPos > 15);
     };
 
     window.addEventListener(
+      "scroll",
+      handleScroll,
+      { passive: true }
+    );
+    document.addEventListener(
       "scroll",
       handleScroll,
       { passive: true }
@@ -290,6 +300,10 @@ function Navbar() {
 
     return () => {
       window.removeEventListener(
+        "scroll",
+        handleScroll
+      );
+      document.removeEventListener(
         "scroll",
         handleScroll
       );
