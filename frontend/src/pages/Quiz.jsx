@@ -3,7 +3,7 @@ import {
   useNavigate,
   useSearchParams,
 } from "react-router-dom";
-import { ArrowLeft, Star, Loader2, BookOpen, AlertCircle, RefreshCw, Trophy, PlayCircle, Check, X, Lightbulb, ChevronLeft, ChevronRight, Award } from "lucide-react";
+import { ArrowLeft, Star, Loader2, BookOpen, AlertCircle, RefreshCw, Trophy, Check, X, Lightbulb, ChevronLeft, ChevronRight, Award } from "lucide-react";
 import "./Quiz.css";
 
 

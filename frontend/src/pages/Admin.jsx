@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
-import {  Shield, LogOut, BookOpen, BrainCircuit, Users, FileText, Search, Lock, Trash2, Loader2 , ArrowRight } from "lucide-react";
+import {  Shield, LogOut, BookOpen, BrainCircuit, Users, FileText, Search, Lock, Trash2, ArrowRight } from "lucide-react";
 import "./Admin.css";
 
 function Admin() {

@@ -4,7 +4,7 @@ import {
   useState,
 } from "react";
 import { useNavigate } from "react-router-dom";
-import {              BookOpen, Activity, Type, Lightbulb, Trash2, Edit3, Save, FileText, RefreshCw, Archive, Mic, Sparkles, Loader2, Plus , Highlighter , Palette , AlignLeft , AlignCenter , AlignRight , CornerDownLeft , ArrowLeft , List , Undo , Redo , Bold , Italic , Underline } from "lucide-react";
+import { BookOpen, Activity, Type, Lightbulb, Trash2, Save, FileText, RefreshCw, Archive, Mic, Sparkles, Plus, Highlighter, Palette, AlignLeft, AlignCenter, AlignRight, CornerDownLeft, ArrowLeft, List, Undo, Redo, Bold, Italic, Underline } from "lucide-react";
 import "./ShlokManagement.css";
 
 
