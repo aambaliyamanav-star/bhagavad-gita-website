@@ -138,10 +138,6 @@ body {
   opacity: 0;
 }
 
-.welcome {
-  animation: fadeUp 0.8s ease-out 0.6s forwards;
-  opacity: 0;
-}
 
 
 /* =====================================================
@@ -1386,148 +1382,6 @@ body[data-theme="dark"] .streak-chip-flame {
 }
 
 
-/* =====================================================
-   WELCOME / GITA WHY
-===================================================== */
-
-.welcome {
-  width:
-    calc(100% - 40px);
-
-  max-width:
-    900px;
-
-  margin:
-    0 auto 30px;
-
-  padding:
-    45px 30px;
-
-  position:
-    relative;
-
-  text-align:
-    center;
-
-  border-radius:
-    26px;
-
-  background:
-    rgba(255, 255, 255, 0.65);
-
-  backdrop-filter:
-    blur(24px) saturate(180%);
-
-  -webkit-backdrop-filter:
-    blur(24px) saturate(180%);
-
-  border:
-    1px solid rgba(255, 255, 255, 0.50);
-
-  box-shadow:
-    0 22px 40px rgba(10, 40, 90, 0.12),
-    0 1px 0 rgba(255, 255, 255, 0.80) inset;
-
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease,
-    background 0.3s ease,
-    border-color 0.3s ease;
-}
-
-
-.welcome:hover {
-  transform:
-    translateY(-4px);
-
-  background:
-    rgba(255, 255, 255, 0.75);
-
-  border-color:
-    rgba(255, 255, 255, 0.70);
-
-  box-shadow:
-    0 28px 48px rgba(10, 40, 90, 0.16),
-    0 1px 0 rgba(255, 255, 255, 0.95) inset;
-}
-
-
-/* =====================================================
-   WELCOME TOP LINE
-===================================================== */
-
-.welcome::before {
-  content:
-    "";
-
-  position:
-    absolute;
-
-  top:
-    0;
-
-  left:
-    10%;
-
-  width:
-    80%;
-
-  height:
-    3px;
-
-  border-radius:
-    50%;
-
-  background:
-    linear-gradient(
-      90deg,
-      transparent,
-      #42a5f5,
-      #1976d2,
-      transparent
-    );
-}
-
-
-/* =====================================================
-   WELCOME TITLE
-===================================================== */
-
-.welcome h2 {
-  margin:
-    0 0 18px;
-
-  color:
-    #0d47a1;
-
-  font-size:
-    31px;
-
-  font-weight:
-    800;
-
-  text-shadow:
-    0 3px 8px rgba(13, 71, 161, 0.12);
-}
-
-
-.welcome p {
-  margin:
-    0 auto;
-
-  max-width:
-    720px;
-
-  color:
-    #42627b;
-
-  font-size:
-    17px;
-
-  line-height:
-    1.9;
-}
-
 
 /* =====================================================
    SECTION ORDER
@@ -1543,10 +1397,6 @@ body[data-theme="dark"] .streak-chip-flame {
     20;
 }
 
-.welcome {
-  order:
-    30;
-}
 
 
 /* =====================================================
@@ -2008,46 +1858,6 @@ body[data-theme="dark"] .today-message div {
 }
 
 
-/* =====================================================
-   DARK WELCOME
-===================================================== */
-
-html.dark .welcome,
-body.dark .welcome,
-html[data-theme="dark"] .welcome,
-body[data-theme="dark"] .welcome {
-  background: rgba(10, 25, 55, 0.55);
-  backdrop-filter: blur(24px) saturate(180%);
-  -webkit-backdrop-filter: blur(24px) saturate(180%);
-  border-color: rgba(100, 181, 246, 0.25);
-  box-shadow: 0 25px 45px rgba(0, 0, 0, 0.40), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-}
-
-html[data-theme="dark"] .welcome:hover,
-body[data-theme="dark"] .welcome:hover {
-  background: rgba(10, 25, 55, 0.70);
-  border-color: rgba(100, 181, 246, 0.4);
-  box-shadow: 0 30px 50px rgba(0, 0, 0, 0.50), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-}
-
-
-html.dark .welcome h2,
-body.dark .welcome h2,
-html[data-theme="dark"] .welcome h2,
-body[data-theme="dark"] .welcome h2 {
-  color:
-    #90caf9;
-}
-
-
-html.dark .welcome p,
-body.dark .welcome p,
-html[data-theme="dark"] .welcome p,
-body[data-theme="dark"] .welcome p {
-  color:
-    #aec8da;
-}
-
 
 /* =====================================================
    TABLET / MOBILE
@@ -2416,48 +2226,6 @@ body[data-theme="dark"] .welcome p {
       1.8;
   }
 
-
-  /* -------------------------------------------------
-     WELCOME
-  ------------------------------------------------- */
-
-  .welcome {
-    width:
-      calc(100% - 32px);
-
-    max-width:
-      650px;
-
-    margin:
-      0 auto 28px;
-
-    padding:
-      32px 20px;
-
-    border-radius:
-      22px;
-  }
-
-
-  .welcome h2 {
-    margin-bottom:
-      16px;
-
-    font-size:
-      27px;
-
-    line-height:
-      1.35;
-  }
-
-
-  .welcome p {
-    font-size:
-      16px;
-
-    line-height:
-      1.8;
-  }
 }
 
 
@@ -2775,42 +2543,6 @@ body[data-theme="dark"] .welcome p {
       14px;
   }
 
-
-  /* -------------------------------------------------
-     WELCOME
-  ------------------------------------------------- */
-
-  .welcome {
-    width:
-      calc(100% - 24px);
-
-    margin:
-      0 auto 28px;
-
-    padding:
-      30px 16px;
-
-    border-radius:
-      20px;
-  }
-
-
-  .welcome h2 {
-    font-size:
-      24px;
-
-    line-height:
-      1.35;
-  }
-
-
-  .welcome p {
-    font-size:
-      15px;
-
-    line-height:
-      1.8;
-  }
 }
 
 
@@ -2945,11 +2677,10 @@ body[data-theme="dark"] .welcome p {
 
 
   /* -------------------------------------------------
-     TODAY / WELCOME
+     TODAY SHLOK
   ------------------------------------------------- */
 
-  .today-shlok,
-  .welcome {
+  .today-shlok {
     width:
       calc(100% - 18px);
 
