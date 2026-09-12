@@ -1404,10 +1404,6 @@ const prepareSanskritLines = () => {
           ॐ
         </div>
 
-        <p className="reader-sacred-title">
-          ॥ श्रीमद्भगवद्गीता ॥
-        </p>
-
         <h1>
           અધ્યાય{" "}
           {currentChapterNumber}
@@ -1416,10 +1412,6 @@ const prepareSanskritLines = () => {
         <h2>
           {chapterName}
         </h2>
-
-        <p className="chapter-total">
-          કુલ {shlokas.length} શ્લોક
-        </p>
       </section>
 
       {/* =================================================
