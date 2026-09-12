@@ -1,8 +1,10 @@
 
+import { useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 
 import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
 import { ThemeProvider } from "./context/ThemeContext.jsx";
+import "./App.css";
 
 import Navbar from "./components/Navbar.jsx";
 
@@ -113,14 +115,18 @@ function AdminRoute({ children }) {
   return children;
 }
 
-function App() {
-  return (
-    <ThemeProvider>
-      <AuthProvider>
-        <BrowserRouter>
-          <Navbar />
+function AnimatedRoutes() {
+  const location = useLocation();
 
-          <Routes>
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+  }, [location.pathname]);
+
+  return (
+    <>
+      <div key={`glow-${location.pathname}`} className="page-transition-glow" />
+      <div key={location.pathname} className="page-transition-wrapper">
+        <Routes location={location}>
 
             {/* =================================================
                 HOME
@@ -369,7 +375,18 @@ function App() {
             />
 
           </Routes>
+      </div>
+    </>
+  );
+}
 
+function App() {
+  return (
+    <ThemeProvider>
+      <AuthProvider>
+        <BrowserRouter>
+          <Navbar />
+          <AnimatedRoutes />
           {/* =================================================
               GITA AI ASSISTANT (FLOATING BOTTOM-RIGHT WIDGET)
           ================================================= */}
