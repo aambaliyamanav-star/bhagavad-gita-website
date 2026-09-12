@@ -70,9 +70,9 @@ body[data-theme="dark"] .home-fixed-bg {
 
 @media (max-width: 768px) {
   .home-fixed-bg {
-    top: 50px;
-    height: calc(100vh - 50px);
-    height: calc(100dvh - 50px);
+    top: 44px;
+    height: calc(100vh - 44px);
+    height: calc(100dvh - 44px);
     background-image:
       linear-gradient(
         135deg,
