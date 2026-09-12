@@ -356,9 +356,9 @@
 
 .divine-essence-card {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 18px;
-  padding: 24px 26px;
+  padding: 22px 26px;
   border-radius: 20px;
   background: #ffffff;
   border: 1px solid rgba(140, 195, 255, 0.32);
