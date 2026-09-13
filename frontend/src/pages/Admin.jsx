@@ -515,9 +515,12 @@ function Admin() {
                   </div>
                   <div className="v-stat-content">
                     <h3>
-                      {visitorStats?.uniqueRegisteredVisitors !== undefined
-                        ? visitorStats.uniqueRegisteredVisitors.toLocaleString()
-                        : "0"}
+                      {(visitorStats?.registeredVisits !== undefined
+                        ? visitorStats.registeredVisits
+                        : visitorStats?.uniqueRegisteredVisitors !== undefined
+                        ? visitorStats.uniqueRegisteredVisitors
+                        : 0
+                      ).toLocaleString()}
                     </h3>
                     <p className="v-stat-label">નોંધાયેલા મુલાકાતીઓ</p>
                   </div>
