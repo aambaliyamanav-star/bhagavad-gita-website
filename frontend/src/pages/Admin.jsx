@@ -21,6 +21,8 @@ import {
   RefreshCw,
   Calendar,
   TrendingUp,
+  UserPlus,
+  UserCheck,
 } from "lucide-react";
 import "./Admin.css";
 
@@ -445,11 +447,31 @@ function Admin() {
             </div>
           ) : (
             <>
-              {/* 4 PRIMARY VISITOR STAT CARDS */}
+              {/* 5 VISITOR STAT CARDS */}
               <div className="visitor-stats-grid">
+                {/* CARD 1: NEW / UNREGISTERED UNIQUE VISITORS (COUNTED ONLY ONCE) */}
+                <div className="v-stat-card new-guest-card">
+                  <div className="v-stat-icon-box amber-glow">
+                    <UserPlus size={26} />
+                  </div>
+                  <div className="v-stat-content">
+                    <h3>
+                      {visitorStats?.uniqueUnregisteredVisitors !== undefined
+                        ? visitorStats.uniqueUnregisteredVisitors.toLocaleString()
+                        : "0"}
+                    </h3>
+                    <p className="v-stat-label">નવા મુલાકાતીઓ (ગેસ્ટ)</p>
+                    <span className="v-stat-sub-rule unique-rule">
+                      વારંવાર આવે તો પણ ૧ જ વાર ગણાય
+                    </span>
+                    <span className="v-stat-sub">Unique Unregistered Users</span>
+                  </div>
+                </div>
+
+                {/* CARD 2: TOTAL ALL VISITS (EVERY HIT COUNTED) */}
                 <div className="v-stat-card total-visits-card">
                   <div className="v-stat-icon-box blue-glow">
-                    <Eye size={28} />
+                    <Eye size={26} />
                   </div>
                   <div className="v-stat-content">
                     <h3>
@@ -457,29 +479,34 @@ function Admin() {
                         ? visitorStats.totalVisits.toLocaleString()
                         : "0"}
                     </h3>
-                    <p className="v-stat-label">કુલ મુલાકાતો</p>
-                    <span className="v-stat-sub">Total Pageviews</span>
+                    <p className="v-stat-label">કુલ તમામ મુલાકાતો</p>
+                    <span className="v-stat-sub-rule total-rule">
+                      જેટલી વાર આવે તે બધી વાર ગણાય
+                    </span>
+                    <span className="v-stat-sub">Total All Pageviews</span>
                   </div>
                 </div>
 
-                <div className="v-stat-card unique-visitors-card">
-                  <div className="v-stat-icon-box purple-glow">
-                    <Users size={28} />
+                {/* CARD 3: TODAY'S UNIQUE GUEST VISITORS */}
+                <div className="v-stat-card today-guest-card">
+                  <div className="v-stat-icon-box gold-glow">
+                    <TrendingUp size={26} />
                   </div>
                   <div className="v-stat-content">
                     <h3>
-                      {visitorStats?.uniqueVisitors !== undefined
-                        ? visitorStats.uniqueVisitors.toLocaleString()
+                      {visitorStats?.todayUniqueUnregisteredVisitors !== undefined
+                        ? visitorStats.todayUniqueUnregisteredVisitors.toLocaleString()
                         : "0"}
                     </h3>
-                    <p className="v-stat-label">અનન્ય મુલાકાતીઓ</p>
-                    <span className="v-stat-sub">Unique Visitors</span>
+                    <p className="v-stat-label">આજના નવા મુલાકાતીઓ</p>
+                    <span className="v-stat-sub">Today's Unique Guests</span>
                   </div>
                 </div>
 
+                {/* CARD 4: TODAY'S TOTAL VISITS */}
                 <div className="v-stat-card today-visits-card">
                   <div className="v-stat-icon-box green-glow">
-                    <Calendar size={28} />
+                    <Calendar size={26} />
                   </div>
                   <div className="v-stat-content">
                     <h3>
@@ -487,23 +514,24 @@ function Admin() {
                         ? visitorStats.todayVisits.toLocaleString()
                         : "0"}
                     </h3>
-                    <p className="v-stat-label">આજની મુલાકાતો</p>
-                    <span className="v-stat-sub">Today's Visits</span>
+                    <p className="v-stat-label">આજની કુલ મુલાકાતો</p>
+                    <span className="v-stat-sub">Today's Total Pageviews</span>
                   </div>
                 </div>
 
-                <div className="v-stat-card today-unique-card">
-                  <div className="v-stat-icon-box gold-glow">
-                    <TrendingUp size={28} />
+                {/* CARD 5: REGISTERED ACTIVE VISITORS */}
+                <div className="v-stat-card registered-visitors-card">
+                  <div className="v-stat-icon-box purple-glow">
+                    <UserCheck size={26} />
                   </div>
                   <div className="v-stat-content">
                     <h3>
-                      {visitorStats?.todayUniqueVisitors !== undefined
-                        ? visitorStats.todayUniqueVisitors.toLocaleString()
+                      {visitorStats?.uniqueRegisteredVisitors !== undefined
+                        ? visitorStats.uniqueRegisteredVisitors.toLocaleString()
                         : "0"}
                     </h3>
-                    <p className="v-stat-label">આજના અનન્ય યુઝર્સ</p>
-                    <span className="v-stat-sub">Today's Unique</span>
+                    <p className="v-stat-label">નોંધાયેલા મુલાકાતીઓ</p>
+                    <span className="v-stat-sub">Logged-in Users Visited</span>
                   </div>
                 </div>
               </div>
@@ -669,6 +697,7 @@ function Admin() {
                       <thead>
                         <tr>
                           <th>પેજ (Page Path)</th>
+                          <th>યુઝર પ્રકાર (User)</th>
                           <th>ડિવાઇસ (Device)</th>
                           <th>બ્રાઉઝર / OS</th>
                           <th>સમય (Time)</th>
@@ -679,6 +708,17 @@ function Admin() {
                           <tr key={i}>
                             <td className="v-table-path">
                               <code>{v.path}</code>
+                            </td>
+                            <td>
+                              {v.isRegistered ? (
+                                <span className="v-user-type-badge registered">
+                                  <UserCheck size={13} /> રજીસ્ટર્ડ
+                                </span>
+                              ) : (
+                                <span className="v-user-type-badge guest">
+                                  <UserPlus size={13} /> નવો / ગેસ્ટ
+                                </span>
+                              )}
                             </td>
                             <td>
                               <span className={`v-device-badge ${v.device?.toLowerCase()}`}>

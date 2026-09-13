@@ -37,6 +37,16 @@ const visitorSchema = new mongoose.Schema(
       type: String,
       default: "Other",
     },
+    isRegistered: {
+      type: Boolean,
+      default: false,
+      index: true,
+    },
+    userId: {
+      type: String,
+      default: null,
+      index: true,
+    },
     visitedAt: {
       type: Date,
       default: Date.now,
@@ -51,3 +61,4 @@ const visitorSchema = new mongoose.Schema(
 visitorSchema.index({ visitedAt: -1, visitorId: 1 });
 
 module.exports = mongoose.model("Visitor", visitorSchema);
+

@@ -59,7 +59,7 @@ function parseUserAgent(uaString = "") {
 // POST /api/visitors/track - Public Endpoint to record a visit
 const recordVisit = async (req, res) => {
   try {
-    const { visitorId, path, referrer } = req.body;
+    const { visitorId, path, referrer, isRegistered, userId } = req.body;
 
     if (!visitorId) {
       return res.status(400).json({ success: false, message: "visitorId is required" });
@@ -91,6 +91,8 @@ const recordVisit = async (req, res) => {
       device,
       browser,
       os,
+      isRegistered: Boolean(isRegistered),
+      userId: isRegistered && userId ? String(userId) : null,
       visitedAt: new Date(),
     });
 
@@ -108,28 +110,48 @@ const getVisitorStats = async (req, res) => {
   try {
     const now = new Date();
 
-    // Start of today (IST / local time approximation, UTC midnight)
+    // Start of today
     const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-    // 1. Total visits
+    // 1. Total all visits (jetlivar ek j user aave te badhi vaar count thay - All Pageviews)
     const totalVisits = await Visitor.countDocuments();
 
-    // 2. Unique visitors (distinct visitorIds)
-    const uniqueVisitorIds = await Visitor.distinct("visitorId");
-    const uniqueVisitors = uniqueVisitorIds.length;
-
-    // 3. Today's visits
+    // 2. Today's all visits
     const todayVisits = await Visitor.countDocuments({
       visitedAt: { $gte: startOfToday },
     });
 
-    // 4. Today's unique visitors
-    const todayUniqueIds = await Visitor.distinct("visitorId", {
+    // 3. New / Unregistered unique visitors (varmvar ek j user aave to pan 1 j vaar count thay)
+    const uniqueUnregisteredIds = await Visitor.distinct("visitorId", {
+      isRegistered: false,
+    });
+    const uniqueUnregisteredVisitors = uniqueUnregisteredIds.length;
+
+    // 4. Today's new / unregistered unique visitors
+    const todayUniqueUnregisteredIds = await Visitor.distinct("visitorId", {
+      isRegistered: false,
       visitedAt: { $gte: startOfToday },
     });
-    const todayUniqueVisitors = todayUniqueIds.length;
+    const todayUniqueUnregisteredVisitors = todayUniqueUnregisteredIds.length;
 
-    // 5. Device distribution
+    // 5. Active Registered unique users who visited
+    const uniqueRegisteredIds = await Visitor.distinct("userId", {
+      isRegistered: true,
+      userId: { $ne: null },
+    });
+    const uniqueRegisteredVisitors = uniqueRegisteredIds.length;
+
+    // 6. Overall unique visitors (distinct visitorId across all)
+    const allUniqueVisitorIds = await Visitor.distinct("visitorId");
+    const totalUniqueVisitors = allUniqueVisitorIds.length;
+
+    // 7. Today's overall unique visitors
+    const todayAllUniqueIds = await Visitor.distinct("visitorId", {
+      visitedAt: { $gte: startOfToday },
+    });
+    const todayUniqueVisitors = todayAllUniqueIds.length;
+
+    // 8. Device distribution
     const deviceAggregation = await Visitor.aggregate([
       { $group: { _id: "$device", count: { $sum: 1 } } },
       { $sort: { count: -1 } },
@@ -145,35 +167,35 @@ const getVisitorStats = async (req, res) => {
       if (item._id) deviceStats[item._id] = item.count;
     });
 
-    // 6. Browser distribution (top 5)
+    // 9. Browser distribution (top 6)
     const browserStats = await Visitor.aggregate([
       { $group: { _id: "$browser", count: { $sum: 1 } } },
       { $sort: { count: -1 } },
       { $limit: 6 },
     ]);
 
-    // 7. OS distribution (top 5)
+    // 10. OS distribution (top 6)
     const osStats = await Visitor.aggregate([
       { $group: { _id: "$os", count: { $sum: 1 } } },
       { $sort: { count: -1 } },
       { $limit: 6 },
     ]);
 
-    // 8. Top visited pages (top 10)
+    // 11. Top visited pages (top 10)
     const topPages = await Visitor.aggregate([
       { $group: { _id: "$path", count: { $sum: 1 } } },
       { $sort: { count: -1 } },
       { $limit: 10 },
     ]);
 
-    // 9. Recent 15 visitors
+    // 12. Recent 15 visitors with registration status
     const recentVisitors = await Visitor.find()
-      .select("path device browser os visitedAt")
+      .select("path device browser os isRegistered visitedAt")
       .sort({ visitedAt: -1 })
       .limit(15)
       .lean();
 
-    // 10. Last 7 days trend
+    // 13. Last 7 days trend
     const sevenDaysAgo = new Date();
     sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
     sevenDaysAgo.setHours(0, 0, 0, 0);
@@ -202,10 +224,13 @@ const getVisitorStats = async (req, res) => {
     res.json({
       success: true,
       stats: {
-        totalVisits,
-        uniqueVisitors,
-        todayVisits,
-        todayUniqueVisitors,
+        totalVisits, // Jetlivar aave te badhi vaar count
+        todayVisits, // Aajna badha visits
+        uniqueUnregisteredVisitors, // New not register user (varmvar aave to no count thay, 1 j var)
+        todayUniqueUnregisteredVisitors, // Aajna new not register unique user
+        uniqueRegisteredVisitors, // Register user na unique visits
+        totalUniqueVisitors, // Badha unique visitors
+        todayUniqueVisitors, // Aajna badha unique visitors
         deviceStats,
         browserStats,
         osStats,
