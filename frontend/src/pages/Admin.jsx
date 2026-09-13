@@ -422,7 +422,6 @@ function Admin() {
               </div>
               <div>
                 <h2>વેબસાઇટ મુલાકાતીઓ (Website Visitors)</h2>
-                <p>રીઅલ-ટાઇમ વેબસાઇટ ટ્રાફિક અને મુલાકાતીઓની માહિતી</p>
               </div>
             </div>
 
@@ -461,10 +460,6 @@ function Admin() {
                         : "0"}
                     </h3>
                     <p className="v-stat-label">નવા મુલાકાતીઓ (ગેસ્ટ)</p>
-                    <span className="v-stat-sub-rule unique-rule">
-                      વારંવાર આવે તો પણ ૧ જ વાર ગણાય
-                    </span>
-                    <span className="v-stat-sub">Unique Unregistered Users</span>
                   </div>
                 </div>
 
@@ -480,10 +475,6 @@ function Admin() {
                         : "0"}
                     </h3>
                     <p className="v-stat-label">કુલ તમામ મુલાકાતો</p>
-                    <span className="v-stat-sub-rule total-rule">
-                      જેટલી વાર આવે તે બધી વાર ગણાય
-                    </span>
-                    <span className="v-stat-sub">Total All Pageviews</span>
                   </div>
                 </div>
 
@@ -499,7 +490,6 @@ function Admin() {
                         : "0"}
                     </h3>
                     <p className="v-stat-label">આજના નવા મુલાકાતીઓ</p>
-                    <span className="v-stat-sub">Today's Unique Guests</span>
                   </div>
                 </div>
 
@@ -515,7 +505,6 @@ function Admin() {
                         : "0"}
                     </h3>
                     <p className="v-stat-label">આજની કુલ મુલાકાતો</p>
-                    <span className="v-stat-sub">Today's Total Pageviews</span>
                   </div>
                 </div>
 
@@ -531,7 +520,6 @@ function Admin() {
                         : "0"}
                     </h3>
                     <p className="v-stat-label">નોંધાયેલા મુલાકાતીઓ</p>
-                    <span className="v-stat-sub">Logged-in Users Visited</span>
                   </div>
                 </div>
               </div>
