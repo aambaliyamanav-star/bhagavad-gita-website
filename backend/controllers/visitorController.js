@@ -134,12 +134,11 @@ const getVisitorStats = async (req, res) => {
     });
     const todayUniqueUnregisteredVisitors = todayUniqueUnregisteredIds.length;
 
-    // 5. Active Registered unique users who visited
-    const uniqueRegisteredIds = await Visitor.distinct("userId", {
+    // 5. Total visits made by registered users (jetli var aave te badhi var nu count thay)
+    const registeredVisits = await Visitor.countDocuments({
       isRegistered: true,
-      userId: { $ne: null },
     });
-    const uniqueRegisteredVisitors = uniqueRegisteredIds.length;
+    const uniqueRegisteredVisitors = registeredVisits;
 
     // 6. Overall unique visitors (distinct visitorId across all)
     const allUniqueVisitorIds = await Visitor.distinct("visitorId");
@@ -228,7 +227,8 @@ const getVisitorStats = async (req, res) => {
         todayVisits, // Aajna badha visits
         uniqueUnregisteredVisitors, // New not register user (varmvar aave to no count thay, 1 j var)
         todayUniqueUnregisteredVisitors, // Aajna new not register unique user
-        uniqueRegisteredVisitors, // Register user na unique visits
+        uniqueRegisteredVisitors, // Register user na badha visits (jetli var aave te badhi var)
+        registeredVisits, // Register user na badha visits
         totalUniqueVisitors, // Badha unique visitors
         todayUniqueVisitors, // Aajna badha unique visitors
         deviceStats,
