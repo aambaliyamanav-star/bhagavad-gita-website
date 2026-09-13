@@ -924,19 +924,19 @@
 .rt-modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  -webkit-backdrop-filter: blur(6px);
-  backdrop-filter: blur(6px);
+  background: rgba(0, 0, 0, 0.55);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
   z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 16px;
   animation: rt-overlay-in 0.2s ease;
 }
 
 [data-theme="dark"] .rt-modal-overlay {
-  background: rgba(0, 0, 0, 0.65);
+  background: rgba(0, 0, 0, 0.72);
 }
 
 @keyframes rt-overlay-in {
@@ -948,13 +948,27 @@
   position: relative;
   background: var(--rt-surface);
   border: 1px solid var(--rt-border);
-  border-radius: 20px;
+  border-radius: 18px;
   width: 100%;
-  max-width: 420px;
-  padding: 32px 24px 24px;
+  max-width: 400px;
+  max-height: min(92dvh, 480px);
+  overflow-y: auto;
+  padding: 20px 20px 16px;
   text-align: center;
   box-shadow: var(--rt-shadow-md);
   animation: rt-modal-in 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Custom Scrollbar */
+.rt-modal::-webkit-scrollbar {
+  width: 5px;
+}
+.rt-modal::-webkit-scrollbar-track {
+  background: transparent;
+}
+.rt-modal::-webkit-scrollbar-thumb {
+  background: var(--rt-border);
+  border-radius: 3px;
 }
 
 @keyframes rt-modal-in {
@@ -964,13 +978,13 @@
 
 .rt-modal-close {
   position: absolute;
-  top: 14px;
-  right: 14px;
+  top: 12px;
+  right: 12px;
   background: var(--rt-surface-2);
   border: 1px solid var(--rt-border);
   border-radius: 50%;
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -985,60 +999,68 @@
 }
 
 .rt-modal-icon {
-  width: 80px;
-  height: 80px;
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
-  margin: 0 auto 16px;
+  margin: 0 auto 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   background: var(--rt-border);
 }
 
-.rt-modal-icon-svg { color: #fff; }
-.rt-modal-lock-svg { color: var(--rt-text-muted); }
+.rt-modal-icon-svg {
+  width: 28px;
+  height: 28px;
+  color: #fff;
+}
+.rt-modal-lock-svg {
+  width: 24px;
+  height: 24px;
+  color: var(--rt-text-muted);
+}
 
 .rt-modal-title {
-  font-size: 1.3rem;
+  font-size: 1.15rem;
   font-weight: 800;
   color: var(--rt-text-primary);
-  margin: 0 0 14px;
-  line-height: 1.4;
+  margin: 0 0 8px;
+  line-height: 1.35;
 }
 
 .rt-modal-desc {
   background: var(--rt-surface-2);
   border: 1px solid var(--rt-border-subtle);
   border-radius: 12px;
-  padding: 12px 16px;
-  font-size: 0.9rem;
-  line-height: 1.6;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  line-height: 1.45;
   color: var(--rt-text-secondary);
   text-align: left;
-  margin-bottom: 14px;
+  margin-bottom: 8px;
 }
 
 .rt-modal-criteria {
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  gap: 2px;
   background: var(--rt-blue-light);
   border-radius: 10px;
-  padding: 10px 14px;
-  margin-bottom: 18px;
+  padding: 7px 12px;
+  margin-bottom: 10px;
   text-align: left;
 }
 
 .rt-criteria-label {
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   text-transform: uppercase;
-  letter-spacing: 0.6px;
+  letter-spacing: 0.5px;
   font-weight: 700;
   color: var(--rt-blue);
 }
 
 .rt-criteria-val {
-  font-size: 0.88rem;
+  font-size: 0.84rem;
   font-weight: 600;
   color: var(--rt-text-primary);
 }
@@ -1047,9 +1069,9 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 16px;
+  padding: 5px 14px;
   border-radius: 9999px;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 600;
 }
 
@@ -1110,7 +1132,54 @@
   }
 }
 
+@media (max-width: 480px), (max-height: 640px) {
+  .rt-modal {
+    padding: 16px 14px 14px;
+    max-height: calc(100dvh - 24px);
+    border-radius: 16px;
+  }
+
+  .rt-modal-icon {
+    width: 46px;
+    height: 46px;
+    margin: 0 auto 8px;
+  }
+
+  .rt-modal-icon-svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .rt-modal-lock-svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .rt-modal-title {
+    font-size: 1.05rem;
+    margin-bottom: 6px;
+  }
+
+  .rt-modal-desc {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    margin-bottom: 6px;
+  }
+
+  .rt-modal-criteria {
+    padding: 6px 10px;
+    margin-bottom: 8px;
+  }
+
+  .rt-modal-status {
+    padding: 4px 12px;
+    font-size: 0.76rem;
+  }
+}
+
 @media (max-width: 480px) {
   .rt-header { flex-direction: column; align-items: flex-start; }
   .rt-stat-card { flex-direction: row; }
 }
+
