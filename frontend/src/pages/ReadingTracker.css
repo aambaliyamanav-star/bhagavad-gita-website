@@ -924,14 +924,19 @@
 .rt-modal-overlay {
   position: fixed;
   inset: 0;
+  width: 100vw;
+  height: 100dvh;
   background: rgba(0, 0, 0, 0.55);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
-  z-index: 1000;
+  z-index: 99999;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 16px;
+  touch-action: none;
+  overscroll-behavior: contain;
+  overflow: hidden;
   animation: rt-overlay-in 0.2s ease;
 }
 
@@ -953,6 +958,7 @@
   max-width: 400px;
   max-height: min(92dvh, 480px);
   overflow-y: auto;
+  overscroll-behavior: contain;
   padding: 20px 20px 16px;
   text-align: center;
   box-shadow: var(--rt-shadow-md);

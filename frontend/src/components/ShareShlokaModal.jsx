@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import {
   X,
   Download,
@@ -820,9 +821,19 @@ export default function ShareShlokaModal({
     setTimeout(() => setCopied(false), 2200);
   };
 
-  if (!isOpen || !shlokaData) return null;
+  useEffect(() => {
+    if (isOpen) {
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = prevOverflow;
+      };
+    }
+  }, [isOpen]);
 
-  return (
+  if (!isOpen || !shlokaData || typeof document === "undefined") return null;
+
+  return createPortal(
     <div className="share-modal-overlay" onClick={onClose}>
       <div
         className="share-modal-container"
@@ -957,7 +968,8 @@ export default function ShareShlokaModal({
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 

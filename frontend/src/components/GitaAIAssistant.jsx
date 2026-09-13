@@ -227,6 +227,11 @@ export default function GitaAIAssistant() {
     if (isOpen) {
       scrollToBottom();
       inputRef.current?.focus();
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = prevOverflow;
+      };
     }
   }, [messages, isOpen]);
 

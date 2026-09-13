@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
 import {
   Trophy,
@@ -87,6 +88,16 @@ function ReadingTracker() {
   useEffect(() => {
     loadProgress();
   }, [user]);
+
+  useEffect(() => {
+    if (selectedBadge) {
+      const prevOverflow = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = prevOverflow;
+      };
+    }
+  }, [selectedBadge]);
 
   const handleSyncCloud = async () => {
     const token = localStorage.getItem("token");
@@ -502,9 +513,9 @@ function ReadingTracker() {
       </div>
 
       {/* ============================================================
-          BADGE MODAL
+          BADGE MODAL (PORTALED DIRECTLY TO BODY)
       ============================================================ */}
-      {selectedBadge && (
+      {selectedBadge && typeof document !== "undefined" && createPortal(
         <div className="rt-modal-overlay" onClick={() => setSelectedBadge(null)}>
           <div className="rt-modal" onClick={(e) => e.stopPropagation()}>
             <button type="button" className="rt-modal-close" onClick={() => setSelectedBadge(null)}>
@@ -532,7 +543,8 @@ function ReadingTracker() {
               }
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </div>
   );
