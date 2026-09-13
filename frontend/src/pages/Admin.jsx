@@ -824,7 +824,7 @@ function Admin() {
 
                       <th>Role</th>
 
-                      <th>મુલાકાતો (Visits)</th>
+                      <th>મુલાકાતો</th>
 
                       <th>Joined</th>
 
