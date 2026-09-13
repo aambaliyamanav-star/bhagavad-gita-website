@@ -59,7 +59,7 @@ function parseUserAgent(uaString = "") {
 // POST /api/visitors/track - Public Endpoint to record a visit
 const recordVisit = async (req, res) => {
   try {
-    const { visitorId, path, referrer, isRegistered, userId } = req.body;
+    let { visitorId, path, referrer, isRegistered, userId } = req.body;
 
     if (!visitorId) {
       return res.status(400).json({ success: false, message: "visitorId is required" });
@@ -70,6 +70,23 @@ const recordVisit = async (req, res) => {
     // Don't track admin pages to avoid skewing real user metrics
     if (currentPath.startsWith("/admin")) {
       return res.json({ success: true, ignored: true });
+    }
+
+    // If user is logged out, check if this device/visitorId previously belonged to a registered user
+    if (!userId) {
+      const previousRegisteredVisit = await Visitor.findOne({
+        visitorId,
+        isRegistered: true,
+        userId: { $ne: null },
+      })
+        .select("userId")
+        .sort({ visitedAt: -1 })
+        .lean();
+
+      if (previousRegisteredVisit && previousRegisteredVisit.userId) {
+        isRegistered = true;
+        userId = previousRegisteredVisit.userId;
+      }
     }
 
     const userAgent = req.headers["user-agent"] || "";

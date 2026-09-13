@@ -49,7 +49,7 @@ export async function trackVisit(path) {
     const visitorId = getVisitorId();
     const referrer = typeof document !== "undefined" ? document.referrer : "";
 
-    // Check if the user is registered/logged in
+    // Check if the user is registered/logged in or previously logged in on this device
     let isRegistered = false;
     let userId = null;
     try {
@@ -59,6 +59,16 @@ export async function trackVisit(path) {
         if (parsed && parsed._id) {
           isRegistered = true;
           userId = parsed._id;
+          localStorage.setItem("gita_registered_user_id", parsed._id);
+        }
+      }
+
+      // If currently logged out, check if this device was previously registered
+      if (!userId) {
+        const rememberedId = localStorage.getItem("gita_registered_user_id");
+        if (rememberedId) {
+          isRegistered = true;
+          userId = rememberedId;
         }
       }
     } catch {

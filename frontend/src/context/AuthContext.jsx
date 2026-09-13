@@ -43,6 +43,10 @@ export function AuthProvider({ children }) {
 
     localStorage.setItem("token", userToken);
 
+    if (userData && userData._id) {
+      localStorage.setItem("gita_registered_user_id", userData._id);
+    }
+
     setUser(userData);
     setToken(userToken);
   };
