@@ -49,10 +49,28 @@ export async function trackVisit(path) {
     const visitorId = getVisitorId();
     const referrer = typeof document !== "undefined" ? document.referrer : "";
 
+    // Check if the user is registered/logged in
+    let isRegistered = false;
+    let userId = null;
+    try {
+      const savedUser = localStorage.getItem("user");
+      if (savedUser) {
+        const parsed = JSON.parse(savedUser);
+        if (parsed && parsed._id) {
+          isRegistered = true;
+          userId = parsed._id;
+        }
+      }
+    } catch {
+      // ignore JSON parse error
+    }
+
     const payload = JSON.stringify({
       visitorId,
       path,
       referrer,
+      isRegistered,
+      userId,
     });
 
     // Use sendBeacon if available for non-blocking analytics

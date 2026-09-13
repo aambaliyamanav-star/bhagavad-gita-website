@@ -14,3 +14,4 @@ router.post("/track", recordVisit);
 router.get("/stats", protect, adminOnly, getVisitorStats);
 
 module.exports = router;
+
