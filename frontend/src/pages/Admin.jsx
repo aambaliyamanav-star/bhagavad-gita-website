@@ -824,6 +824,8 @@ function Admin() {
 
                       <th>Role</th>
 
+                      <th>મુલાકાતો (Visits)</th>
+
                       <th>Joined</th>
 
                       <th>Action</th>
@@ -884,6 +886,16 @@ function Admin() {
                               }
                             >
                               {user.role}
+                            </span>
+
+                          </td>
+
+
+                          <td>
+
+                            <span className="user-visits-badge" title={`આ યુઝરે રજીસ્ટર કર્યા પછી કુલ ${user.visitCount || 0} વખત મુલાકાત લીધી છે`}>
+                              <Eye size={13} className="user-visits-icon" />
+                              {user.visitCount || 0}
                             </span>
 
                           </td>

@@ -1,21 +1,50 @@
 const User = require("../models/User");
+const Visitor = require("../models/Visitor");
 
 // GET ALL USERS
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.find()
       .select("-password")
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .lean();
 
-    res.json({
-      count: users.length,
-      users
+    // Calculate visit counts for each registered user after registration
+    const visitAgg = await Visitor.aggregate([
+      {
+        $match: {
+          isRegistered: true,
+          userId: { $ne: null },
+        },
+      },
+      {
+        $group: {
+          _id: "$userId",
+          visitCount: { $sum: 1 },
+        },
+      },
+    ]);
+
+    const visitMap = {};
+    visitAgg.forEach((item) => {
+      if (item._id) {
+        visitMap[String(item._id)] = item.visitCount;
+      }
     });
 
+    const usersWithVisits = users.map((user) => ({
+      ...user,
+      visitCount: visitMap[String(user._id)] || 0,
+    }));
+
+    res.json({
+      count: usersWithVisits.length,
+      users: usersWithVisits,
+    });
   } catch (error) {
     res.status(500).json({
       message: "Users મેળવવામાં error આવ્યો.",
-      error: error.message
+      error: error.message,
     });
   }
 };
