@@ -35,6 +35,7 @@ import ReadingTracker from "./pages/ReadingTracker.jsx";
 import QuizAchievements from "./pages/QuizAchievements.jsx";
 import GitaAiHistory from "./pages/GitaAiHistory.jsx";
 import GitaAIAssistant from "./components/GitaAIAssistant.jsx";
+import { trackVisit } from "./utils/visitorTracker.js";
 
 // =====================================================
 // PROTECTED ROUTE COMPONENT
@@ -121,6 +122,7 @@ function AnimatedRoutes() {
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    trackVisit(location.pathname);
   }, [location.pathname]);
 
   return (

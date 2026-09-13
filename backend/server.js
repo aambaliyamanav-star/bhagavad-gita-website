@@ -12,6 +12,7 @@ const continueReadingRoutes = require("./routes/continueReadingRoutes");
 const quizRoutes = require("./routes/quizRoutes");
 const readingTrackerRoutes = require("./routes/readingTrackerRoutes");
 const gitaAiRoutes = require("./routes/gitaAiRoutes");
+const visitorRoutes = require("./routes/visitorRoutes");
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.use(
 app.use("/api/quiz", quizRoutes);
 app.use("/api/reading-tracker", readingTrackerRoutes);
 app.use("/api/gita-ai", gitaAiRoutes);
+app.use("/api/visitors", visitorRoutes);
 
 app.get("/", (req, res) => {
   res.json({
