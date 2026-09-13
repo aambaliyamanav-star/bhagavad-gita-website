@@ -1040,6 +1040,34 @@
 
 
 /* =========================================================
+   USER VISITS BADGE
+========================================================= */
+
+.user-visits-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  background: rgba(37, 99, 235, 0.08);
+  color: #1d4ed8;
+  border: 1px solid rgba(37, 99, 235, 0.22);
+  border-radius: 9999px;
+  font-size: 12.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.user-visits-badge:hover {
+  background: rgba(37, 99, 235, 0.15);
+  border-color: rgba(37, 99, 235, 0.4);
+}
+
+.user-visits-icon {
+  color: #2563eb;
+}
+
+/* =========================================================
    ROLE BADGES
 ========================================================= */
 
@@ -3126,5 +3154,24 @@ html[data-theme='dark'] .v-user-type-badge.registered,
   color: #c4b5fd !important;
   border: 1px solid rgba(139, 92, 246, 0.35) !important;
 }
+
+html[data-theme='dark'] .user-visits-badge,
+.dark .user-visits-badge,
+.dark-theme .user-visits-badge,
+.dark-mode .user-visits-badge,
+[data-theme="dark"] .user-visits-badge {
+  background: rgba(30, 58, 138, 0.35) !important;
+  color: #93c5fd !important;
+  border-color: rgba(96, 165, 250, 0.3) !important;
+}
+
+html[data-theme='dark'] .user-visits-icon,
+.dark .user-visits-icon,
+.dark-theme .user-visits-icon,
+.dark-mode .user-visits-icon,
+[data-theme="dark"] .user-visits-icon {
+  color: #60a5fa !important;
+}
+
 
 
