@@ -483,7 +483,10 @@ export default function GitaAIAssistant() {
   }
 
   return (
-    <aside className={`gita-ai-wrapper ${theme}`} aria-label="Gita AI Assistant">
+    <aside
+      className={`gita-ai-wrapper ${theme} ${isOpen ? "is-open" : ""}`}
+      aria-label="Gita AI Assistant"
+    >
       {/* =================================================
           FLOATING TRIGGER BUTTON (BOTTOM RIGHT CORNER)
       ================================================= */}
@@ -503,10 +506,16 @@ export default function GitaAIAssistant() {
       )}
 
       {/* =================================================
-          CHAT WINDOW MODAL
+          CHAT WINDOW MODAL & BLURRED BACKDROP
       ================================================= */}
       {isOpen && (
-        <div className="gita-ai-window" role="dialog" aria-modal="true">
+        <div className="gita-ai-overlay" onClick={() => setIsOpen(false)}>
+          <div
+            className="gita-ai-window"
+            role="dialog"
+            aria-modal="true"
+            onClick={(e) => e.stopPropagation()}
+          >
           {/* WINDOW HEADER */}
           <header className="gita-ai-header">
             <div className="gita-ai-header-left">
@@ -677,6 +686,7 @@ export default function GitaAIAssistant() {
             </div>
           </footer>
         </div>
+      </div>
       )}
     </aside>
   );

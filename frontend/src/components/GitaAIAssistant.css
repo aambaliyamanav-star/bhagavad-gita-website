@@ -12,8 +12,45 @@
   pointer-events: none;
 }
 
+.gita-ai-wrapper.is-open {
+  inset: 0;
+  bottom: 0;
+  right: 0;
+  width: 100vw;
+  height: 100dvh;
+  pointer-events: auto;
+}
+
 .gita-ai-wrapper * {
   box-sizing: border-box;
+}
+
+/* =========================================================
+   BLURRED BACKDROP OVERLAY
+   ========================================================= */
+
+.gita-ai-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(2, 6, 18, 0.48);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  pointer-events: auto;
+  animation: gitaAiOverlayIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes gitaAiOverlayIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* =========================================================
@@ -103,18 +140,19 @@
 
 .gita-ai-window {
   pointer-events: auto;
-  width: 400px;
-  max-width: calc(100vw - 32px);
-  height: 600px;
-  max-height: calc(100vh - 100px);
+  position: relative;
+  width: 440px;
+  max-width: min(92vw, 440px);
+  height: 620px;
+  max-height: calc(100dvh - 40px);
   display: flex;
   flex-direction: column;
-  border-radius: 24px;
+  border-radius: 22px;
   overflow: hidden;
   box-shadow:
-    0 24px 64px rgba(5, 25, 65, 0.45),
-    0 4px 18px rgba(0, 0, 0, 0.25),
-    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    0 24px 64px rgba(2, 6, 23, 0.65),
+    0 4px 24px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
   animation: windowSlideUp 0.32s cubic-bezier(0.16, 1, 0.3, 1);
   transition: all 0.3s ease;
 }
@@ -122,11 +160,11 @@
 @keyframes windowSlideUp {
   from {
     opacity: 0;
-    transform: translateY(24px) scale(0.96);
+    transform: scale(0.94) translateY(12px);
   }
   to {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: scale(1) translateY(0);
   }
 }
 
@@ -765,12 +803,16 @@
     aspect-ratio: 1 / 1;
   }
 
+  .gita-ai-overlay {
+    padding: 10px;
+  }
+
   .gita-ai-window {
-    width: calc(100vw - 24px);
-    height: min(580px, 84vh);
-    bottom: 12px;
-    right: 12px;
-    border-radius: 20px;
+    width: 100%;
+    max-width: calc(100vw - 20px);
+    height: calc(100dvh - 24px);
+    max-height: calc(100dvh - 24px);
+    border-radius: 18px;
   }
 }
 
