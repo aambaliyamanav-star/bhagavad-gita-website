@@ -138,9 +138,13 @@ const getVisitorStats = async (req, res) => {
       visitedAt: { $gte: startOfToday },
     });
 
-    // 3. New / Unregistered unique visitors (varmvar ek j user aave to pan 1 j vaar count thay)
+    // 3. New / Unregistered unique visitors in rolling last 60 days window
+    const sixtyDaysAgo = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    sixtyDaysAgo.setDate(sixtyDaysAgo.getDate() - 60);
+
     const uniqueUnregisteredIds = await Visitor.distinct("visitorId", {
       isRegistered: false,
+      visitedAt: { $gte: sixtyDaysAgo },
     });
     const uniqueUnregisteredVisitors = uniqueUnregisteredIds.length;
 
