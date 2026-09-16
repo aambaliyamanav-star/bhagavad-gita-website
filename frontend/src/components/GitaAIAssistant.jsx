@@ -10,7 +10,8 @@ import {
   Copy,
   Check,
   Mic,
-  MicOff
+  MicOff,
+  Undo2
 } from "lucide-react";
 
 import { useTheme } from "../context/ThemeContext";
@@ -528,6 +529,44 @@ export default function GitaAIAssistant() {
     setTimeout(() => setCopiedId(null), 2000);
   };
 
+  // Undo changes up to this point and edit
+  const handleUndoMessage = (targetIndex, text) => {
+    if (isLoading) {
+      setIsLoading(false);
+    }
+    if (isListening && recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch (e) {}
+      setIsListening(false);
+    }
+
+    // Roll back conversation messages up to (and excluding) this user message
+    const previousMessages = messages.slice(0, targetIndex);
+    if (previousMessages.length === 0) {
+      setMessages([
+        {
+          id: `greeting_${Date.now()}`,
+          sender: "ai",
+          text: "જય શ્રી કૃષ્ણ! 🙏 નવી વાતચીત માટે હું તૈયાર છું. તમારો નવો પ્રશ્ન પૂછો.",
+          timestamp: new Date().toISOString(),
+          isGreetingPrompt: true,
+        },
+      ]);
+    } else {
+      setMessages(previousMessages);
+    }
+
+    // Populate the input box with the user's question and focus
+    setInputText(text);
+    setTimeout(() => {
+      if (inputRef.current) {
+        inputRef.current.focus();
+        inputRef.current.setSelectionRange(text.length, text.length);
+      }
+    }, 50);
+  };
+
   const handleOpenHistory = () => {
     setIsOpen(false);
     if (!user) {
@@ -681,7 +720,7 @@ export default function GitaAIAssistant() {
               </div>
             )}
 
-            {messages.map((msg) => (
+            {messages.map((msg, index) => (
               <div
                 key={msg.id}
                 className={`gita-msg-row ${
@@ -718,6 +757,39 @@ export default function GitaAIAssistant() {
                             <span>કોપી</span>
                           </>
                         )}
+                      </button>
+                    </div>
+                  )}
+
+                  {msg.sender === "user" && (
+                    <div className="gita-msg-actions gita-user-msg-actions">
+                      <button
+                        type="button"
+                        className="gita-copy-btn"
+                        onClick={() => handleCopyText(msg.id, msg.text)}
+                        title="પ્રશ્ન કોપી કરો"
+                      >
+                        {copiedId === msg.id ? (
+                          <>
+                            <Check size={12} />
+                            <span>કોપી થયું</span>
+                          </>
+                        ) : (
+                          <>
+                            <Copy size={12} />
+                            <span>કોપી</span>
+                          </>
+                        )}
+                      </button>
+
+                      <button
+                        type="button"
+                        className="gita-undo-btn"
+                        onClick={() => handleUndoMessage(index, msg.text)}
+                        title="અહીં સુધી Undo કરો અને આ પ્રશ્નમાં સુધારો કરો"
+                      >
+                        <Undo2 size={12} />
+                        <span>Undo / સુધારો</span>
                       </button>
                     </div>
                   )}
