@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const notificationController = require("./notificationController");
 
 
 // =====================================================
@@ -833,6 +834,11 @@ const registerUser = async (
         role:
           "user",
       });
+
+    // Notify admins via push notification
+    notificationController
+      .notifyAdminNewUser(user)
+      .catch((err) => console.error("Admin notification error:", err));
 
     otpStore.delete(
       cleanEmail
