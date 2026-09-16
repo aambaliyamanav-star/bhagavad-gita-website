@@ -8,8 +8,11 @@ import {
   X,
   History,
   Copy,
-  Check
+  Check,
+  Mic,
+  MicOff
 } from "lucide-react";
+
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext.jsx";
 import {
@@ -198,6 +201,7 @@ export default function GitaAIAssistant() {
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isListening, setIsListening] = useState(false);
   const [copiedId, setCopiedId] = useState(null);
   const [activeConvId, setActiveConvId] = useState(null);
 
@@ -205,6 +209,80 @@ export default function GitaAIAssistant() {
 
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+  const recognitionRef = useRef(null);
+
+  // Stop voice recognition if chat window closes
+  useEffect(() => {
+    if (!isOpen && isListening) {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch (e) {}
+      }
+      setIsListening(false);
+    }
+  }, [isOpen, isListening]);
+
+  // Voice Input Toggle using Web Speech API
+  const toggleVoiceInput = () => {
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      alert(
+        "તમારા બ્રાઉઝરમાં વોઇસ ઇનપુટ સપોર્ટ નથી. કૃપા કરીને Google Chrome અથવા Microsoft Edge નો ઉપયોગ કરો."
+      );
+      return;
+    }
+
+    if (isListening) {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch (e) {}
+      }
+      setIsListening(false);
+      return;
+    }
+
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.lang = "gu-IN"; // Gujarati speech recognition
+      recognition.interimResults = true;
+      recognition.continuous = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.onstart = () => {
+        setIsListening(true);
+      };
+
+      recognition.onresult = (event) => {
+        let transcript = "";
+        for (let i = 0; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript;
+        }
+        if (transcript) {
+          setInputText(transcript);
+        }
+      };
+
+      recognition.onerror = (event) => {
+        console.warn("Speech recognition error:", event.error);
+        setIsListening(false);
+      };
+
+      recognition.onend = () => {
+        setIsListening(false);
+        inputRef.current?.focus();
+      };
+
+      recognitionRef.current = recognition;
+      recognition.start();
+    } catch (err) {
+      console.error("Voice input start failed:", err);
+      setIsListening(false);
+    }
+  };
 
   // Auto-close if user logs out or if user enters quiz or auth page
   useEffect(() => {
@@ -345,6 +423,15 @@ export default function GitaAIAssistant() {
         },
       });
       return;
+    }
+
+    if (isListening) {
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch (e) {}
+      }
+      setIsListening(false);
     }
 
     const userMessage = {
@@ -666,17 +753,49 @@ export default function GitaAIAssistant() {
 
           {/* CHAT INPUT FORM */}
           <footer className="gita-ai-footer">
-            <div className="gita-input-wrapper">
+            {isListening && (
+              <div className="gita-listening-bar">
+                <span className="gita-listening-wave" />
+                <span>માઇક ચાલુ છે... બોલો (તમારો અવાજ લખાશે)</span>
+              </div>
+            )}
+            <div
+              className={`gita-input-wrapper ${
+                isListening ? "listening-active" : ""
+              }`}
+            >
               <textarea
                 ref={inputRef}
                 rows={1}
                 value={inputText}
                 onChange={(e) => setInputText(e.target.value)}
                 onKeyDown={handleKeyDown}
-                placeholder="તમારો આધ્યાત્મિક પ્રશ્ન કે સમસ્યા પૂછો..."
+                placeholder={
+                  isListening
+                    ? "સાંભળી રહ્યું છે... બોલો..."
+                    : "તમારો આધ્યાત્મિક પ્રશ્ન કે સમસ્યા પૂછો..."
+                }
                 className="gita-ai-textarea"
                 disabled={isLoading}
               />
+
+              {/* VOICE INPUT (MIC) BUTTON */}
+              <button
+                type="button"
+                className={`gita-ai-mic-btn ${
+                  isListening ? "active-recording" : ""
+                }`}
+                onClick={toggleVoiceInput}
+                disabled={isLoading}
+                title={
+                  isListening
+                    ? "સાંભળવાનું બંધ કરવા ક્લિક કરો"
+                    : "વોઇસ દ્વારા બોલીને પૂછો (માઇક)"
+                }
+                aria-label="વોઇસ ઇનપુટ"
+              >
+                {isListening ? <MicOff size={18} /> : <Mic size={18} />}
+              </button>
 
               <button
                 type="button"
@@ -690,6 +809,7 @@ export default function GitaAIAssistant() {
               </button>
             </div>
           </footer>
+
         </div>
       </div>
       )}
