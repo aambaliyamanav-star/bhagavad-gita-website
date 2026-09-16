@@ -762,34 +762,29 @@ export default function GitaAIAssistant() {
                   )}
 
                   {msg.sender === "user" && (
-                    <div className="gita-msg-actions gita-user-msg-actions">
+                    <div className="gita-user-msg-actions">
                       <button
                         type="button"
-                        className="gita-copy-btn"
+                        className="gita-user-icon-btn"
                         onClick={() => handleCopyText(msg.id, msg.text)}
-                        title="પ્રશ્ન કોપી કરો"
+                        title={copiedId === msg.id ? "કોપી થયું!" : "પ્રશ્ન કોપી કરો"}
+                        aria-label="પ્રશ્ન કોપી કરો"
                       >
                         {copiedId === msg.id ? (
-                          <>
-                            <Check size={12} />
-                            <span>કોપી થયું</span>
-                          </>
+                          <Check size={13} strokeWidth={2.5} />
                         ) : (
-                          <>
-                            <Copy size={12} />
-                            <span>કોપી</span>
-                          </>
+                          <Copy size={13} strokeWidth={2.2} />
                         )}
                       </button>
 
                       <button
                         type="button"
-                        className="gita-undo-btn"
+                        className="gita-user-icon-btn"
                         onClick={() => handleUndoMessage(index, msg.text)}
-                        title="અહીં સુધી Undo કરો અને આ પ્રશ્નમાં સુધારો કરો"
+                        title="આ પ્રશ્ન સુધી Undo કરો અને સુધારો"
+                        aria-label="આ પ્રશ્ન સુધી Undo કરો અને સુધારો"
                       >
-                        <Undo2 size={12} />
-                        <span>Undo / સુધારો</span>
+                        <Undo2 size={13} strokeWidth={2.2} />
                       </button>
                     </div>
                   )}
