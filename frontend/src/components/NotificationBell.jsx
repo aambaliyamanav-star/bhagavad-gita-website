@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Bell, BellOff, BellRing, Check, X, ShieldAlert } from "lucide-react";
+import { Bell, BellOff, BellRing, X } from "lucide-react";
 import { useAuth } from "../context/AuthContext.jsx";
 import {
   isPushNotificationSupported,
@@ -18,7 +18,7 @@ export default function NotificationBell({ inMenu = false }) {
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [showBannerPrompt, setShowBannerPrompt] = useState(false);
-  const [statusMsg, setStatusMsg] = useState("");
+  const [statusMsg, setStatusMsg] = useState({ text: "", type: "" });
 
   useEffect(() => {
     const isSupp = isPushNotificationSupported();
@@ -48,20 +48,36 @@ export default function NotificationBell({ inMenu = false }) {
 
   const handleSubscribe = async () => {
     setLoading(true);
-    setStatusMsg("");
+    setStatusMsg({ text: "", type: "" });
     try {
       await subscribeUserToPush(user);
       setIsSubscribed(true);
       setPermission("granted");
       setShowBannerPrompt(false);
-      setStatusMsg("નોટિફિકેશન સફળતાપૂર્વક શરૂ થઈ ગયું છે! 🙏");
+      setStatusMsg({
+        text: "નોટિફિકેશન સફળતાપૂર્વક શરૂ થઈ ગયું છે! 🙏",
+        type: "success",
+      });
       setTimeout(() => {
-        setStatusMsg("");
+        setStatusMsg({ text: "", type: "" });
         setShowModal(false);
       }, 2500);
     } catch (err) {
-      console.error(err);
-      setStatusMsg(err.message || "નોટિફિકેશન શરૂ કરવામાં સમસ્યા આવી.");
+      console.error("Subscription error:", err);
+      let errorMsg = "નોટિફિકેશન શરૂ કરવામાં સમસ્યા આવી.";
+      if (
+        err.message &&
+        (err.message.includes("નકારી") || err.message.includes("denied"))
+      ) {
+        errorMsg =
+          "નોટિફિકેશનની પરવાનગી નકારી દીધી છે. બ્રાઉઝર સેટિંગ્સમાંથી Allow કરો.";
+      } else if (err.message && err.message.includes("fetch")) {
+        errorMsg =
+          "સર્વર સાથે જોડાણ થઈ શક્યું નથી. કૃપા કરીને થોડીવાર પછી ફરી પ્રયાસ કરો.";
+      } else if (err.message) {
+        errorMsg = err.message;
+      }
+      setStatusMsg({ text: errorMsg, type: "error" });
     } finally {
       setLoading(false);
     }
@@ -69,18 +85,24 @@ export default function NotificationBell({ inMenu = false }) {
 
   const handleUnsubscribe = async () => {
     setLoading(true);
-    setStatusMsg("");
+    setStatusMsg({ text: "", type: "" });
     try {
       await unsubscribeUserFromPush();
       setIsSubscribed(false);
-      setStatusMsg("નોટિફિકેશન બંધ કરવામાં આવ્યું છે.");
+      setStatusMsg({
+        text: "નોટિફિકેશન બંધ કરવામાં આવ્યું છે.",
+        type: "success",
+      });
       setTimeout(() => {
-        setStatusMsg("");
+        setStatusMsg({ text: "", type: "" });
         setShowModal(false);
       }, 2000);
     } catch (err) {
       console.error(err);
-      setStatusMsg("બંધ કરવામાં સમસ્યા આવી.");
+      setStatusMsg({
+        text: "નોટિફિકેશન બંધ કરવામાં સમસ્યા આવી.",
+        type: "error",
+      });
     } finally {
       setLoading(false);
     }
@@ -99,7 +121,10 @@ export default function NotificationBell({ inMenu = false }) {
       <button
         type="button"
         className={`notif-bell-btn ${isSubscribed ? "active" : ""}`}
-        onClick={() => setShowModal((prev) => !prev)}
+        onClick={() => {
+          setStatusMsg({ text: "", type: "" });
+          setShowModal((prev) => !prev);
+        }}
         title={
           isSubscribed
             ? "દૈનિક શ્લોક નોટિફિકેશન સક્રિય છે"
@@ -145,23 +170,16 @@ export default function NotificationBell({ inMenu = false }) {
             <div className="notif-modal-body">
               {isSubscribed ? (
                 <>
-                  <p style={{ color: "#27ae60", fontWeight: "bold" }}>
+                  <p
+                    style={{
+                      color: "#27ae60",
+                      fontWeight: "bold",
+                      margin: "0 0 16px 0",
+                      lineHeight: "1.6",
+                    }}
+                  >
                     ✓ નોટિફિકેશન સક્રિય છે (Active)
                   </p>
-                  <ul className="notif-feature-list">
-                    <li>🌸 દરરોજ દિવસમાં ૩-૪ વખત પવિત્ર શ્લોક યાદ અપાશે.</li>
-                    <li>
-                      ⚡ <strong>વિશેષતા:</strong> જો તમે દિવસમાં એકવાર પણ
-                      વેબસાઇટ ખોલશો, તો તે દિવસ માટે વધારાના નોટિફિકેશન આપમેળે
-                      બંધ થઈ જશે!
-                    </li>
-                    {user?.role === "admin" && (
-                      <li style={{ color: "#d35400" }}>
-                        🛡️ <strong>એડમિન:</strong> નવો યુઝર રજીસ્ટર થશે ત્યારે
-                        તમને તુરંત સૂચના મળશે.
-                      </li>
-                    )}
-                  </ul>
 
                   <button
                     type="button"
@@ -175,17 +193,15 @@ export default function NotificationBell({ inMenu = false }) {
                 </>
               ) : (
                 <>
-                  <p>
+                  <p
+                    style={{
+                      margin: "0 0 16px 0",
+                      lineHeight: "1.6",
+                    }}
+                  >
                     શ્રીમદ્ ભગવદ્ ગીતાના અમૃત જેવા પવિત્ર શ્લોક અને જ્ઞાન દરરોજ
                     મેળવવા માટે નોટિફિકેશન શરૂ કરો.
                   </p>
-                  <ul className="notif-feature-list">
-                    <li>📖 સવાર-સાંજ પ્રેરણાદાયક શ્લોક અને અર્થ.</li>
-                    <li>
-                      ✨ વેબસાઇટ ખોલતા જ તે દિવસના બાકી નોટિફિકેશન આપોઆપ શાંત થઈ
-                      જશે.
-                    </li>
-                  </ul>
 
                   <button
                     type="button"
@@ -194,12 +210,18 @@ export default function NotificationBell({ inMenu = false }) {
                     disabled={loading}
                   >
                     <BellRing size={16} />
-                    {loading ? "પરવાનગી મેળવી રહ્યું છે..." : "હા, નોટિફિકેશન શરૂ કરો"}
+                    {loading
+                      ? "પરવાનગી મેળવી રહ્યું છે..."
+                      : "હા, નોટિફિકેશન શરૂ કરો"}
                   </button>
                 </>
               )}
 
-              {statusMsg && <div className="notif-toast">{statusMsg}</div>}
+              {statusMsg.text && (
+                <div className={`notif-toast ${statusMsg.type}`}>
+                  {statusMsg.text}
+                </div>
+              )}
             </div>
           </div>
         </>

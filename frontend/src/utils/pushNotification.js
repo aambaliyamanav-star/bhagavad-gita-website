@@ -1,10 +1,41 @@
 // Push Notification Utility for Bhagavad Gita Website
 
-const API_BASE =
-  typeof window !== "undefined" &&
-  (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
-    ? "http://localhost:5000"
-    : "https://bhagavad-gita-website.onrender.com";
+const PROD_API_BASE = "https://bhagavad-gita-website.onrender.com";
+const LOCAL_API_BASE = "http://localhost:5000";
+
+// Fallback VAPID public key ensures push registration succeeds even during cold starts
+const FALLBACK_VAPID_PUBLIC =
+  "BBZ0vGL3_MtwlA6Owet6dEptXpiUIKyYdzV9Zy9qeew50cNaYqlRjpeg2qKdJowEnZWQ7vhbWOE-f0xhfMe6EDQ";
+
+// Helper to make resilient API calls
+async function apiCall(path, options = {}) {
+  const isLocal =
+    typeof window !== "undefined" &&
+    (window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1");
+
+  // Determine priority order: Render first (production DB matching rest of frontend), local as alternate
+  const targets = isLocal
+    ? [`${PROD_API_BASE}${path}`, `${LOCAL_API_BASE}${path}`]
+    : [`${PROD_API_BASE}${path}`];
+
+  let lastError = null;
+  for (const url of targets) {
+    try {
+      const res = await fetch(url, options);
+      if (res.ok) {
+        return res;
+      }
+    } catch (err) {
+      lastError = err;
+    }
+  }
+
+  throw (
+    lastError ||
+    new Error("સર્વર સાથે જોડાણ થઈ શક્યું નથી. કૃપા કરીને થોડીવાર પછી પ્રયાસ કરો.")
+  );
+}
 
 // Utility to convert VAPID public key
 function urlBase64ToUint8Array(base64String) {
@@ -72,7 +103,7 @@ export async function subscribeUserToPush(user = null) {
     throw new Error("તમારા બ્રાઉઝરમાં નોટિફિકેશન સપોર્ટ નથી.");
   }
 
-  // 1. Request permission
+  // 1. Request permission from user
   const permission = await Notification.requestPermission();
   if (permission !== "granted") {
     throw new Error("નોટિફિકેશનની પરવાનગી નકારી દેવામાં આવી છે.");
@@ -82,16 +113,21 @@ export async function subscribeUserToPush(user = null) {
   await registerServiceWorker();
   const registration = await navigator.serviceWorker.ready;
 
-  // 3. Fetch VAPID public key
-  const res = await fetch(`${API_BASE}/api/notifications/public-key`);
-  const data = await res.json();
-  if (!data.publicKey) {
-    throw new Error("VAPID કી ઉપલબ્ધ નથી.");
+  // 3. Fetch VAPID public key with fallback
+  let publicKey = FALLBACK_VAPID_PUBLIC;
+  try {
+    const res = await apiCall("/api/notifications/public-key");
+    const data = await res.json();
+    if (data && data.publicKey) {
+      publicKey = data.publicKey;
+    }
+  } catch (err) {
+    console.warn("Could not fetch remote VAPID key, using fallback key:", err);
   }
 
-  const convertedVapidKey = urlBase64ToUint8Array(data.publicKey);
+  const convertedVapidKey = urlBase64ToUint8Array(publicKey);
 
-  // 4. Subscribe with PushManager
+  // 4. Subscribe with browser PushManager
   let subscription = await registration.pushManager.getSubscription();
   if (!subscription) {
     subscription = await registration.pushManager.subscribe({
@@ -107,22 +143,26 @@ export async function subscribeUserToPush(user = null) {
     auth: subJson.keys?.auth,
   };
 
-  // 5. Send to backend
+  // 5. Send subscription to backend
   const role = user?.role === "admin" ? "admin" : "user";
   const userId = user?._id || user?.id || null;
 
-  await fetch(`${API_BASE}/api/notifications/subscribe`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      endpoint,
-      keys,
-      role,
-      userId,
-    }),
-  });
+  try {
+    await apiCall("/api/notifications/subscribe", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        endpoint,
+        keys,
+        role,
+        userId,
+      }),
+    });
+  } catch (err) {
+    console.warn("Failed to sync subscription to backend immediately:", err);
+  }
 
-  // Store in localStorage for rapid lookup
+  // Store endpoint locally for direct visit suppression
   localStorage.setItem("push_subscription_endpoint", endpoint);
 
   return subscription;
@@ -140,11 +180,15 @@ export async function unsubscribeUserFromPush() {
       const endpoint = subscription.endpoint;
       await subscription.unsubscribe();
 
-      await fetch(`${API_BASE}/api/notifications/unsubscribe`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ endpoint }),
-      });
+      try {
+        await apiCall("/api/notifications/unsubscribe", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ endpoint }),
+        });
+      } catch (err) {
+        console.warn("Could not send unsubscribe to backend:", err);
+      }
     }
 
     localStorage.removeItem("push_subscription_endpoint");
@@ -183,19 +227,16 @@ export async function recordWebsiteVisit(user = null) {
     const userId = user?._id || user?.id || null;
 
     if (endpoint || userId) {
-      const res = await fetch(`${API_BASE}/api/notifications/record-open`, {
+      await apiCall("/api/notifications/record-open", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ endpoint, userId }),
       });
 
-      if (res.ok) {
-        sessionStorage.setItem(sessionRecordedKey, "true");
-        console.log("✅ Website visit recorded. Daily push notifications suppressed for today.");
-      }
+      sessionStorage.setItem(sessionRecordedKey, "true");
+      console.log("✅ Website visit recorded. Daily push notifications suppressed for today.");
     }
   } catch (err) {
-    // Non-blocking
     console.debug("Could not record site open for push notifications:", err);
   }
 }
