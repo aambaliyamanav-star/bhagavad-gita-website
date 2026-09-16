@@ -4,6 +4,7 @@
  * Replies directly, accurately, and contextually to whatever question is asked.
  * Rich knowledge base covering characters, facts, life questions, philosophy, and shlokas.
  */
+const GitaAiConversation = require("../models/GitaAiConversation");
 
 const GITA_SYSTEM_PROMPT = `
 તમે "ગીતા AI" છો — શ્રીમદ્ ભગવદ્ ગીતા, મહાભારત અને ભગવાન શ્રીકૃષ્ણના સંદેશાઓ પર આધારિત એક અત્યંત જ્ઞાની, સચોટ, પ્રેમાળ અને વિવેકી માર્ગદર્શક.
@@ -623,3 +624,100 @@ exports.askGitaAI = async (req, res) => {
     });
   }
 };
+
+// GET /api/gita-ai/history
+exports.getHistory = async (req, res) => {
+  try {
+    const list = await GitaAiConversation.find({
+      userId: req.user._id,
+    }).sort({ updatedAt: -1 });
+
+    const conversations = list.map((c) => ({
+      id: c.convId,
+      title: c.title,
+      messages: c.messages,
+      updatedAt: c.updatedAt,
+    }));
+
+    return res.json({ success: true, conversations });
+  } catch (error) {
+    console.error("Get History Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "ઇતિહાસ લોડ કરવામાં સમસ્યા આવી.",
+    });
+  }
+};
+
+// POST /api/gita-ai/history
+exports.saveHistory = async (req, res) => {
+  try {
+    const { convId, title, messages } = req.body;
+    if (!convId || !title || !Array.isArray(messages)) {
+      return res.status(400).json({ success: false, message: "અમાન્ય ડેટા." });
+    }
+
+    const updated = await GitaAiConversation.findOneAndUpdate(
+      { userId: req.user._id, convId },
+      {
+        userId: req.user._id,
+        userEmail: req.user.email,
+        convId,
+        title,
+        messages,
+      },
+      { upsert: true, new: true }
+    );
+
+    return res.json({
+      success: true,
+      conversation: {
+        id: updated.convId,
+        title: updated.title,
+        messages: updated.messages,
+        updatedAt: updated.updatedAt,
+      },
+    });
+  } catch (error) {
+    console.error("Save History Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "ઇતિહાસ સાચવવામાં સમસ્યા આવી.",
+    });
+  }
+};
+
+// DELETE /api/gita-ai/history/:convId
+exports.deleteHistory = async (req, res) => {
+  try {
+    const { convId } = req.params;
+    await GitaAiConversation.deleteOne({
+      userId: req.user._id,
+      convId,
+    });
+    return res.json({ success: true, message: "સંવાદ ડીલીટ થયો." });
+  } catch (error) {
+    console.error("Delete History Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "ડીલીટ કરવામાં સમસ્યા આવી.",
+    });
+  }
+};
+
+// DELETE /api/gita-ai/history
+exports.clearAllHistory = async (req, res) => {
+  try {
+    await GitaAiConversation.deleteMany({
+      userId: req.user._id,
+    });
+    return res.json({ success: true, message: "તમામ સંવાદો ડીલીટ થયા." });
+  } catch (error) {
+    console.error("Clear History Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "ઇતિહાસ ક્લિયર કરવામાં સમસ્યા આવી.",
+    });
+  }
+};
+

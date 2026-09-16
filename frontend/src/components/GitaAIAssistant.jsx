@@ -19,7 +19,8 @@ import {
   saveConversation,
   getActiveConversationId,
   setActiveConversationId,
-  getConversationById
+  getConversationById,
+  syncHistoryWithServer,
 } from "../utils/gitaAiHistory";
 import "./GitaAIAssistant.css";
 
@@ -313,18 +314,25 @@ export default function GitaAIAssistant() {
     }
   }, [messages, isOpen]);
 
-  // Load existing active conversation or create initial
+  // Sync user conversations across all devices from cloud
   useEffect(() => {
-    const savedActiveId = getActiveConversationId();
-    if (savedActiveId) {
-      const conv = getConversationById(savedActiveId);
-      if (conv && conv.messages && conv.messages.length > 0) {
-        setMessages(conv.messages);
-        setActiveConvId(conv.id);
-        return;
-      }
+    if (user) {
+      syncHistoryWithServer();
     }
+  }, [user]);
 
+  // Auto-resize input textarea up to 6-7 lines before scrolling
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.style.height = "auto";
+      const scrollHeight = inputRef.current.scrollHeight;
+      // Cap at 165px (approx 6-7 lines of text)
+      inputRef.current.style.height = `${Math.min(scrollHeight, 165)}px`;
+    }
+  }, [inputText]);
+
+  // Start with a clean new chat by default
+  useEffect(() => {
     // Default welcome prompt for new chat
     setMessages([
       {
@@ -332,8 +340,8 @@ export default function GitaAIAssistant() {
         sender: "ai",
         text: "જય શ્રી કૃષ્ણ! 🙏 નવી વાતચીત માટે હું તૈયાર છું. તમારો નવો પ્રશ્ન પૂછો.",
         timestamp: new Date().toISOString(),
-        isGreetingPrompt: true
-      }
+        isGreetingPrompt: true,
+      },
     ]);
 
     // Listen for custom event from History page to resume specific conversation
@@ -354,6 +362,7 @@ export default function GitaAIAssistant() {
       window.removeEventListener("gita-ai-open-conversation", handleOpenConversation);
     };
   }, []);
+
 
   // Save conversation automatically whenever messages change (excluding temporary greeting)
   useEffect(() => {
@@ -562,8 +571,11 @@ export default function GitaAIAssistant() {
       });
       return;
     }
+    // Always open a fresh new chat session
+    handleNewConversation();
     setIsOpen(true);
   };
+
 
   // Login, Register અથવા Quiz રમતી વખતે Floating AI બટન બતાવવાની જરૂર નથી
   if (
