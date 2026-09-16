@@ -1,16 +1,17 @@
 const webpush = require("web-push");
 const Subscription = require("../models/Subscription");
 
+const DEFAULT_VAPID_PUBLIC =
+  "BBZ0vGL3_MtwlA6Owet6dEptXpiUIKyYdzV9Zy9qeew50cNaYqlRjpeg2qKdJowEnZWQ7vhbWOE-f0xhfMe6EDQ";
+const DEFAULT_VAPID_PRIVATE =
+  "2PC7JJlWR5mb8hiEcmjlBkDKrJS907LjRxknH44mHzw";
+
 // Lazy setup for VAPID details
 let vapidConfigured = false;
 function ensureVapidConfig() {
   if (vapidConfigured) return true;
-  const vapidPublicKey = process.env.VAPID_PUBLIC_KEY;
-  const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY;
-  if (!vapidPublicKey || !vapidPrivateKey) {
-    console.warn("⚠️ VAPID keys missing in environment variables.");
-    return false;
-  }
+  const vapidPublicKey = process.env.VAPID_PUBLIC_KEY || DEFAULT_VAPID_PUBLIC;
+  const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY || DEFAULT_VAPID_PRIVATE;
   try {
     webpush.setVapidDetails(
       "mailto:admin@bhagavadgita.com",
@@ -24,6 +25,7 @@ function ensureVapidConfig() {
     return false;
   }
 }
+
 
 // Helper to send push
 async function sendPush(subscription, payload) {
@@ -50,7 +52,7 @@ async function sendPush(subscription, payload) {
 module.exports = {
   // GET /api/notifications/public-key
   getPublicKey: (req, res) => {
-    const publicKey = process.env.VAPID_PUBLIC_KEY || "";
+    const publicKey = process.env.VAPID_PUBLIC_KEY || DEFAULT_VAPID_PUBLIC;
     return res.json({ publicKey });
   },
 
@@ -227,3 +229,4 @@ module.exports = {
     }
   },
 };
+
