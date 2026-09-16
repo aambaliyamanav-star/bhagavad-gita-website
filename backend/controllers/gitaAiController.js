@@ -16,7 +16,9 @@ const GITA_SYSTEM_PROMPT = `
 ૪. દર વખતે સંસ્કૃત શ્લોક ન આપો. માત્ર ત્યારે જ શ્લોક ટાંકો જ્યારે વપરાશકર્તાએ ખાસ શ્લોક માંગ્યો હોય અથવા કોઈ ગંભીર વિષય સમજાવવા માટે શ્લોકનો સંદર્ભ આપવો અનિવાર્ય હોય.
 ૫. જીવનના પ્રશ્નોમાં (ચિંતા, ક્રોધ, નિર્ણય, પરીક્ષા, સંબંધો, એકલતા, નિષ્ફળતા) શ્રીકૃષ્ણના ઉપદેશોના આધારે વ્યવહારિક, સ્પષ્ટ અને અમલ કરી શકાય તેવી સાચી સલાહ આપો.
 ૬. ભાષા શુદ્ધ, સરળ, સન્માનજનક અને આત્મીય ગુજરાતી હોવી જોઈએ.
+૭. ક્યારેય પણ અધૂરો કે અધવચ્ચેથી કપાઈ જતો જવાબ ન આપવો. તમારો જવાબ હંમેશા સંપૂર્ણ, સ્પષ્ટ અને છેલ્લે સુધી પૂર્ણવિરામ સાથે સમાપ્ત થવો જોઈએ.
 `;
+
 
 // Helper: Normalize query
 function cleanQuery(str) {
@@ -517,12 +519,10 @@ exports.askGitaAI = async (req, res) => {
     const apiKey = process.env.GEMINI_API_KEY;
     if (apiKey) {
       const modelsToTry = [
-        "gemini-3.6-flash",
-        "gemini-3.5-flash",
-        "gemini-3.8-flash",
-        "gemini-flash-latest",
+        "gemini-2.5-flash",
         "gemini-2.0-flash",
-        "gemini-1.5-flash"
+        "gemini-1.5-flash",
+        "gemini-flash-latest"
       ];
       for (const modelName of modelsToTry) {
         try {
@@ -535,7 +535,7 @@ exports.askGitaAI = async (req, res) => {
           });
           contents.push({
             role: "model",
-            parts: [{ text: "જય શ્રી કૃષ્ણ! હું તૈયાર છું. વપરાશકર્તા જે ચોક્કસ પ્રશ્ન પૂછશે, હું ફક્ત તેનો જ સીધો, સાચો અને સચોટ જવાબ ગુજરાતીમાં આપીશ." }]
+            parts: [{ text: "જય શ્રી કૃષ્ણ! હું તૈયાર છું. વપરાશકર્તા જે ચોક્કસ પ્રશ્ન પૂછશે, હું ફક્ત તેનો જ સીધો, સાચો અને સચોટ જવાબ ગુજરાતીમાં સંપૂર્ણ રીતે આપીશ." }]
           });
 
           // Append recent chat history (up to last 6 messages)
@@ -569,11 +569,12 @@ exports.askGitaAI = async (req, res) => {
                 contents,
                 generationConfig: {
                   temperature: 0.6,
-                  maxOutputTokens: 1200
+                  maxOutputTokens: 8192
                 }
               })
             }
           );
+
 
           if (response.ok) {
             const data = await response.json();
