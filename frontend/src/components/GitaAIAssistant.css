@@ -585,49 +585,63 @@
   color: #2563eb;
 }
 
-/* User Message Actions */
+/* User Message Actions - Sleek Professional Icons on Hover */
 .gita-user-msg-actions {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 6px;
-  margin-top: 6px;
-  padding-top: 5px;
-  border-top: 1px solid rgba(255, 255, 255, 0.18);
-  flex-wrap: wrap;
+  gap: 5px;
+  max-height: 0;
+  margin-top: 0;
+  opacity: 0;
+  visibility: hidden;
+  overflow: hidden;
+  transition: opacity 0.2s ease, max-height 0.2s ease, margin-top 0.2s ease, visibility 0.2s ease;
 }
 
-.user-row .gita-copy-btn,
-.user-row .gita-undo-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 3px 8px;
+.user-row:hover .gita-user-msg-actions,
+.user-row:focus-within .gita-user-msg-actions {
+  max-height: 28px;
+  margin-top: 6px;
+  opacity: 1;
+  visibility: visible;
+}
+
+.gita-user-icon-btn {
+  width: 24px;
+  height: 24px;
+  padding: 0;
   border-radius: 6px;
   border: 1px solid rgba(255, 255, 255, 0.25);
-  background: rgba(255, 255, 255, 0.16);
+  background: rgba(255, 255, 255, 0.18);
   color: #ffffff;
-  font-size: 0.73rem;
-  font-weight: 550;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   transition: all 0.18s ease;
   user-select: none;
   -webkit-user-select: none;
 }
 
-.user-row .gita-copy-btn:hover,
-.user-row .gita-undo-btn:hover {
-  background: rgba(255, 255, 255, 0.3);
-  border-color: rgba(255, 255, 255, 0.45);
-  transform: translateY(-1px);
+.gita-user-icon-btn:hover {
+  background: rgba(255, 255, 255, 0.35);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: scale(1.08);
 }
 
-.user-row .gita-undo-btn {
-  background: rgba(255, 255, 255, 0.2);
+.gita-user-icon-btn:active {
+  transform: scale(0.94);
 }
 
-.user-row .gita-undo-btn:hover {
-  background: rgba(255, 255, 255, 0.38);
+/* Touch devices support */
+@media (hover: none) and (pointer: coarse) {
+  .gita-user-msg-actions {
+    max-height: 28px;
+    margin-top: 6px;
+    opacity: 0.85;
+    visibility: visible;
+  }
 }
 
 /* Typing indicator (only animated dots) */
