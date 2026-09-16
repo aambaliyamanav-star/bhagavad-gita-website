@@ -36,6 +36,7 @@ import QuizAchievements from "./pages/QuizAchievements.jsx";
 import GitaAiHistory from "./pages/GitaAiHistory.jsx";
 import GitaAIAssistant from "./components/GitaAIAssistant.jsx";
 import { trackVisit } from "./utils/visitorTracker.js";
+import { recordWebsiteVisit } from "./utils/pushNotification.js";
 
 // =====================================================
 // PROTECTED ROUTE COMPONENT
@@ -118,12 +119,14 @@ function AdminRoute({ children }) {
 
 function AnimatedRoutes() {
   const location = useLocation();
+  const { user } = useAuth();
   const isHome = location.pathname === "/";
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
     trackVisit(location.pathname);
-  }, [location.pathname]);
+    recordWebsiteVisit(user);
+  }, [location.pathname, user]);
 
   return (
     <>

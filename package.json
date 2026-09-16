@@ -1,6 +1,8 @@
 {
   "dependencies": {
     "date-fns": "^4.4.0",
-    "react-datepicker": "^9.1.0"
+    "node-cron": "^4.6.0",
+    "react-datepicker": "^9.1.0",
+    "web-push": "^3.6.7"
   }
 }
