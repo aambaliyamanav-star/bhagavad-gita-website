@@ -10,40 +10,67 @@ import {
 } from "../utils/pushNotification.js";
 import "./NotificationBell.css";
 
-export default function NotificationBell({ inMenu = false }) {
+export default function NotificationBell() {
   const { user } = useAuth();
   const [supported, setSupported] = useState(false);
   const [permission, setPermission] = useState("default");
   const [isSubscribed, setIsSubscribed] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [showBannerPrompt, setShowBannerPrompt] = useState(false);
   const [statusMsg, setStatusMsg] = useState({ text: "", type: "" });
 
   useEffect(() => {
     const isSupp = isPushNotificationSupported();
     setSupported(isSupp);
 
-    if (isSupp) {
-      const perm = getNotificationPermission();
-      setPermission(perm);
+    if (!isSupp) return;
 
-      getExistingSubscription().then((sub) => {
-        setIsSubscribed(!!sub);
+    const currentPerm = getNotificationPermission();
+    setPermission(currentPerm);
 
-        // Show banner prompt only once if permission is default and not dismissed
-        if (
-          perm === "default" &&
-          !sub &&
-          !sessionStorage.getItem("gita_notif_prompt_dismissed")
-        ) {
-          const timer = setTimeout(() => {
-            setShowBannerPrompt(true);
-          }, 3500);
-          return () => clearTimeout(timer);
-        }
-      });
-    }
+    getExistingSubscription().then((sub) => {
+      setIsSubscribed(!!sub);
+
+      // =====================================================
+      // OPTION 1: DIRECT AUTO-PROMPT
+      // Automatically request browser notification permission
+      // on website visit without asking any intermediate questions!
+      // =====================================================
+      if (currentPerm === "default" && !sub) {
+        let hasPrompted = false;
+
+        const requestDirect = () => {
+          if (hasPrompted) return;
+          hasPrompted = true;
+          window.removeEventListener("click", requestDirect);
+          window.removeEventListener("touchstart", requestDirect);
+
+          subscribeUserToPush(user)
+            .then(() => {
+              setIsSubscribed(true);
+              setPermission("granted");
+            })
+            .catch((err) => {
+              console.debug("Direct auto-prompt result:", err?.message || err);
+            });
+        };
+
+        // 1. Trigger directly after a short 1.2 second delay on page load
+        const timer = setTimeout(() => {
+          requestDirect();
+        }, 1200);
+
+        // 2. Also listen for the very first click/touch (fallback for browsers requiring user gesture)
+        window.addEventListener("click", requestDirect, { once: true });
+        window.addEventListener("touchstart", requestDirect, { once: true });
+
+        return () => {
+          clearTimeout(timer);
+          window.removeEventListener("click", requestDirect);
+          window.removeEventListener("touchstart", requestDirect);
+        };
+      }
+    });
   }, [user]);
 
   const handleSubscribe = async () => {
@@ -53,7 +80,6 @@ export default function NotificationBell({ inMenu = false }) {
       await subscribeUserToPush(user);
       setIsSubscribed(true);
       setPermission("granted");
-      setShowBannerPrompt(false);
       setStatusMsg({
         text: "નોટિફિકેશન સફળતાપૂર્વક શરૂ થઈ ગયું છે! 🙏",
         type: "success",
@@ -108,16 +134,11 @@ export default function NotificationBell({ inMenu = false }) {
     }
   };
 
-  const handleDismissBanner = () => {
-    setShowBannerPrompt(false);
-    sessionStorage.setItem("gita_notif_prompt_dismissed", "true");
-  };
-
   if (!supported) return null;
 
   return (
     <>
-      {/* BELL BUTTON IN NAVBAR / MENU */}
+      {/* BELL BUTTON IN NAVBAR */}
       <button
         type="button"
         className={`notif-bell-btn ${isSubscribed ? "active" : ""}`}
@@ -225,33 +246,6 @@ export default function NotificationBell({ inMenu = false }) {
             </div>
           </div>
         </>
-      )}
-
-      {/* FLOATING PROMPT BANNER (First-time visitors) */}
-      {showBannerPrompt && !isSubscribed && (
-        <div className="notif-banner-prompt">
-          <div className="notif-banner-text">
-            <strong>🌸 શ્રીમદ્ ભગવદ્ ગીતા શ્લોક</strong>
-            શું તમે દરરોજ જીવન માર્ગદર્શન આપતા શ્લોકના નોટિફિકેશન મેળવવા માંગો છો?
-          </div>
-          <div className="notif-banner-actions">
-            <button
-              type="button"
-              className="notif-banner-btn-yes"
-              onClick={handleSubscribe}
-              disabled={loading}
-            >
-              {loading ? "..." : "હા, શરૂ કરો"}
-            </button>
-            <button
-              type="button"
-              className="notif-banner-btn-later"
-              onClick={handleDismissBanner}
-            >
-              પછીથી
-            </button>
-          </div>
-        </div>
       )}
     </>
   );
