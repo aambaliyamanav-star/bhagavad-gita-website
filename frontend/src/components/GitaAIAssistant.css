@@ -585,6 +585,51 @@
   color: #2563eb;
 }
 
+/* User Message Actions */
+.gita-user-msg-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-top: 6px;
+  padding-top: 5px;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  flex-wrap: wrap;
+}
+
+.user-row .gita-copy-btn,
+.user-row .gita-undo-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.16);
+  color: #ffffff;
+  font-size: 0.73rem;
+  font-weight: 550;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.user-row .gita-copy-btn:hover,
+.user-row .gita-undo-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.45);
+  transform: translateY(-1px);
+}
+
+.user-row .gita-undo-btn {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.user-row .gita-undo-btn:hover {
+  background: rgba(255, 255, 255, 0.38);
+}
+
 /* Typing indicator (only animated dots) */
 .typing-bubble {
   display: inline-flex;
