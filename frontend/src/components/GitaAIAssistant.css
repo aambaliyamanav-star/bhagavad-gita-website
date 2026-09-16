@@ -717,10 +717,10 @@
 
 .gita-input-wrapper {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   gap: 8px;
-  padding: 6px 8px 6px 14px;
-  border-radius: 18px;
+  padding: 8px 8px 8px 14px;
+  border-radius: 20px;
   border: 1.5px solid rgba(27, 82, 164, 0.25);
   background: rgba(255, 255, 255, 0.95);
   transition: all 0.2s ease;
@@ -742,16 +742,21 @@
   background: transparent;
   outline: none;
   resize: none;
-  font-size: 0.92rem;
+  font-size: 0.94rem;
   color: #0d3d7c;
   font-family: inherit;
-  line-height: 1.4;
-  max-height: 80px;
+  line-height: 1.45;
+  min-height: 24px;
+  max-height: 165px; /* Minimum 6-7 lines visible before scroll */
+  overflow-y: auto;
+  padding: 4px 0;
+  box-sizing: border-box;
 }
 
 .gita-ai-wrapper.dark .gita-ai-textarea {
   color: #f1f5f9;
 }
+
 
 .gita-ai-textarea::placeholder {
   color: #94a3b8;

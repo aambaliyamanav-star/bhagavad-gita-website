@@ -12,6 +12,7 @@ import {
 import { useTheme } from "../context/ThemeContext";
 import {
   getAllConversations,
+  syncHistoryWithServer,
   deleteConversation,
   clearAllConversations,
   openConversationInAssistant
@@ -31,6 +32,9 @@ export default function GitaAiHistory() {
 
   useEffect(() => {
     loadData();
+    syncHistoryWithServer().then((list) => {
+      if (list) setConversations(list);
+    });
 
     const handleUpdate = () => loadData();
     window.addEventListener("gita-ai-history-updated", handleUpdate);
