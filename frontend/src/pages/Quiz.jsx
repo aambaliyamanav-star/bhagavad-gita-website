@@ -4,6 +4,7 @@ import {
   useSearchParams,
 } from "react-router-dom";
 import { ArrowLeft, Star, Loader2, BookOpen, AlertCircle, RefreshCw, Trophy, Check, X, Lightbulb, ChevronLeft, ChevronRight, Award } from "lucide-react";
+import SudarshanShimmerLoader from "../components/SudarshanShimmerLoader.jsx";
 import "./Quiz.css";
 
 
@@ -1075,23 +1076,11 @@ function Quiz() {
   if (loading) {
     return (
       <main className="quiz-page">
-
-        <div className="quiz-loading">
-
-          <div className="quiz-loading-icon">
-            <Loader2 size={40} className="spinner" color="#2563eb" />
-          </div>
-
-          <h2>
-            Quiz લોડ થઈ રહ્યું છે...
-          </h2>
-
-          <p>
-            કૃપા કરીને થોડી ક્ષણ રાહ જુઓ.
-          </p>
-
-        </div>
-
+        <SudarshanShimmerLoader
+          type="quiz"
+          title="ગીતા જ્ઞાન ક્વિઝ લોડ થઈ રહી છે..."
+          subtitle="પ્રશ્નો અને આધ્યાત્મિક વિકલ્પો તૈયાર થઈ રહ્યા છે..."
+        />
       </main>
     );
   }
