@@ -15,7 +15,17 @@ import {
   Search,
   Trash2,
   MessageSquareText,
-  Clock
+  Clock,
+  PanelLeft,
+  MoreHorizontal,
+  Share2,
+  Pencil,
+  Pin,
+  PinOff,
+  Archive,
+  ArchiveRestore,
+  ChevronDown,
+  ChevronRight,
 } from "lucide-react";
 
 import { useTheme } from "../context/ThemeContext";
@@ -29,6 +39,9 @@ import {
   syncHistoryWithServer,
   deleteConversation,
   clearAllConversations,
+  renameConversation,
+  togglePinConversation,
+  toggleArchiveConversation,
 } from "../utils/gitaAiHistory";
 import "./GitaAIAssistant.css";
 
@@ -216,12 +229,24 @@ export default function GitaAIAssistant() {
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [historyList, setHistoryList] = useState([]);
   const [historySearch, setHistorySearch] = useState("");
+  const [menuOpenConvId, setMenuOpenConvId] = useState(null);
+  const [editingConvId, setEditingConvId] = useState(null);
+  const [editingTitle, setEditingTitle] = useState("");
+  const [showArchived, setShowArchived] = useState(false);
+  const [toastMessage, setToastMessage] = useState(null);
 
   const hasUserMessages = messages.some((m) => m.sender === "user");
 
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
   const recognitionRef = useRef(null);
+
+  const showToast = (msg) => {
+    setToastMessage(msg);
+    setTimeout(() => {
+      setToastMessage((cur) => (cur === msg ? null : cur));
+    }, 2500);
+  };
 
   // Load and listen for history updates
   useEffect(() => {
@@ -241,6 +266,32 @@ export default function GitaAIAssistant() {
       window.removeEventListener("gita-ai-history-updated", updateHistoryList);
     };
   }, [user]);
+
+  // Listen for open-history event from other pages
+  useEffect(() => {
+    const handleOpenHistory = () => {
+      setIsOpen(true);
+      setIsHistoryOpen(true);
+      setHistoryList(getAllConversations());
+    };
+    window.addEventListener("gita-ai-open-history", handleOpenHistory);
+    return () => {
+      window.removeEventListener("gita-ai-open-history", handleOpenHistory);
+    };
+  }, []);
+
+  // Close 3-dots dropdown menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (!e.target.closest(".gita-sidebar-menu-wrapper")) {
+        setMenuOpenConvId(null);
+      }
+    };
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
 
   // Stop voice recognition if chat window closes
   useEffect(() => {
@@ -659,14 +710,101 @@ export default function GitaAIAssistant() {
     setIsHistoryOpen(false);
   };
 
+  // Toggle 3-dots dropdown menu
+  const handleToggleMenu = (e, convId) => {
+    e.stopPropagation();
+    setMenuOpenConvId((prev) => (prev === convId ? null : convId));
+  };
+
+  // Share conversation (native share or copy text to clipboard)
+  const handleShareConversation = async (e, conv) => {
+    e.stopPropagation();
+    setMenuOpenConvId(null);
+    try {
+      const summary =
+        conv.messages && conv.messages.length > 0
+          ? conv.messages
+              .filter((m) => !m.isGreetingPrompt && !m.id?.startsWith("greeting_"))
+              .map(
+                (m) =>
+                  `${m.sender === "user" ? "👤 પ્રશ્ન:" : "🪷 ગીતા AI:"} ${m.text}`
+              )
+              .join("\n\n")
+          : "";
+
+      const shareText = `॥ શ્રીમદ્ ભગવદ્ ગીતા સંવાદ ॥\n\nવિષય: ${
+        conv.title || "આધ્યાત્મિક માર્ગદર્શન"
+      }\n\n${summary}\n\nસંપૂર્ણ ગીતા વાંચો અને જાણો: ${window.location.origin}`;
+
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: conv.title || "ગીતા AI સંવાદ",
+            text: shareText,
+            url: window.location.origin,
+          });
+          return;
+        } catch (err) {}
+      }
+
+      await navigator.clipboard.writeText(shareText);
+      showToast("સંવાદ ક્લિપબોર્ડ પર કોપી થયો! 📋");
+    } catch (err) {
+      console.error("Share error:", err);
+      showToast("શેર કરવામાં સમસ્યા આવી.");
+    }
+  };
+
+  // Rename handlers
+  const handleStartRename = (e, conv) => {
+    e.stopPropagation();
+    setMenuOpenConvId(null);
+    setEditingConvId(conv.id);
+    setEditingTitle(conv.title || "");
+  };
+
+  const handleSaveRename = (e, convId) => {
+    if (e) e.stopPropagation();
+    if (editingTitle && editingTitle.trim()) {
+      renameConversation(convId, editingTitle.trim());
+      showToast("નામ બદલાઈ ગયું! ✏️");
+    }
+    setEditingConvId(null);
+    setEditingTitle("");
+  };
+
+  const handleCancelRename = (e) => {
+    if (e) e.stopPropagation();
+    setEditingConvId(null);
+    setEditingTitle("");
+  };
+
+  // Pin / Unpin toggle
+  const handleTogglePin = (e, convId) => {
+    e.stopPropagation();
+    setMenuOpenConvId(null);
+    const newPinned = togglePinConversation(convId);
+    showToast(newPinned ? "સંવાદ પિન કર્યો! 📌" : "સંવાદ અનપિન કર્યો.");
+  };
+
+  // Archive / Unarchive toggle
+  const handleToggleArchive = (e, convId) => {
+    e.stopPropagation();
+    setMenuOpenConvId(null);
+    const newArchived = toggleArchiveConversation(convId);
+    showToast(newArchived ? "સંવાદ આર્કાઇવ કર્યો! 📦" : "સંવાદ અન-આર્કાઇવ કર્યો.");
+  };
+
   // Delete single conversation
   const handleDeleteHistoryItem = (e, convId) => {
     e.stopPropagation();
+    setMenuOpenConvId(null);
     deleteConversation(convId);
     setHistoryList((prev) => prev.filter((c) => c.id !== convId));
     if (activeConvId === convId) {
       handleNewConversation();
     }
+    showToast("સંવાદ ડીલીટ કર્યો. 🗑️");
   };
 
   // Clear all conversations
@@ -675,6 +813,7 @@ export default function GitaAIAssistant() {
       clearAllConversations();
       setHistoryList([]);
       handleNewConversation();
+      showToast("તમામ ઇતિહાસ સાફ કર્યો.");
     }
   };
 
@@ -704,6 +843,168 @@ export default function GitaAIAssistant() {
         message: redirectMsg,
       },
     });
+  };
+
+  // Render single history item in sidebar with 3-dots dropdown menu
+  const renderHistoryItem = (conv) => {
+    const isActive = conv.id === activeConvId;
+    const isEditing = editingConvId === conv.id;
+    const isMenuOpen = menuOpenConvId === conv.id;
+
+    return (
+      <div
+        key={conv.id}
+        className={`gita-sidebar-item ${isActive ? "active" : ""} ${
+          conv.isPinned ? "is-pinned" : ""
+        }`}
+        onClick={() => {
+          if (!isEditing) handleSelectConversation(conv.id);
+        }}
+        role="button"
+        tabIndex={0}
+      >
+        <div className="gita-sidebar-item-icon">
+          {conv.isPinned ? (
+            <Pin size={14} className="gita-sidebar-pin-badge" />
+          ) : (
+            <MessageSquareText size={15} />
+          )}
+        </div>
+
+        <div className="gita-sidebar-item-info">
+          {isEditing ? (
+            <div
+              className="gita-sidebar-rename-form"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <input
+                type="text"
+                value={editingTitle}
+                autoFocus
+                onChange={(e) => setEditingTitle(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleSaveRename(e, conv.id);
+                  if (e.key === "Escape") handleCancelRename(e);
+                }}
+              />
+              <button
+                type="button"
+                className="rename-action-btn save"
+                onClick={(e) => handleSaveRename(e, conv.id)}
+                title="સાચવો"
+              >
+                <Check size={13} />
+              </button>
+              <button
+                type="button"
+                className="rename-action-btn cancel"
+                onClick={handleCancelRename}
+                title="રદ કરો"
+              >
+                <X size={13} />
+              </button>
+            </div>
+          ) : (
+            <>
+              <h5 className="gita-sidebar-item-title" title={conv.title}>
+                {conv.title || "આધ્યાત્મિક સંવાદ"}
+              </h5>
+              <div className="gita-sidebar-item-meta">
+                <Clock size={11} />
+                <span>{formatHistoryDate(conv.updatedAt)}</span>
+                {conv.messages?.length > 0 && (
+                  <span className="gita-sidebar-item-count">
+                    • {conv.messages.length} મેસેજ
+                  </span>
+                )}
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* 3-Dots Action Button & Floating Menu */}
+        {!isEditing && (
+          <div className="gita-sidebar-menu-wrapper">
+            <button
+              type="button"
+              className={`gita-sidebar-item-more-btn ${
+                isMenuOpen ? "active" : ""
+              }`}
+              onClick={(e) => handleToggleMenu(e, conv.id)}
+              title="વિકલ્પો"
+              aria-label="વધુ વિકલ્પો"
+            >
+              <MoreHorizontal size={15} />
+            </button>
+
+            {isMenuOpen && (
+              <div
+                className="gita-sidebar-menu-dropdown"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {/* 1. Share */}
+                <button
+                  type="button"
+                  className="gita-sidebar-menu-item"
+                  onClick={(e) => handleShareConversation(e, conv)}
+                >
+                  <Share2 size={13} />
+                  <span>શેર કરો</span>
+                </button>
+
+                {/* 2. Rename */}
+                <button
+                  type="button"
+                  className="gita-sidebar-menu-item"
+                  onClick={(e) => handleStartRename(e, conv)}
+                >
+                  <Pencil size={13} />
+                  <span>નામ બદલો</span>
+                </button>
+
+                {/* 3. Pin / Unpin */}
+                <button
+                  type="button"
+                  className="gita-sidebar-menu-item"
+                  onClick={(e) => handleTogglePin(e, conv.id)}
+                >
+                  {conv.isPinned ? <PinOff size={13} /> : <Pin size={13} />}
+                  <span>{conv.isPinned ? "અનપિન કરો" : "પિન કરો"}</span>
+                </button>
+
+                {/* 4. Archive / Unarchive */}
+                <button
+                  type="button"
+                  className="gita-sidebar-menu-item"
+                  onClick={(e) => handleToggleArchive(e, conv.id)}
+                >
+                  {conv.isArchived ? (
+                    <ArchiveRestore size={13} />
+                  ) : (
+                    <Archive size={13} />
+                  )}
+                  <span>
+                    {conv.isArchived ? "અન-આર્કાઇવ કરો" : "આર્કાઇવ કરો"}
+                  </span>
+                </button>
+
+                <div className="gita-sidebar-menu-divider" />
+
+                {/* 5. Delete */}
+                <button
+                  type="button"
+                  className="gita-sidebar-menu-item danger"
+                  onClick={(e) => handleDeleteHistoryItem(e, conv.id)}
+                >
+                  <Trash2 size={13} />
+                  <span>ડીલીટ કરો</span>
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    );
   };
 
   const handleFabClick = () => {
@@ -841,6 +1142,13 @@ export default function GitaAIAssistant() {
                   </div>
                 )}
 
+                {/* Toast Notification in Sidebar */}
+                {toastMessage && (
+                  <div className="gita-sidebar-toast">
+                    <span>{toastMessage}</span>
+                  </div>
+                )}
+
                 {/* Conversations List */}
                 <div className="gita-sidebar-list">
                   {filteredHistory.length === 0 ? (
@@ -859,46 +1167,67 @@ export default function GitaAIAssistant() {
                           : "તમારો પ્રશ્ન પૂછો, તે આપમેળે અહીં સંગ્રહિત થશે."}
                       </span>
                     </div>
+                  ) : historySearch.trim() ? (
+                    filteredHistory.map((conv) => renderHistoryItem(conv))
                   ) : (
-                    filteredHistory.map((conv) => {
-                      const isActive = conv.id === activeConvId;
-                      return (
-                        <div
-                          key={conv.id}
-                          className={`gita-sidebar-item ${isActive ? "active" : ""}`}
-                          onClick={() => handleSelectConversation(conv.id)}
-                          role="button"
-                          tabIndex={0}
-                        >
-                          <div className="gita-sidebar-item-icon">
-                            <MessageSquareText size={15} />
+                    <>
+                      {/* Pinned Conversations */}
+                      {historyList.filter((c) => c.isPinned && !c.isArchived).length > 0 && (
+                        <div className="gita-sidebar-group">
+                          <div className="gita-sidebar-group-title">
+                            <Pin size={12} />
+                            <span>પિન કરેલા સંવાદો</span>
                           </div>
-                          <div className="gita-sidebar-item-info">
-                            <h5 className="gita-sidebar-item-title" title={conv.title}>
-                              {conv.title || "આધ્યાત્મિક સંવાદ"}
-                            </h5>
-                            <div className="gita-sidebar-item-meta">
-                              <Clock size={11} />
-                              <span>{formatHistoryDate(conv.updatedAt)}</span>
-                              {conv.messages?.length > 0 && (
-                                <span className="gita-sidebar-item-count">
-                                  • {conv.messages.length} મેસેજ
-                                </span>
-                              )}
+                          {historyList
+                            .filter((c) => c.isPinned && !c.isArchived)
+                            .map((conv) => renderHistoryItem(conv))}
+                        </div>
+                      )}
+
+                      {/* Recent Unpinned Conversations */}
+                      {historyList.filter((c) => !c.isPinned && !c.isArchived).length > 0 && (
+                        <div className="gita-sidebar-group">
+                          {historyList.filter((c) => c.isPinned && !c.isArchived).length > 0 && (
+                            <div className="gita-sidebar-group-title">
+                              <span>તાજેતરના સંવાદો</span>
                             </div>
-                          </div>
+                          )}
+                          {historyList
+                            .filter((c) => !c.isPinned && !c.isArchived)
+                            .map((conv) => renderHistoryItem(conv))}
+                        </div>
+                      )}
+
+                      {/* Archived Conversations (Collapsible) */}
+                      {historyList.filter((c) => c.isArchived).length > 0 && (
+                        <div className="gita-sidebar-archived-section">
                           <button
                             type="button"
-                            className="gita-sidebar-item-delete"
-                            onClick={(e) => handleDeleteHistoryItem(e, conv.id)}
-                            title="આ સંવાદ ડીલીટ કરો"
-                            aria-label="ડીલીટ કરો"
+                            className="gita-sidebar-archived-toggle"
+                            onClick={() => setShowArchived((prev) => !prev)}
                           >
-                            <Trash2 size={13} />
+                            <div className="gita-sidebar-archived-toggle-left">
+                              <Archive size={13} />
+                              <span>
+                                આર્કાઇવ કરેલ સંવાદો ({historyList.filter((c) => c.isArchived).length})
+                              </span>
+                            </div>
+                            {showArchived ? (
+                              <ChevronDown size={14} />
+                            ) : (
+                              <ChevronRight size={14} />
+                            )}
                           </button>
+                          {showArchived && (
+                            <div className="gita-sidebar-archived-list">
+                              {historyList
+                                .filter((c) => c.isArchived)
+                                .map((conv) => renderHistoryItem(conv))}
+                            </div>
+                          )}
                         </div>
-                      );
-                    })
+                      )}
+                    </>
                   )}
                 </div>
 
@@ -931,54 +1260,54 @@ export default function GitaAIAssistant() {
               </aside>
             </div>
 
-            {/* WINDOW HEADER */}
+            {/* WINDOW HEADER (ChatGPT Style with History on the LEFT) */}
             <header className="gita-ai-header">
               <div className="gita-ai-header-left">
+                {/* ChatGPT style sidebar drawer toggle button on the LEFT */}
+                <button
+                  type="button"
+                  className={`gita-ai-icon-btn sidebar-toggle-btn ${isHistoryOpen ? "active" : ""}`}
+                  onClick={handleToggleHistory}
+                  title={isHistoryOpen ? "ઇતિહાસ સાઇડબાર બંધ કરો" : "સંવાદ ઇતિહાસ જુઓ (Sidebar)"}
+                  aria-label="સાઇડબાર"
+                >
+                  <PanelLeft size={18} />
+                </button>
+
                 <div className="gita-ai-avatar">
-                  <Bot size={20} />
+                  <Bot size={19} />
                   <span className="gita-ai-online-dot" />
                 </div>
                 <div className="gita-ai-header-titles">
-                  <h3>ગીતા AI માર્ગદર્શક</h3>
+                  <h3>ગીતા AI</h3>
                   <span>॥ श्रीकृष्णः शरणं मम ॥</span>
                 </div>
               </div>
 
               <div className="gita-ai-header-actions">
-                {/* History Button - Toggles sidebar */}
+                {/* New Conversation Button */}
                 <button
                   type="button"
-                  className={`gita-ai-icon-btn ${isHistoryOpen ? "active" : ""}`}
-                  onClick={handleToggleHistory}
-                  title={isHistoryOpen ? "ઇતિહાસ બંધ કરો" : "સંવાદ ઇતિહાસ જુઓ (Sidebar)"}
-                  aria-label="ઇતિહાસ"
+                  className="gita-ai-icon-btn"
+                  onClick={handleNewConversation}
+                  title="નવી વાતચીત શરૂ કરો"
+                  aria-label="નવી વાતચીત"
                 >
-                  <History size={17} />
+                  <RotateCcw size={17} />
                 </button>
 
-              {/* New Conversation Button */}
-              <button
-                type="button"
-                className="gita-ai-icon-btn"
-                onClick={handleNewConversation}
-                title="નવી વાતચીત શરૂ કરો"
-                aria-label="નવી વાતચીત"
-              >
-                <RotateCcw size={17} />
-              </button>
-
-              {/* Close Button */}
-              <button
-                type="button"
-                className="gita-ai-icon-btn close-btn"
-                onClick={() => setIsOpen(false)}
-                title="બંધ કરો"
-                aria-label="ચેટ બંધ કરો"
-              >
-                <X size={19} />
-              </button>
-            </div>
-          </header>
+                {/* Close Button */}
+                <button
+                  type="button"
+                  className="gita-ai-icon-btn close-btn"
+                  onClick={() => setIsOpen(false)}
+                  title="ચેટ બંધ કરો"
+                  aria-label="ચેટ બંધ કરો"
+                >
+                  <X size={19} />
+                </button>
+              </div>
+            </header>
 
           {/* CHAT MESSAGES BODY */}
           <div className="gita-ai-body">

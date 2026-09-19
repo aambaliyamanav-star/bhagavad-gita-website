@@ -33,7 +33,6 @@ import QuizResult from "./pages/QuizResult";
 import LifeGuidance from "./pages/LifeGuidance.jsx";
 import ReadingTracker from "./pages/ReadingTracker.jsx";
 import QuizAchievements from "./pages/QuizAchievements.jsx";
-import GitaAiHistory from "./pages/GitaAiHistory.jsx";
 import GitaAIAssistant from "./components/GitaAIAssistant.jsx";
 import { trackVisit } from "./utils/visitorTracker.js";
 import { recordWebsiteVisit } from "./utils/pushNotification.js";
@@ -370,15 +369,6 @@ function AnimatedRoutes() {
                   <QuizAchievements />
                 </ProtectedRoute>
               }
-            />
-
-            {/* =================================================
-                GITA AI CHAT HISTORY
-            ================================================= */}
-
-            <Route
-              path="/gita-ai-history"
-              element={<GitaAiHistory />}
             />
 
           </Routes>
