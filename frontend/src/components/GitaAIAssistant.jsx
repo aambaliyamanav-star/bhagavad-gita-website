@@ -1316,7 +1316,7 @@ export default function GitaAIAssistant() {
             </header>
 
           {/* CHAT MESSAGES BODY */}
-          <div className="gita-ai-body">
+          <div className={`gita-ai-body ${!hasUserMessages ? "has-suggestions" : ""}`}>
             {messages.length === 0 && !isLoading && (
               <div className="gita-empty-chat-state">
                 <div className="gita-empty-chat-icon">
@@ -1425,27 +1425,27 @@ export default function GitaAIAssistant() {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* QUICK SUGGESTIONS */}
-          {!hasUserMessages && !isLoading && (
-            <div className="gita-suggestions-bar">
-              <div className="gita-suggestions-scroll">
-                {SUGGESTIONS.map((sug, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    className="gita-suggestion-chip"
-                    onClick={() => handleSendMessage(sug)}
-                  >
-                    <MessageSquare size={13} className="gita-suggestion-icon" />
-                    <span>{sug}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* CHAT INPUT FORM */}
           <footer className="gita-ai-footer">
+            {/* QUICK SUGGESTIONS */}
+            {!hasUserMessages && !isLoading && (
+              <div className="gita-suggestions-bar">
+                <div className="gita-suggestions-scroll">
+                  {SUGGESTIONS.map((sug, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      className="gita-suggestion-chip"
+                      onClick={() => handleSendMessage(sug)}
+                    >
+                      <MessageSquare size={13} className="gita-suggestion-icon" />
+                      <span>{sug}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {isListening && (
               <div className="gita-listening-bar">
                 <span className="gita-listening-wave" />
