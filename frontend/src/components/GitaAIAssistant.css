@@ -840,22 +840,23 @@
   background: #08162f;
 }
 
-/* ChatGPT style subtle disclaimer notice above input box */
-.gita-ai-disclaimer {
+/* ChatGPT style subtle disclaimer notice at the very bottom of the chat conversation */
+.gita-ai-chat-disclaimer {
+  align-self: center;
   text-align: center;
-  font-size: 0.71rem;
+  font-size: 0.70rem;
   line-height: 1.35;
   color: #64748b;
   opacity: 0.85;
-  margin-bottom: 7px;
-  padding: 0 8px;
+  margin: 8px auto 4px;
+  padding: 3px 12px;
   user-select: none;
   -webkit-user-select: none;
   letter-spacing: 0.15px;
   animation: fadeInDisclaimer 0.22s ease forwards;
 }
 
-.gita-ai-wrapper.dark .gita-ai-disclaimer {
+.gita-ai-wrapper.dark .gita-ai-chat-disclaimer {
   color: #94a3b8;
   opacity: 0.75;
 }

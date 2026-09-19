@@ -1415,6 +1415,13 @@ export default function GitaAIAssistant() {
               </div>
             )}
 
+            {/* ChatGPT style subtle disclaimer notice at the very end of the chat stream */}
+            {hasAiAnswers && !isLoading && (
+              <div className="gita-ai-chat-disclaimer">
+                <span>ગીતા AI ભૂલ કરી શકે છે. મહત્વપૂર્ણ માહિતીની ચકાસણી કરી લેવી.</span>
+              </div>
+            )}
+
             <div ref={messagesEndRef} />
           </div>
 
@@ -1443,13 +1450,6 @@ export default function GitaAIAssistant() {
               <div className="gita-listening-bar">
                 <span className="gita-listening-wave" />
                 <span>માઇક ચાલુ છે... બોલો (તમારો અવાજ લખાશે)</span>
-              </div>
-            )}
-
-            {/* ChatGPT style subtle disclaimer notice above input box */}
-            {hasAiAnswers && (
-              <div className="gita-ai-disclaimer">
-                <span>ગીતા AI ભૂલ કરી શકે છે. મહત્વપૂર્ણ માહિતીની ચકાસણી કરી લેવી.</span>
               </div>
             )}
 
