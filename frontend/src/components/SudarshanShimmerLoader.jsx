@@ -175,10 +175,21 @@ export default function SudarshanShimmerLoader({
   chakraSize = 72,
   className = "",
 }) {
-  const { theme } = useTheme();
+  let currentTheme = "light";
+  try {
+    const themeCtx = useTheme();
+    if (themeCtx?.theme) {
+      currentTheme = themeCtx.theme;
+    }
+  } catch (e) {
+    // Fallback gracefully to html data-theme
+    if (typeof document !== "undefined") {
+      currentTheme = document.documentElement.getAttribute("data-theme") || "light";
+    }
+  }
 
   return (
-    <div className={`sudarshan-shimmer-container ${theme || "light"} ${className}`}>
+    <div className={`sudarshan-shimmer-container ${currentTheme} ${className}`}>
       {/* =====================================================
           1. SACRED SUDARSHAN CHAKRA & STATUS HEADER
       ===================================================== */}
