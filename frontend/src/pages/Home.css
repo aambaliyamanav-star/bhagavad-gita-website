@@ -76,7 +76,12 @@ body {
   min-height: 100vh;
   position: relative;
   isolation: isolate;
-  background: #0b2d4d;
+  background: #f0f7ff;
+}
+
+html[data-theme="dark"] body,
+body.dark {
+  background: #071526;
 }
 
 
