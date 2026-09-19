@@ -239,6 +239,9 @@ export default function GitaAIAssistant() {
   const [toastMessage, setToastMessage] = useState(null);
 
   const hasUserMessages = messages.some((m) => m.sender === "user");
+  const hasAiAnswers = messages.some(
+    (m) => m.sender === "ai" && !m.isGreetingPrompt && !m.id?.startsWith("greeting_")
+  );
 
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
@@ -1442,6 +1445,14 @@ export default function GitaAIAssistant() {
                 <span>માઇક ચાલુ છે... બોલો (તમારો અવાજ લખાશે)</span>
               </div>
             )}
+
+            {/* ChatGPT style subtle disclaimer notice above input box */}
+            {hasAiAnswers && (
+              <div className="gita-ai-disclaimer">
+                <span>ગીતા AI ભૂલ કરી શકે છે. મહત્વપૂર્ણ માહિતીની ચકાસણી કરી લેવી.</span>
+              </div>
+            )}
+
             <div
               className={`gita-input-wrapper ${
                 isListening ? "listening-active" : ""
