@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BookOpen, Loader2 } from "lucide-react";
+import { BookOpen } from "lucide-react";
+import SudarshanShimmerLoader from "../components/SudarshanShimmerLoader.jsx";
 import "./Chapters.css";
 
 const chapters = [
@@ -81,6 +82,23 @@ function Chapters() {
     navigate(`/chapter/${chapterNumber}`);
   };
 
+  if (loading) {
+    return (
+      <main className="chapters-page">
+        <section className="chapters-header">
+          <p>॥ श्रीमद्भगवद्गीता ॥</p>
+          <h1>ભગવદ્ ગીતાના 18 અધ્યાય</h1>
+        </section>
+        <SudarshanShimmerLoader
+          type="cards"
+          title="અધ્યાય સૂચિ લોડ થઈ રહી છે..."
+          subtitle="પવિત્ર ગીતા અધ્યાયોનું સંકલન થઈ રહ્યું છે..."
+          count={6}
+        />
+      </main>
+    );
+  }
+
   return (
     <main className="chapters-page">
 
@@ -118,13 +136,7 @@ function Chapters() {
               </h2>
 
               <p>
-                {loading ? (
-                  <>
-                    <Loader2 className="btn-icon spinner" size={14} /> Loading...
-                  </>
-                ) : (
-                  `${databaseCount} શ્લોક`
-                )}
+                {databaseCount} શ્લોક
               </p>
 
               <button

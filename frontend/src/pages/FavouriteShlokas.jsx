@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Heart, Lock, Loader2, AlertCircle, RefreshCw, BookOpen, Trash2 } from "lucide-react";
 import { useAuth } from "../context/AuthContext.jsx";
+import SudarshanShimmerLoader from "../components/SudarshanShimmerLoader.jsx";
 import "./FavouriteShlokas.css";
 
 function FavouriteShlokas() {
@@ -398,21 +399,12 @@ function FavouriteShlokas() {
 
         </section>
 
-        <section className="favourite-empty-card">
-
-          <div className="favourite-empty-icon">
-            <Loader2 className="spinner" size={48} color="#3b82f6" />
-          </div>
-
-          <h2>
-            Favourite શ્લોક લોડ થઈ રહ્યા છે...
-          </h2>
-
-          <p>
-            કૃપા કરીને થોડી ક્ષણ રાહ જુઓ.
-          </p>
-
-        </section>
+        <SudarshanShimmerLoader
+          type="cards"
+          title="તમારા મનપસંદ શ્લોક લોડ થઈ રહ્યા છે..."
+          subtitle="પવિત્ર ગીતા વાણીનું સંકલન થઈ રહ્યું છે..."
+          count={3}
+        />
 
       </main>
     );

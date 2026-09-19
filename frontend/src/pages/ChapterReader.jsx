@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { BookOpen, Heart, Mic, Loader2, Sparkles, AlertCircle, ChevronLeft, ChevronRight, Share2 } from "lucide-react";
 import "./ChapterReader.css";
 import ShareShlokaModal from "../components/ShareShlokaModal.jsx";
+import SudarshanShimmerLoader from "../components/SudarshanShimmerLoader.jsx";
 
 import {
   useParams,
@@ -886,19 +887,11 @@ if (
   if (loading) {
     return (
       <main className="chapter-reader">
-        <div className="reader-loading-card">
-          <div className="loading-spinner">
-            <Loader2 className="spinner" size={48} color="#3b82f6" />
-          </div>
-
-          <h2>
-            શ્લોક લોડ થઈ રહ્યા છે...
-          </h2>
-
-          <p>
-            કૃપા કરીને થોડી ક્ષણ રાહ જુઓ.
-          </p>
-        </div>
+        <SudarshanShimmerLoader
+          type="reader"
+          title={`અધ્યાય ${chapterNumber || ""} ના શ્લોક લોડ થઈ રહ્યા છે...`}
+          subtitle="કૃપા કરીને થોડી ક્ષણ રાહ જુઓ ॥ શ્રીકૃષ્ણાર્પણમસ્તુ ॥"
+        />
       </main>
     );
   }

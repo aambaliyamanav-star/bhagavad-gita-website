@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loader2, AlertCircle, RefreshCw, ArrowLeft, BookOpen, ChevronRight, ClipboardList, CheckCircle2, XCircle, SkipForward, Clock, PlayCircle, Award } from "lucide-react";
+import SudarshanShimmerLoader from "../components/SudarshanShimmerLoader.jsx";
 import "./QuizResult.css";
 
 const API_URL = "https://bhagavad-gita-website.onrender.com/api/quiz";
@@ -322,23 +323,11 @@ function QuizResult() {
   if (loading) {
     return (
       <main className="quiz-result-page">
-
-        <section className="quiz-result-loading">
-
-          <div className="quiz-result-loading-icon">
-            <Loader2 size={40} className="spinner" color="#2563eb" />
-          </div>
-
-          <h2>
-            Quiz Result લોડ થઈ રહ્યું છે...
-          </h2>
-
-          <p>
-            કૃપા કરીને થોડી ક્ષણ રાહ જુઓ.
-          </p>
-
-        </section>
-
+        <SudarshanShimmerLoader
+          type="simple"
+          title="Quiz પરિણામ તૈયાર થઈ રહ્યું છે..."
+          subtitle="તમારી આધ્યાત્મિક પ્રગતિનું વિશ્લેષણ થઈ રહ્યું છે..."
+        />
       </main>
     );
   }
