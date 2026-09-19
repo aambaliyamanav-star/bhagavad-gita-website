@@ -862,7 +862,7 @@ export default function GitaAIAssistant() {
         key={conv.id}
         className={`gita-sidebar-item ${isActive ? "active" : ""} ${
           conv.isPinned ? "is-pinned" : ""
-        }`}
+        } ${isMenuOpen ? "menu-open" : ""}`}
         onClick={() => {
           if (!isEditing) handleSelectConversation(conv.id);
         }}
