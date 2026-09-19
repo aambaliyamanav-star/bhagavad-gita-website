@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   Sparkles,
-  Bot,
   Send,
   RotateCcw,
   X,
@@ -56,6 +55,33 @@ const SUGGESTIONS = [
   "ચિંતા અને નિષ્ફળતાના ડરમાંથી મુક્તિ કેવી રીતે મેળવવી?",
   "સાચો અને ધર્મયુક્ત નિર્ણય કેવી રીતે લેવો?"
 ];
+
+// Google Gemini AI signature 4-pointed curved star sparkle icon
+function GeminiIcon({ size = 22, className = "", style = {} }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      style={{ display: "inline-block", verticalAlign: "middle", flexShrink: 0, ...style }}
+    >
+      {/* Primary Gemini Curved Star */}
+      <path
+        d="M10.8 1.5C10.8 6.64 6.64 10.8 1.5 10.8C6.64 10.8 10.8 14.96 10.8 20.1C10.8 14.96 14.96 10.8 20.1 10.8C14.96 10.8 10.8 6.64 10.8 1.5Z"
+        fill="currentColor"
+      />
+      {/* Secondary Companion Star */}
+      <path
+        d="M18.8 1.2C18.8 3.3 17.1 5 15 5C17.1 5 18.8 6.7 18.8 8.8C18.8 6.7 20.5 5 22.6 5C20.5 5 18.8 3.3 18.8 1.2Z"
+        fill="currentColor"
+        opacity={0.88}
+      />
+    </svg>
+  );
+}
 
 // Helper to format inline markdown tokens into bold / highlighted words without raw symbols
 function formatInlineText(text) {
@@ -1060,7 +1086,7 @@ export default function GitaAIAssistant() {
         >
           <div className="gita-ai-fab-glow" />
           <div className="gita-ai-fab-icon-box">
-            <Bot size={24} className="gita-fab-bot-icon" />
+            <GeminiIcon size={26} className="gita-fab-gemini-icon" />
           </div>
         </button>
       )}
@@ -1274,7 +1300,7 @@ export default function GitaAIAssistant() {
                 </button>
 
                 <div className="gita-ai-avatar">
-                  <Bot size={19} />
+                  <GeminiIcon size={20} />
                   <span className="gita-ai-online-dot" />
                 </div>
                 <div className="gita-ai-header-titles">
@@ -1330,7 +1356,7 @@ export default function GitaAIAssistant() {
               >
                 {msg.sender === "ai" && (
                   <div className="gita-msg-avatar">
-                    <Bot size={16} />
+                    <GeminiIcon size={16} />
                   </div>
                 )}
 
@@ -1397,7 +1423,7 @@ export default function GitaAIAssistant() {
             {isLoading && (
               <div className="gita-msg-row ai-row">
                 <div className="gita-msg-avatar">
-                  <Bot size={16} />
+                  <GeminiIcon size={16} />
                 </div>
                 <div className="gita-msg-bubble typing-bubble">
                   <div className="gita-typing-dots">
