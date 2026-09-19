@@ -145,7 +145,9 @@ function History() {
         <button
           type="button"
           className="history-option-card gita-ai-history-card"
-          onClick={() => navigate("/gita-ai-history")}
+          onClick={() => {
+            window.dispatchEvent(new CustomEvent("gita-ai-open-history"));
+          }}
         >
 
           <div className="history-option-icon gita-ai-option-icon">

@@ -29,6 +29,14 @@ const GitaAiConversationSchema = new mongoose.Schema(
       required: true,
     },
     messages: [MessageSchema],
+    isPinned: {
+      type: Boolean,
+      default: false,
+    },
+    isArchived: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

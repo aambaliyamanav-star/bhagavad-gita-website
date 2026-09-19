@@ -650,6 +650,8 @@ exports.getHistory = async (req, res) => {
       id: c.convId,
       title: c.title,
       messages: c.messages,
+      isPinned: !!c.isPinned,
+      isArchived: !!c.isArchived,
       updatedAt: c.updatedAt,
     }));
 
@@ -666,20 +668,24 @@ exports.getHistory = async (req, res) => {
 // POST /api/gita-ai/history
 exports.saveHistory = async (req, res) => {
   try {
-    const { convId, title, messages } = req.body;
+    const { convId, title, messages, isPinned, isArchived } = req.body;
     if (!convId || !title || !Array.isArray(messages)) {
       return res.status(400).json({ success: false, message: "અમાન્ય ડેટા." });
     }
 
+    const updateDoc = {
+      userId: req.user._id,
+      userEmail: req.user.email,
+      convId,
+      title,
+      messages,
+    };
+    if (typeof isPinned === "boolean") updateDoc.isPinned = isPinned;
+    if (typeof isArchived === "boolean") updateDoc.isArchived = isArchived;
+
     const updated = await GitaAiConversation.findOneAndUpdate(
       { userId: req.user._id, convId },
-      {
-        userId: req.user._id,
-        userEmail: req.user.email,
-        convId,
-        title,
-        messages,
-      },
+      updateDoc,
       { upsert: true, new: true }
     );
 
@@ -689,6 +695,8 @@ exports.saveHistory = async (req, res) => {
         id: updated.convId,
         title: updated.title,
         messages: updated.messages,
+        isPinned: !!updated.isPinned,
+        isArchived: !!updated.isArchived,
         updatedAt: updated.updatedAt,
       },
     });

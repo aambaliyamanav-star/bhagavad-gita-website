@@ -83,7 +83,6 @@ function Navbar() {
       "/admin",
       "/guidance",
       "/jivan-margdarshan",
-      "/gita-ai-history",
       "/reading-tracker",
     ];
     if (

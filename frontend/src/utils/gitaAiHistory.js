@@ -20,6 +20,16 @@ function getUserStorageKey() {
   return "gita_ai_conversations";
 }
 
+function sortConversations(list) {
+  return list.sort((a, b) => {
+    // Pinned conversations always come first
+    if (Boolean(b.isPinned) !== Boolean(a.isPinned)) {
+      return b.isPinned ? 1 : -1;
+    }
+    return new Date(b.updatedAt) - new Date(a.updatedAt);
+  });
+}
+
 export function getAllConversations() {
   try {
     const key = getUserStorageKey();
@@ -30,9 +40,7 @@ export function getAllConversations() {
     }
     if (!raw) return [];
     const list = JSON.parse(raw);
-    return Array.isArray(list)
-      ? list.sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt))
-      : [];
+    return Array.isArray(list) ? sortConversations(list) : [];
   } catch (err) {
     console.error("Error reading Gita AI history:", err);
     return [];
@@ -64,17 +72,25 @@ export async function syncHistoryWithServer() {
         // 1. Add local conversations
         localList.forEach((c) => map.set(c.id, c));
 
-        // 2. Server conversations take precedence or add
+        // 2. Server conversations take precedence or merge
         data.conversations.forEach((c) => {
           const existing = map.get(c.id);
-          if (!existing || new Date(c.updatedAt) >= new Date(existing.updatedAt)) {
+          if (!existing) {
             map.set(c.id, c);
+          } else {
+            // Keep the latest version, preserving flags
+            const serverUpdated = new Date(c.updatedAt);
+            const localUpdated = new Date(existing.updatedAt);
+            const base = serverUpdated >= localUpdated ? c : existing;
+            map.set(c.id, {
+              ...base,
+              isPinned: c.isPinned ?? existing.isPinned ?? false,
+              isArchived: c.isArchived ?? existing.isArchived ?? false,
+            });
           }
         });
 
-        const merged = Array.from(map.values()).sort(
-          (a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)
-        );
+        const merged = sortConversations(Array.from(map.values()));
 
         localStorage.setItem(getUserStorageKey(), JSON.stringify(merged));
         window.dispatchEvent(new CustomEvent("gita-ai-history-updated"));
@@ -95,6 +111,8 @@ export function saveConversation(conv) {
 
     const updatedConv = {
       ...conv,
+      isPinned: conv.isPinned ?? false,
+      isArchived: conv.isArchived ?? false,
       updatedAt: new Date().toISOString(),
     };
 
@@ -104,7 +122,8 @@ export function saveConversation(conv) {
       list.unshift(updatedConv);
     }
 
-    localStorage.setItem(key, JSON.stringify(list));
+    const sortedList = sortConversations(list);
+    localStorage.setItem(key, JSON.stringify(sortedList));
     localStorage.setItem(ACTIVE_CONV_KEY, updatedConv.id);
 
     // Sync asynchronously to backend if logged in
@@ -120,6 +139,8 @@ export function saveConversation(conv) {
           convId: updatedConv.id,
           title: updatedConv.title,
           messages: updatedConv.messages,
+          isPinned: !!updatedConv.isPinned,
+          isArchived: !!updatedConv.isArchived,
         }),
       }).catch((err) => console.debug("Server save failed:", err));
     }
@@ -224,4 +245,121 @@ export function openConversationInAssistant(conversationId) {
       detail: { conversationId },
     })
   );
+}
+
+export function renameConversation(id, newTitle) {
+  try {
+    const key = getUserStorageKey();
+    const list = getAllConversations();
+    const target = list.find((c) => c.id === id);
+    if (!target) return false;
+
+    target.title = newTitle.trim() || target.title;
+    target.updatedAt = new Date().toISOString();
+
+    const sortedList = sortConversations(list);
+    localStorage.setItem(key, JSON.stringify(sortedList));
+
+    const token = localStorage.getItem("token");
+    if (token) {
+      fetch(`${API_BASE}/api/gita-ai/history`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          convId: target.id,
+          title: target.title,
+          messages: target.messages,
+          isPinned: !!target.isPinned,
+          isArchived: !!target.isArchived,
+        }),
+      }).catch((err) => console.debug("Server rename sync failed:", err));
+    }
+
+    window.dispatchEvent(new CustomEvent("gita-ai-history-updated"));
+    return true;
+  } catch (err) {
+    console.error("Error renaming conversation:", err);
+    return false;
+  }
+}
+
+export function togglePinConversation(id) {
+  try {
+    const key = getUserStorageKey();
+    const list = getAllConversations();
+    const target = list.find((c) => c.id === id);
+    if (!target) return false;
+
+    target.isPinned = !target.isPinned;
+    target.updatedAt = new Date().toISOString();
+
+    const sortedList = sortConversations(list);
+    localStorage.setItem(key, JSON.stringify(sortedList));
+
+    const token = localStorage.getItem("token");
+    if (token) {
+      fetch(`${API_BASE}/api/gita-ai/history`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          convId: target.id,
+          title: target.title,
+          messages: target.messages,
+          isPinned: !!target.isPinned,
+          isArchived: !!target.isArchived,
+        }),
+      }).catch((err) => console.debug("Server pin sync failed:", err));
+    }
+
+    window.dispatchEvent(new CustomEvent("gita-ai-history-updated"));
+    return target.isPinned;
+  } catch (err) {
+    console.error("Error toggling pin conversation:", err);
+    return false;
+  }
+}
+
+export function toggleArchiveConversation(id) {
+  try {
+    const key = getUserStorageKey();
+    const list = getAllConversations();
+    const target = list.find((c) => c.id === id);
+    if (!target) return false;
+
+    target.isArchived = !target.isArchived;
+    target.updatedAt = new Date().toISOString();
+
+    const sortedList = sortConversations(list);
+    localStorage.setItem(key, JSON.stringify(sortedList));
+
+    const token = localStorage.getItem("token");
+    if (token) {
+      fetch(`${API_BASE}/api/gita-ai/history`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          convId: target.id,
+          title: target.title,
+          messages: target.messages,
+          isPinned: !!target.isPinned,
+          isArchived: !!target.isArchived,
+        }),
+      }).catch((err) => console.debug("Server archive sync failed:", err));
+    }
+
+    window.dispatchEvent(new CustomEvent("gita-ai-history-updated"));
+    return target.isArchived;
+  } catch (err) {
+    console.error("Error toggling archive conversation:", err);
+    return false;
+  }
 }
