@@ -8,7 +8,6 @@ import { useAuth } from "../context/AuthContext.jsx";
 import { 
   BookOpen, 
   Search, 
-  Loader2, 
   AlertCircle, 
   Sparkles,
   Share2,
@@ -718,6 +717,11 @@ useEffect(() => {
     setMessage("");
     setResult(null);
 
+    if (loading && allShlokas.length === 0) {
+      setMessage("શ્લોક લોડ થઈ રહ્યા છે, કૃપા કરીને થોડી ક્ષણ રાહ જુઓ...");
+      return;
+    }
+
     if (
       !chapterValue &&
       !shlokaValue &&
@@ -1129,41 +1133,21 @@ useEffect(() => {
               onClick={
                 handleSearch
               }
-              disabled={loading}
               title="શ્લોક શોધો"
             >
-              {loading ? (
-                <>
-                  <Loader2 className="btn-icon spinner" size={18} />
-                  <span className="search-btn-text">Loading...</span>
-                </>
-              ) : (
-                <>
-                  <Search className="btn-icon" size={18} />
-                  <span className="search-btn-text">શોધો</span>
-                </>
-              )}
+              <Search className="btn-icon" size={18} />
+              <span className="search-btn-text">શોધો</span>
             </button>
 
           </div>
 
-          {/* LOADING MESSAGE */}
-
-          {loading && (
-            <div className="search-message">
-              <Loader2 className="msg-icon spinner" size={18} /> MongoDBમાંથી શ્લોક data
-              લોડ થઈ રહ્યો છે...
-            </div>
-          )}
-
           {/* ERROR / MESSAGE */}
 
-          {!loading &&
-            message && (
-              <div className="search-message">
-                <AlertCircle className="msg-icon" size={18} /> {message}
-              </div>
-            )}
+          {message && (
+            <div className="search-message">
+              <AlertCircle className="msg-icon" size={18} /> {message}
+            </div>
+          )}
 
           {/* SEARCH RESULTS */}
 
