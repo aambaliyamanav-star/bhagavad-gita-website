@@ -224,8 +224,17 @@ export default function GitaAIAssistant() {
 
   // Extract user's registered first name for ChatGPT style greeting
   const userFirstName = (() => {
-    if (!user) return "";
-    const rawName = (user.name || user.fullName || user.displayName || user.username || "").trim();
+    let rawUser = user;
+    if (!rawUser) {
+      try {
+        const saved = localStorage.getItem("user");
+        if (saved) rawUser = JSON.parse(saved);
+      } catch (e) {
+        // ignore
+      }
+    }
+    if (!rawUser) return "";
+    const rawName = (rawUser.name || rawUser.fullName || rawUser.displayName || rawUser.username || "").trim();
     if (!rawName) return "";
     return rawName.split(/\s+/)[0];
   })();
@@ -428,16 +437,8 @@ export default function GitaAIAssistant() {
 
   // Start with a clean new chat by default
   useEffect(() => {
-    // Default welcome prompt for new chat
-    setMessages([
-      {
-        id: `greeting_${Date.now()}`,
-        sender: "ai",
-        text: "જય શ્રી કૃષ્ણ. નવી વાતચીત માટે હું તૈયાર છું. તમારો નવો પ્રશ્ન પૂછો.",
-        timestamp: new Date().toISOString(),
-        isGreetingPrompt: true,
-      },
-    ]);
+    // Default clean state for new chat
+    setMessages([]);
 
     // Listen for custom event from History page to resume specific conversation
     const handleOpenConversation = (e) => {
@@ -491,15 +492,7 @@ export default function GitaAIAssistant() {
   const handleNewConversation = () => {
     setActiveConversationId(null);
     setActiveConvId(null);
-    setMessages([
-      {
-        id: `greeting_${Date.now()}`,
-        sender: "ai",
-        text: "જય શ્રી કૃષ્ણ. નવી વાતચીત માટે હું તૈયાર છું. તમારો નવો પ્રશ્ન પૂછો.",
-        timestamp: new Date().toISOString(),
-        isGreetingPrompt: true
-      }
-    ]);
+    setMessages([]);
   };
 
   // Send message
@@ -638,15 +631,7 @@ export default function GitaAIAssistant() {
     // Roll back conversation messages up to (and excluding) this user message
     const previousMessages = messages.slice(0, targetIndex);
     if (previousMessages.length === 0) {
-      setMessages([
-        {
-          id: `greeting_${Date.now()}`,
-          sender: "ai",
-          text: "જય શ્રી કૃષ્ણ. નવી વાતચીત માટે હું તૈયાર છું. તમારો નવો પ્રશ્ન પૂછો.",
-          timestamp: new Date().toISOString(),
-          isGreetingPrompt: true,
-        },
-      ]);
+      setMessages([]);
     } else {
       setMessages(previousMessages);
     }
@@ -1325,7 +1310,7 @@ export default function GitaAIAssistant() {
 
           {/* CHAT MESSAGES BODY */}
           <div className={`gita-ai-body ${!hasUserMessages ? "has-suggestions" : ""}`}>
-            {messages.length === 0 && !isLoading && (
+            {!hasUserMessages && !isLoading && (
               <div className="gita-new-chat-hero">
                 <span className="gita-hero-greeting">જય શ્રી કૃષ્ણ</span>
                 <h2 className="gita-hero-title">
@@ -1334,7 +1319,9 @@ export default function GitaAIAssistant() {
               </div>
             )}
 
-            {messages.map((msg, index) => (
+            {messages
+              .filter((m) => !m.isGreetingPrompt && !m.id?.startsWith("greeting_"))
+              .map((msg, index) => (
               <div
                 key={msg.id}
                 className={`gita-msg-row ${
