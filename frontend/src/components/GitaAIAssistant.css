@@ -118,14 +118,24 @@
 .gita-fab-gemini-icon,
 .gita-fab-bot-icon {
   color: #ffd54f;
-  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.3s ease;
-  filter: drop-shadow(0 2px 6px rgba(255, 213, 79, 0.35));
+  animation: geminiGentleSway 3.6s ease-in-out infinite;
+  transform-origin: center center;
+  filter: drop-shadow(0 2px 6px rgba(255, 213, 79, 0.4));
+  transition: filter 0.3s ease;
+}
+
+@keyframes geminiGentleSway {
+  0%, 100% {
+    transform: rotate(-10deg) scale(0.96);
+  }
+  50% {
+    transform: rotate(10deg) scale(1.06);
+  }
 }
 
 .gita-ai-fab:hover .gita-fab-gemini-icon,
 .gita-ai-fab:hover .gita-fab-bot-icon {
-  transform: scale(1.18) rotate(8deg);
-  filter: drop-shadow(0 3px 10px rgba(255, 213, 79, 0.6));
+  filter: drop-shadow(0 3px 12px rgba(255, 213, 79, 0.8));
 }
 
 .gita-ai-fab:hover {
