@@ -840,6 +840,37 @@
   background: #08162f;
 }
 
+/* ChatGPT style subtle disclaimer notice above input box */
+.gita-ai-disclaimer {
+  text-align: center;
+  font-size: 0.71rem;
+  line-height: 1.35;
+  color: #64748b;
+  opacity: 0.85;
+  margin-bottom: 7px;
+  padding: 0 8px;
+  user-select: none;
+  -webkit-user-select: none;
+  letter-spacing: 0.15px;
+  animation: fadeInDisclaimer 0.22s ease forwards;
+}
+
+.gita-ai-wrapper.dark .gita-ai-disclaimer {
+  color: #94a3b8;
+  opacity: 0.75;
+}
+
+@keyframes fadeInDisclaimer {
+  from {
+    opacity: 0;
+    transform: translateY(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .gita-input-wrapper {
   display: flex;
   align-items: flex-end;
