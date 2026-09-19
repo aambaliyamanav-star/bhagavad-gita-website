@@ -9,6 +9,7 @@ import {
   BookOpen, 
   Search, 
   AlertCircle, 
+  Loader2, 
   Sparkles,
   Share2,
   Trophy,
