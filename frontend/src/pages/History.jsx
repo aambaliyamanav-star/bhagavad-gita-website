@@ -138,36 +138,6 @@ function History() {
 
         </button>
 
-        {/* =================================================
-            GITA AI CHAT HISTORY (ગીતા AI સંવાદ ઇતિહાસ)
-        ================================================= */}
-
-        <button
-          type="button"
-          className="history-option-card gita-ai-history-card"
-          onClick={() => {
-            window.dispatchEvent(new CustomEvent("gita-ai-open-history"));
-          }}
-        >
-
-          <div className="history-option-icon gita-ai-option-icon">
-            <Sparkles />
-          </div>
-
-          <div className="history-option-content">
-
-            <h2>
-              ગીતા AI સંવાદ ઇતિહાસ
-            </h2>
-
-          </div>
-
-          <div className="history-option-arrow">
-            <ChevronRight />
-          </div>
-
-        </button>
-
       </section>
 
     </main>
