@@ -222,6 +222,14 @@ export default function GitaAIAssistant() {
   const { theme } = useTheme();
   const { user } = useAuth();
 
+  // Extract user's registered first name for ChatGPT style greeting
+  const userFirstName = (() => {
+    if (!user) return "";
+    const rawName = (user.name || user.fullName || user.displayName || user.username || "").trim();
+    if (!rawName) return "";
+    return rawName.split(/\s+/)[0];
+  })();
+
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState("");
@@ -1318,12 +1326,11 @@ export default function GitaAIAssistant() {
           {/* CHAT MESSAGES BODY */}
           <div className={`gita-ai-body ${!hasUserMessages ? "has-suggestions" : ""}`}>
             {messages.length === 0 && !isLoading && (
-              <div className="gita-empty-chat-state">
-                <div className="gita-empty-chat-icon">
-                  <Bot size={28} />
-                </div>
-                <h4>ગીતા AI માર્ગદર્શક</h4>
-                <p>તમારો કોઈપણ પ્રશ્ન પૂછો અથવા નીચે આપેલા પ્રશ્નોમાંથી પસંદ કરો</p>
+              <div className="gita-new-chat-hero">
+                <span className="gita-hero-greeting">જય શ્રી કૃષ્ણ</span>
+                <h2 className="gita-hero-title">
+                  હું તમને કેવી રીતે મદદ કરી શકું{userFirstName ? `, ${userFirstName}` : ""}?
+                </h2>
               </div>
             )}
 
