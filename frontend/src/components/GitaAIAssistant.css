@@ -115,15 +115,13 @@
   color: #ffd54f;
 }
 
-.gita-fab-sparkle {
-  animation: sparkleSpin 4s infinite linear;
+.gita-fab-bot-icon {
+  color: #ffd54f;
+  transition: transform 0.25s ease;
 }
 
-@keyframes sparkleSpin {
-  0% { transform: rotate(0deg); }
-  25% { transform: rotate(15deg); }
-  75% { transform: rotate(-15deg); }
-  100% { transform: rotate(0deg); }
+.gita-ai-fab:hover .gita-fab-bot-icon {
+  transform: scale(1.12);
 }
 
 .gita-ai-fab:hover {
@@ -171,19 +169,25 @@
 /* Light Mode Window */
 .gita-ai-wrapper.light .gita-ai-window {
   background: #ffffff;
-  border: 1px solid #e5e5e5;
-  color: #0d0d0d;
+  border: 1px solid rgba(17, 85, 204, 0.22);
+  color: #0f172a;
+  box-shadow:
+    0 24px 60px rgba(10, 61, 143, 0.25),
+    0 4px 20px rgba(0, 0, 0, 0.12);
 }
 
-/* Dark Mode Window (ChatGPT Charcoal) */
+/* Dark Mode Window (Spiritual Deep Navy) */
 .gita-ai-wrapper.dark .gita-ai-window {
-  background: #212121;
-  border: 1px solid #2f2f2f;
-  color: #ececec;
+  background: #08162f;
+  border: 1px solid rgba(80, 140, 255, 0.28);
+  color: #f1f5f9;
+  box-shadow:
+    0 24px 64px rgba(2, 6, 23, 0.85),
+    0 4px 24px rgba(0, 0, 0, 0.65);
 }
 
 /* =========================================================
-   HEADER (ChatGPT Style)
+   HEADER (Signature Website Royal Blue)
    ========================================================= */
 
 .gita-ai-header {
@@ -193,16 +197,17 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #ffffff;
-  color: #0d0d0d;
-  border-bottom: 1px solid #ececec;
-  box-shadow: none;
+  background: linear-gradient(135deg, #0a3d8f 0%, #1155cc 55%, #1a6be0 100%);
+  color: #ffffff;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 2px 12px rgba(0, 30, 100, 0.25);
 }
 
 .gita-ai-wrapper.dark .gita-ai-header {
-  background: #212121;
-  color: #ececec;
-  border-bottom: 1px solid #2f2f2f;
+  background: linear-gradient(135deg, #050e24 0%, #0a1f4b 55%, #0e2d6a 100%);
+  color: #ffffff;
+  border-bottom: 1px solid rgba(80, 140, 255, 0.22);
+  box-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
 }
 
 .gita-ai-header-left {
@@ -216,17 +221,17 @@
   width: 34px;
   height: 34px;
   border-radius: 10px;
-  background: #f4f4f4;
-  border: 1px solid #e5e5e5;
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #2563eb;
+  color: #ffd54f;
 }
 
 .gita-ai-wrapper.dark .gita-ai-avatar {
-  background: #2f2f2f;
-  border-color: #383838;
+  background: rgba(80, 140, 255, 0.18);
+  border-color: rgba(80, 140, 255, 0.35);
   color: #ffd54f;
 }
 
@@ -242,7 +247,7 @@
 }
 
 .gita-ai-wrapper.dark .gita-ai-online-dot {
-  border-color: #212121;
+  border-color: #08162f;
 }
 
 .gita-ai-header-titles {
@@ -254,23 +259,24 @@
   font-size: 0.96rem;
   font-weight: 600;
   margin: 0;
-  color: #0d0d0d;
+  color: #ffffff;
   line-height: 1.25;
 }
 
 .gita-ai-wrapper.dark .gita-ai-header-titles h3 {
-  color: #ececec;
+  color: #ffffff;
 }
 
 .gita-ai-header-titles span {
   font-size: 0.72rem;
-  color: #737373;
+  color: #ffd54f;
   font-family: "Noto Sans Devanagari", serif;
   margin-top: 1px;
+  letter-spacing: 0.3px;
 }
 
 .gita-ai-wrapper.dark .gita-ai-header-titles span {
-  color: #8e8e8e;
+  color: #ffd54f;
 }
 
 .gita-ai-header-actions {
@@ -285,7 +291,7 @@
   border-radius: 8px;
   border: none;
   background: transparent;
-  color: #555555;
+  color: rgba(255, 255, 255, 0.85);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -294,36 +300,36 @@
 }
 
 .gita-ai-wrapper.dark .gita-ai-icon-btn {
-  color: #b4b4b4;
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .gita-ai-icon-btn:hover {
-  background: #f4f4f4;
-  color: #0d0d0d;
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
   transform: none;
 }
 
 .gita-ai-wrapper.dark .gita-ai-icon-btn:hover {
-  background: #2f2f2f;
+  background: rgba(255, 255, 255, 0.18);
   color: #ffffff;
 }
 
 .gita-ai-icon-btn.active,
 .gita-ai-icon-btn.sidebar-toggle-btn.active {
-  background: rgba(37, 99, 235, 0.1);
-  color: #2563eb;
+  background: rgba(255, 255, 255, 0.28);
+  color: #ffd54f;
   box-shadow: none;
 }
 
 .gita-ai-wrapper.dark .gita-ai-icon-btn.active,
 .gita-ai-wrapper.dark .gita-ai-icon-btn.sidebar-toggle-btn.active {
-  background: rgba(96, 165, 250, 0.15);
-  color: #60a5fa;
+  background: rgba(80, 140, 255, 0.35);
+  color: #ffd54f;
 }
 
 .gita-ai-icon-btn.close-btn:hover {
-  background: rgba(239, 68, 68, 0.12);
-  color: #ef4444;
+  background: rgba(239, 68, 68, 0.3);
+  color: #ffffff;
 }
 
 /* =========================================================
@@ -440,41 +446,42 @@
   word-break: break-word;
 }
 
-/* User Bubble - ChatGPT Style */
+/* User Bubble - Royal Blue Theme */
 .user-row .gita-msg-bubble {
-  background: #f4f4f4;
-  color: #0d0d0d;
+  background: linear-gradient(135deg, #0a3d8f 0%, #1155cc 100%);
+  color: #ffffff;
   border-radius: 20px;
   border-bottom-right-radius: 6px;
   border: none;
-  box-shadow: none;
+  box-shadow: 0 2px 8px rgba(10, 61, 143, 0.22);
 }
 
 .gita-ai-wrapper.dark .user-row .gita-msg-bubble {
-  background: #2f2f2f;
-  color: #ececec;
+  background: linear-gradient(135deg, #1155cc 0%, #2563eb 100%);
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(17, 85, 204, 0.35);
 }
 
-/* AI Bubble - Light (ChatGPT Minimalist with Divine Accent) */
+/* AI Bubble - Light (Clean Crisp White with Royal Blue Left Accent) */
 .gita-ai-wrapper.light .ai-row .gita-msg-bubble {
-  background: #ffffff;
-  color: #0d0d0d;
-  border: 1px solid #f0f0f0;
-  border-left: 3px solid #2563eb;
+  background: #f8faff;
+  color: #0c234b;
+  border: 1px solid rgba(17, 85, 204, 0.16);
+  border-left: 3.5px solid #1155cc;
   border-radius: 16px;
   border-bottom-left-radius: 4px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2px 10px rgba(17, 85, 204, 0.06);
 }
 
-/* AI Bubble - Dark (ChatGPT Charcoal with Saffron Accent) */
+/* AI Bubble - Dark (Spiritual Deep Blue with Sacred Gold Accent) */
 .gita-ai-wrapper.dark .ai-row .gita-msg-bubble {
-  background: #262626;
-  color: #ececec;
-  border: 1px solid #333333;
-  border-left: 3px solid #ffd54f;
+  background: rgba(10, 28, 58, 0.88);
+  color: #f1f5f9;
+  border: 1px solid rgba(80, 140, 255, 0.22);
+  border-left: 3.5px solid #ffd54f;
   border-radius: 16px;
   border-bottom-left-radius: 4px;
-  box-shadow: none;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
 }
 
 .gita-msg-text {
@@ -818,19 +825,19 @@
 }
 
 /* =========================================================
-   FOOTER INPUT BAR (ChatGPT Pill Style)
+   FOOTER INPUT BAR (ChatGPT Pill Style with Royal Blue Theme)
    ========================================================= */
 
 .gita-ai-footer {
   flex: 0 0 auto;
   padding: 10px 14px 12px;
-  border-top: 1px solid #f0f0f0;
+  border-top: 1px solid rgba(17, 85, 204, 0.12);
   background: #ffffff;
 }
 
 .gita-ai-wrapper.dark .gita-ai-footer {
-  border-top-color: #2a2a2a;
-  background: #212121;
+  border-top: 1px solid rgba(80, 140, 255, 0.18);
+  background: #08162f;
 }
 
 .gita-input-wrapper {
@@ -839,24 +846,24 @@
   gap: 8px;
   padding: 8px 8px 8px 16px;
   border-radius: 26px;
-  border: 1px solid #e5e5e5;
-  background: #f4f4f4;
+  border: 1.5px solid rgba(17, 85, 204, 0.22);
+  background: #f0f6ff;
   transition: all 0.2s ease;
 }
 
 .gita-ai-wrapper.dark .gita-input-wrapper {
-  background: #2f2f2f;
-  border-color: #383838;
+  background: rgba(10, 28, 58, 0.9);
+  border-color: rgba(80, 140, 255, 0.28);
 }
 
 .gita-input-wrapper:focus-within {
-  border-color: #0d0d0d;
-  box-shadow: 0 0 0 1px #0d0d0d;
+  border-color: #1155cc;
+  box-shadow: 0 0 0 2px rgba(17, 85, 204, 0.18);
 }
 
 .gita-ai-wrapper.dark .gita-input-wrapper:focus-within {
-  border-color: #8e8e8e;
-  box-shadow: 0 0 0 1px #8e8e8e;
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.25);
 }
 
 .gita-ai-textarea {
@@ -866,7 +873,7 @@
   outline: none;
   resize: none;
   font-size: 0.92rem;
-  color: #0d0d0d;
+  color: #0c234b;
   font-family: inherit;
   line-height: 1.45;
   min-height: 24px;
@@ -877,11 +884,15 @@
 }
 
 .gita-ai-wrapper.dark .gita-ai-textarea {
-  color: #ececec;
+  color: #f1f5f9;
 }
 
 .gita-ai-textarea::placeholder {
-  color: #8e8e8e;
+  color: #64748b;
+}
+
+.gita-ai-wrapper.dark .gita-ai-textarea::placeholder {
+  color: #94a3b8;
 }
 
 .gita-ai-send-btn {
@@ -889,7 +900,7 @@
   height: 34px;
   border-radius: 50%;
   border: none;
-  background: #0d0d0d;
+  background: linear-gradient(135deg, #0a3d8f, #1155cc);
   color: #ffffff;
   display: flex;
   align-items: center;
@@ -897,21 +908,23 @@
   cursor: pointer;
   flex-shrink: 0;
   transition: all 0.2s ease;
-  box-shadow: none;
+  box-shadow: 0 2px 8px rgba(10, 61, 143, 0.3);
 }
 
 .gita-ai-wrapper.dark .gita-ai-send-btn {
-  background: #ffffff;
-  color: #0d0d0d;
+  background: linear-gradient(135deg, #1155cc, #2563eb);
+  color: #ffffff;
+  box-shadow: 0 2px 10px rgba(17, 85, 204, 0.4);
 }
 
 .gita-ai-send-btn:hover:not(:disabled) {
-  transform: scale(1.05);
-  background: #262626;
+  transform: scale(1.06);
+  background: linear-gradient(135deg, #08337a, #0e4bb3);
 }
 
 .gita-ai-wrapper.dark .gita-ai-send-btn:hover:not(:disabled) {
-  background: #e5e5e5;
+  transform: scale(1.06);
+  background: linear-gradient(135deg, #0f4bb5, #1d4ed8);
 }
 
 .gita-ai-send-btn:disabled {
@@ -1064,7 +1077,7 @@
   z-index: 1;
 }
 
-/* Slide-out Sidebar Panel (ChatGPT Dark & Clean Light) */
+/* Slide-out Sidebar Panel (Royal Blue Theme) */
 .gita-sidebar-panel {
   position: absolute;
   top: 0;
@@ -1072,11 +1085,11 @@
   left: 0;
   width: 320px;
   max-width: 86%;
-  background: #f9f9f9;
+  background: #f4f8fd;
   display: flex;
   flex-direction: column;
-  box-shadow: 8px 0 32px rgba(0, 0, 0, 0.16);
-  border-right: 1px solid #e5e5e5;
+  box-shadow: 8px 0 32px rgba(10, 61, 143, 0.15);
+  border-right: 1px solid rgba(17, 85, 204, 0.16);
   transform: translateX(-100%);
   transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   z-index: 2;
@@ -1087,11 +1100,11 @@
   transform: translateX(0);
 }
 
-/* Dark Mode - Sidebar Panel (ChatGPT exact #171717) */
+/* Dark Mode - Sidebar Panel */
 .gita-ai-wrapper.dark .gita-sidebar-panel {
-  background: #171717;
-  border-right-color: #2f2f2f;
-  box-shadow: 8px 0 36px rgba(0, 0, 0, 0.7);
+  background: #050e24;
+  border-right-color: rgba(80, 140, 255, 0.18);
+  box-shadow: 8px 0 36px rgba(0, 0, 0, 0.75);
 }
 
 /* Sidebar Header */
@@ -1102,13 +1115,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid #ececec;
-  background: #f9f9f9;
+  border-bottom: 1px solid rgba(17, 85, 204, 0.12);
+  background: #eaf2fc;
 }
 
 .gita-ai-wrapper.dark .gita-sidebar-header {
-  background: #171717;
-  border-bottom-color: #262626;
+  background: #071536;
+  border-bottom-color: rgba(80, 140, 255, 0.16);
 }
 
 .gita-sidebar-header-left {
@@ -1117,15 +1130,15 @@
   gap: 8px;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #0d0d0d;
+  color: #0a3d8f;
 }
 
 .gita-ai-wrapper.dark .gita-sidebar-header-left {
-  color: #ececec;
+  color: #f1f5f9;
 }
 
 .gita-sidebar-header-icon {
-  color: #2563eb;
+  color: #1155cc;
 }
 
 .gita-ai-wrapper.dark .gita-sidebar-header-icon {
@@ -1138,7 +1151,7 @@
   border-radius: 7px;
   border: none;
   background: transparent;
-  color: #8e8e8e;
+  color: #64748b;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1147,16 +1160,16 @@
 }
 
 .gita-sidebar-close-btn:hover {
-  background: #e5e5e5;
-  color: #0d0d0d;
+  background: rgba(17, 85, 204, 0.12);
+  color: #0a3d8f;
 }
 
 .gita-ai-wrapper.dark .gita-sidebar-close-btn {
-  color: #8e8e8e;
+  color: #94a3b8;
 }
 
 .gita-ai-wrapper.dark .gita-sidebar-close-btn:hover {
-  background: #2a2a2a;
+  background: rgba(80, 140, 255, 0.18);
   color: #ffffff;
 }
 
@@ -1174,29 +1187,94 @@
   gap: 8px;
   padding: 9px 12px;
   border-radius: 10px;
-  border: 1px solid #e5e5e5;
+  border: 1.5px solid rgba(17, 85, 204, 0.28);
   background: #ffffff;
-  color: #0d0d0d;
-  font-weight: 500;
+  color: #0a3d8f;
+  font-weight: 600;
   font-size: 0.86rem;
   cursor: pointer;
   transition: all 0.18s ease;
+  box-shadow: 0 1px 3px rgba(10, 61, 143, 0.08);
 }
 
 .gita-sidebar-new-chat-btn:hover {
-  background: #f0f0f0;
-  border-color: #dcdcdc;
+  background: #e8f2fc;
+  border-color: #1155cc;
+  color: #0a3d8f;
 }
 
 .gita-ai-wrapper.dark .gita-sidebar-new-chat-btn {
-  background: #212121;
-  border-color: #2f2f2f;
-  color: #ececec;
+  background: #0a1e45;
+  border: 1.5px solid rgba(80, 140, 255, 0.28);
+  color: #93c5fd;
+  box-shadow: none;
 }
 
 .gita-ai-wrapper.dark .gita-sidebar-new-chat-btn:hover {
-  background: #2a2a2a;
-  border-color: #383838;
+  background: #0e2b61;
+  border-color: #60a5fa;
+  color: #ffffff;
+}
+
+/* Archived Conversations (Top Box, directly below New Chat) */
+.gita-sidebar-archived-top-box {
+  flex: 0 0 auto;
+  padding: 0 12px 6px;
+}
+
+.gita-sidebar-archived-top-box .gita-sidebar-archived-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px dashed rgba(17, 85, 204, 0.25);
+  background: rgba(17, 85, 204, 0.05);
+  cursor: pointer;
+  font-size: 0.80rem;
+  font-weight: 600;
+  color: #1155cc;
+  transition: all 0.18s ease;
+}
+
+.gita-sidebar-archived-top-box .gita-sidebar-archived-toggle:hover,
+.gita-sidebar-archived-top-box .gita-sidebar-archived-toggle.expanded {
+  background: rgba(17, 85, 204, 0.1);
+  border-color: #1155cc;
+  border-style: solid;
+}
+
+.gita-ai-wrapper.dark .gita-sidebar-archived-top-box .gita-sidebar-archived-toggle {
+  background: rgba(80, 140, 255, 0.08);
+  border-color: rgba(80, 140, 255, 0.25);
+  color: #93c5fd;
+}
+
+.gita-ai-wrapper.dark .gita-sidebar-archived-top-box .gita-sidebar-archived-toggle:hover,
+.gita-ai-wrapper.dark .gita-sidebar-archived-top-box .gita-sidebar-archived-toggle.expanded {
+  background: rgba(80, 140, 255, 0.15);
+  border-color: #60a5fa;
+  border-style: solid;
+  color: #ffffff;
+}
+
+.gita-sidebar-archived-top-box .gita-sidebar-archived-list {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 6px;
+  max-height: 190px;
+  overflow-y: auto;
+  padding: 4px;
+  border-radius: 8px;
+  background: rgba(17, 85, 204, 0.04);
+  border: 1px solid rgba(17, 85, 204, 0.1);
+}
+
+.gita-ai-wrapper.dark .gita-sidebar-archived-top-box .gita-sidebar-archived-list {
+  background: rgba(0, 0, 0, 0.25);
+  border-color: rgba(80, 140, 255, 0.15);
 }
 
 /* Search Box */
@@ -1209,28 +1287,34 @@
   padding: 6px 10px;
   border-radius: 8px;
   background: #ffffff;
-  border: 1px solid #e5e5e5;
-  color: #0d0d0d;
+  border: 1px solid rgba(17, 85, 204, 0.2);
+  color: #0c234b;
   transition: all 0.18s ease;
 }
 
 .gita-sidebar-search-box:focus-within {
-  border-color: #0d0d0d;
+  border-color: #1155cc;
+  box-shadow: 0 0 0 1.5px rgba(17, 85, 204, 0.18);
 }
 
 .gita-ai-wrapper.dark .gita-sidebar-search-box {
-  background: #212121;
-  border-color: #2f2f2f;
-  color: #ececec;
+  background: #091b36;
+  border-color: rgba(80, 140, 255, 0.25);
+  color: #f1f5f9;
 }
 
 .gita-ai-wrapper.dark .gita-sidebar-search-box:focus-within {
-  border-color: #8e8e8e;
+  border-color: #60a5fa;
+  box-shadow: 0 0 0 1.5px rgba(96, 165, 250, 0.2);
 }
 
 .gita-sidebar-search-icon {
-  color: #8e8e8e;
+  color: #64748b;
   flex-shrink: 0;
+}
+
+.gita-ai-wrapper.dark .gita-sidebar-search-icon {
+  color: #94a3b8;
 }
 
 .gita-sidebar-search-box input {
@@ -1322,34 +1406,36 @@
 }
 
 .gita-sidebar-item:hover {
-  background: #ececec;
+  background: #e6f0fc;
 }
 
 .gita-sidebar-item.active {
-  background: #e3e3e3;
+  background: #d8e8fa;
+  border-color: rgba(17, 85, 204, 0.2);
 }
 
 .gita-ai-wrapper.dark .gita-sidebar-item:hover {
-  background: #212121;
+  background: #091a3c;
 }
 
 .gita-ai-wrapper.dark .gita-sidebar-item.active {
-  background: #2a2a2a;
+  background: #0d2554;
+  border-color: rgba(80, 140, 255, 0.25);
 }
 
 .gita-sidebar-item-icon {
   flex-shrink: 0;
-  color: #8e8e8e;
+  color: #64748b;
   display: flex;
   align-items: center;
 }
 
 .gita-sidebar-item:hover .gita-sidebar-item-icon {
-  color: #0d0d0d;
+  color: #1155cc;
 }
 
 .gita-ai-wrapper.dark .gita-sidebar-item:hover .gita-sidebar-item-icon {
-  color: #ececec;
+  color: #60a5fa;
 }
 
 .gita-sidebar-pin-badge {
@@ -1367,7 +1453,7 @@
 .gita-sidebar-item-title {
   font-size: 0.83rem;
   font-weight: 500;
-  color: #0d0d0d;
+  color: #0c234b;
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -1376,7 +1462,7 @@
 }
 
 .gita-ai-wrapper.dark .gita-sidebar-item-title {
-  color: #ececec;
+  color: #f1f5f9;
 }
 
 .gita-sidebar-item-meta {
@@ -1384,7 +1470,7 @@
   align-items: center;
   gap: 4px;
   font-size: 0.7rem;
-  color: #8e8e8e;
+  color: #64748b;
 }
 
 .gita-sidebar-item-count {
@@ -1405,7 +1491,7 @@
   border-radius: 6px;
   border: none;
   background: transparent;
-  color: #8e8e8e;
+  color: #64748b;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1420,12 +1506,12 @@
 }
 
 .gita-sidebar-item-more-btn:hover {
-  background: rgba(0, 0, 0, 0.08);
-  color: #0d0d0d;
+  background: rgba(17, 85, 204, 0.12);
+  color: #0a3d8f;
 }
 
 .gita-ai-wrapper.dark .gita-sidebar-item-more-btn:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(80, 140, 255, 0.2);
   color: #ffffff;
 }
 
@@ -1441,17 +1527,18 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 12px 32px rgba(10, 61, 143, 0.18);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   animation: fadeInMenu 0.14s cubic-bezier(0.16, 1, 0.3, 1);
   background: #ffffff;
-  border: 1px solid #e5e5e5;
+  border: 1px solid rgba(17, 85, 204, 0.2);
 }
 
 .gita-ai-wrapper.dark .gita-sidebar-menu-dropdown {
-  background: #212121;
-  border-color: #333333;
+  background: #0a1e45;
+  border-color: rgba(80, 140, 255, 0.25);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6);
 }
 
 @keyframes fadeInMenu {
@@ -1474,7 +1561,7 @@
   border-radius: 7px;
   border: none;
   background: transparent;
-  color: #0d0d0d;
+  color: #0c234b;
   font-size: 0.82rem;
   font-weight: 500;
   cursor: pointer;
@@ -1483,15 +1570,17 @@
 }
 
 .gita-ai-wrapper.dark .gita-sidebar-menu-item {
-  color: #ececec;
+  color: #f1f5f9;
 }
 
 .gita-sidebar-menu-item:hover {
-  background: #f4f4f4;
+  background: #eef5ff;
+  color: #1155cc;
 }
 
 .gita-ai-wrapper.dark .gita-sidebar-menu-item:hover {
-  background: #2a2a2a;
+  background: #0e2b61;
+  color: #ffffff;
 }
 
 .gita-sidebar-menu-item.danger {
@@ -1506,11 +1595,11 @@
 .gita-sidebar-menu-divider {
   height: 1px;
   margin: 3px 0;
-  background: #ececec;
+  background: rgba(17, 85, 204, 0.1);
 }
 
 .gita-ai-wrapper.dark .gita-sidebar-menu-divider {
-  background: #2f2f2f;
+  background: rgba(80, 140, 255, 0.15);
 }
 
 /* Inline Rename Form */
@@ -1524,7 +1613,7 @@
 .gita-sidebar-rename-form input {
   flex: 1;
   min-width: 0;
-  border: 1.5px solid #2563eb;
+  border: 1.5px solid #1155cc;
   border-radius: 6px;
   padding: 3px 8px;
   font-size: 0.82rem;
@@ -1556,66 +1645,20 @@
   color: #ffffff;
 }
 
-/* Collapsible Archived Section */
-.gita-sidebar-archived-section {
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px solid rgba(142, 142, 142, 0.2);
-}
-
-.gita-sidebar-archived-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: 7px 10px;
-  border-radius: 8px;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-  font-size: 0.78rem;
-  font-weight: 500;
-  color: #8e8e8e;
-  transition: all 0.15s;
-}
-
-.gita-sidebar-archived-toggle:hover {
-  background: rgba(0, 0, 0, 0.04);
-  color: #0d0d0d;
-}
-
-.gita-ai-wrapper.dark .gita-sidebar-archived-toggle:hover {
-  background: rgba(255, 255, 255, 0.06);
-  color: #ececec;
-}
-
-.gita-sidebar-archived-toggle-left {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
-
-.gita-sidebar-archived-list {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  padding-top: 4px;
-}
-
 /* Toast Notification in Sidebar */
 .gita-sidebar-toast {
   position: absolute;
   bottom: 58px;
   left: 50%;
   transform: translateX(-50%);
-  background: #0d0d0d;
+  background: linear-gradient(135deg, #0a3d8f, #1155cc);
   color: #ffffff;
-  border: 1px solid #333333;
+  border: 1px solid rgba(255, 215, 0, 0.35);
   padding: 6px 14px;
   border-radius: 20px;
   font-size: 0.76rem;
   font-weight: 500;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 6px 20px rgba(10, 61, 143, 0.35);
   z-index: 99;
   pointer-events: none;
   animation: toastSlideUp 0.18s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1623,8 +1666,8 @@
 }
 
 .gita-ai-wrapper.dark .gita-sidebar-toast {
-  background: #2a2a2a;
-  border-color: #444444;
+  background: linear-gradient(135deg, #050e24, #0a1f4b);
+  border-color: rgba(80, 140, 255, 0.35);
 }
 
 @keyframes toastSlideUp {
@@ -1686,18 +1729,18 @@
 .gita-sidebar-footer {
   flex: 0 0 auto;
   padding: 10px 12px;
-  border-top: 1px solid #ececec;
-  background: #f9f9f9;
+  border-top: 1px solid rgba(17, 85, 204, 0.12);
+  background: #eaf2fc;
 }
 
 .gita-ai-wrapper.dark .gita-sidebar-footer {
-  border-top-color: #262626;
-  background: #171717;
+  border-top-color: rgba(80, 140, 255, 0.16);
+  background: #071536;
 }
 
 .gita-sidebar-auth-card {
-  background: rgba(37, 99, 235, 0.05);
-  border: 1px solid rgba(37, 99, 235, 0.16);
+  background: rgba(17, 85, 204, 0.06);
+  border: 1px solid rgba(17, 85, 204, 0.2);
   border-radius: 9px;
   padding: 8px 10px;
   display: flex;
@@ -1708,12 +1751,13 @@
 
 .gita-sidebar-auth-card p {
   font-size: 0.74rem;
-  color: #555555;
+  color: #0a3d8f;
   margin: 0;
+  font-weight: 500;
 }
 
 .gita-ai-wrapper.dark .gita-sidebar-auth-card p {
-  color: #8e8e8e;
+  color: #93c5fd;
 }
 
 .gita-sidebar-login-btn {
@@ -1721,17 +1765,28 @@
   padding: 6px 10px;
   border-radius: 7px;
   border: none;
-  background: #0d0d0d;
+  background: linear-gradient(135deg, #0a3d8f, #1155cc);
   color: #ffffff;
   font-size: 0.78rem;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.18s ease;
+  transition: all 0.18s ease;
+  box-shadow: 0 2px 6px rgba(10, 61, 143, 0.25);
+}
+
+.gita-sidebar-login-btn:hover {
+  background: linear-gradient(135deg, #08337a, #0e4bb3);
+  box-shadow: 0 3px 8px rgba(10, 61, 143, 0.35);
 }
 
 .gita-ai-wrapper.dark .gita-sidebar-login-btn {
-  background: #ffffff;
-  color: #0d0d0d;
+  background: linear-gradient(135deg, #1155cc, #2563eb);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(17, 85, 204, 0.35);
+}
+
+.gita-ai-wrapper.dark .gita-sidebar-login-btn:hover {
+  background: linear-gradient(135deg, #0f4bb5, #1d4ed8);
 }
 
 .gita-sidebar-clear-all {

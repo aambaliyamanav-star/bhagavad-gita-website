@@ -15,6 +15,7 @@ import {
   Search,
   Trash2,
   MessageSquareText,
+  MessageSquare,
   Clock,
   PanelLeft,
   MoreHorizontal,
@@ -26,6 +27,8 @@ import {
   ArchiveRestore,
   ChevronDown,
   ChevronRight,
+  Plus,
+  BookOpen,
 } from "lucide-react";
 
 import { useTheme } from "../context/ThemeContext";
@@ -419,7 +422,7 @@ export default function GitaAIAssistant() {
       {
         id: `greeting_${Date.now()}`,
         sender: "ai",
-        text: "જય શ્રી કૃષ્ણ! 🙏 નવી વાતચીત માટે હું તૈયાર છું. તમારો નવો પ્રશ્ન પૂછો.",
+        text: "જય શ્રી કૃષ્ણ. નવી વાતચીત માટે હું તૈયાર છું. તમારો નવો પ્રશ્ન પૂછો.",
         timestamp: new Date().toISOString(),
         isGreetingPrompt: true,
       },
@@ -481,7 +484,7 @@ export default function GitaAIAssistant() {
       {
         id: `greeting_${Date.now()}`,
         sender: "ai",
-        text: "જય શ્રી કૃષ્ણ! 🙏 નવી વાતચીત માટે હું તૈયાર છું. તમારો નવો પ્રશ્ન પૂછો.",
+        text: "જય શ્રી કૃષ્ણ. નવી વાતચીત માટે હું તૈયાર છું. તમારો નવો પ્રશ્ન પૂછો.",
         timestamp: new Date().toISOString(),
         isGreetingPrompt: true
       }
@@ -628,7 +631,7 @@ export default function GitaAIAssistant() {
         {
           id: `greeting_${Date.now()}`,
           sender: "ai",
-          text: "જય શ્રી કૃષ્ણ! 🙏 નવી વાતચીત માટે હું તૈયાર છું. તમારો નવો પ્રશ્ન પૂછો.",
+          text: "જય શ્રી કૃષ્ણ. નવી વાતચીત માટે હું તૈયાર છું. તમારો નવો પ્રશ્ન પૂછો.",
           timestamp: new Date().toISOString(),
           isGreetingPrompt: true,
         },
@@ -727,7 +730,7 @@ export default function GitaAIAssistant() {
               .filter((m) => !m.isGreetingPrompt && !m.id?.startsWith("greeting_"))
               .map(
                 (m) =>
-                  `${m.sender === "user" ? "👤 પ્રશ્ન:" : "🪷 ગીતા AI:"} ${m.text}`
+                  `${m.sender === "user" ? "પ્રશ્ન:" : "ગીતા AI:"} ${m.text}`
               )
               .join("\n\n")
           : "";
@@ -748,7 +751,7 @@ export default function GitaAIAssistant() {
       }
 
       await navigator.clipboard.writeText(shareText);
-      showToast("સંવાદ ક્લિપબોર્ડ પર કોપી થયો! 📋");
+      showToast("સંવાદ ક્લિપબોર્ડ પર કોપી થયો!");
     } catch (err) {
       console.error("Share error:", err);
       showToast("શેર કરવામાં સમસ્યા આવી.");
@@ -767,7 +770,7 @@ export default function GitaAIAssistant() {
     if (e) e.stopPropagation();
     if (editingTitle && editingTitle.trim()) {
       renameConversation(convId, editingTitle.trim());
-      showToast("નામ બદલાઈ ગયું! ✏️");
+      showToast("નામ અપડેટ થઈ ગયું.");
     }
     setEditingConvId(null);
     setEditingTitle("");
@@ -784,7 +787,7 @@ export default function GitaAIAssistant() {
     e.stopPropagation();
     setMenuOpenConvId(null);
     const newPinned = togglePinConversation(convId);
-    showToast(newPinned ? "સંવાદ પિન કર્યો! 📌" : "સંવાદ અનપિન કર્યો.");
+    showToast(newPinned ? "સંવાદ પિન કર્યો." : "સંવાદ અનપિન કર્યો.");
   };
 
   // Archive / Unarchive toggle
@@ -792,7 +795,7 @@ export default function GitaAIAssistant() {
     e.stopPropagation();
     setMenuOpenConvId(null);
     const newArchived = toggleArchiveConversation(convId);
-    showToast(newArchived ? "સંવાદ આર્કાઇવ કર્યો! 📦" : "સંવાદ અન-આર્કાઇવ કર્યો.");
+    showToast(newArchived ? "સંવાદ આર્કાઇવ કર્યો." : "સંવાદ અન-આર્કાઇવ કર્યો.");
   };
 
   // Delete single conversation
@@ -804,7 +807,7 @@ export default function GitaAIAssistant() {
     if (activeConvId === convId) {
       handleNewConversation();
     }
-    showToast("સંવાદ ડીલીટ કર્યો. 🗑️");
+    showToast("સંવાદ ડીલીટ કર્યો.");
   };
 
   // Clear all conversations
@@ -1061,7 +1064,7 @@ export default function GitaAIAssistant() {
         >
           <div className="gita-ai-fab-glow" />
           <div className="gita-ai-fab-icon-box">
-            <Sparkles size={24} className="gita-fab-sparkle" />
+            <Bot size={24} className="gita-fab-bot-icon" />
           </div>
         </button>
       )}
@@ -1114,10 +1117,40 @@ export default function GitaAIAssistant() {
                     className="gita-sidebar-new-chat-btn"
                     onClick={handleStartNewFromHistory}
                   >
-                    <Sparkles size={16} />
+                    <Plus size={16} />
                     <span>+ નવી વાતચીત</span>
                   </button>
                 </div>
+
+                {/* Archived Conversations Box (Top, below New Chat) */}
+                {historyList.filter((c) => c.isArchived).length > 0 && (
+                  <div className="gita-sidebar-archived-top-box">
+                    <button
+                      type="button"
+                      className={`gita-sidebar-archived-toggle ${showArchived ? "expanded" : ""}`}
+                      onClick={() => setShowArchived((prev) => !prev)}
+                    >
+                      <div className="gita-sidebar-archived-toggle-left">
+                        <Archive size={14} />
+                        <span>
+                          આર્કાઇવ કરેલ સંવાદો ({historyList.filter((c) => c.isArchived).length})
+                        </span>
+                      </div>
+                      {showArchived ? (
+                        <ChevronDown size={14} />
+                      ) : (
+                        <ChevronRight size={14} />
+                      )}
+                    </button>
+                    {showArchived && (
+                      <div className="gita-sidebar-archived-list">
+                        {historyList
+                          .filter((c) => c.isArchived)
+                          .map((conv) => renderHistoryItem(conv))}
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {/* Search Bar (shows when user has 2+ chats) */}
                 {historyList.length > 2 && (
@@ -1195,36 +1228,6 @@ export default function GitaAIAssistant() {
                           {historyList
                             .filter((c) => !c.isPinned && !c.isArchived)
                             .map((conv) => renderHistoryItem(conv))}
-                        </div>
-                      )}
-
-                      {/* Archived Conversations (Collapsible) */}
-                      {historyList.filter((c) => c.isArchived).length > 0 && (
-                        <div className="gita-sidebar-archived-section">
-                          <button
-                            type="button"
-                            className="gita-sidebar-archived-toggle"
-                            onClick={() => setShowArchived((prev) => !prev)}
-                          >
-                            <div className="gita-sidebar-archived-toggle-left">
-                              <Archive size={13} />
-                              <span>
-                                આર્કાઇવ કરેલ સંવાદો ({historyList.filter((c) => c.isArchived).length})
-                              </span>
-                            </div>
-                            {showArchived ? (
-                              <ChevronDown size={14} />
-                            ) : (
-                              <ChevronRight size={14} />
-                            )}
-                          </button>
-                          {showArchived && (
-                            <div className="gita-sidebar-archived-list">
-                              {historyList
-                                .filter((c) => c.isArchived)
-                                .map((conv) => renderHistoryItem(conv))}
-                            </div>
-                          )}
                         </div>
                       )}
                     </>
@@ -1314,7 +1317,7 @@ export default function GitaAIAssistant() {
             {messages.length === 0 && !isLoading && (
               <div className="gita-empty-chat-state">
                 <div className="gita-empty-chat-icon">
-                  <Sparkles size={26} />
+                  <Bot size={28} />
                 </div>
                 <h4>ગીતા AI માર્ગદર્શક</h4>
                 <p>તમારો કોઈપણ પ્રશ્ન પૂછો અથવા નીચે આપેલા પ્રશ્નોમાંથી પસંદ કરો</p>
@@ -1423,7 +1426,7 @@ export default function GitaAIAssistant() {
                     className="gita-suggestion-chip"
                     onClick={() => handleSendMessage(sug)}
                   >
-                    <Sparkles size={13} className="gita-suggestion-icon" />
+                    <MessageSquare size={13} className="gita-suggestion-icon" />
                     <span>{sug}</span>
                   </button>
                 ))}
