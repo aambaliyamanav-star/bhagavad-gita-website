@@ -1261,6 +1261,18 @@ export default function GitaAIAssistant() {
                 <div className="gita-sidebar-footer">
                   {user ? (
                     <div className="gita-sidebar-user-section">
+                      {historyList.length > 0 && (
+                        <button
+                          type="button"
+                          className="gita-sidebar-clear-all"
+                          onClick={handleClearAllHistory}
+                          title="બધા સંવાદો કાઢી નાખો"
+                        >
+                          <Trash2 size={12} />
+                          <span>તમામ ઇતિહાસ સાફ કરો</span>
+                        </button>
+                      )}
+
                       <div
                         className="gita-sidebar-user-card"
                         onClick={() => {
@@ -1284,18 +1296,6 @@ export default function GitaAIAssistant() {
                         </div>
                         <ChevronRight size={15} className="gita-sidebar-user-arrow" />
                       </div>
-
-                      {historyList.length > 0 && (
-                        <button
-                          type="button"
-                          className="gita-sidebar-clear-all"
-                          onClick={handleClearAllHistory}
-                          title="બધા સંવાદો કાઢી નાખો"
-                        >
-                          <Trash2 size={12} />
-                          <span>તમામ ઇતિહાસ સાફ કરો</span>
-                        </button>
-                      )}
                     </div>
                   ) : (
                     <div
