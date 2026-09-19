@@ -1820,65 +1820,126 @@
 /* Sidebar Footer */
 .gita-sidebar-footer {
   flex: 0 0 auto;
-  padding: 10px 12px;
-  border-top: 1px solid rgba(17, 85, 204, 0.12);
-  background: #eaf2fc;
+  padding: 10px 10px 12px;
+  border-top: 1px solid rgba(17, 85, 204, 0.14);
+  background: #f0f6ff;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .gita-ai-wrapper.dark .gita-sidebar-footer {
-  border-top-color: rgba(80, 140, 255, 0.16);
-  background: #071536;
+  border-top-color: rgba(80, 140, 255, 0.18);
+  background: #06132e;
 }
 
-.gita-sidebar-auth-card {
-  background: rgba(17, 85, 204, 0.06);
-  border: 1px solid rgba(17, 85, 204, 0.2);
-  border-radius: 9px;
-  padding: 8px 10px;
+.gita-sidebar-user-section {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  text-align: center;
-}
-
-.gita-sidebar-auth-card p {
-  font-size: 0.74rem;
-  color: #0a3d8f;
-  margin: 0;
-  font-weight: 500;
-}
-
-.gita-ai-wrapper.dark .gita-sidebar-auth-card p {
-  color: #93c5fd;
-}
-
-.gita-sidebar-login-btn {
+  gap: 8px;
   width: 100%;
-  padding: 6px 10px;
-  border-radius: 7px;
-  border: none;
-  background: linear-gradient(135deg, #0a3d8f, #1155cc);
-  color: #ffffff;
-  font-size: 0.78rem;
-  font-weight: 600;
+}
+
+.gita-sidebar-user-card {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: #ffffff;
+  border: 1px solid rgba(17, 85, 204, 0.18);
   cursor: pointer;
-  transition: all 0.18s ease;
+  transition: all 0.2s ease;
+  user-select: none;
+  box-shadow: 0 1px 4px rgba(10, 61, 143, 0.05);
+}
+
+.gita-sidebar-user-card:hover {
+  background: #e6f0fd;
+  border-color: rgba(17, 85, 204, 0.38);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(10, 61, 143, 0.12);
+}
+
+.gita-ai-wrapper.dark .gita-sidebar-user-card {
+  background: #091c3f;
+  border-color: rgba(80, 140, 255, 0.22);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+}
+
+.gita-ai-wrapper.dark .gita-sidebar-user-card:hover {
+  background: #0e2756;
+  border-color: rgba(80, 140, 255, 0.45);
+}
+
+.gita-sidebar-user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0a3d8f 0%, #1155cc 100%);
+  color: #ffd54f;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
   box-shadow: 0 2px 6px rgba(10, 61, 143, 0.25);
+  border: 1.5px solid rgba(255, 215, 0, 0.45);
 }
 
-.gita-sidebar-login-btn:hover {
-  background: linear-gradient(135deg, #08337a, #0e4bb3);
-  box-shadow: 0 3px 8px rgba(10, 61, 143, 0.35);
-}
-
-.gita-ai-wrapper.dark .gita-sidebar-login-btn {
-  background: linear-gradient(135deg, #1155cc, #2563eb);
+.gita-sidebar-user-avatar.guest {
+  background: linear-gradient(135deg, #64748b, #475569);
   color: #ffffff;
-  box-shadow: 0 2px 8px rgba(17, 85, 204, 0.35);
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
-.gita-ai-wrapper.dark .gita-sidebar-login-btn:hover {
-  background: linear-gradient(135deg, #0f4bb5, #1d4ed8);
+.gita-sidebar-user-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  flex: 1;
+}
+
+.gita-sidebar-user-name {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #0c234b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.25;
+}
+
+.gita-ai-wrapper.dark .gita-sidebar-user-name {
+  color: #f1f5f9;
+}
+
+.gita-sidebar-user-id {
+  font-size: 0.69rem;
+  color: #64748b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.25;
+  margin-top: 1px;
+}
+
+.gita-ai-wrapper.dark .gita-sidebar-user-id {
+  color: #94a3b8;
+}
+
+.gita-sidebar-user-arrow {
+  color: #94a3b8;
+  flex-shrink: 0;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.gita-sidebar-user-card:hover .gita-sidebar-user-arrow {
+  color: #1155cc;
+  transform: translateX(2px);
+}
+
+.gita-ai-wrapper.dark .gita-sidebar-user-card:hover .gita-sidebar-user-arrow {
+  color: #ffd54f;
 }
 
 .gita-sidebar-clear-all {
@@ -1887,12 +1948,12 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 7px 10px;
+  padding: 6px 10px;
   border-radius: 7px;
   border: 1px solid rgba(239, 68, 68, 0.2);
   background: transparent;
   color: #ef4444;
-  font-size: 0.76rem;
+  font-size: 0.74rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.18s ease;

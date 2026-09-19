@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   Sparkles,
+  User,
   Send,
   RotateCcw,
   X,
@@ -1256,30 +1257,63 @@ export default function GitaAIAssistant() {
                   )}
                 </div>
 
-                {/* Sidebar Footer */}
+                {/* Sidebar Footer - User Profile Section */}
                 <div className="gita-sidebar-footer">
-                  {!user ? (
-                    <div className="gita-sidebar-auth-card">
-                      <p>બધા ડીવાઈસમાં હિસ્ટ્રી મેળવવા માટે</p>
-                      <button
-                        type="button"
-                        className="gita-sidebar-login-btn"
-                        onClick={handleGoToLogin}
+                  {user ? (
+                    <div className="gita-sidebar-user-section">
+                      <div
+                        className="gita-sidebar-user-card"
+                        onClick={() => {
+                          setIsOpen(false);
+                          navigate("/profile");
+                        }}
+                        title="પ્રોફાઇલ જુઓ"
+                        role="button"
+                        tabIndex={0}
                       >
-                        Login કરો →
-                      </button>
+                        <div className="gita-sidebar-user-avatar">
+                          <User size={16} />
+                        </div>
+                        <div className="gita-sidebar-user-info">
+                          <span className="gita-sidebar-user-name">
+                            {user.name || "વપરાશકર્તા"}
+                          </span>
+                          <span className="gita-sidebar-user-id" title={user.email || ""}>
+                            {user.email || (user._id || user.id ? `ID: #${String(user._id || user.id).slice(-6).toUpperCase()}` : "સભ્ય પ્રોફાઇલ")}
+                          </span>
+                        </div>
+                        <ChevronRight size={15} className="gita-sidebar-user-arrow" />
+                      </div>
+
+                      {historyList.length > 0 && (
+                        <button
+                          type="button"
+                          className="gita-sidebar-clear-all"
+                          onClick={handleClearAllHistory}
+                          title="બધા સંવાદો કાઢી નાખો"
+                        >
+                          <Trash2 size={12} />
+                          <span>તમામ ઇતિહાસ સાફ કરો</span>
+                        </button>
+                      )}
                     </div>
                   ) : (
-                    historyList.length > 0 && (
-                      <button
-                        type="button"
-                        className="gita-sidebar-clear-all"
-                        onClick={handleClearAllHistory}
-                      >
-                        <Trash2 size={13} />
-                        <span>તમામ ઇતિહાસ સાફ કરો</span>
-                      </button>
-                    )
+                    <div
+                      className="gita-sidebar-user-card guest"
+                      onClick={handleGoToLogin}
+                      title="Login કરો"
+                      role="button"
+                      tabIndex={0}
+                    >
+                      <div className="gita-sidebar-user-avatar guest">
+                        <User size={16} />
+                      </div>
+                      <div className="gita-sidebar-user-info">
+                        <span className="gita-sidebar-user-name">અતિથિ (Guest)</span>
+                        <span className="gita-sidebar-user-id">Login કરો →</span>
+                      </div>
+                      <ChevronRight size={15} className="gita-sidebar-user-arrow" />
+                    </div>
                   )}
                 </div>
               </aside>
