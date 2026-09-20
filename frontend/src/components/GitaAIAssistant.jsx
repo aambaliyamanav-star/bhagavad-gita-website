@@ -1054,22 +1054,6 @@ export default function GitaAIAssistant() {
                   <span>{conv.isPinned ? "અનપિન કરો" : "પિન કરો"}</span>
                 </button>
 
-                {/* 4. Archive / Unarchive */}
-                <button
-                  type="button"
-                  className="gita-sidebar-menu-item"
-                  onClick={(e) => handleToggleArchive(e, conv.id)}
-                >
-                  {conv.isArchived ? (
-                    <ArchiveRestore size={13} />
-                  ) : (
-                    <Archive size={13} />
-                  )}
-                  <span>
-                    {conv.isArchived ? "અન-આર્કાઇવ કરો" : "આર્કાઇવ કરો"}
-                  </span>
-                </button>
-
                 <div className="gita-sidebar-menu-divider" />
 
                 {/* 5. Delete */}
@@ -1461,26 +1445,6 @@ export default function GitaAIAssistant() {
                         >
                           {activeConv.isPinned ? <PinOff size={13} /> : <Pin size={13} />}
                           <span>{activeConv.isPinned ? "અનપિન કરો" : "પિન કરો"}</span>
-                        </button>
-
-                        {/* 4. Archive / Unarchive */}
-                        <button
-                          type="button"
-                          className="gita-sidebar-menu-item"
-                          onClick={(e) => {
-                            setIsHeaderMenuOpen(false);
-                            handleToggleArchive(e, activeConv.id);
-                            setHistoryList(getAllConversations());
-                          }}
-                        >
-                          {activeConv.isArchived ? (
-                            <ArchiveRestore size={13} />
-                          ) : (
-                            <Archive size={13} />
-                          )}
-                          <span>
-                            {activeConv.isArchived ? "અન-આર્કાઇવ કરો" : "આર્કાઇવ કરો"}
-                          </span>
                         </button>
 
                         <div className="gita-sidebar-menu-divider" />
