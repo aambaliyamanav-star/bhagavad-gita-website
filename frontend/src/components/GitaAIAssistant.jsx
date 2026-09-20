@@ -282,6 +282,11 @@ export default function GitaAIAssistant() {
   const [showArchived, setShowArchived] = useState(false);
   const [toastMessage, setToastMessage] = useState(null);
 
+  // Top header 3-dots menu & rename states
+  const [isHeaderMenuOpen, setIsHeaderMenuOpen] = useState(false);
+  const [isHeaderRenameOpen, setIsHeaderRenameOpen] = useState(false);
+  const [headerRenameTitle, setHeaderRenameTitle] = useState("");
+
   const hasUserMessages = messages.some((m) => m.sender === "user");
   const hasAiAnswers = messages.some(
     (m) => m.sender === "ai" && !m.isGreetingPrompt && !m.id?.startsWith("greeting_")
@@ -296,6 +301,52 @@ export default function GitaAIAssistant() {
     setTimeout(() => {
       setToastMessage((cur) => (cur === msg ? null : cur));
     }, 2500);
+  };
+
+  // Retrieve or resolve the current active conversation object
+  const getActiveConversation = () => {
+    let conv =
+      (activeConvId ? getConversationById(activeConvId) : null) ||
+      historyList.find((c) => c.id === activeConvId);
+
+    if (!conv && hasUserMessages) {
+      const convId = activeConvId || `gita_chat_${Date.now()}`;
+      if (!activeConvId) {
+        setActiveConvId(convId);
+      }
+      const realMessages = messages.filter(
+        (m) =>
+          !m.isGreetingPrompt &&
+          !m.id?.startsWith("greeting_") &&
+          !m.text?.includes("નવી વાતચીત માટે હું તૈયાર છું")
+      );
+      const firstUserMsg = realMessages.find((m) => m.sender === "user");
+      const title = firstUserMsg
+        ? firstUserMsg.text.slice(0, 45) + (firstUserMsg.text.length > 45 ? "..." : "")
+        : "આધ્યાત્મિક સંવાદ";
+
+      conv = {
+        id: convId,
+        title,
+        messages: realMessages,
+        isPinned: false,
+        isArchived: false,
+      };
+    }
+    return conv;
+  };
+
+  const activeConv = hasUserMessages ? getActiveConversation() : null;
+
+  // Header Rename submit handler
+  const handleHeaderRenameSubmit = (e) => {
+    if (e) e.preventDefault();
+    if (headerRenameTitle.trim() && activeConv?.id) {
+      renameConversation(activeConv.id, headerRenameTitle.trim());
+      setHistoryList(getAllConversations());
+      showToast("નામ અપડેટ થઈ ગયું.");
+    }
+    setIsHeaderRenameOpen(false);
   };
 
   // Load and listen for history updates
@@ -330,11 +381,14 @@ export default function GitaAIAssistant() {
     };
   }, []);
 
-  // Close 3-dots dropdown menu when clicking outside
+  // Close 3-dots dropdown menus when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (!e.target.closest(".gita-sidebar-menu-wrapper")) {
         setMenuOpenConvId(null);
+      }
+      if (!e.target.closest(".gita-header-menu-wrapper")) {
+        setIsHeaderMenuOpen(false);
       }
     };
     document.addEventListener("click", handleClickOutside);
@@ -520,6 +574,8 @@ export default function GitaAIAssistant() {
     setActiveConversationId(null);
     setActiveConvId(null);
     setMessages([]);
+    setIsHeaderMenuOpen(false);
+    setIsHeaderRenameOpen(false);
   };
 
   // Send message
@@ -1344,6 +1400,110 @@ export default function GitaAIAssistant() {
               </div>
 
               <div className="gita-ai-header-actions">
+                {/* 3-Dots Action Button & Dropdown Menu (Only visible when chatting) */}
+                {hasUserMessages && activeConv && (
+                  <div className="gita-header-menu-wrapper">
+                    <button
+                      type="button"
+                      className={`gita-ai-icon-btn ${isHeaderMenuOpen ? "active" : ""}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setIsHeaderMenuOpen((prev) => !prev);
+                      }}
+                      title="વધુ વિકલ્પો"
+                      aria-label="વધુ વિકલ્પો"
+                    >
+                      <MoreHorizontal size={18} />
+                    </button>
+
+                    {isHeaderMenuOpen && (
+                      <div
+                        className="gita-sidebar-menu-dropdown gita-header-menu-dropdown"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {/* 1. Share */}
+                        <button
+                          type="button"
+                          className="gita-sidebar-menu-item"
+                          onClick={(e) => {
+                            setIsHeaderMenuOpen(false);
+                            handleShareConversation(e, activeConv);
+                          }}
+                        >
+                          <Share2 size={13} />
+                          <span>શેર કરો</span>
+                        </button>
+
+                        {/* 2. Rename */}
+                        <button
+                          type="button"
+                          className="gita-sidebar-menu-item"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setIsHeaderMenuOpen(false);
+                            setHeaderRenameTitle(activeConv.title || "");
+                            setIsHeaderRenameOpen(true);
+                          }}
+                        >
+                          <Pencil size={13} />
+                          <span>નામ બદલો</span>
+                        </button>
+
+                        {/* 3. Pin / Unpin */}
+                        <button
+                          type="button"
+                          className="gita-sidebar-menu-item"
+                          onClick={(e) => {
+                            setIsHeaderMenuOpen(false);
+                            handleTogglePin(e, activeConv.id);
+                            setHistoryList(getAllConversations());
+                          }}
+                        >
+                          {activeConv.isPinned ? <PinOff size={13} /> : <Pin size={13} />}
+                          <span>{activeConv.isPinned ? "અનપિન કરો" : "પિન કરો"}</span>
+                        </button>
+
+                        {/* 4. Archive / Unarchive */}
+                        <button
+                          type="button"
+                          className="gita-sidebar-menu-item"
+                          onClick={(e) => {
+                            setIsHeaderMenuOpen(false);
+                            handleToggleArchive(e, activeConv.id);
+                            setHistoryList(getAllConversations());
+                          }}
+                        >
+                          {activeConv.isArchived ? (
+                            <ArchiveRestore size={13} />
+                          ) : (
+                            <Archive size={13} />
+                          )}
+                          <span>
+                            {activeConv.isArchived ? "અન-આર્કાઇવ કરો" : "આર્કાઇવ કરો"}
+                          </span>
+                        </button>
+
+                        <div className="gita-sidebar-menu-divider" />
+
+                        {/* 5. Delete */}
+                        <button
+                          type="button"
+                          className="gita-sidebar-menu-item danger"
+                          onClick={(e) => {
+                            setIsHeaderMenuOpen(false);
+                            if (window.confirm("શું તમે આ સંવાદ ડીલીટ કરવા માંગો છો?")) {
+                              handleDeleteHistoryItem(e, activeConv.id);
+                            }
+                          }}
+                        >
+                          <Trash2 size={13} />
+                          <span>ડીલીટ કરો</span>
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 {/* New Conversation Button */}
                 <button
                   type="button"
@@ -1557,6 +1717,58 @@ export default function GitaAIAssistant() {
               </button>
             </div>
           </footer>
+
+          {/* Rename Modal for Header 3-Dots Menu */}
+          {isHeaderRenameOpen && (
+            <div
+              className="gita-rename-modal-overlay"
+              onClick={() => setIsHeaderRenameOpen(false)}
+            >
+              <div
+                className="gita-rename-modal"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="gita-rename-modal-header">
+                  <Pencil size={17} className="gita-rename-modal-icon" />
+                  <h4>સંવાદનું નામ બદલો</h4>
+                </div>
+                <form onSubmit={handleHeaderRenameSubmit}>
+                  <input
+                    type="text"
+                    className="gita-rename-modal-input"
+                    value={headerRenameTitle}
+                    onChange={(e) => setHeaderRenameTitle(e.target.value)}
+                    placeholder="સંવાદનું નામ લખો..."
+                    autoFocus
+                    maxLength={60}
+                  />
+                  <div className="gita-rename-modal-actions">
+                    <button
+                      type="button"
+                      className="gita-rename-btn cancel"
+                      onClick={() => setIsHeaderRenameOpen(false)}
+                    >
+                      રદ કરો
+                    </button>
+                    <button
+                      type="submit"
+                      className="gita-rename-btn save"
+                      disabled={!headerRenameTitle.trim()}
+                    >
+                      સાચવો
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* Floating Toast Notification */}
+          {toastMessage && (
+            <div className="gita-ai-toast">
+              <span>{toastMessage}</span>
+            </div>
+          )}
 
         </div>
       </div>
