@@ -115,11 +115,34 @@ const submitFeedback = async (req, res) => {
         ? category
         : "suggestion";
 
+      // If user is updating, find their earlier feedback to populate previousMessage & previousRating
+      let prevFeedbackMessage = "";
+      let prevFeedbackRating = null;
+
+      const userCriteria = [];
+      if (req.userId) userCriteria.push({ userId: req.userId });
+      if (email && email.trim().length > 0) userCriteria.push({ email: email.toLowerCase().trim() });
+
+      if (userCriteria.length > 0) {
+        const lastFb = await Feedback.findOne({
+          $or: userCriteria,
+          status: "active",
+        }).sort({ createdAt: -1 });
+
+        if (lastFb) {
+          prevFeedbackMessage = lastFb.message || "";
+          prevFeedbackRating = lastFb.rating || null;
+        }
+      }
+
       savedFeedback = await Feedback.create({
         userId: req.userId || null,
         name,
         email,
         rating: finalRatingNum > 0 ? finalRatingNum : 5,
+        previousRating: prevFeedbackRating,
+        previousMessage: prevFeedbackMessage,
+        isUpdatedRating: ratingUpdated || Boolean(prevFeedbackRating),
         category: finalCategory,
         message: message.trim(),
         device: device || "",
@@ -163,19 +186,10 @@ const submitFeedback = async (req, res) => {
 // =====================================================
 const calculateUniqueLatestRatings = async () => {
   const userRatingsMap = new Map();
+  const seenUserIds = new Set();
+  const seenEmails = new Set();
 
-  // 1. Gather all active unique ratings from Rating collection
-  const ratingDocs = await Rating.find({}).lean();
-  ratingDocs.forEach((r) => {
-    const key = r.userId
-      ? String(r.userId)
-      : (r.userEmail ? `email:${r.userEmail.toLowerCase()}` : String(r._id));
-    if (r.rating >= 1 && r.rating <= 5) {
-      userRatingsMap.set(key, r.rating);
-    }
-  });
-
-  // 2. Also check Feedbacks to include any raters (sorted newest first)
+  // 1. Gather all active feedbacks sorted newest first (createdAt: -1)
   const allFeedbacks = await Feedback.find({
     status: "active",
     rating: { $gte: 1, $lte: 5 },
@@ -184,11 +198,34 @@ const calculateUniqueLatestRatings = async () => {
     .lean();
 
   allFeedbacks.forEach((fb) => {
-    const key = fb.userId
-      ? String(fb.userId)
-      : (fb.email ? `email:${fb.email.toLowerCase()}` : `fb:${fb._id}`);
-    if (!userRatingsMap.has(key)) {
-      userRatingsMap.set(key, fb.rating);
+    const uid = fb.userId ? String(fb.userId) : null;
+    const email = fb.email && fb.email.trim() ? fb.email.toLowerCase().trim() : null;
+
+    const alreadySeen = (uid && seenUserIds.has(uid)) || (email && seenEmails.has(email));
+
+    if (!alreadySeen) {
+      if (uid) seenUserIds.add(uid);
+      if (email) seenEmails.add(email);
+
+      const uniqueKey = uid || (email ? `email:${email}` : `fb:${fb._id}`);
+      userRatingsMap.set(uniqueKey, fb.rating);
+    }
+  });
+
+  // 2. Also check Rating collection in case a user gave a rating without feedback document
+  const ratingDocs = await Rating.find({}).lean();
+  ratingDocs.forEach((r) => {
+    const uid = r.userId ? String(r.userId) : null;
+    const email = r.userEmail && r.userEmail.trim() ? r.userEmail.toLowerCase().trim() : null;
+
+    const alreadySeen = (uid && seenUserIds.has(uid)) || (email && seenEmails.has(email));
+
+    if (!alreadySeen && r.rating >= 1 && r.rating <= 5) {
+      if (uid) seenUserIds.add(uid);
+      if (email) seenEmails.add(email);
+
+      const uniqueKey = uid || (email ? `email:${email}` : String(r._id));
+      userRatingsMap.set(uniqueKey, r.rating);
     }
   });
 
@@ -384,7 +421,7 @@ const getAdminFeedbacks = async (req, res) => {
 const deleteFeedback = async (req, res) => {
   try {
     const { id } = req.params;
-    const feedback = await Feedback.findByIdAndDelete(id);
+    const feedback = await Feedback.findById(id);
 
     if (!feedback) {
       return res.status(404).json({
@@ -393,9 +430,53 @@ const deleteFeedback = async (req, res) => {
       });
     }
 
+    const userId = feedback.userId ? String(feedback.userId) : null;
+    const userEmail = feedback.email && feedback.email.trim() ? feedback.email.toLowerCase().trim() : null;
+
+    // 1. Delete all feedbacks from this user so no stale entries remain
+    const userFilter = [];
+    if (userId) userFilter.push({ userId });
+    if (userEmail) userFilter.push({ email: userEmail });
+
+    if (userFilter.length > 0) {
+      await Feedback.deleteMany({ $or: userFilter });
+    } else {
+      await Feedback.findByIdAndDelete(id);
+    }
+
+    // 2. Delete user's rating record completely so they can give a fresh rating again!
+    if (userId) {
+      await Rating.deleteMany({ userId });
+    }
+    if (userEmail) {
+      await Rating.deleteMany({ userEmail });
+    }
+
+    // 3. Recalculate unique latest rating stats immediately
+    const { totalRatings, averageRating, distribution } = await calculateUniqueLatestRatings();
+
+    const categoryCounts = {
+      suggestion: await Feedback.countDocuments({ category: "suggestion" }),
+      feedback: await Feedback.countDocuments({ category: "feedback" }),
+      bug: await Feedback.countDocuments({ category: "bug" }),
+      appreciation: await Feedback.countDocuments({ category: "appreciation" }),
+    };
+
+    const totalFeedbacks = await Feedback.countDocuments({});
+
     return res.status(200).json({
       success: true,
-      message: "પ્રતિસાદ સફળતાપૂર્વક ડિલીટ થયો.",
+      message: "પ્રતિસાદ સફળતાપૂર્વક ડિલીટ થયો અને યુઝર ફરીથી રેટિંગ આપી શકશે.",
+      deletedId: id,
+      deletedUserId: userId,
+      deletedUserEmail: userEmail,
+      summary: {
+        totalRatings,
+        totalFeedbacks,
+        averageRating,
+        distribution,
+        categoryCounts,
+      },
     });
   } catch (error) {
     console.error("Delete Feedback Error:", error);

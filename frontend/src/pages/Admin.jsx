@@ -286,7 +286,29 @@ function Admin() {
             headers: { Authorization: `Bearer ${token}` },
           });
           if (res.ok) {
-            setFeedbacks((prev) => prev.filter((f) => f._id !== id));
+            const data = await res.json().catch(() => null);
+            if (data?.summary) {
+              setFeedbackSummary(data.summary);
+            }
+            if (data?.deletedUserId || data?.deletedUserEmail) {
+              setFeedbacks((prev) =>
+                prev.filter((f) => {
+                  if (f._id === id) return false;
+                  if (data?.deletedUserId) {
+                    const fUid = f.userId?._id ? String(f.userId._id) : (f.userId ? String(f.userId) : null);
+                    if (fUid && fUid === String(data.deletedUserId)) return false;
+                  }
+                  if (data?.deletedUserEmail && f.email) {
+                    if (f.email.toLowerCase().trim() === data.deletedUserEmail.toLowerCase().trim()) return false;
+                  }
+                  return true;
+                })
+              );
+            } else {
+              setFeedbacks((prev) => prev.filter((f) => f._id !== id));
+            }
+            // Background sync for complete consistency
+            fetchFeedbacks(true);
             break;
           }
         } catch {
