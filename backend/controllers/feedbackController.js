@@ -15,14 +15,31 @@ const getMyRating = async (req, res) => {
       });
     }
 
-    const userRatingDoc = await Rating.findOne({ userId: req.userId }).lean();
+    // Check if user has an active feedback
+    const activeFeedback = await Feedback.findOne({
+      userId: req.userId,
+      status: "active",
+    });
 
-    if (!userRatingDoc) {
+    if (!activeFeedback) {
+      // If user has no active feedback in the system, clean up any orphaned Rating document!
+      await Rating.deleteMany({ userId: req.userId });
       return res.status(200).json({
         success: true,
         hasRated: false,
         rating: 0,
         isLocked: false,
+      });
+    }
+
+    const userRatingDoc = await Rating.findOne({ userId: req.userId }).lean();
+
+    if (!userRatingDoc) {
+      return res.status(200).json({
+        success: true,
+        hasRated: true,
+        rating: activeFeedback.rating,
+        isLocked: activeFeedback.rating === 5,
       });
     }
 
@@ -212,22 +229,10 @@ const calculateUniqueLatestRatings = async () => {
     }
   });
 
-  // 2. Also check Rating collection in case a user gave a rating without feedback document
-  const ratingDocs = await Rating.find({}).lean();
-  ratingDocs.forEach((r) => {
-    const uid = r.userId ? String(r.userId) : null;
-    const email = r.userEmail && r.userEmail.trim() ? r.userEmail.toLowerCase().trim() : null;
-
-    const alreadySeen = (uid && seenUserIds.has(uid)) || (email && seenEmails.has(email));
-
-    if (!alreadySeen && r.rating >= 1 && r.rating <= 5) {
-      if (uid) seenUserIds.add(uid);
-      if (email) seenEmails.add(email);
-
-      const uniqueKey = uid || (email ? `email:${email}` : String(r._id));
-      userRatingsMap.set(uniqueKey, r.rating);
-    }
-  });
+  // If no active feedbacks remain, ensure Rating collection is also completely purged
+  if (allFeedbacks.length === 0) {
+    await Rating.deleteMany({});
+  }
 
   const ratings = Array.from(userRatingsMap.values());
   const totalCount = ratings.length;
