@@ -45,14 +45,14 @@ app.use("/api/notifications", notificationRoutes);
 
 // =====================================================
 // PUSH NOTIFICATION CRON JOBS
-// Send 5 times a day (IST): 8:00 AM, 12:00 PM, 4:00 PM, 8:00 PM, 10:00 PM
+// Send 5 times a day (IST): 8:00 AM, 12:00 PM, 4:00 PM, 7:00 PM, 10:00 PM
 // Automatically skips users who completed their daily goals (shlok + quiz)!
 // =====================================================
 const reminderTimes = [
   "0 8 * * *",   // 08:00 AM IST
   "0 12 * * *",  // 12:00 PM IST
   "0 16 * * *",  // 04:00 PM IST
-  "0 20 * * *",  // 08:00 PM IST
+  "0 19 * * *",  // 07:00 PM IST
   "0 22 * * *",  // 10:00 PM IST
 ];
 
