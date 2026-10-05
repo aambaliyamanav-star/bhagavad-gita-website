@@ -49,14 +49,6 @@ const submitFeedback = async (req, res) => {
     const { category, message, device } = req.body;
     let { rating, name, email } = req.body;
 
-    // 1. Text message is COMPULSORY for every submission (first time or updating)
-    if (!message || !message.trim()) {
-      return res.status(400).json({
-        success: false,
-        message: "કૃપા કરીને આપનો પ્રતિસાદ અથવા સૂચન અવશ્ય લખો (લખાણ ફરજિયાત છે).",
-      });
-    }
-
     // Handle user identification
     if (req.user) {
       name = name && name.trim().length > 0 ? name.trim() : (req.user.name || "ભક્ત");
@@ -66,37 +58,21 @@ const submitFeedback = async (req, res) => {
       email = email ? email.trim() : "";
     }
 
-    // Find the most recent previous feedback by this user to capture previousMessage
-    let previousFeedbackDoc = null;
-    if (req.userId) {
-      previousFeedbackDoc = await Feedback.findOne({ userId: req.userId }).sort({ createdAt: -1 });
-    } else if (email) {
-      previousFeedbackDoc = await Feedback.findOne({ email: email.toLowerCase() }).sort({ createdAt: -1 });
-    }
-
     let finalRatingNum = rating !== undefined && rating !== null ? Number(rating) : 0;
     let isRatingLocked = false;
     let ratingUpdated = false;
-    let previousRating = null;
-    let previousMessage = previousFeedbackDoc ? (previousFeedbackDoc.message || "") : "";
-    let isUpdatedRating = false;
 
     // Handle Star Rating logic (Strictly 1 per account, lockable at 5)
     if (req.userId && finalRatingNum >= 1 && finalRatingNum <= 5) {
       let existingRating = await Rating.findOne({ userId: req.userId });
 
       if (existingRating) {
-        previousRating = existingRating.rating;
         if (existingRating.isLocked || existingRating.rating === 5) {
           // Already locked at 5 stars! Cannot be changed.
           isRatingLocked = true;
           finalRatingNum = 5;
         } else {
-          // Update existing rating with old vs new tracking
-          if (previousRating !== finalRatingNum) {
-            isUpdatedRating = true;
-          }
-          existingRating.previousRating = previousRating;
+          // Update existing rating without creating a duplicate count!
           existingRating.rating = finalRatingNum;
           existingRating.userName = name;
           existingRating.userEmail = email;
@@ -115,44 +91,46 @@ const submitFeedback = async (req, res) => {
           userName: name,
           userEmail: email,
           rating: finalRatingNum,
-          previousRating: null,
           isLocked: lockNow,
         });
         isRatingLocked = lockNow;
         ratingUpdated = true;
       }
     } else if (req.userId) {
+      // If user didn't specify rating in this submission, fetch their current rating if exists
       const existingRating = await Rating.findOne({ userId: req.userId });
       if (existingRating) {
         finalRatingNum = existingRating.rating;
-        previousRating = existingRating.previousRating || null;
         isRatingLocked = existingRating.isLocked;
       }
     }
 
-    // Fallback: If previousRating not in Rating collection, take from previous feedback
-    if (!previousRating && previousFeedbackDoc) {
-      previousRating = previousFeedbackDoc.rating;
+    // Handle Suggestion / Message submission (Unlimited submissions allowed per account)
+    let savedFeedback = null;
+    const hasMessage = message && message.trim().length > 0;
+
+    if (hasMessage) {
+      const validCategories = ["suggestion", "feedback", "bug", "appreciation"];
+      const finalCategory = validCategories.includes(category)
+        ? category
+        : "suggestion";
+
+      savedFeedback = await Feedback.create({
+        userId: req.userId || null,
+        name,
+        email,
+        rating: finalRatingNum > 0 ? finalRatingNum : 5,
+        category: finalCategory,
+        message: message.trim(),
+        device: device || "",
+        status: "active",
+      });
+    } else if (!ratingUpdated && !hasMessage) {
+      return res.status(400).json({
+        success: false,
+        message: "કૃપા કરીને તમારું સૂચન લખો અથવા રેટિંગ આપો.",
+      });
     }
-
-    const validCategories = ["suggestion", "feedback", "bug", "appreciation"];
-    const finalCategory = validCategories.includes(category)
-      ? category
-      : "suggestion";
-
-    const savedFeedback = await Feedback.create({
-      userId: req.userId || null,
-      name,
-      email,
-      rating: finalRatingNum > 0 ? finalRatingNum : 5,
-      previousRating: (isUpdatedRating || previousFeedbackDoc) ? previousRating : null,
-      previousMessage: (isUpdatedRating || previousFeedbackDoc) ? previousMessage : "",
-      isUpdatedRating: isUpdatedRating || Boolean(previousFeedbackDoc && previousRating && previousRating !== finalRatingNum),
-      category: finalCategory,
-      message: message.trim(),
-      device: device || "",
-      status: "active",
-    });
 
     let responseMessage = "આપનો પ્રતિસાદ સફળતાપૂર્વક સબમિટ થયો છે. ધન્યવાદ!";
     if (ratingUpdated && isRatingLocked) {
@@ -178,39 +156,71 @@ const submitFeedback = async (req, res) => {
 };
 
 // =====================================================
+// HELPER: CALCULATE UNIQUE LATEST RATINGS PER USER
+// Guarantees each user is counted EXACTLY ONCE with their NEWEST rating!
+// No matter how many times a user updates their rating,
+// ONLY the latest rating is included in the average and total rating count.
+// =====================================================
+const calculateUniqueLatestRatings = async () => {
+  const userRatingsMap = new Map();
+
+  // 1. Gather all active unique ratings from Rating collection
+  const ratingDocs = await Rating.find({}).lean();
+  ratingDocs.forEach((r) => {
+    const key = r.userId
+      ? String(r.userId)
+      : (r.userEmail ? `email:${r.userEmail.toLowerCase()}` : String(r._id));
+    if (r.rating >= 1 && r.rating <= 5) {
+      userRatingsMap.set(key, r.rating);
+    }
+  });
+
+  // 2. Also check Feedbacks to include any raters (sorted newest first)
+  const allFeedbacks = await Feedback.find({
+    status: "active",
+    rating: { $gte: 1, $lte: 5 },
+  })
+    .sort({ createdAt: -1 })
+    .lean();
+
+  allFeedbacks.forEach((fb) => {
+    const key = fb.userId
+      ? String(fb.userId)
+      : (fb.email ? `email:${fb.email.toLowerCase()}` : `fb:${fb._id}`);
+    // If not already in userRatingsMap, this is the user's latest rating!
+    if (!userRatingsMap.has(key)) {
+      userRatingsMap.set(key, fb.rating);
+    }
+  });
+
+  const ratings = Array.from(userRatingsMap.values());
+  const totalCount = ratings.length;
+  let sum = 0;
+  const distribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+
+  ratings.forEach((r) => {
+    sum += r;
+    if (distribution[r] !== undefined) {
+      distribution[r] += 1;
+    }
+  });
+
+  const averageRating = totalCount > 0 ? Number((sum / totalCount).toFixed(1)) : 5.0;
+
+  return {
+    totalRatings: totalCount,
+    averageRating,
+    distribution,
+  };
+};
+
+// =====================================================
 // GET PUBLIC STATS & RECENT REVIEWS
 // =====================================================
 const getFeedbackStats = async (req, res) => {
   try {
-    // 1. Calculate ratings from Rating collection (Unique 1 per user)
-    const allRatings = await Rating.find({}, "rating").lean();
-    let totalRatings = allRatings.length;
-    let sum = 0;
-    const distribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+    const { totalRatings, averageRating, distribution } = await calculateUniqueLatestRatings();
 
-    allRatings.forEach((item) => {
-      const r = item.rating;
-      sum += r;
-      if (distribution[r] !== undefined) {
-        distribution[r] += 1;
-      }
-    });
-
-    // Fallback: If Rating collection has few entries, also aggregate distinct ratings from Feedbacks
-    if (totalRatings === 0) {
-      const feedbacks = await Feedback.find({ status: "active" }, "rating").lean();
-      totalRatings = feedbacks.length;
-      feedbacks.forEach((item) => {
-        sum += item.rating;
-        if (distribution[item.rating] !== undefined) {
-          distribution[item.rating] += 1;
-        }
-      });
-    }
-
-    const averageRating = totalRatings > 0 ? Number((sum / totalRatings).toFixed(1)) : 5.0;
-
-    // 2. Calculate category counts from Feedbacks (Suggestions, bugs, etc.)
     const categoryCounts = {
       suggestion: await Feedback.countDocuments({ category: "suggestion" }),
       feedback: await Feedback.countDocuments({ category: "feedback" }),
@@ -220,7 +230,6 @@ const getFeedbackStats = async (req, res) => {
 
     const totalFeedbacks = await Feedback.countDocuments({ status: "active" });
 
-    // 3. Latest reviews for public showcase
     const recentReviews = await Feedback.find({ status: "active" })
       .sort({ createdAt: -1 })
       .select("name rating category message createdAt")
@@ -230,7 +239,7 @@ const getFeedbackStats = async (req, res) => {
     return res.status(200).json({
       success: true,
       stats: {
-        totalCount: totalRatings,
+        totalCount: totalRatings, // Only unique users' latest ratings counted!
         totalFeedbacks,
         averageRating,
         distribution,
@@ -301,7 +310,7 @@ const getAdminFeedbacks = async (req, res) => {
         let prevMsg = fb.previousMessage || "";
         let prevRating = fb.previousRating || null;
 
-        // If previousMessage is empty, search for earlier feedback from same user
+        // If either previousMessage or previousRating is empty, search for earlier feedback from same user
         if (!prevMsg && (fb.userId?._id || fb.email)) {
           const userFilter = fb.userId?._id
             ? { userId: fb.userId._id }
@@ -332,32 +341,8 @@ const getAdminFeedbacks = async (req, res) => {
       })
     );
 
-    // Calculate rating metrics from unique Ratings collection
-    const allRatings = await Rating.find({}, "rating").lean();
-    let totalRatings = allRatings.length;
-    let sum = 0;
-    const distribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-
-    allRatings.forEach((item) => {
-      sum += item.rating;
-      if (distribution[item.rating] !== undefined) {
-        distribution[item.rating] += 1;
-      }
-    });
-
-    if (totalRatings === 0) {
-      // Fallback to feedback entries if no Rating docs yet
-      const allFbs = await Feedback.find({}, "rating").lean();
-      totalRatings = allFbs.length;
-      allFbs.forEach((item) => {
-        sum += item.rating;
-        if (distribution[item.rating] !== undefined) {
-          distribution[item.rating] += 1;
-        }
-      });
-    }
-
-    const averageRating = totalRatings > 0 ? Number((sum / totalRatings).toFixed(1)) : 5.0;
+    // Calculate rating metrics from unique latest ratings
+    const { totalRatings, averageRating, distribution } = await calculateUniqueLatestRatings();
 
     const categoryCounts = {
       suggestion: await Feedback.countDocuments({ category: "suggestion" }),
@@ -377,9 +362,9 @@ const getAdminFeedbacks = async (req, res) => {
           limit,
         },
         summary: {
-          totalRatings,
+          totalRatings, // UNIQUE RATERS WITH ONLY LATEST RATINGS
           totalFeedbacks: await Feedback.countDocuments({}),
-          averageRating,
+          averageRating, // AVERAGE OF ONLY LATEST RATINGS
           distribution,
           categoryCounts,
         },
