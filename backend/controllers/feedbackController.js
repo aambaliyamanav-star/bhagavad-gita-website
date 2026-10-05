@@ -37,9 +37,9 @@ const getMyRating = async (req, res) => {
     if (!userRatingDoc) {
       return res.status(200).json({
         success: true,
-        hasRated: true,
-        rating: activeFeedback.rating,
-        isLocked: activeFeedback.rating === 5,
+        hasRated: false,
+        rating: 0,
+        isLocked: false,
       });
     }
 
@@ -66,7 +66,7 @@ const submitFeedback = async (req, res) => {
     const { category, message, device } = req.body;
     let { rating, name, email } = req.body;
 
-    // 1. Enforce compulsory message/text
+    // Enforce compulsory message/text
     if (!message || message.trim().length === 0) {
       return res.status(400).json({
         success: false,
@@ -203,10 +203,19 @@ const submitFeedback = async (req, res) => {
 // =====================================================
 const calculateUniqueLatestRatings = async () => {
   const userRatingsMap = new Map();
-  const seenUserIds = new Set();
-  const seenEmails = new Set();
 
-  // 1. Gather all active feedbacks sorted newest first (createdAt: -1)
+  // 1. Gather all active unique ratings from Rating collection
+  const ratingDocs = await Rating.find({}).lean();
+  ratingDocs.forEach((r) => {
+    const key = r.userId
+      ? String(r.userId)
+      : (r.userEmail ? `email:${r.userEmail.toLowerCase()}` : String(r._id));
+    if (r.rating >= 1 && r.rating <= 5) {
+      userRatingsMap.set(key, r.rating);
+    }
+  });
+
+  // 2. Also check Feedbacks to include any raters (sorted newest first)
   const allFeedbacks = await Feedback.find({
     status: "active",
     rating: { $gte: 1, $lte: 5 },
@@ -215,24 +224,13 @@ const calculateUniqueLatestRatings = async () => {
     .lean();
 
   allFeedbacks.forEach((fb) => {
-    const uid = fb.userId ? String(fb.userId) : null;
-    const email = fb.email && fb.email.trim() ? fb.email.toLowerCase().trim() : null;
-
-    const alreadySeen = (uid && seenUserIds.has(uid)) || (email && seenEmails.has(email));
-
-    if (!alreadySeen) {
-      if (uid) seenUserIds.add(uid);
-      if (email) seenEmails.add(email);
-
-      const uniqueKey = uid || (email ? `email:${email}` : `fb:${fb._id}`);
-      userRatingsMap.set(uniqueKey, fb.rating);
+    const key = fb.userId
+      ? String(fb.userId)
+      : (fb.email ? `email:${fb.email.toLowerCase()}` : `fb:${fb._id}`);
+    if (!userRatingsMap.has(key)) {
+      userRatingsMap.set(key, fb.rating);
     }
   });
-
-  // If no active feedbacks remain, ensure Rating collection is also completely purged
-  if (allFeedbacks.length === 0) {
-    await Rating.deleteMany({});
-  }
 
   const ratings = Array.from(userRatingsMap.values());
   const totalCount = ratings.length;
@@ -426,7 +424,7 @@ const getAdminFeedbacks = async (req, res) => {
 const deleteFeedback = async (req, res) => {
   try {
     const { id } = req.params;
-    const feedback = await Feedback.findById(id);
+    const feedback = await Feedback.findByIdAndDelete(id);
 
     if (!feedback) {
       return res.status(404).json({
@@ -438,26 +436,51 @@ const deleteFeedback = async (req, res) => {
     const userId = feedback.userId ? String(feedback.userId) : null;
     const userEmail = feedback.email && feedback.email.trim() ? feedback.email.toLowerCase().trim() : null;
 
-    // 1. Delete all feedbacks from this user so no stale entries remain
-    const userFilter = [];
-    if (userId) userFilter.push({ userId });
-    if (userEmail) userFilter.push({ email: userEmail });
+    // Check remaining feedbacks for this user
+    const userQuery = [];
+    if (userId) userQuery.push({ userId });
+    if (userEmail) userQuery.push({ email: userEmail });
 
-    if (userFilter.length > 0) {
-      await Feedback.deleteMany({ $or: userFilter });
+    let remainingFeedbacks = [];
+    if (userQuery.length > 0) {
+      remainingFeedbacks = await Feedback.find({
+        $or: userQuery,
+        status: "active",
+      }).sort({ createdAt: -1 });
+    }
+
+    if (remainingFeedbacks.length === 0) {
+      // If user has no more feedbacks left, delete their rating record completely so they can rate again
+      if (userId) await Rating.deleteMany({ userId });
+      if (userEmail) await Rating.deleteMany({ userEmail });
     } else {
-      await Feedback.findByIdAndDelete(id);
+      // If user still has other feedbacks, update their Rating doc to reflect their latest remaining feedback!
+      const newestRemaining = remainingFeedbacks[0];
+      const isLocked = newestRemaining.rating === 5;
+      const prevRating = remainingFeedbacks[1] ? remainingFeedbacks[1].rating : null;
+
+      if (userId) {
+        await Rating.findOneAndUpdate(
+          { userId },
+          {
+            rating: newestRemaining.rating,
+            isLocked: isLocked,
+            previousRating: prevRating,
+          }
+        );
+      } else if (userEmail) {
+        await Rating.findOneAndUpdate(
+          { userEmail },
+          {
+            rating: newestRemaining.rating,
+            isLocked: isLocked,
+            previousRating: prevRating,
+          }
+        );
+      }
     }
 
-    // 2. Delete user's rating record completely so they can give a fresh rating again!
-    if (userId) {
-      await Rating.deleteMany({ userId });
-    }
-    if (userEmail) {
-      await Rating.deleteMany({ userEmail });
-    }
-
-    // 3. Recalculate unique latest rating stats immediately
+    // Recalculate unique latest rating stats immediately
     const { totalRatings, averageRating, distribution } = await calculateUniqueLatestRatings();
 
     const categoryCounts = {
@@ -471,10 +494,8 @@ const deleteFeedback = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "પ્રતિસાદ સફળતાપૂર્વક ડિલીટ થયો અને યુઝર ફરીથી રેટિંગ આપી શકશે.",
+      message: "પ્રતિસાદ સફળતાપૂર્વક ડિલીટ થયો.",
       deletedId: id,
-      deletedUserId: userId,
-      deletedUserEmail: userEmail,
       summary: {
         totalRatings,
         totalFeedbacks,
