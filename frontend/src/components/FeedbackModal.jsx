@@ -156,14 +156,20 @@ export default function FeedbackModal() {
     e.preventDefault();
     setError("");
 
-    // Writing a message text is COMPULSORY for all submissions
-    if (!message || !message.trim()) {
-      setError("કૃપા કરીને આપનો પ્રતિસાદ અથવા સૂચન અવશ્ય લખો (લખાણ ફરજિયાત છે).");
+    // If rating is locked, user must provide a suggestion message
+    if (isLocked && !message.trim()) {
+      setError("આપનું ૫-સ્ટાર રેટિંગ પહેલેથી લૉક છે. કૃપા કરીને નવું સૂચન કે સમસ્યા લખો.");
       return;
     }
 
+    // If not locked and no message, user can at least submit a rating
     if (!isLocked && (!rating || rating < 1 || rating > 5)) {
       setError("કૃપા કરીને ૧ થી ૫ વચ્ચે સ્ટાર રેટિંગ પસંદ કરો.");
+      return;
+    }
+
+    if (!message.trim() && isLocked) {
+      setError("કૃપા કરીને આપનો પ્રતિસાદ અથવા સૂચન લખો.");
       return;
     }
 
@@ -462,16 +468,16 @@ export default function FeedbackModal() {
                   {/* Message Textarea */}
                   <div className="feedback-textarea-wrap">
                     <label className="feedback-group-title">
-                      આપનો પ્રતિસાદ અથવા સૂચન <span style={{ color: "#ef4444" }}>* (ફરજિયાત)</span>
+                      આપનું સૂચન અથવા સમસ્યા
                     </label>
                     <textarea
                       className="feedback-textarea"
-                      placeholder="આપનો પ્રતિસાદ, સૂચન કે સમસ્યા અહીં અવશ્ય લખો..."
+                      placeholder="કોઈ નવું સૂચન, સુધારો કે સમસ્યા હોય તો અહીં લખો..."
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       maxLength={1000}
                       rows={4}
-                      required
+                      required={isLocked}
                     />
                     <span className="feedback-char-counter">
                       {message.length} / 1000 અક્ષરો

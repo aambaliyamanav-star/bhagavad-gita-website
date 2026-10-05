@@ -1310,13 +1310,33 @@ function Admin() {
                   </span>
                 </div>
 
-                {/* 4. COMPULSORY MESSAGE CONTENT */}
-                <div className="admin-modal-message-box">
-                  <h4 className="admin-modal-message-title">
-                    <MessageSquare size={16} /> પ્રતિસાદ / સૂચન સંદેશ (ફરજિયાત):
-                  </h4>
-                  <p>{activeFeedbackModal.message}</p>
-                </div>
+                {/* 4. MESSAGES: BOTH OLD AND NEW SUGGESTIONS/MESSAGES */}
+                {activeFeedbackModal.previousMessage && activeFeedbackModal.previousMessage !== activeFeedbackModal.message ? (
+                  <div className="admin-modal-messages-comparison">
+                    {/* OLD SUGGESTION / MESSAGE */}
+                    <div className="admin-modal-message-box old-message">
+                      <h4 className="admin-modal-message-title old-title">
+                        <Clock size={16} /> અગાઉનું (જૂનું) સૂચન / સંદેશ:
+                      </h4>
+                      <p>{activeFeedbackModal.previousMessage}</p>
+                    </div>
+
+                    {/* NEW / UPDATED SUGGESTION / MESSAGE */}
+                    <div className="admin-modal-message-box new-message">
+                      <h4 className="admin-modal-message-title new-title">
+                        <Sparkles size={16} /> અપડેટેડ (નવું) સૂચન / સંદેશ:
+                      </h4>
+                      <p>{activeFeedbackModal.message}</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="admin-modal-message-box">
+                    <h4 className="admin-modal-message-title">
+                      <MessageSquare size={16} /> પ્રતિસાદ / સૂચન સંદેશ (ફરજિયાત):
+                    </h4>
+                    <p>{activeFeedbackModal.message}</p>
+                  </div>
+                )}
               </div>
 
               <div className="admin-modal-footer">

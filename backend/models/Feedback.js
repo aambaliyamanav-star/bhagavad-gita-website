@@ -30,6 +30,12 @@ const feedbackSchema = new mongoose.Schema(
       min: 1,
       max: 5,
     },
+    previousMessage: {
+      type: String,
+      default: "",
+      trim: true,
+      maxlength: 2000,
+    },
     isUpdatedRating: {
       type: Boolean,
       default: false,
