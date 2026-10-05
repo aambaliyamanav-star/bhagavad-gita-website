@@ -88,7 +88,7 @@ function Admin() {
       const data = await response.json();
       if (data.success) {
         alert(
-          `✅ નોટિફિકેશન સફળતાપૂર્વક મોકલાઈ ગયું!\nકુલ મુલાકાતીઓ: ${data.total || 0}\nસફળ: ${data.sent || 0}`
+          `નોટિફિકેશન સફળતાપૂર્વક મોકલાઈ ગયું!\nકુલ મુલાકાતીઓ: ${data.total || 0}\nસફળ: ${data.sent || 0}`
         );
       } else {
         alert("નોટિફિકેશન મોકલવામાં સમસ્યા આવી: " + (data.error || ""));
@@ -262,7 +262,7 @@ function Admin() {
       setDeletingId(null);
 
       alert(
-        "User successfully deleted. ✅"
+        "User successfully deleted."
       );
     } catch (error) {
       console.error(error);
