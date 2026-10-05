@@ -3359,16 +3359,30 @@ html[data-theme='dark'] .user-visits-icon,
   margin: 0 !important;
 }
 
-/* Feedback Cards Grid */
+/* Feedback Cards Grid: 3 in a row, max 2 rows visible (~255px), rest scrollable */
 .admin-feedbacks-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  max-height: 520px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  max-height: 255px;
   overflow-y: auto;
-  padding-right: 6px;
+  padding: 4px;
   scrollbar-width: thin;
   scrollbar-color: rgba(37, 99, 235, 0.35) transparent;
+}
+
+@media (max-width: 1024px) {
+  .admin-feedbacks-grid {
+    grid-template-columns: repeat(2, 1fr);
+    max-height: 265px;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-feedbacks-grid {
+    grid-template-columns: 1fr;
+    max-height: 280px;
+  }
 }
 
 .admin-feedbacks-grid::-webkit-scrollbar {
@@ -3386,6 +3400,164 @@ html[data-theme='dark'] .user-visits-icon,
 
 .admin-feedbacks-grid::-webkit-scrollbar-thumb:hover {
   background: rgba(37, 99, 235, 0.55);
+}
+
+/* Compact Feedback Card (Button-style item without long message) */
+.admin-feedback-compact-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 8px;
+  transition: all 0.2s ease;
+  position: relative;
+  text-align: left;
+}
+
+.admin-feedback-compact-card:hover {
+  transform: translateY(-2px);
+  border-color: #93c5fd;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.12);
+  background: #f8fafc;
+}
+
+.admin-fb-compact-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.admin-fb-compact-user {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  flex: 1;
+}
+
+.admin-fb-avatar-sm {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.admin-fb-compact-names {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.admin-fb-compact-name {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 110px;
+}
+
+.admin-fb-compact-badge {
+  padding: 1px 6px;
+  border-radius: 9999px;
+  font-size: 0.62rem;
+  font-weight: 700;
+}
+
+.admin-fb-compact-badge.registered {
+  background: #ede9fe;
+  color: #6d28d9;
+}
+
+.admin-fb-compact-badge.guest {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.admin-fb-compact-del-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  padding: 4px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.admin-fb-compact-del-btn:hover {
+  background: #fee2e2;
+  color: #ef4444;
+}
+
+.admin-fb-compact-mid {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  font-size: 0.75rem;
+}
+
+.admin-fb-compact-stars {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: #b45309;
+  font-weight: 800;
+}
+
+.admin-fb-category-tag.compact {
+  padding: 2px 7px;
+  font-size: 0.68rem;
+  border-radius: 4px;
+}
+
+.admin-fb-compact-time {
+  color: #94a3b8;
+  font-size: 0.7rem;
+  white-space: nowrap;
+}
+
+.admin-fb-compact-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-top: 4px;
+  border-top: 1px dashed rgba(226, 232, 240, 0.8);
+}
+
+.admin-fb-compact-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.74rem;
+  font-weight: 600;
+  color: #2563eb;
+  transition: color 0.2s;
+}
+
+.admin-feedback-compact-card:hover .admin-fb-compact-btn {
+  color: #1d4ed8;
+  text-decoration: underline;
 }
 
 .admin-feedback-card {
@@ -3665,6 +3837,276 @@ html[data-theme='dark'] .admin-feedback-pill.active,
 .dark-mode .feedback-section-header h2,
 [data-theme="dark"] .feedback-section-header h2 {
   color: #c7dcf7;
+}
+
+/* =========================================================
+   FEEDBACK DETAIL MODAL & POPUP
+========================================================= */
+
+.admin-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: modalFadeIn 0.2s ease;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.admin-modal-content.feedback-detail-modal {
+  background: #ffffff;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 540px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.28);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: modalScaleIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes modalScaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.admin-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 24px;
+  border-bottom: 1px solid #f1f5f9;
+  background: #f8fafc;
+}
+
+.admin-modal-user-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-modal-user-name {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-modal-user-email {
+  font-size: 0.8rem;
+  color: #64748b;
+  display: block;
+  margin-top: 2px;
+}
+
+.admin-modal-close-btn {
+  background: transparent;
+  border: none;
+  color: #64748b;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.admin-modal-close-btn:hover {
+  background: #e2e8f0;
+  color: #0f172a;
+}
+
+.admin-modal-body {
+  padding: 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-modal-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.admin-modal-message-box {
+  background: #f8fafc;
+  border-left: 4px solid #3b82f6;
+  border-radius: 10px;
+  padding: 14px 18px;
+}
+
+.admin-modal-message-title {
+  margin: 0 0 8px 0;
+  font-size: 0.82rem;
+  color: #1e40af;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.admin-modal-message-box p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #1e293b;
+  white-space: pre-wrap;
+}
+
+.admin-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  background: #f8fafc;
+  border-top: 1px solid #f1f5f9;
+}
+
+.admin-modal-del-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  color: #e11d48;
+  border-radius: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.admin-modal-del-btn:hover {
+  background: #e11d48;
+  color: #ffffff;
+}
+
+.admin-modal-close-action {
+  padding: 8px 18px;
+  background: #e2e8f0;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.admin-modal-close-action:hover {
+  background: #cbd5e1;
+  color: #0f172a;
+}
+
+/* Dark Mode Overrides for Compact Card and Modal */
+html[data-theme='dark'] .admin-feedback-compact-card,
+.dark .admin-feedback-compact-card {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3) !important;
+}
+
+html[data-theme='dark'] .admin-feedback-compact-card:hover,
+.dark .admin-feedback-compact-card:hover {
+  background: #273549 !important;
+  border-color: #60a5fa !important;
+}
+
+html[data-theme='dark'] .admin-fb-compact-name,
+.dark .admin-fb-compact-name {
+  color: #f1f5f9 !important;
+}
+
+html[data-theme='dark'] .admin-fb-compact-btn,
+.dark .admin-fb-compact-btn {
+  color: #60a5fa !important;
+}
+
+html[data-theme='dark'] .admin-fb-compact-bottom,
+.dark .admin-fb-compact-bottom {
+  border-top-color: #334155 !important;
+}
+
+html[data-theme='dark'] .admin-modal-content.feedback-detail-modal,
+.dark .admin-modal-content.feedback-detail-modal {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+html[data-theme='dark'] .admin-modal-header,
+.dark .admin-modal-header,
+html[data-theme='dark'] .admin-modal-footer,
+.dark .admin-modal-footer {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+}
+
+html[data-theme='dark'] .admin-modal-user-name,
+.dark .admin-modal-user-name {
+  color: #f8fafc !important;
+}
+
+html[data-theme='dark'] .admin-modal-close-btn,
+.dark .admin-modal-close-btn {
+  color: #94a3b8 !important;
+}
+
+html[data-theme='dark'] .admin-modal-close-btn:hover,
+.dark .admin-modal-close-btn:hover {
+  background: #334155 !important;
+  color: #f8fafc !important;
+}
+
+html[data-theme='dark'] .admin-modal-message-box,
+.dark .admin-modal-message-box {
+  background: #0f172a !important;
+  border-left-color: #60a5fa !important;
+}
+
+html[data-theme='dark'] .admin-modal-message-title,
+.dark .admin-modal-message-title {
+  color: #93c5fd !important;
+}
+
+html[data-theme='dark'] .admin-modal-message-box p,
+.dark .admin-modal-message-box p {
+  color: #e2e8f0 !important;
+}
+
+html[data-theme='dark'] .admin-modal-close-action,
+.dark .admin-modal-close-action {
+  background: #334155 !important;
+  color: #cbd5e1 !important;
+}
+
+html[data-theme='dark'] .admin-modal-close-action:hover,
+.dark .admin-modal-close-action:hover {
+  background: #475569 !important;
+  color: #ffffff !important;
 }
 
 
