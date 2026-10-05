@@ -128,69 +128,80 @@ module.exports = {
     }
   },
 
-  // Triggered by Cron (3-4 times a day: 8:00 AM, 1:00 PM, 5:00 PM, 8:30 PM)
-  sendDailyReminder: async () => {
+  // Triggered by Cron or Admin (Sends daily divine shloka reminder to all subscribers)
+  sendDailyReminder: async (customMsg = null) => {
     try {
-      const startOfToday = new Date();
-      startOfToday.setHours(0, 0, 0, 0);
+      // Find all active subscribers (Both users and admins so dev/admin also gets notifications!)
+      const subscribers = await Subscription.find({});
 
-      // Find subscribers who have NOT opened the site today and received < 4 reminders today
-      const eligibleUsers = await Subscription.find({
-        role: "user",
-        $or: [
-          { lastOpenedDate: null },
-          { lastOpenedDate: { $lt: startOfToday } },
-        ],
-        reminderCount: { $lt: 4 },
-      });
-
-      if (eligibleUsers.length === 0) {
-        console.log("ℹ️ No eligible users for daily reminder at this time.");
-        return;
+      if (!subscribers || subscribers.length === 0) {
+        console.log("ℹ️ No subscribers found for daily reminder.");
+        return { success: true, count: 0, sent: 0 };
       }
 
-      const reminders = [
-        {
+      // Determine time-appropriate message based on current Indian Standard Time (IST)
+      const istHours = new Date(Date.now() + 5.5 * 60 * 60 * 1000).getUTCHours();
+      let defaultReminder;
+      if (istHours >= 4 && istHours < 12) {
+        defaultReminder = {
           title: "🌸 શ્રીમદ્ ભગવદ્ ગીતા - પ્રભાત ચિંતન",
-          body: "કર્મ કરો, ફળની ચિંતા ન કરો. આજનો દૈનિક શ્લોક વાંચવા અહીં ક્લિક કરો.",
-        },
-        {
+          body: "કર્મણ્યેવાધિકારસ્તે મા ફલેષુ કદાચન। આજનો પવિત્ર શ્લોક વાંચવા માટે ક્લિક કરો.",
+        };
+      } else if (istHours >= 12 && istHours < 16) {
+        defaultReminder = {
           title: "✨ ભગવદ્ ગીતા - બપોરનું માર્ગદર્શન",
-          body: "મન શાંત રાખો અને સાચા માર્ગે ચાલો. આજનો પવિત્ર શ્લોક વાંચો.",
-        },
-        {
+          body: "મન શાંત રાખો અને સાચા માર્ગે ચાલો। આજનું ગીતા માર્ગદર્શન મેળવો.",
+        };
+      } else if (istHours >= 16 && istHours < 20) {
+        defaultReminder = {
           title: "🕉️ શ્રીમદ્ ભગવદ્ ગીતા - સંધ્યા સંદેશ",
-          body: "શ્રદ્ધાવાન મનુષ્ય જ પરમ શાંતિ અને જ્ઞાન પ્રાપ્ત કરે છે. આજનો શ્લોક વાંચો.",
-        },
-        {
+          body: "શ્રદ્ધાવાન મનુષ્ય જ પરમ શાંતિ અને જ્ઞાન પ્રાપ્ત કરે છે। આજનો શ્લોક વાંચો.",
+        };
+      } else {
+        defaultReminder = {
           title: "🌙 શ્રીમદ્ ભગવદ્ ગીતા - રાત્રિ વિચાર",
           body: "આજનો દિવસ પૂર્ણ કરતાં પહેલાં ગીતાનો એક પવિત્ર શ્લોક વાંચીને મન શાંત કરો.",
-        },
-      ];
-
-      console.log(`📢 Sending daily reminder to ${eligibleUsers.length} subscribers...`);
-
-      for (const sub of eligibleUsers) {
-        const reminderIndex = Math.min(sub.reminderCount || 0, reminders.length - 1);
-        const reminder = reminders[reminderIndex];
-
-        const payload = {
-          title: reminder.title,
-          body: reminder.body,
-          url: process.env.SITE_URL || "http://localhost:3000",
-          tag: "daily-shloka-reminder",
         };
-
-        await sendPush(sub, payload);
-
-        // Increment reminder count
-        await Subscription.updateOne(
-          { _id: sub._id },
-          { $inc: { reminderCount: 1 } }
-        );
       }
+
+      const reminder = customMsg || defaultReminder;
+      const targetUrl =
+        process.env.SITE_URL || "https://bhagavad-gita-website-rk1v.vercel.app";
+
+      const payload = {
+        title: reminder.title,
+        body: reminder.body,
+        url: targetUrl,
+        tag: "daily-shloka-reminder",
+      };
+
+      console.log(`📢 Sending reminder to ${subscribers.length} subscribers...`);
+      let sentCount = 0;
+      let failedCount = 0;
+
+      for (const sub of subscribers) {
+        try {
+          await sendPush(sub, payload);
+          sentCount++;
+          await Subscription.updateOne(
+            { _id: sub._id },
+            { $inc: { reminderCount: 1 } }
+          );
+        } catch {
+          failedCount++;
+        }
+      }
+
+      return {
+        success: true,
+        total: subscribers.length,
+        sent: sentCount,
+        failed: failedCount,
+        reminder,
+      };
     } catch (err) {
       console.error("❌ Send daily reminder error:", err);
+      return { success: false, error: err.message };
     }
   },
 
@@ -206,7 +217,7 @@ module.exports = {
       const payload = {
         title: "🎉 નવો વપરાશકર્તા જોડાયો!",
         body: `${userName} (${userEmail}) એ ભગવદ્ ગીતા વેબસાઇટ પર સફળતાપૂર્વક રજીસ્ટ્રેશન કર્યું.`,
-        url: process.env.ADMIN_DASHBOARD_URL || "http://localhost:3000/admin",
+        url: process.env.ADMIN_DASHBOARD_URL || "https://bhagavad-gita-website-rk1v.vercel.app/admin",
         tag: "new-user-registered",
       };
 
