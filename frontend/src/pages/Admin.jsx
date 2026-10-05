@@ -63,18 +63,40 @@ function Admin() {
     else setLoadingVisitors(true);
 
     try {
-      const response = await fetch(
-        "https://bhagavad-gita-website.onrender.com/api/visitors/stats",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const isLocal =
+        typeof window !== "undefined" &&
+        (window.location.hostname === "localhost" ||
+          window.location.hostname === "127.0.0.1");
 
-      const data = await response.json();
-      if (response.ok && data.success) {
-        setVisitorStats(data.stats);
+      const urls = isLocal
+        ? [
+            "http://localhost:5000/api/visitors/stats",
+            "https://bhagavad-gita-website.onrender.com/api/visitors/stats",
+          ]
+        : ["https://bhagavad-gita-website.onrender.com/api/visitors/stats"];
+
+      let fetchedData = null;
+      for (const url of urls) {
+        try {
+          const response = await fetch(url, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.stats) {
+              fetchedData = data.stats;
+              break;
+            }
+          }
+        } catch {
+          // try next url
+        }
+      }
+
+      if (fetchedData) {
+        setVisitorStats(fetchedData);
       }
     } catch (error) {
       console.error("Error fetching visitor stats:", error);
