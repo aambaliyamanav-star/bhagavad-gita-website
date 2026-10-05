@@ -610,7 +610,7 @@ function Admin() {
                 </h2>
 
                 <p>
-                  Avg Rating ({feedbackSummary?.totalFeedbacks ?? feedbacks.length})
+                  Avg Rating ({feedbackSummary?.totalRatings ?? 0})
                 </p>
               </div>
 
