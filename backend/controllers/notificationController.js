@@ -355,8 +355,8 @@ module.exports = {
           );
         }
 
-        // Cap max reminders per day to 4 to avoid excessive notifications
-        if (currentReminderCount >= 4 && !customMsg) {
+        // Cap max reminders per day to 5 (8 AM, 12 PM, 4 PM, 8 PM, 10 PM)
+        if (currentReminderCount >= 5 && !customMsg) {
           skippedCount++;
           continue;
         }
