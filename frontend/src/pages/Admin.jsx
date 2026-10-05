@@ -628,7 +628,9 @@ function Admin() {
 
               <div>
                 <h2>
-                  {feedbackSummary?.averageRating ? `${feedbackSummary.averageRating} ★` : "5.0 ★"}
+                  {feedbackSummary && feedbackSummary.totalRatings > 0
+                    ? `${Number(feedbackSummary.averageRating).toFixed(1)} ★`
+                    : "0.0 ★"}
                 </h2>
 
                 <p>

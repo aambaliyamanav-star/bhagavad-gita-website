@@ -246,7 +246,7 @@ const calculateUniqueLatestRatings = async () => {
     }
   });
 
-  const averageRating = totalCount > 0 ? Number((sum / totalCount).toFixed(1)) : 5.0;
+  const averageRating = totalCount > 0 ? Number((sum / totalCount).toFixed(1)) : 0;
 
   return {
     totalRatings: totalCount,
