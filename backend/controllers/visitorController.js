@@ -59,18 +59,22 @@ function parseUserAgent(uaString = "") {
 // POST /api/visitors/track - Public Endpoint to record a visit
 const recordVisit = async (req, res) => {
   try {
-    let { visitorId, path, referrer, isRegistered, userId } = req.body;
+    let data = req.body;
+    if (typeof data === "string") {
+      try {
+        data = JSON.parse(data);
+      } catch (e) {
+        data = {};
+      }
+    }
+    data = data || {};
+    let { visitorId, path, referrer, isRegistered, userId } = data;
 
     if (!visitorId) {
       return res.status(400).json({ success: false, message: "visitorId is required" });
     }
 
     const currentPath = typeof path === "string" && path.trim() ? path.trim() : "/";
-
-    // Don't track admin pages to avoid skewing real user metrics
-    if (currentPath.startsWith("/admin")) {
-      return res.json({ success: true, ignored: true });
-    }
 
     // If user is logged out, check if this device/visitorId previously belonged to a registered user
     if (!userId) {
@@ -127,8 +131,17 @@ const getVisitorStats = async (req, res) => {
   try {
     const now = new Date();
 
-    // Start of today
-    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    // Indian Standard Time (IST = UTC + 5:30) midnight calculation
+    const istOffsetMs = 5.5 * 60 * 60 * 1000;
+    const istNow = new Date(now.getTime() + istOffsetMs);
+    const startOfToday = new Date(
+      Date.UTC(
+        istNow.getUTCFullYear(),
+        istNow.getUTCMonth(),
+        istNow.getUTCDate(),
+        0, 0, 0, 0
+      ) - istOffsetMs
+    );
 
     // 1. Total all visits (jetlivar ek j user aave te badhi vaar count thay - All Pageviews)
     const totalVisits = await Visitor.countDocuments();

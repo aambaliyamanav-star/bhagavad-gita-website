@@ -3,7 +3,8 @@
  * Silently records pageviews and unique visitors
  */
 
-const API_BASE = "https://bhagavad-gita-website.onrender.com";
+const PROD_API_BASE = "https://bhagavad-gita-website.onrender.com";
+const LOCAL_API_BASE = "http://localhost:5000";
 
 // Retrieve or generate a persistent anonymous visitor ID
 export function getVisitorId() {
@@ -33,9 +34,6 @@ let lastTrackedTime = 0;
 export async function trackVisit(path) {
   try {
     if (!path || typeof path !== "string") return;
-
-    // Do not track admin management paths to keep stats genuine
-    if (path.startsWith("/admin")) return;
 
     const now = Date.now();
     // Throttle: don't track the exact same path if visited within 20 seconds
@@ -83,25 +81,36 @@ export async function trackVisit(path) {
       userId,
     });
 
-    // Use sendBeacon if available for non-blocking analytics
-    if (typeof navigator !== "undefined" && navigator.sendBeacon) {
-      const blob = new Blob([payload], { type: "application/json" });
-      const sent = navigator.sendBeacon(`${API_BASE}/api/visitors/track`, blob);
-      if (sent) return;
-    }
+    const isLocal =
+      typeof window !== "undefined" &&
+      (window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1");
 
-    // Fallback to fetch
-    fetch(`${API_BASE}/api/visitors/track`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: payload,
-      keepalive: true,
-    }).catch(() => {
-      // Silently ignore network failures to never disrupt the user
-    });
-  } catch {
-    // Ignore any tracking errors
+    // Standard, reliable cross-origin fetch with keepalive: true
+    // (Never use sendBeacon here because sendBeacon fails on cross-origin JSON preflight in Chromium)
+    const targets = isLocal
+      ? [`${LOCAL_API_BASE}/api/visitors/track`, `${PROD_API_BASE}/api/visitors/track`]
+      : [`${PROD_API_BASE}/api/visitors/track`];
+
+    for (const url of targets) {
+      fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: payload,
+        keepalive: true,
+      })
+        .then((res) => {
+          if (res.ok) {
+            console.debug("✅ Visit recorded:", path);
+          }
+        })
+        .catch(() => {
+          // Silently ignore network failures to never disrupt the user
+        });
+    }
+  } catch (err) {
+    console.debug("trackVisit error:", err);
   }
 }
