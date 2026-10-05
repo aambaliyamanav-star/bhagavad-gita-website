@@ -156,10 +156,8 @@ const submitFeedback = async (req, res) => {
 };
 
 // =====================================================
-// HELPER: CALCULATE UNIQUE LATEST RATINGS PER USER
-// Guarantees each user is counted EXACTLY ONCE with their NEWEST rating!
-// No matter how many times a user updates their rating,
-// ONLY the latest rating is included in the average and total rating count.
+// HELPER: CALCULATE AVERAGE RATING FROM ONLY LATEST RATING PER USER
+// Guarantees each user's latest rating is the only one counted in the average.
 // =====================================================
 const calculateUniqueLatestRatings = async () => {
   const userRatingsMap = new Map();
@@ -187,7 +185,6 @@ const calculateUniqueLatestRatings = async () => {
     const key = fb.userId
       ? String(fb.userId)
       : (fb.email ? `email:${fb.email.toLowerCase()}` : `fb:${fb._id}`);
-    // If not already in userRatingsMap, this is the user's latest rating!
     if (!userRatingsMap.has(key)) {
       userRatingsMap.set(key, fb.rating);
     }
@@ -239,7 +236,7 @@ const getFeedbackStats = async (req, res) => {
     return res.status(200).json({
       success: true,
       stats: {
-        totalCount: totalRatings, // Only unique users' latest ratings counted!
+        totalCount: totalRatings,
         totalFeedbacks,
         averageRating,
         distribution,
@@ -362,9 +359,9 @@ const getAdminFeedbacks = async (req, res) => {
           limit,
         },
         summary: {
-          totalRatings, // UNIQUE RATERS WITH ONLY LATEST RATINGS
+          totalRatings,
           totalFeedbacks: await Feedback.countDocuments({}),
-          averageRating, // AVERAGE OF ONLY LATEST RATINGS
+          averageRating, // Only latest rating counts in average!
           distribution,
           categoryCounts,
         },
