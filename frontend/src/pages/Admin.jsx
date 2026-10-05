@@ -28,6 +28,8 @@ import {
   Star,
   MessageSquare,
   X,
+  Sparkles,
+  Clock,
 } from "lucide-react";
 import "./Admin.css";
 
@@ -67,17 +69,6 @@ function Admin() {
   const [feedbackSearch, setFeedbackSearch] = useState("");
   const [deletingFeedbackId, setDeletingFeedbackId] = useState(null);
   const [activeFeedbackModal, setActiveFeedbackModal] = useState(null);
-
-  useEffect(() => {
-    if (activeFeedbackModal) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [activeFeedbackModal]);
 
   const navigate = useNavigate();
 
@@ -1097,9 +1088,16 @@ function Admin() {
                               <h4 className="admin-fb-compact-name" title={fb.name}>
                                 {fb.name}
                               </h4>
-                              <span className={`admin-fb-compact-badge ${fb.userId ? "registered" : "guest"}`}>
-                                {fb.userId ? "રજીસ્ટર્ડ" : "અતિથિ"}
-                              </span>
+                              <div className="admin-fb-badge-group">
+                                <span className={`admin-fb-compact-badge ${fb.userId ? "registered" : "guest"}`}>
+                                  {fb.userId ? "રજીસ્ટર્ડ" : "અતિથિ"}
+                                </span>
+                                {fb.isLatestUserFeedback ? (
+                                  <span className="admin-fb-status-pill latest" title="તાજેતરનો (સૌથી નવો) પ્રતિસાદ">નવો</span>
+                                ) : (
+                                  <span className="admin-fb-status-pill older" title="અગાઉનો (જૂનો) પ્રતિસાદ">જૂનો</span>
+                                )}
+                              </div>
                             </div>
                           </div>
 
@@ -1119,8 +1117,18 @@ function Admin() {
 
                         <div className="admin-fb-compact-mid">
                           <div className="admin-fb-compact-stars">
-                            <Star size={13} fill="#f59e0b" color="#f59e0b" />
-                            <span>{fb.rating}.0</span>
+                            {fb.previousRating ? (
+                              <div className="admin-fb-rating-transition" title={`અગાઉનું રેટિંગ: ${fb.previousRating}★ ➔ નવું રેટિંગ: ${fb.rating}★`}>
+                                <span className="rating-prev-num">{fb.previousRating}★</span>
+                                <span className="rating-arrow-icon">➔</span>
+                                <span className="rating-curr-num">{fb.rating}★</span>
+                              </div>
+                            ) : (
+                              <>
+                                <Star size={13} fill="#f59e0b" color="#f59e0b" />
+                                <span>{fb.rating}.0</span>
+                              </>
+                            )}
                           </div>
 
                           <span className={`admin-fb-category-tag compact ${fb.category}`}>
@@ -1156,48 +1164,109 @@ function Admin() {
         {/* =================================================
             FEEDBACK DETAIL VIEW MODAL (PORTAL DIRECTLY TO BODY)
         ================================================= */}
-        {activeFeedbackModal &&
-          typeof document !== "undefined" &&
-          createPortal(
+        {activeFeedbackModal && typeof document !== "undefined" && createPortal(
+          <div
+            className="admin-modal-overlay"
+            onClick={() => setActiveFeedbackModal(null)}
+          >
             <div
-              className="admin-modal-overlay"
-              onClick={() => setActiveFeedbackModal(null)}
+              className="admin-modal-content feedback-detail-modal"
+              onClick={(e) => e.stopPropagation()}
             >
-              <div
-                className="admin-modal-content feedback-detail-modal"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <div className="admin-modal-header">
-                  <div className="admin-modal-user-info">
-                    <div className="admin-fb-avatar">
-                      {(activeFeedbackModal.name || "U").charAt(0).toUpperCase()}
-                    </div>
-                    <div>
-                      <h3 className="admin-modal-user-name">
-                        {activeFeedbackModal.name}
-                        <span className={`admin-fb-badge ${activeFeedbackModal.userId ? "registered" : "guest"}`}>
-                          {activeFeedbackModal.userId ? "રજીસ્ટર્ડ યુઝર" : "અતિથિ"}
-                        </span>
-                      </h3>
-                      {activeFeedbackModal.email && (
-                        <span className="admin-modal-user-email">
-                          {activeFeedbackModal.email}
-                        </span>
-                      )}
-                    </div>
+              <div className="admin-modal-header">
+                <div className="admin-modal-user-info">
+                  <div className="admin-fb-avatar">
+                    {(activeFeedbackModal.name || "U").charAt(0).toUpperCase()}
                   </div>
-
-                  <button
-                    type="button"
-                    className="admin-modal-close-btn"
-                    onClick={() => setActiveFeedbackModal(null)}
-                    title="બંધ કરો"
-                  >
-                    <X size={20} />
-                  </button>
+                  <div>
+                    <h3 className="admin-modal-user-name">
+                      {activeFeedbackModal.name}
+                      <span className={`admin-fb-badge ${activeFeedbackModal.userId ? "registered" : "guest"}`}>
+                        {activeFeedbackModal.userId ? "રજીસ્ટર્ડ યુઝર" : "અતિથિ"}
+                      </span>
+                    </h3>
+                    {activeFeedbackModal.email && (
+                      <span className="admin-modal-user-email">
+                        {activeFeedbackModal.email}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
-                <div className="admin-modal-body">
+                <button
+                  type="button"
+                  className="admin-modal-close-btn"
+                  onClick={() => setActiveFeedbackModal(null)}
+                  title="બંધ કરો"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="admin-modal-body">
+                {/* 1. LATEST VS OLDER STATUS BANNER */}
+                <div
+                  className={`admin-fb-status-banner ${
+                    activeFeedbackModal.isLatestUserFeedback ? "is-latest" : "is-older"
+                  }`}
+                >
+                  {activeFeedbackModal.isLatestUserFeedback ? (
+                    <>
+                      <Sparkles size={18} className="status-banner-icon" />
+                      <div>
+                        <strong>નવો પ્રતિસાદ (તાજેતરનો)</strong>
+                        <p>આ યુઝરનો સૌથી નવો / તાજેતરનો પ્રતિસાદ છે.</p>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <Clock size={18} className="status-banner-icon" />
+                      <div>
+                        <strong>અગાઉનો પ્રતિસાદ (જૂનો)</strong>
+                        <p>આ યુઝરનો જૂનો પ્રતિસાદ છે (યુઝરે ત્યારબાદ નવો પ્રતિસાદ અથવા રેટિંગ આપેલ છે).</p>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {/* 2. RATING SECTION: OLD RATING VS NEW RATING OR SINGLE RATING */}
+                {activeFeedbackModal.previousRating ? (
+                  <div className="admin-fb-rating-compare-card">
+                    <div className="compare-rating-side old-rating">
+                      <span className="compare-label">અગાઉનું (જૂનું) રેટિંગ</span>
+                      <div className="compare-star-row">
+                        {[1, 2, 3, 4, 5].map((i) => (
+                          <Star
+                            key={i}
+                            size={16}
+                            fill={i <= activeFeedbackModal.previousRating ? "#f59e0b" : "none"}
+                            color="#f59e0b"
+                          />
+                        ))}
+                        <span className="compare-score">{activeFeedbackModal.previousRating}.0 ★</span>
+                      </div>
+                    </div>
+
+                    <div className="compare-rating-arrow" title="રેટિંગ બદલાયું">
+                      ➔
+                    </div>
+
+                    <div className="compare-rating-side new-rating">
+                      <span className="compare-label">અપડેટેડ (નવું) રેટિંગ</span>
+                      <div className="compare-star-row">
+                        {[1, 2, 3, 4, 5].map((i) => (
+                          <Star
+                            key={i}
+                            size={16}
+                            fill={i <= activeFeedbackModal.rating ? "#f59e0b" : "none"}
+                            color="#f59e0b"
+                          />
+                        ))}
+                        <span className="compare-score">{activeFeedbackModal.rating}.0 ★</span>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
                   <div className="admin-modal-meta-row">
                     <div className="admin-fb-stars">
                       {[1, 2, 3, 4, 5].map((i) => (
@@ -1213,55 +1282,69 @@ function Admin() {
                       </span>
                     </div>
 
-                    <span className={`admin-fb-category-tag ${activeFeedbackModal.category}`}>
-                      {activeFeedbackModal.category === "suggestion"
-                        ? "સૂચન"
-                        : activeFeedbackModal.category === "bug"
-                        ? "બગ / સમસ્યા"
-                        : activeFeedbackModal.category === "appreciation"
-                        ? "પ્રશંસા"
-                        : "પ્રતિસાદ"}
-                    </span>
-
-                    <span className="admin-fb-date">
-                      {formatTimeAgo(activeFeedbackModal.createdAt)}
+                    <span className="admin-fb-first-rating-badge">
+                      પ્રથમ રેટિંગ
                     </span>
                   </div>
+                )}
 
-                  <div className="admin-modal-message-box">
-                    <h4 className="admin-modal-message-title">
-                      <MessageSquare size={16} /> પ્રતિસાદ / સૂચન સંદેશ:
-                    </h4>
-                    <p>{activeFeedbackModal.message}</p>
-                  </div>
+                {/* 3. CATEGORY & TIME META */}
+                <div className="admin-modal-meta-row" style={{ marginTop: "4px" }}>
+                  <span className={`admin-fb-category-tag ${activeFeedbackModal.category}`}>
+                    {activeFeedbackModal.category === "suggestion"
+                      ? "સૂચન"
+                      : activeFeedbackModal.category === "bug"
+                      ? "બગ / સમસ્યા"
+                      : activeFeedbackModal.category === "appreciation"
+                      ? "પ્રશંસા"
+                      : "પ્રતિસાદ"}
+                  </span>
+
+                  <span className="admin-fb-date">
+                    તારીખ/સમય: {formatTimeAgo(activeFeedbackModal.createdAt)}
+                    {activeFeedbackModal.createdAt && (
+                      <span style={{ opacity: 0.75, marginLeft: "6px" }}>
+                        ({new Date(activeFeedbackModal.createdAt).toLocaleDateString("gu-IN")})
+                      </span>
+                    )}
+                  </span>
                 </div>
 
-                <div className="admin-modal-footer">
-                  <button
-                    type="button"
-                    className="admin-modal-del-btn"
-                    onClick={() => {
-                      handleDeleteFeedback(activeFeedbackModal._id, activeFeedbackModal.name);
-                      setActiveFeedbackModal(null);
-                    }}
-                    disabled={deletingFeedbackId === activeFeedbackModal._id}
-                  >
-                    <Trash2 size={16} />
-                    <span>{deletingFeedbackId === activeFeedbackModal._id ? "ડિલીટ થઈ રહ્યું છે..." : "પ્રતિસાદ ડિલીટ કરો"}</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    className="admin-modal-close-action"
-                    onClick={() => setActiveFeedbackModal(null)}
-                  >
-                    બંધ કરો
-                  </button>
+                {/* 4. COMPULSORY MESSAGE CONTENT */}
+                <div className="admin-modal-message-box">
+                  <h4 className="admin-modal-message-title">
+                    <MessageSquare size={16} /> પ્રતિસાદ / સૂચન સંદેશ (ફરજિયાત):
+                  </h4>
+                  <p>{activeFeedbackModal.message}</p>
                 </div>
               </div>
-            </div>,
-            document.body
-          )}
+
+              <div className="admin-modal-footer">
+                <button
+                  type="button"
+                  className="admin-modal-del-btn"
+                  onClick={() => {
+                    handleDeleteFeedback(activeFeedbackModal._id, activeFeedbackModal.name);
+                    setActiveFeedbackModal(null);
+                  }}
+                  disabled={deletingFeedbackId === activeFeedbackModal._id}
+                >
+                  <Trash2 size={16} />
+                  <span>{deletingFeedbackId === activeFeedbackModal._id ? "ડિલીટ થઈ રહ્યું છે..." : "પ્રતિસાદ ડિલીટ કરો"}</span>
+                </button>
+
+                <button
+                  type="button"
+                  className="admin-modal-close-action"
+                  onClick={() => setActiveFeedbackModal(null)}
+                >
+                  બંધ કરો
+                </button>
+              </div>
+            </div>
+          </div>,
+          document.body
+        )}
 
         {/* =================================================
             USERS

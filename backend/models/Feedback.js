@@ -24,6 +24,16 @@ const feedbackSchema = new mongoose.Schema(
       min: 1,
       max: 5,
     },
+    previousRating: {
+      type: Number,
+      default: null,
+      min: 1,
+      max: 5,
+    },
+    isUpdatedRating: {
+      type: Boolean,
+      default: false,
+    },
     category: {
       type: String,
       enum: ["suggestion", "feedback", "bug", "appreciation"],
