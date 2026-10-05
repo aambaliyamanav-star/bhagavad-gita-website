@@ -26,6 +26,7 @@ import {
   Bell,
   Star,
   MessageSquare,
+  X,
 } from "lucide-react";
 import "./Admin.css";
 
@@ -64,6 +65,7 @@ function Admin() {
   const [feedbackRatingFilter, setFeedbackRatingFilter] = useState("all");
   const [feedbackSearch, setFeedbackSearch] = useState("");
   const [deletingFeedbackId, setDeletingFeedbackId] = useState(null);
+  const [activeFeedbackModal, setActiveFeedbackModal] = useState(null);
 
   const navigate = useNavigate();
 
@@ -1066,67 +1068,69 @@ function Admin() {
                 return (
                   <div className="admin-feedbacks-grid">
                     {filtered.map((fb) => (
-                      <div key={fb._id} className="admin-feedback-card">
-                        <div className="admin-fb-header">
-                          <div className="admin-fb-user-info">
-                            <div className="admin-fb-avatar">
+                      <div
+                        key={fb._id}
+                        className="admin-feedback-compact-card"
+                        onClick={() => setActiveFeedbackModal(fb)}
+                        role="button"
+                        tabIndex={0}
+                        title="સંપૂર્ણ વિગત અને સંદેશ જોવા માટે ક્લિક કરો"
+                      >
+                        <div className="admin-fb-compact-top">
+                          <div className="admin-fb-compact-user">
+                            <div className="admin-fb-avatar-sm">
                               {(fb.name || "U").charAt(0).toUpperCase()}
                             </div>
-                            <div>
-                              <h4 className="admin-fb-user-name">
+                            <div className="admin-fb-compact-names">
+                              <h4 className="admin-fb-compact-name" title={fb.name}>
                                 {fb.name}
-                                {fb.userId ? (
-                                  <span className="admin-fb-badge registered">રજીસ્ટર્ડ યુઝર</span>
-                                ) : (
-                                  <span className="admin-fb-badge guest">અતિથિ</span>
-                                )}
                               </h4>
-                              {fb.email && <span className="admin-fb-user-email">{fb.email}</span>}
+                              <span className={`admin-fb-compact-badge ${fb.userId ? "registered" : "guest"}`}>
+                                {fb.userId ? "રજીસ્ટર્ડ" : "અતિથિ"}
+                              </span>
                             </div>
                           </div>
 
                           <button
                             type="button"
-                            className="admin-fb-delete-btn"
-                            onClick={() => handleDeleteFeedback(fb._id, fb.name)}
+                            className="admin-fb-compact-del-btn"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteFeedback(fb._id, fb.name);
+                            }}
                             disabled={deletingFeedbackId === fb._id}
                             title="આ પ્રતિસાદ ડિલીટ કરો"
                           >
-                            <Trash2 size={16} />
-                            <span>{deletingFeedbackId === fb._id ? "..." : "ડિલીટ"}</span>
+                            <Trash2 size={13} />
                           </button>
                         </div>
 
-                        <div className="admin-fb-meta-row">
-                          <div className="admin-fb-stars">
-                            {[1, 2, 3, 4, 5].map((i) => (
-                              <Star
-                                key={i}
-                                size={16}
-                                fill={i <= fb.rating ? "#f59e0b" : "none"}
-                                color="#f59e0b"
-                              />
-                            ))}
-                            <span className="admin-fb-rating-num">{fb.rating}.0</span>
+                        <div className="admin-fb-compact-mid">
+                          <div className="admin-fb-compact-stars">
+                            <Star size={13} fill="#f59e0b" color="#f59e0b" />
+                            <span>{fb.rating}.0</span>
                           </div>
 
-                          <span className={`admin-fb-category-tag ${fb.category}`}>
+                          <span className={`admin-fb-category-tag compact ${fb.category}`}>
                             {fb.category === "suggestion"
                               ? "સૂચન"
                               : fb.category === "bug"
-                              ? "બગ / સમસ્યા"
+                              ? "બગ"
                               : fb.category === "appreciation"
                               ? "પ્રશંસા"
                               : "પ્રતિસાદ"}
                           </span>
 
-                          <span className="admin-fb-date">
+                          <span className="admin-fb-compact-time">
                             {formatTimeAgo(fb.createdAt)}
                           </span>
                         </div>
 
-                        <div className="admin-fb-message-box">
-                          <p>{fb.message}</p>
+                        <div className="admin-fb-compact-bottom">
+                          <span className="admin-fb-compact-btn">
+                            <Eye size={13} />
+                            <span>સંદેશ જુઓ</span>
+                          </span>
                         </div>
                       </div>
                     ))}
@@ -1136,6 +1140,113 @@ function Admin() {
             </>
           )}
         </section>
+
+        {/* =================================================
+            FEEDBACK DETAIL VIEW MODAL
+        ================================================= */}
+        {activeFeedbackModal && (
+          <div
+            className="admin-modal-overlay"
+            onClick={() => setActiveFeedbackModal(null)}
+          >
+            <div
+              className="admin-modal-content feedback-detail-modal"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="admin-modal-header">
+                <div className="admin-modal-user-info">
+                  <div className="admin-fb-avatar">
+                    {(activeFeedbackModal.name || "U").charAt(0).toUpperCase()}
+                  </div>
+                  <div>
+                    <h3 className="admin-modal-user-name">
+                      {activeFeedbackModal.name}
+                      <span className={`admin-fb-badge ${activeFeedbackModal.userId ? "registered" : "guest"}`}>
+                        {activeFeedbackModal.userId ? "રજીસ્ટર્ડ યુઝર" : "અતિથિ"}
+                      </span>
+                    </h3>
+                    {activeFeedbackModal.email && (
+                      <span className="admin-modal-user-email">
+                        {activeFeedbackModal.email}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  className="admin-modal-close-btn"
+                  onClick={() => setActiveFeedbackModal(null)}
+                  title="બંધ કરો"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="admin-modal-body">
+                <div className="admin-modal-meta-row">
+                  <div className="admin-fb-stars">
+                    {[1, 2, 3, 4, 5].map((i) => (
+                      <Star
+                        key={i}
+                        size={18}
+                        fill={i <= activeFeedbackModal.rating ? "#f59e0b" : "none"}
+                        color="#f59e0b"
+                      />
+                    ))}
+                    <span className="admin-fb-rating-num" style={{ fontSize: "1rem" }}>
+                      {activeFeedbackModal.rating}.0
+                    </span>
+                  </div>
+
+                  <span className={`admin-fb-category-tag ${activeFeedbackModal.category}`}>
+                    {activeFeedbackModal.category === "suggestion"
+                      ? "સૂચન"
+                      : activeFeedbackModal.category === "bug"
+                      ? "બગ / સમસ્યા"
+                      : activeFeedbackModal.category === "appreciation"
+                      ? "પ્રશંસા"
+                      : "પ્રતિસાદ"}
+                  </span>
+
+                  <span className="admin-fb-date">
+                    {formatTimeAgo(activeFeedbackModal.createdAt)}
+                  </span>
+                </div>
+
+                <div className="admin-modal-message-box">
+                  <h4 className="admin-modal-message-title">
+                    <MessageSquare size={16} /> પ્રતિસાદ / સૂચન સંદેશ:
+                  </h4>
+                  <p>{activeFeedbackModal.message}</p>
+                </div>
+              </div>
+
+              <div className="admin-modal-footer">
+                <button
+                  type="button"
+                  className="admin-modal-del-btn"
+                  onClick={() => {
+                    handleDeleteFeedback(activeFeedbackModal._id, activeFeedbackModal.name);
+                    setActiveFeedbackModal(null);
+                  }}
+                  disabled={deletingFeedbackId === activeFeedbackModal._id}
+                >
+                  <Trash2 size={16} />
+                  <span>{deletingFeedbackId === activeFeedbackModal._id ? "ડિલીટ થઈ રહ્યું છે..." : "પ્રતિસાદ ડિલીટ કરો"}</span>
+                </button>
+
+                <button
+                  type="button"
+                  className="admin-modal-close-action"
+                  onClick={() => setActiveFeedbackModal(null)}
+                >
+                  બંધ કરો
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* =================================================
             USERS
