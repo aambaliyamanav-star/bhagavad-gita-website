@@ -181,7 +181,7 @@ export default function FeedbackModal() {
         window.location.hostname === "127.0.0.1");
 
     const targets = isLocal
-      ? [`${PROD_API_BASE}/api/feedback`, `${LOCAL_API_BASE}/api/feedback`]
+      ? [`${LOCAL_API_BASE}/api/feedback`, `${PROD_API_BASE}/api/feedback`]
       : [`${PROD_API_BASE}/api/feedback`];
 
     const token = localStorage.getItem("token");
