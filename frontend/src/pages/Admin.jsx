@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import {
@@ -66,6 +67,17 @@ function Admin() {
   const [feedbackSearch, setFeedbackSearch] = useState("");
   const [deletingFeedbackId, setDeletingFeedbackId] = useState(null);
   const [activeFeedbackModal, setActiveFeedbackModal] = useState(null);
+
+  useEffect(() => {
+    if (activeFeedbackModal) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [activeFeedbackModal]);
 
   const navigate = useNavigate();
 
@@ -1142,111 +1154,114 @@ function Admin() {
         </section>
 
         {/* =================================================
-            FEEDBACK DETAIL VIEW MODAL
+            FEEDBACK DETAIL VIEW MODAL (PORTAL DIRECTLY TO BODY)
         ================================================= */}
-        {activeFeedbackModal && (
-          <div
-            className="admin-modal-overlay"
-            onClick={() => setActiveFeedbackModal(null)}
-          >
+        {activeFeedbackModal &&
+          typeof document !== "undefined" &&
+          createPortal(
             <div
-              className="admin-modal-content feedback-detail-modal"
-              onClick={(e) => e.stopPropagation()}
+              className="admin-modal-overlay"
+              onClick={() => setActiveFeedbackModal(null)}
             >
-              <div className="admin-modal-header">
-                <div className="admin-modal-user-info">
-                  <div className="admin-fb-avatar">
-                    {(activeFeedbackModal.name || "U").charAt(0).toUpperCase()}
+              <div
+                className="admin-modal-content feedback-detail-modal"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <div className="admin-modal-header">
+                  <div className="admin-modal-user-info">
+                    <div className="admin-fb-avatar">
+                      {(activeFeedbackModal.name || "U").charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                      <h3 className="admin-modal-user-name">
+                        {activeFeedbackModal.name}
+                        <span className={`admin-fb-badge ${activeFeedbackModal.userId ? "registered" : "guest"}`}>
+                          {activeFeedbackModal.userId ? "રજીસ્ટર્ડ યુઝર" : "અતિથિ"}
+                        </span>
+                      </h3>
+                      {activeFeedbackModal.email && (
+                        <span className="admin-modal-user-email">
+                          {activeFeedbackModal.email}
+                        </span>
+                      )}
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="admin-modal-user-name">
-                      {activeFeedbackModal.name}
-                      <span className={`admin-fb-badge ${activeFeedbackModal.userId ? "registered" : "guest"}`}>
-                        {activeFeedbackModal.userId ? "રજીસ્ટર્ડ યુઝર" : "અતિથિ"}
-                      </span>
-                    </h3>
-                    {activeFeedbackModal.email && (
-                      <span className="admin-modal-user-email">
-                        {activeFeedbackModal.email}
-                      </span>
-                    )}
-                  </div>
+
+                  <button
+                    type="button"
+                    className="admin-modal-close-btn"
+                    onClick={() => setActiveFeedbackModal(null)}
+                    title="બંધ કરો"
+                  >
+                    <X size={20} />
+                  </button>
                 </div>
 
-                <button
-                  type="button"
-                  className="admin-modal-close-btn"
-                  onClick={() => setActiveFeedbackModal(null)}
-                  title="બંધ કરો"
-                >
-                  <X size={20} />
-                </button>
-              </div>
+                <div className="admin-modal-body">
+                  <div className="admin-modal-meta-row">
+                    <div className="admin-fb-stars">
+                      {[1, 2, 3, 4, 5].map((i) => (
+                        <Star
+                          key={i}
+                          size={18}
+                          fill={i <= activeFeedbackModal.rating ? "#f59e0b" : "none"}
+                          color="#f59e0b"
+                        />
+                      ))}
+                      <span className="admin-fb-rating-num" style={{ fontSize: "1rem" }}>
+                        {activeFeedbackModal.rating}.0
+                      </span>
+                    </div>
 
-              <div className="admin-modal-body">
-                <div className="admin-modal-meta-row">
-                  <div className="admin-fb-stars">
-                    {[1, 2, 3, 4, 5].map((i) => (
-                      <Star
-                        key={i}
-                        size={18}
-                        fill={i <= activeFeedbackModal.rating ? "#f59e0b" : "none"}
-                        color="#f59e0b"
-                      />
-                    ))}
-                    <span className="admin-fb-rating-num" style={{ fontSize: "1rem" }}>
-                      {activeFeedbackModal.rating}.0
+                    <span className={`admin-fb-category-tag ${activeFeedbackModal.category}`}>
+                      {activeFeedbackModal.category === "suggestion"
+                        ? "સૂચન"
+                        : activeFeedbackModal.category === "bug"
+                        ? "બગ / સમસ્યા"
+                        : activeFeedbackModal.category === "appreciation"
+                        ? "પ્રશંસા"
+                        : "પ્રતિસાદ"}
+                    </span>
+
+                    <span className="admin-fb-date">
+                      {formatTimeAgo(activeFeedbackModal.createdAt)}
                     </span>
                   </div>
 
-                  <span className={`admin-fb-category-tag ${activeFeedbackModal.category}`}>
-                    {activeFeedbackModal.category === "suggestion"
-                      ? "સૂચન"
-                      : activeFeedbackModal.category === "bug"
-                      ? "બગ / સમસ્યા"
-                      : activeFeedbackModal.category === "appreciation"
-                      ? "પ્રશંસા"
-                      : "પ્રતિસાદ"}
-                  </span>
-
-                  <span className="admin-fb-date">
-                    {formatTimeAgo(activeFeedbackModal.createdAt)}
-                  </span>
+                  <div className="admin-modal-message-box">
+                    <h4 className="admin-modal-message-title">
+                      <MessageSquare size={16} /> પ્રતિસાદ / સૂચન સંદેશ:
+                    </h4>
+                    <p>{activeFeedbackModal.message}</p>
+                  </div>
                 </div>
 
-                <div className="admin-modal-message-box">
-                  <h4 className="admin-modal-message-title">
-                    <MessageSquare size={16} /> પ્રતિસાદ / સૂચન સંદેશ:
-                  </h4>
-                  <p>{activeFeedbackModal.message}</p>
+                <div className="admin-modal-footer">
+                  <button
+                    type="button"
+                    className="admin-modal-del-btn"
+                    onClick={() => {
+                      handleDeleteFeedback(activeFeedbackModal._id, activeFeedbackModal.name);
+                      setActiveFeedbackModal(null);
+                    }}
+                    disabled={deletingFeedbackId === activeFeedbackModal._id}
+                  >
+                    <Trash2 size={16} />
+                    <span>{deletingFeedbackId === activeFeedbackModal._id ? "ડિલીટ થઈ રહ્યું છે..." : "પ્રતિસાદ ડિલીટ કરો"}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className="admin-modal-close-action"
+                    onClick={() => setActiveFeedbackModal(null)}
+                  >
+                    બંધ કરો
+                  </button>
                 </div>
               </div>
-
-              <div className="admin-modal-footer">
-                <button
-                  type="button"
-                  className="admin-modal-del-btn"
-                  onClick={() => {
-                    handleDeleteFeedback(activeFeedbackModal._id, activeFeedbackModal.name);
-                    setActiveFeedbackModal(null);
-                  }}
-                  disabled={deletingFeedbackId === activeFeedbackModal._id}
-                >
-                  <Trash2 size={16} />
-                  <span>{deletingFeedbackId === activeFeedbackModal._id ? "ડિલીટ થઈ રહ્યું છે..." : "પ્રતિસાદ ડિલીટ કરો"}</span>
-                </button>
-
-                <button
-                  type="button"
-                  className="admin-modal-close-action"
-                  onClick={() => setActiveFeedbackModal(null)}
-                >
-                  બંધ કરો
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
+            </div>,
+            document.body
+          )}
 
         {/* =================================================
             USERS
