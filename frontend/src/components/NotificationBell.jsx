@@ -6,9 +6,12 @@ import {
   X,
   Sparkles,
   CheckCircle2,
-  AlertTriangle,
+  AlertCircle,
   RefreshCw,
-  Sun,
+  BookOpen,
+  Flame,
+  ShieldCheck,
+  Lock,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext.jsx";
 import {
@@ -53,7 +56,7 @@ export default function NotificationBell() {
       setIsSubscribed(active);
 
       // If user has NOT turned on notifications and hasn't dismissed it in this visit:
-      // Show the Welcome Popup on website open!
+      // Show the Welcome Popup on website open
       if (!active && !dismissedThisVisit) {
         const timer = setTimeout(() => {
           setShowPromptModal(true);
@@ -72,28 +75,28 @@ export default function NotificationBell() {
       setIsSubscribed(true);
       setPermission("granted");
       setStatusMsg({
-        text: "✨ અદ્ભુત! નોટિફિકેશન સફળતાપૂર્વક શરૂ થઈ ગયું છે. જય શ્રી કૃષ્ણ! 🙏",
+        text: "સૂચનાઓ સફળતાપૂર્વક સક્રિય કરવામાં આવી છે.",
         type: "success",
       });
 
-      // Automatically close modal after celebration
+      // Automatically close modal after success
       setTimeout(() => {
         setStatusMsg({ text: "", type: "" });
         setShowPromptModal(false);
         setShowSettingsModal(false);
-      }, 2200);
+      }, 2000);
     } catch (err) {
       console.error("Subscription error:", err);
       const perm = getNotificationPermission();
       setPermission(perm);
 
-      let errorMsg = "નોટિફિકેશન શરૂ કરવામાં સમસ્યા આવી.";
+      let errorMsg = "સૂચનાઓ શરૂ કરવામાં સમસ્યા આવી.";
       if (
         perm === "denied" ||
         (err.message && (err.message.includes("નકારી") || err.message.includes("denied")))
       ) {
         errorMsg =
-          "નોટિફિકેશનની પરવાનગી નકારી દીધી છે. બ્રાઉઝરના 🔒 લૉક આઇકનમાંથી Allow કરો.";
+          "સૂચનાઓની પરવાનગી નકારી દીધી છે. બ્રાઉઝરના લૉક આઇકનમાંથી Allow કરો.";
       } else if (err.message && err.message.includes("fetch")) {
         errorMsg =
           "સર્વર સાથે જોડાણ થઈ શક્યું નથી. કૃપા કરીને થોડીવાર પછી ફરી પ્રયાસ કરો.";
@@ -115,7 +118,7 @@ export default function NotificationBell() {
       setIsSubscribed(false);
       setPermission(getNotificationPermission());
       setStatusMsg({
-        text: "નોટિફિકેશન બંધ કરવામાં આવ્યું છે.",
+        text: "સૂચનાઓ નિષ્ક્રિય કરવામાં આવી છે.",
         type: "success",
       });
       setTimeout(() => {
@@ -125,7 +128,7 @@ export default function NotificationBell() {
     } catch (err) {
       console.error(err);
       setStatusMsg({
-        text: "નોટિફિકેશન બંધ કરવામાં સમસ્યા આવી.",
+        text: "સૂચનાઓ બંધ કરવામાં સમસ્યા આવી.",
         type: "error",
       });
     } finally {
@@ -141,7 +144,7 @@ export default function NotificationBell() {
       handleSubscribe();
     } else {
       setStatusMsg({
-        text: "હજી પરવાનગી મળી નથી. બ્રાઉઝરના એડ્રેસ બારમાં 🔒 લૉક આઇકન પર ક્લિક કરી Notifications: Allow કરો.",
+        text: "હજી પરવાનગી મળી નથી. બ્રાઉઝરના એડ્રેસ બારમાં લૉક આઇકન પર ક્લિક કરી Notifications: Allow કરો.",
         type: "error",
       });
     }
@@ -173,10 +176,10 @@ export default function NotificationBell() {
         onClick={handleNavbarBellClick}
         title={
           isSubscribed
-            ? "દૈનિક શ્લોક નોટિફિકેશન સક્રિય છે"
-            : "દૈનિક શ્લોક નોટિફિકેશન શરૂ કરો"
+            ? "દૈનિક પ્રેરણા સૂચનાઓ સક્રિય છે"
+            : "દૈનિક પ્રેરણા સૂચનાઓ શરૂ કરો"
         }
-        aria-label="નોટિફિકેશન સેટિંગ્સ"
+        aria-label="સૂચના સેટિંગ્સ"
       >
         {isSubscribed ? (
           <>
@@ -192,7 +195,7 @@ export default function NotificationBell() {
       </button>
 
       {/* =====================================================
-          MAIN WELCOME POPUP MODAL (જ્યાં સુધી નોટિફિકેશન શરૂ ન કરે ત્યાં સુધી દર વખતે વેબસાઇટ ખોલતા દેખાશે)
+          MAIN WELCOME POPUP MODAL (જ્યાં સુધી નોટિફિકેશન શરૂ ન કરે ત્યાં સુધી દર વખતે દેખાય)
       ===================================================== */}
       {showPromptModal && (
         <>
@@ -207,9 +210,9 @@ export default function NotificationBell() {
               className="notif-prompt-close-btn"
               onClick={handleDismissPrompt}
               aria-label="બંધ કરો"
-              title="પછીથી"
+              title="હમણાં નહીં"
             >
-              <X size={20} />
+              <X size={18} />
             </button>
 
             {/* Glowing Bell Icon Header */}
@@ -217,52 +220,53 @@ export default function NotificationBell() {
               <div className="notif-prompt-icon-ring ring-1" />
               <div className="notif-prompt-icon-ring ring-2" />
               <div className="notif-prompt-icon-circle">
-                <BellRing size={34} className="notif-prompt-bell-animated" />
+                <BellRing size={32} className="notif-prompt-bell-animated" />
               </div>
             </div>
 
             {/* Header / Title */}
             <div className="notif-prompt-header">
               <span className="notif-prompt-tag">
-                <Sparkles size={14} /> શ્રીમદ્ ભગવદ્ ગીતા
+                <Sparkles size={13} />
+                <span>શ્રીમદ્ ભગવદ્ ગીતા</span>
               </span>
               <h2 className="notif-prompt-title">
-                દૈનિક શ્લોક નોટિફિકેશન શરૂ કરો 🙏
+                દૈનિક પ્રેરણા સૂચનાઓ સક્રિય કરો
               </h2>
               <p className="notif-prompt-subtitle">
-                દરરોજ સવારે અને સાંજે પવિત્ર ગીતા શ્લોક, સરળ ગુજરાતી અર્થ અને દૈનિક આધ્યાત્મિક પ્રેરણા સીધા તમારા ફોનમાં મેળવો.
+                દરરોજ તમારી વાંચન સ્ટ્રીક જાળવવા અને જીવનમાં સકારાત્મક માર્ગદર્શન મેળવવા માટે સૂચનાઓ શરૂ કરો.
               </p>
             </div>
 
-            {/* Features List */}
+            {/* Professional Features List */}
             <div className="notif-prompt-features">
               <div className="notif-feature-item">
                 <div className="notif-feature-icon">
-                  <CheckCircle2 size={16} />
+                  <Flame size={16} />
                 </div>
                 <div className="notif-feature-text">
-                  <strong>દરરોજ નવો પવિત્ર શ્લોક</strong>
-                  <span>સરળ ગુજરાતી અર્થ અને જીવન માર્ગદર્શન સાથે</span>
+                  <strong>દૈનિક સ્ટ્રીક (Daily Streak)</strong>
+                  <span>નિયમિત વાંચનની આદત જાળવી રાખો અને લક્ષ્ય પૂર્ણ કરો</span>
                 </div>
               </div>
 
               <div className="notif-feature-item">
                 <div className="notif-feature-icon">
-                  <Sun size={16} />
+                  <BookOpen size={16} />
                 </div>
                 <div className="notif-feature-text">
-                  <strong>પ્રભાત અને સંધ્યા ચિંતન</strong>
-                  <span>દિવસની શરૂઆત અને અંત સદ્વિચાર સાથે કરો</span>
+                  <strong>સમયસર પ્રેરણા અને માર્ગદર્શન</strong>
+                  <span>દિવસ દરમિયાન મનની શાંતિ અને એકાગ્રતા માટે સહાયક સંદેશાઓ</span>
                 </div>
               </div>
 
               <div className="notif-feature-item">
                 <div className="notif-feature-icon">
-                  <BellOff size={16} />
+                  <ShieldCheck size={16} />
                 </div>
                 <div className="notif-feature-text">
-                  <strong>૧૦૦% નિઃશુલ્ક અને સુરક્ષિત</strong>
-                  <span>કોઈ સ્પેમ નહીં, ગમે ત્યારે બંધ કરી શકો છો</span>
+                  <strong>સંપૂર્ણ નિયંત્રણ અને સુરક્ષા</strong>
+                  <span>કોઈ વધારાના સંદેશાઓ નહીં, ગમે ત્યારે સહેલાઈથી બંધ કરી શકો છો</span>
                 </div>
               </div>
             </div>
@@ -271,11 +275,11 @@ export default function NotificationBell() {
             {permission === "denied" && (
               <div className="notif-denied-box">
                 <div className="notif-denied-header">
-                  <AlertTriangle size={18} />
-                  <span>નોટિફિકેશન બ્રાઉઝરમાં બ્લોક થયેલ છે</span>
+                  <Lock size={15} />
+                  <span>સૂચનાઓની પરવાનગી બ્રાઉઝરમાં બ્લોક થયેલ છે</span>
                 </div>
                 <p>
-                  તમે અગાઉ 'Block' કરેલું છે. તેને ચાલુ કરવા માટે બ્રાઉઝરમાં ઉપર URL પાસે લૉક (🔒) આઇકન પર ક્લિક કરી <strong>Notifications: Allow</strong> કરો.
+                  તમે અગાઉ બ્લોક કરેલ છે. તેને ચાલુ કરવા માટે બ્રાઉઝરના એડ્રેસ બારમાં લૉક આઇકન પર ક્લિક કરી <strong>Notifications: Allow</strong> પસંદ કરો.
                 </p>
                 <button
                   type="button"
@@ -283,7 +287,7 @@ export default function NotificationBell() {
                   onClick={handleCheckPermissionAgain}
                   disabled={loading}
                 >
-                  <RefreshCw size={15} /> મેં Allow કર્યું, ફરીથી તપાસો
+                  <RefreshCw size={14} /> પરવાનગી ફરીથી ચકાસો
                 </button>
               </div>
             )}
@@ -291,7 +295,12 @@ export default function NotificationBell() {
             {/* Toast Message */}
             {statusMsg.text && (
               <div className={`notif-prompt-toast ${statusMsg.type}`}>
-                {statusMsg.text}
+                {statusMsg.type === "success" ? (
+                  <CheckCircle2 size={15} />
+                ) : (
+                  <AlertCircle size={15} />
+                )}
+                <span>{statusMsg.text}</span>
               </div>
             )}
 
@@ -304,9 +313,9 @@ export default function NotificationBell() {
                   onClick={handleSubscribe}
                   disabled={loading}
                 >
-                  <BellRing size={18} />
+                  <BellRing size={17} />
                   <span>
-                    {loading ? "પરવાનગી મેળવી રહ્યું છે..." : "હા, નોટિફિકેશન શરૂ કરો"}
+                    {loading ? "પ્રક્રિયા ચાલુ છે..." : "સૂચનાઓ સક્રિય કરો"}
                   </span>
                 </button>
 
@@ -316,7 +325,7 @@ export default function NotificationBell() {
                   onClick={handleDismissPrompt}
                   disabled={loading}
                 >
-                  પછીથી (Maybe Later)
+                  હમણાં નહીં
                 </button>
               </div>
             )}
@@ -348,24 +357,26 @@ export default function NotificationBell() {
           <div className="notif-modal">
             <div className="notif-modal-header">
               <span className="notif-modal-title">
-                <Bell size={18} />
-                દૈનિક શ્લોક નોટિફિકેશન
+                <Bell size={17} />
+                <span>સૂચના સેટિંગ્સ</span>
               </span>
               <button
                 type="button"
                 className="notif-close-btn"
                 onClick={() => setShowSettingsModal(false)}
+                aria-label="બંધ કરો"
               >
-                <X size={18} />
+                <X size={16} />
               </button>
             </div>
 
             <div className="notif-modal-body">
               <div className="notif-active-badge">
-                <CheckCircle2 size={16} /> નોટિફિકેશન સક્રિય છે (Active)
+                <CheckCircle2 size={14} />
+                <span>સૂચનાઓ સક્રિય છે</span>
               </div>
               <p style={{ margin: "8px 0 16px 0", lineHeight: "1.5", fontSize: "13px" }}>
-                તમને દરરોજ ભગવદ્ ગીતાના પવિત્ર શ્લોક અને દૈનિક માર્ગદર્શન સમયસર મળી રહેશે.
+                તમારી દૈનિક સ્ટ્રીક અને માર્ગદર્શન માટેની સૂચનાઓ નિયમિત રીતે ચાલુ છે.
               </p>
 
               <button
@@ -374,13 +385,18 @@ export default function NotificationBell() {
                 onClick={handleUnsubscribe}
                 disabled={loading}
               >
-                <BellOff size={16} />
-                {loading ? "પ્રક્રિયા ચાલુ..." : "નોટિફિકેશન બંધ કરો"}
+                <BellOff size={15} />
+                <span>{loading ? "પ્રક્રિયા ચાલુ છે..." : "સૂચનાઓ નિષ્ક્રિય કરો"}</span>
               </button>
 
               {statusMsg.text && (
                 <div className={`notif-toast ${statusMsg.type}`}>
-                  {statusMsg.text}
+                  {statusMsg.type === "success" ? (
+                    <CheckCircle2 size={14} />
+                  ) : (
+                    <AlertCircle size={14} />
+                  )}
+                  <span>{statusMsg.text}</span>
                 </div>
               )}
             </div>

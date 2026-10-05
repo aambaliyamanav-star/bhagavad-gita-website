@@ -128,7 +128,7 @@ module.exports = {
     }
   },
 
-  // Triggered by Cron or Admin (Sends daily divine shloka reminder to all subscribers)
+  // Dynamic engaging notification messages pool without shloks or raw translations
   sendDailyReminder: async (customMsg = null) => {
     try {
       // Find all active subscribers (Both users and admins so dev/admin also gets notifications!)
@@ -139,32 +139,95 @@ module.exports = {
         return { success: true, count: 0, sent: 0 };
       }
 
-      // Determine time-appropriate message based on current Indian Standard Time (IST)
-      const istHours = new Date(Date.now() + 5.5 * 60 * 60 * 1000).getUTCHours();
-      let defaultReminder;
-      if (istHours >= 4 && istHours < 12) {
-        defaultReminder = {
-          title: "🌸 શ્રીમદ્ ભગવદ્ ગીતા - પ્રભાત ચિંતન",
-          body: "કર્મણ્યેવાધિકારસ્તે મા ફલેષુ કદાચન। આજનો પવિત્ર શ્લોક વાંચવા માટે ક્લિક કરો.",
-        };
-      } else if (istHours >= 12 && istHours < 16) {
-        defaultReminder = {
-          title: "✨ ભગવદ્ ગીતા - બપોરનું માર્ગદર્શન",
-          body: "મન શાંત રાખો અને સાચા માર્ગે ચાલો। આજનું ગીતા માર્ગદર્શન મેળવો.",
-        };
-      } else if (istHours >= 16 && istHours < 20) {
-        defaultReminder = {
-          title: "🕉️ શ્રીમદ્ ભગવદ્ ગીતા - સંધ્યા સંદેશ",
-          body: "શ્રદ્ધાવાન મનુષ્ય જ પરમ શાંતિ અને જ્ઞાન પ્રાપ્ત કરે છે। આજનો શ્લોક વાંચો.",
-        };
-      } else {
-        defaultReminder = {
-          title: "🌙 શ્રીમદ્ ભગવદ્ ગીતા - રાત્રિ વિચાર",
-          body: "આજનો દિવસ પૂર્ણ કરતાં પહેલાં ગીતાનો એક પવિત્ર શ્લોક વાંચીને મન શાંત કરો.",
-        };
-      }
+      // Determine time-appropriate message based on current Indian Standard Time (IST = UTC + 5:30)
+      const istDate = new Date(Date.now() + 5.5 * 60 * 60 * 1000);
+      const istHours = istDate.getUTCHours();
 
-      const reminder = customMsg || defaultReminder;
+      const messagePools = {
+        morning: [
+          {
+            title: "શ્રીમદ્ ભગવદ્ ગીતા | Daily Streak",
+            body: "તમારી દૈનિક સ્ટ્રીક જાળવી રાખવા માટે દિવસની શરૂઆતમાં ૧ શ્લોક વાંચો.",
+          },
+          {
+            title: "ભગવદ્ ગીતા | પ્રભાત પ્રેરણા",
+            body: "આજના દિવસની શુભ શરૂઆત સકારાત્મક વિચાર અને સ્પષ્ટ માર્ગદર્શન સાથે કરો.",
+          },
+          {
+            title: "શ્રીમદ્ ભગવદ્ ગીતા | દૈનિક લક્ષ્ય",
+            body: "તમારું આજના દિવસનું પ્રથમ વાંચન લક્ષ્ય પૂર્ણ કરવા માટે આગળ વધો.",
+          },
+          {
+            title: "ભગવદ્ ગીતા | એકાગ્રતા અને કર્મ",
+            body: "આજના કાર્યમાં સફળતા અને સ્થિરતા મેળવવા ગીતાજીનું માર્ગદર્શન મેળવો.",
+          },
+        ],
+        afternoon: [
+          {
+            title: "ભગવદ્ ગીતા | દૈનિક વિરામ",
+            body: "દિવસની વ્યસ્તતા વચ્ચે ૨ મિનિટ મનને શાંત કરો અને વાંચન પ્રગતિ આગળ વધારો.",
+          },
+          {
+            title: "શ્રીમદ્ ભગવદ્ ગીતા | ક્વિઝ ચેલેન્જ",
+            body: "આજે નવી ક્વિઝ રમીને તમારા જ્ઞાનની કસોટી કરો અને પોઈન્ટ્સ મેળવો.",
+          },
+          {
+            title: "ભગવદ્ ગીતા | મનની શાંતિ",
+            body: "કોઈપણ મૂંઝવણ કે તણાવ હોય તો ગીતા AI સાથે માર્ગદર્શન મેળવો અથવા નવો શ્લોક વાંચો.",
+          },
+          {
+            title: "શ્રીમદ્ ભગવદ્ ગીતા | દૈનિક પ્રગતિ",
+            body: "તમારી વાંચન સફર ચાલુ રાખો અને આજના ટાર્ગેટ તરફ આગળ વધો.",
+          },
+        ],
+        evening: [
+          {
+            title: "ભગવદ્ ગીતા | Daily Streak રિમાઇન્ડર",
+            body: "ધ્યાન રાખો! તમારી આજની વાંચન સ્ટ્રીક તૂટી ન જાય તે માટે ૧ શ્લોક પૂર્ણ કરો.",
+          },
+          {
+            title: "શ્રીમદ્ ભગવદ્ ગીતા | સંધ્યા ચિંતન",
+            body: "દિવસના થાક પછી આંતરિક શાંતિ અને માનસિક સ્થિરતા માટે થોડો સમય ફાળવો.",
+          },
+          {
+            title: "ભગવદ્ ગીતા | લક્ષ્ય પૂર્તિ",
+            body: "તમારો આજનો દૈનિક વાંચન ટાર્ગેટ હજુ બાકી છે, હમણાં જ પૂર્ણ કરો.",
+          },
+          {
+            title: "શ્રીમદ્ ભગવદ્ ગીતા | આત્મ-વિશ્વાસ",
+            body: "સાચા નિર્ણયો લેવા અને મનોબળ મજબૂત બનાવવા ગીતાજીનું માર્ગદર્શન વાંચો.",
+          },
+        ],
+        night: [
+          {
+            title: "ભગવદ્ ગીતા | દિવસનું સમાપન",
+            body: "આજનો દિવસ પૂર્ણ કરતાં પહેલાં તમારી Daily Streak સુરક્ષિત કરો.",
+          },
+          {
+            title: "શ્રીમદ્ ભગવદ્ ગીતા | રાત્રિ શાંતિ",
+            body: "દિવસના તમામ વિચારો શાંત કરીને સંતોષપૂર્વક ઊંઘ મેળવવા માટે ગીતા વાંચો.",
+          },
+          {
+            title: "ભગવદ્ ગીતા | આત્મ-મંથન",
+            body: "આજના દિવસનું મૂલ્યાંકન કરો અને આવતીકાલ માટે નવી ઊર્જા મેળવો.",
+          },
+          {
+            title: "શ્રીમદ્ ભગવદ્ ગીતા | દૈનિક સ્ટ્રીક",
+            body: "આજનો દિવસ ગીતા વાંચ્યા વિના પૂરો ન થવા દો. હમણાં જ વાંચન પૂર્ણ કરો.",
+          },
+        ],
+      };
+
+      let currentSlot = "night";
+      if (istHours >= 5 && istHours < 12) currentSlot = "morning";
+      else if (istHours >= 12 && istHours < 16) currentSlot = "afternoon";
+      else if (istHours >= 16 && istHours < 20) currentSlot = "evening";
+
+      const slotPool = messagePools[currentSlot];
+      // Randomly select one message from the appropriate slot to ensure variety
+      const selectedMessage = slotPool[Math.floor(Math.random() * slotPool.length)];
+
+      const reminder = customMsg || selectedMessage;
       const targetUrl =
         process.env.SITE_URL || "https://bhagavad-gita-website-rk1v.vercel.app";
 
@@ -215,7 +278,7 @@ module.exports = {
       const userEmail = newUser.email || "";
 
       const payload = {
-        title: "🎉 નવો વપરાશકર્તા જોડાયો!",
+        title: "નવો વપરાશકર્તા જોડાયો",
         body: `${userName} (${userEmail}) એ ભગવદ્ ગીતા વેબસાઇટ પર સફળતાપૂર્વક રજીસ્ટ્રેશન કર્યું.`,
         url: process.env.ADMIN_DASHBOARD_URL || "https://bhagavad-gita-website-rk1v.vercel.app/admin",
         tag: "new-user-registered",
