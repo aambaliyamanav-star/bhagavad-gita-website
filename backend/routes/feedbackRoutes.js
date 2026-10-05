@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 
 const {
+  getMyRating,
   submitFeedback,
   getFeedbackStats,
   getAdminFeedbacks,
@@ -17,6 +18,7 @@ const {
 // Public / User routes
 router.post("/", optionalAuth, submitFeedback);
 router.get("/stats", getFeedbackStats);
+router.get("/my-rating", optionalAuth, getMyRating);
 
 // Admin routes
 router.get("/admin", protect, adminOnly, getAdminFeedbacks);

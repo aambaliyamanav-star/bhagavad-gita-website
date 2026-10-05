@@ -1,67 +1,150 @@
 const Feedback = require("../models/Feedback");
+const Rating = require("../models/Rating");
 
 // =====================================================
-// SUBMIT FEEDBACK & RATING (Public / Logged-in)
+// GET CURRENT USER RATING & LOCK STATUS
+// =====================================================
+const getMyRating = async (req, res) => {
+  try {
+    if (!req.userId) {
+      return res.status(200).json({
+        success: true,
+        hasRated: false,
+        rating: 0,
+        isLocked: false,
+      });
+    }
+
+    const userRatingDoc = await Rating.findOne({ userId: req.userId }).lean();
+
+    if (!userRatingDoc) {
+      return res.status(200).json({
+        success: true,
+        hasRated: false,
+        rating: 0,
+        isLocked: false,
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      hasRated: true,
+      rating: userRatingDoc.rating,
+      isLocked: Boolean(userRatingDoc.isLocked || userRatingDoc.rating === 5),
+    });
+  } catch (error) {
+    console.error("Get My Rating Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "રેટિંગ માહિતી મેળવવામાં સમસ્યા આવી.",
+    });
+  }
+};
+
+// =====================================================
+// SUBMIT FEEDBACK / SUGGESTION / RATING
 // =====================================================
 const submitFeedback = async (req, res) => {
   try {
-    const { rating, category, message, device } = req.body;
-    let { name, email } = req.body;
+    const { category, message, device } = req.body;
+    let { rating, name, email } = req.body;
 
-    if (!rating || Number(rating) < 1 || Number(rating) > 5) {
-      return res.status(400).json({
-        success: false,
-        message: "કૃપા કરીને ૧ થી ૫ વચ્ચે સ્ટાર રેટિંગ પસંદ કરો.",
-      });
-    }
-
-    if (!message || message.trim().length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: "કૃપા કરીને તમારું સૂચન કે પ્રતિસાદ લખો.",
-      });
-    }
-
+    // Handle user identification
     if (req.user) {
-      if (!name || name.trim().length === 0) {
-        name = req.user.name || "ભક્ત";
-      }
-      if (!email) {
-        email = req.user.email || "";
-      }
+      name = name && name.trim().length > 0 ? name.trim() : (req.user.name || "ભક્ત");
+      email = req.user.email || email || "";
     } else {
-      if (!name || name.trim().length === 0) {
-        name = "અનામી સાધક";
+      name = name && name.trim().length > 0 ? name.trim() : "અનામી સાધક";
+      email = email ? email.trim() : "";
+    }
+
+    let finalRatingNum = rating !== undefined && rating !== null ? Number(rating) : 0;
+    let isRatingLocked = false;
+    let ratingUpdated = false;
+
+    // Handle Star Rating logic (Strictly 1 per account, lockable at 5)
+    if (req.userId && finalRatingNum >= 1 && finalRatingNum <= 5) {
+      let existingRating = await Rating.findOne({ userId: req.userId });
+
+      if (existingRating) {
+        if (existingRating.isLocked || existingRating.rating === 5) {
+          // Already locked at 5 stars! Cannot be changed.
+          isRatingLocked = true;
+          finalRatingNum = 5;
+        } else {
+          // Update existing rating without creating a duplicate count!
+          existingRating.rating = finalRatingNum;
+          existingRating.userName = name;
+          existingRating.userEmail = email;
+          if (finalRatingNum === 5) {
+            existingRating.isLocked = true;
+            isRatingLocked = true;
+          }
+          await existingRating.save();
+          ratingUpdated = true;
+        }
+      } else {
+        // First-time rating for this user account
+        const lockNow = finalRatingNum === 5;
+        await Rating.create({
+          userId: req.userId,
+          userName: name,
+          userEmail: email,
+          rating: finalRatingNum,
+          isLocked: lockNow,
+        });
+        isRatingLocked = lockNow;
+        ratingUpdated = true;
+      }
+    } else if (req.userId) {
+      // If user didn't specify rating in this submission, fetch their current rating if exists
+      const existingRating = await Rating.findOne({ userId: req.userId });
+      if (existingRating) {
+        finalRatingNum = existingRating.rating;
+        isRatingLocked = existingRating.isLocked;
       }
     }
 
-    const validCategories = ["suggestion", "feedback", "bug", "appreciation"];
-    const finalCategory = validCategories.includes(category)
-      ? category
-      : "feedback";
+    // Handle Suggestion / Message submission (Unlimited submissions allowed per account)
+    let savedFeedback = null;
+    const hasMessage = message && message.trim().length > 0;
 
-    const feedback = await Feedback.create({
-      userId: req.userId || null,
-      name: name.trim(),
-      email: email ? email.trim() : "",
-      rating: Number(rating),
-      category: finalCategory,
-      message: message.trim(),
-      device: device || "",
-      status: "active",
-    });
+    if (hasMessage) {
+      const validCategories = ["suggestion", "feedback", "bug", "appreciation"];
+      const finalCategory = validCategories.includes(category)
+        ? category
+        : "suggestion";
+
+      savedFeedback = await Feedback.create({
+        userId: req.userId || null,
+        name,
+        email,
+        rating: finalRatingNum > 0 ? finalRatingNum : 5,
+        category: finalCategory,
+        message: message.trim(),
+        device: device || "",
+        status: "active",
+      });
+    } else if (!ratingUpdated && !hasMessage) {
+      return res.status(400).json({
+        success: false,
+        message: "કૃપા કરીને તમારું સૂચન લખો અથવા રેટિંગ આપો.",
+      });
+    }
+
+    let responseMessage = "આપનો પ્રતિસાદ સફળતાપૂર્વક સબમિટ થયો છે. ધન્યવાદ!";
+    if (ratingUpdated && isRatingLocked) {
+      responseMessage = "૫-સ્ટાર રેટિંગ અને પ્રતિસાદ સફળતાપૂર્વક સબમિટ થયો. આપનું ૫-સ્ટાર રેટિંગ હવે લૉક થઈ ગયું છે. ખૂબ ખૂબ ધન્યવાદ!";
+    } else if (ratingUpdated) {
+      responseMessage = "તમારું રેટિંગ સફળતાપૂર્વક અપડેટ થયું છે.";
+    }
 
     return res.status(201).json({
       success: true,
-      message: "તમારો પ્રતિસાદ અને રેટિંગ સફળતાપૂર્વક સબમિટ થયો છે. ધન્યવાદ!",
-      feedback: {
-        _id: feedback._id,
-        name: feedback.name,
-        rating: feedback.rating,
-        category: feedback.category,
-        message: feedback.message,
-        createdAt: feedback.createdAt,
-      },
+      message: responseMessage,
+      isLocked: isRatingLocked,
+      currentRating: finalRatingNum,
+      feedback: savedFeedback,
     });
   } catch (error) {
     console.error("Submit Feedback Error:", error);
@@ -77,26 +160,11 @@ const submitFeedback = async (req, res) => {
 // =====================================================
 const getFeedbackStats = async (req, res) => {
   try {
-    const feedbacks = await Feedback.find({ status: "active" })
-      .sort({ createdAt: -1 })
-      .select("name rating category message createdAt")
-      .limit(20)
-      .lean();
-
-    const allRatings = await Feedback.find(
-      { status: "active" },
-      "rating category"
-    ).lean();
-
-    const totalCount = allRatings.length;
+    // 1. Calculate ratings from Rating collection (Unique 1 per user)
+    const allRatings = await Rating.find({}, "rating").lean();
+    let totalRatings = allRatings.length;
     let sum = 0;
     const distribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-    const categoryCounts = {
-      suggestion: 0,
-      feedback: 0,
-      bug: 0,
-      appreciation: 0,
-    };
 
     allRatings.forEach((item) => {
       const r = item.rating;
@@ -104,21 +172,48 @@ const getFeedbackStats = async (req, res) => {
       if (distribution[r] !== undefined) {
         distribution[r] += 1;
       }
-      if (categoryCounts[item.category] !== undefined) {
-        categoryCounts[item.category] += 1;
-      }
     });
 
-    const averageRating = totalCount > 0 ? Number((sum / totalCount).toFixed(1)) : 5.0;
+    // Fallback: If Rating collection has few entries, also aggregate distinct ratings from Feedbacks
+    if (totalRatings === 0) {
+      const feedbacks = await Feedback.find({ status: "active" }, "rating").lean();
+      totalRatings = feedbacks.length;
+      feedbacks.forEach((item) => {
+        sum += item.rating;
+        if (distribution[item.rating] !== undefined) {
+          distribution[item.rating] += 1;
+        }
+      });
+    }
+
+    const averageRating = totalRatings > 0 ? Number((sum / totalRatings).toFixed(1)) : 5.0;
+
+    // 2. Calculate category counts from Feedbacks (Suggestions, bugs, etc.)
+    const categoryCounts = {
+      suggestion: await Feedback.countDocuments({ category: "suggestion" }),
+      feedback: await Feedback.countDocuments({ category: "feedback" }),
+      bug: await Feedback.countDocuments({ category: "bug" }),
+      appreciation: await Feedback.countDocuments({ category: "appreciation" }),
+    };
+
+    const totalFeedbacks = await Feedback.countDocuments({ status: "active" });
+
+    // 3. Latest reviews for public showcase
+    const recentReviews = await Feedback.find({ status: "active" })
+      .sort({ createdAt: -1 })
+      .select("name rating category message createdAt")
+      .limit(20)
+      .lean();
 
     return res.status(200).json({
       success: true,
       stats: {
-        totalCount,
+        totalCount: totalRatings,
+        totalFeedbacks,
         averageRating,
         distribution,
         categoryCounts,
-        recentReviews: feedbacks,
+        recentReviews,
       },
     });
   } catch (error) {
@@ -136,7 +231,7 @@ const getFeedbackStats = async (req, res) => {
 const getAdminFeedbacks = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 20;
+    const limit = parseInt(req.query.limit) || 100;
     const skip = (page - 1) * limit;
 
     const { category, rating, search } = req.query;
@@ -158,7 +253,7 @@ const getAdminFeedbacks = async (req, res) => {
       ];
     }
 
-    const [feedbacks, totalCount, allActive] = await Promise.all([
+    const [feedbacks, totalCount] = await Promise.all([
       Feedback.find(filter)
         .populate("userId", "name email role")
         .sort({ createdAt: -1 })
@@ -166,31 +261,41 @@ const getAdminFeedbacks = async (req, res) => {
         .limit(limit)
         .lean(),
       Feedback.countDocuments(filter),
-      Feedback.find({}, "rating category").lean(),
     ]);
 
-    // Calculate overall stats for summary cards
+    // Calculate rating metrics from unique Ratings collection
+    const allRatings = await Rating.find({}, "rating").lean();
+    let totalRatings = allRatings.length;
     let sum = 0;
     const distribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-    const categoryCounts = {
-      suggestion: 0,
-      feedback: 0,
-      bug: 0,
-      appreciation: 0,
-    };
 
-    allActive.forEach((item) => {
-      sum += item.rating || 0;
+    allRatings.forEach((item) => {
+      sum += item.rating;
       if (distribution[item.rating] !== undefined) {
         distribution[item.rating] += 1;
       }
-      if (categoryCounts[item.category] !== undefined) {
-        categoryCounts[item.category] += 1;
-      }
     });
 
-    const averageRating =
-      allActive.length > 0 ? Number((sum / allActive.length).toFixed(1)) : 5.0;
+    if (totalRatings === 0) {
+      // Fallback to feedback entries if no Rating docs yet
+      const allFbs = await Feedback.find({}, "rating").lean();
+      totalRatings = allFbs.length;
+      allFbs.forEach((item) => {
+        sum += item.rating;
+        if (distribution[item.rating] !== undefined) {
+          distribution[item.rating] += 1;
+        }
+      });
+    }
+
+    const averageRating = totalRatings > 0 ? Number((sum / totalRatings).toFixed(1)) : 5.0;
+
+    const categoryCounts = {
+      suggestion: await Feedback.countDocuments({ category: "suggestion" }),
+      feedback: await Feedback.countDocuments({ category: "feedback" }),
+      bug: await Feedback.countDocuments({ category: "bug" }),
+      appreciation: await Feedback.countDocuments({ category: "appreciation" }),
+    };
 
     return res.status(200).json({
       success: true,
@@ -203,7 +308,8 @@ const getAdminFeedbacks = async (req, res) => {
           limit,
         },
         summary: {
-          totalFeedbacks: allActive.length,
+          totalRatings,
+          totalFeedbacks: await Feedback.countDocuments({}),
           averageRating,
           distribution,
           categoryCounts,
@@ -248,6 +354,7 @@ const deleteFeedback = async (req, res) => {
 };
 
 module.exports = {
+  getMyRating,
   submitFeedback,
   getFeedbackStats,
   getAdminFeedbacks,
