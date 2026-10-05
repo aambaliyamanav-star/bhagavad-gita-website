@@ -950,14 +950,14 @@ function Admin() {
         {/* =================================================
             USER FEEDBACKS & STAR RATINGS SECTION
         ================================================= */}
-        <section className="visitor-analytics-section feedback-admin-section" aria-label="User Feedbacks">
-          <div className="visitor-section-header">
+        <section className="feedback-section-box" aria-label="User Feedbacks">
+          <div className="section-header feedback-section-header">
             <div className="visitor-title-wrap">
               <div className="visitor-header-icon-box" style={{ background: "rgba(245, 158, 11, 0.12)", color: "#d97706" }}>
                 <Star size={24} fill="#f59e0b" color="#f59e0b" />
               </div>
               <div>
-                <h2>પ્રતિસાદ અને સ્ટાર રેટિંગ્સ (User Feedbacks & Ratings)</h2>
+                <h2>પ્રતિસાદ અને સ્ટાર રેટિંગ્સ</h2>
                 <span className="v-header-sub">
                   કુલ {feedbackSummary?.totalFeedbacks ?? feedbacks.length} ભક્તો દ્વારા પ્રતિસાદ નોંધાયા છે
                 </span>
@@ -986,51 +986,6 @@ function Admin() {
             </div>
           ) : (
             <>
-              {/* FEEDBACK METRIC SUMMARY CARDS */}
-              <div className="visitor-stats-grid" style={{ marginBottom: "22px" }}>
-                <div className="v-stat-card new-guest-card">
-                  <div className="v-stat-icon-box amber-glow">
-                    <Star size={24} fill="#f59e0b" color="#f59e0b" />
-                  </div>
-                  <div className="v-stat-content">
-                    <h3>{feedbackSummary?.averageRating ? `${feedbackSummary.averageRating} ★` : "5.0 ★"}</h3>
-                    <p className="v-stat-label">
-                      સરેરાશ રેટિંગ ({feedbackSummary?.totalRatings ?? 0} રેટિંગ્સ)
-                    </p>
-                  </div>
-                </div>
-
-                <div className="v-stat-card registered-stat-card">
-                  <div className="v-stat-icon-box blue-glow">
-                    <MessageSquare size={24} />
-                  </div>
-                  <div className="v-stat-content">
-                    <h3>{(feedbackSummary?.totalFeedbacks ?? feedbacks.length).toLocaleString()}</h3>
-                    <p className="v-stat-label">કુલ પ્રતિસાદ / સૂચનો</p>
-                  </div>
-                </div>
-
-                <div className="v-stat-card return-card">
-                  <div className="v-stat-icon-box green-glow">
-                    <Lightbulb size={24} />
-                  </div>
-                  <div className="v-stat-content">
-                    <h3>{(feedbackSummary?.categoryCounts?.suggestion || 0).toLocaleString()}</h3>
-                    <p className="v-stat-label">નવા સૂચનો (Suggestions)</p>
-                  </div>
-                </div>
-
-                <div className="v-stat-card total-unique-card">
-                  <div className="v-stat-icon-box rose-glow">
-                    <Bug size={24} />
-                  </div>
-                  <div className="v-stat-content">
-                    <h3>{(feedbackSummary?.categoryCounts?.bug || 0).toLocaleString()}</h3>
-                    <p className="v-stat-label">સમસ્યાઓ / બગ્સ (Issues)</p>
-                  </div>
-                </div>
-              </div>
-
               {/* FILTER CONTROLS */}
               <div className="admin-feedback-filter-bar">
                 <div className="admin-feedback-filter-group">
