@@ -4282,6 +4282,38 @@ html[data-theme='dark'] .admin-modal-close-action:hover,
   padding: 2px 8px;
 }
 
+/* =========================================================
+   MESSAGES COMPARISON (OLD VS NEW SUGGESTION)
+========================================================= */
+
+.admin-modal-messages-comparison {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.admin-modal-message-box.old-message {
+  background: #f8fafc;
+  border-left: 4px solid #94a3b8;
+  border-radius: 10px;
+  padding: 14px 18px;
+}
+
+.admin-modal-message-title.old-title {
+  color: #475569;
+}
+
+.admin-modal-message-box.new-message {
+  background: #f0fdf4;
+  border-left: 4px solid #16a34a;
+  border-radius: 10px;
+  padding: 14px 18px;
+}
+
+.admin-modal-message-title.new-title {
+  color: #15803d;
+}
+
 /* Dark Mode Overrides for Comparisons & Banners */
 html[data-theme='dark'] .admin-fb-status-pill.latest,
 .dark .admin-fb-status-pill.latest {
@@ -4358,6 +4390,28 @@ html[data-theme='dark'] .admin-fb-first-rating-badge,
   background: #082f49 !important;
   border-color: #0369a1 !important;
   color: #7dd3fc !important;
+}
+
+html[data-theme='dark'] .admin-modal-message-box.old-message,
+.dark .admin-modal-message-box.old-message {
+  background: #0f172a !important;
+  border-left-color: #64748b !important;
+}
+
+html[data-theme='dark'] .admin-modal-message-title.old-title,
+.dark .admin-modal-message-title.old-title {
+  color: #cbd5e1 !important;
+}
+
+html[data-theme='dark'] .admin-modal-message-box.new-message,
+.dark .admin-modal-message-box.new-message {
+  background: #052e16 !important;
+  border-left-color: #22c55e !important;
+}
+
+html[data-theme='dark'] .admin-modal-message-title.new-title,
+.dark .admin-modal-message-title.new-title {
+  color: #86efac !important;
 }
 
 

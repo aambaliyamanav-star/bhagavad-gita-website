@@ -66,10 +66,19 @@ const submitFeedback = async (req, res) => {
       email = email ? email.trim() : "";
     }
 
+    // Find the most recent previous feedback by this user to capture previousMessage
+    let previousFeedbackDoc = null;
+    if (req.userId) {
+      previousFeedbackDoc = await Feedback.findOne({ userId: req.userId }).sort({ createdAt: -1 });
+    } else if (email) {
+      previousFeedbackDoc = await Feedback.findOne({ email: email.toLowerCase() }).sort({ createdAt: -1 });
+    }
+
     let finalRatingNum = rating !== undefined && rating !== null ? Number(rating) : 0;
     let isRatingLocked = false;
     let ratingUpdated = false;
     let previousRating = null;
+    let previousMessage = previousFeedbackDoc ? (previousFeedbackDoc.message || "") : "";
     let isUpdatedRating = false;
 
     // Handle Star Rating logic (Strictly 1 per account, lockable at 5)
@@ -121,6 +130,11 @@ const submitFeedback = async (req, res) => {
       }
     }
 
+    // Fallback: If previousRating not in Rating collection, take from previous feedback
+    if (!previousRating && previousFeedbackDoc) {
+      previousRating = previousFeedbackDoc.rating;
+    }
+
     const validCategories = ["suggestion", "feedback", "bug", "appreciation"];
     const finalCategory = validCategories.includes(category)
       ? category
@@ -131,8 +145,9 @@ const submitFeedback = async (req, res) => {
       name,
       email,
       rating: finalRatingNum > 0 ? finalRatingNum : 5,
-      previousRating: isUpdatedRating ? previousRating : null,
-      isUpdatedRating: isUpdatedRating,
+      previousRating: (isUpdatedRating || previousFeedbackDoc) ? previousRating : null,
+      previousMessage: (isUpdatedRating || previousFeedbackDoc) ? previousMessage : "",
+      isUpdatedRating: isUpdatedRating || Boolean(previousFeedbackDoc && previousRating && previousRating !== finalRatingNum),
       category: finalCategory,
       message: message.trim(),
       device: device || "",
@@ -270,22 +285,52 @@ const getAdminFeedbacks = async (req, res) => {
       Feedback.countDocuments(filter),
     ]);
 
-    // Mark whether each feedback is the user's latest feedback
+    // Mark whether each feedback is the user's latest feedback and ensure previousRating and previousMessage are populated
     const seenUsers = new Set();
-    const feedbacks = rawFeedbacks.map((fb) => {
-      const userKey = fb.userId?._id
-        ? String(fb.userId._id)
-        : (fb.email ? `email:${fb.email.toLowerCase()}` : `fb:${fb._id}`);
-      let isLatest = false;
-      if (!seenUsers.has(userKey)) {
-        seenUsers.add(userKey);
-        isLatest = true;
-      }
-      return {
-        ...fb,
-        isLatestUserFeedback: isLatest,
-      };
-    });
+    const feedbacks = await Promise.all(
+      rawFeedbacks.map(async (fb) => {
+        const userKey = fb.userId?._id
+          ? String(fb.userId._id)
+          : (fb.email ? `email:${fb.email.toLowerCase()}` : `fb:${fb._id}`);
+        let isLatest = false;
+        if (!seenUsers.has(userKey)) {
+          seenUsers.add(userKey);
+          isLatest = true;
+        }
+
+        let prevMsg = fb.previousMessage || "";
+        let prevRating = fb.previousRating || null;
+
+        // If previousMessage is empty, search for earlier feedback from same user
+        if (!prevMsg && (fb.userId?._id || fb.email)) {
+          const userFilter = fb.userId?._id
+            ? { userId: fb.userId._id }
+            : { email: fb.email.toLowerCase() };
+
+          const olderFeedback = await Feedback.findOne({
+            ...userFilter,
+            _id: { $ne: fb._id },
+            createdAt: { $lt: fb.createdAt },
+          })
+            .sort({ createdAt: -1 })
+            .lean();
+
+          if (olderFeedback) {
+            prevMsg = olderFeedback.message || "";
+            if (!prevRating && olderFeedback.rating) {
+              prevRating = olderFeedback.rating;
+            }
+          }
+        }
+
+        return {
+          ...fb,
+          previousMessage: prevMsg,
+          previousRating: prevRating,
+          isLatestUserFeedback: isLatest,
+        };
+      })
+    );
 
     // Calculate rating metrics from unique Ratings collection
     const allRatings = await Rating.find({}, "rating").lean();
