@@ -34,6 +34,7 @@ import LifeGuidance from "./pages/LifeGuidance.jsx";
 import ReadingTracker from "./pages/ReadingTracker.jsx";
 import QuizAchievements from "./pages/QuizAchievements.jsx";
 import GitaAIAssistant from "./components/GitaAIAssistant.jsx";
+import FeedbackModal from "./components/FeedbackModal.jsx";
 import { trackVisit } from "./utils/visitorTracker.js";
 import { recordWebsiteVisit } from "./utils/pushNotification.js";
 
@@ -384,6 +385,10 @@ function App() {
         <BrowserRouter>
           <Navbar />
           <AnimatedRoutes />
+          {/* =================================================
+              FEEDBACK & STAR RATING (FLOATING BOTTOM-LEFT WIDGET)
+          ================================================= */}
+          <FeedbackModal />
           {/* =================================================
               GITA AI ASSISTANT (FLOATING BOTTOM-RIGHT WIDGET)
           ================================================= */}

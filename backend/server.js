@@ -14,6 +14,7 @@ const readingTrackerRoutes = require("./routes/readingTrackerRoutes");
 const gitaAiRoutes = require("./routes/gitaAiRoutes");
 const visitorRoutes = require("./routes/visitorRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
+const feedbackRoutes = require("./routes/feedbackRoutes");
 const notificationController = require("./controllers/notificationController");
 const cron = require("node-cron");
 
@@ -42,6 +43,7 @@ app.use("/api/reading-tracker", readingTrackerRoutes);
 app.use("/api/gita-ai", gitaAiRoutes);
 app.use("/api/visitors", visitorRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/feedback", feedbackRoutes);
 
 // =====================================================
 // PUSH NOTIFICATION CRON JOBS

@@ -24,6 +24,7 @@ import {
   X,
   Menu,
   Compass,
+  Star,
 } from "lucide-react";
 
 import { useAuth } from "../context/AuthContext.jsx";
@@ -938,6 +939,34 @@ function Navbar() {
             <span className="side-menu-text">
               <strong>
                 Profile
+              </strong>
+            </span>
+
+            <span className="side-menu-arrow">
+              <ChevronRight size={18} strokeWidth={2} />
+            </span>
+          </button>
+
+
+          {/* =================================================
+              FEEDBACK & RATING
+          ================================================= */}
+
+          <button
+            type="button"
+            className="side-menu-item side-menu-button"
+            onClick={() => {
+              setMenuOpen(false);
+              window.dispatchEvent(new CustomEvent("open-feedback-modal"));
+            }}
+          >
+            <span className="side-menu-icon" style={{ color: "#f59e0b" }}>
+              <Star size={20} strokeWidth={1.8} fill="#f59e0b" />
+            </span>
+
+            <span className="side-menu-text">
+              <strong>
+                પ્રતિસાદ અને રેટિંગ
               </strong>
             </span>
 

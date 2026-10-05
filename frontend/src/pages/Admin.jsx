@@ -24,6 +24,12 @@ import {
   UserPlus,
   UserCheck,
   Bell,
+  Star,
+  MessageSquare,
+  Lightbulb,
+  Bug,
+  Sparkles,
+  Filter,
 } from "lucide-react";
 import "./Admin.css";
 
@@ -52,6 +58,16 @@ function Admin() {
   const [loadingVisitors, setLoadingVisitors] = useState(true);
   const [refreshingVisitors, setRefreshingVisitors] = useState(false);
   const [sendingNotification, setSendingNotification] = useState(false);
+
+  // User feedback and ratings state
+  const [feedbacks, setFeedbacks] = useState([]);
+  const [feedbackSummary, setFeedbackSummary] = useState(null);
+  const [loadingFeedbacks, setLoadingFeedbacks] = useState(true);
+  const [refreshingFeedbacks, setRefreshingFeedbacks] = useState(false);
+  const [feedbackCategoryFilter, setFeedbackCategoryFilter] = useState("all");
+  const [feedbackRatingFilter, setFeedbackRatingFilter] = useState("all");
+  const [feedbackSearch, setFeedbackSearch] = useState("");
+  const [deletingFeedbackId, setDeletingFeedbackId] = useState(null);
 
   const navigate = useNavigate();
 
@@ -190,9 +206,103 @@ function Admin() {
     }
   };
 
+  const fetchFeedbacks = async (isRefresh = false) => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    if (isRefresh) setRefreshingFeedbacks(true);
+    else setLoadingFeedbacks(true);
+
+    try {
+      const isLocal =
+        typeof window !== "undefined" &&
+        (window.location.hostname === "localhost" ||
+          window.location.hostname === "127.0.0.1");
+
+      const urls = isLocal
+        ? [
+            "http://localhost:5000/api/feedback/admin?limit=150",
+            "https://bhagavad-gita-website.onrender.com/api/feedback/admin?limit=150",
+          ]
+        : ["https://bhagavad-gita-website.onrender.com/api/feedback/admin?limit=150"];
+
+      let fetched = null;
+      for (const url of urls) {
+        try {
+          const res = await fetch(url, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.success && data.data) {
+              fetched = data.data;
+              break;
+            }
+          }
+        } catch {
+          // try next
+        }
+      }
+
+      if (fetched) {
+        setFeedbacks(fetched.feedbacks || []);
+        setFeedbackSummary(fetched.summary || null);
+      }
+    } catch (err) {
+      console.error("Error fetching feedbacks:", err);
+    } finally {
+      setLoadingFeedbacks(false);
+      setRefreshingFeedbacks(false);
+    }
+  };
+
+  const handleDeleteFeedback = async (id, userName) => {
+    const confirmed = window.confirm(
+      `શું તમે ${userName || "આ"} ભક્ત/યુઝરનો પ્રતિસાદ ડિલીટ કરવા માંગો છો?`
+    );
+    if (!confirmed) return;
+
+    setDeletingFeedbackId(id);
+    const token = localStorage.getItem("token");
+
+    try {
+      const isLocal =
+        typeof window !== "undefined" &&
+        (window.location.hostname === "localhost" ||
+          window.location.hostname === "127.0.0.1");
+
+      const urls = isLocal
+        ? [
+            `http://localhost:5000/api/feedback/${id}`,
+            `https://bhagavad-gita-website.onrender.com/api/feedback/${id}`,
+          ]
+        : [`https://bhagavad-gita-website.onrender.com/api/feedback/${id}`];
+
+      for (const url of urls) {
+        try {
+          const res = await fetch(url, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (res.ok) {
+            setFeedbacks((prev) => prev.filter((f) => f._id !== id));
+            break;
+          }
+        } catch {
+          // try next
+        }
+      }
+    } catch (err) {
+      console.error("Error deleting feedback:", err);
+    } finally {
+      setDeletingFeedbackId(null);
+    }
+  };
+
   useEffect(() => {
     fetchUsers();
     fetchVisitorStats();
+    fetchFeedbacks();
   }, []);
 
   // =====================================================
@@ -481,6 +591,25 @@ function Admin() {
 
                 <p>
                   Shlokas
+                </p>
+              </div>
+
+            </div>
+
+
+            <div className="stat-card">
+
+              <div className="stat-icon">
+                <Star size={32} color="#f59e0b" fill="#f59e0b" strokeWidth={1.5} />
+              </div>
+
+              <div>
+                <h2>
+                  {feedbackSummary?.averageRating ? `${feedbackSummary.averageRating} ★` : "5.0 ★"}
+                </h2>
+
+                <p>
+                  Avg Rating ({feedbackSummary?.totalFeedbacks ?? feedbacks.length})
                 </p>
               </div>
 
@@ -814,6 +943,258 @@ function Admin() {
                   </div>
                 </div>
               )}
+            </>
+          )}
+        </section>
+
+        {/* =================================================
+            USER FEEDBACKS & STAR RATINGS SECTION
+        ================================================= */}
+        <section className="visitor-analytics-section feedback-admin-section" aria-label="User Feedbacks">
+          <div className="visitor-section-header">
+            <div className="visitor-title-wrap">
+              <div className="visitor-header-icon-box" style={{ background: "rgba(245, 158, 11, 0.12)", color: "#d97706" }}>
+                <Star size={24} fill="#f59e0b" color="#f59e0b" />
+              </div>
+              <div>
+                <h2>પ્રતિસાદ અને સ્ટાર રેટિંગ્સ (User Feedbacks & Ratings)</h2>
+                <span className="v-header-sub">
+                  કુલ {feedbackSummary?.totalFeedbacks ?? feedbacks.length} ભક્તો દ્વારા પ્રતિસાદ નોંધાયા છે
+                </span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              className="visitor-refresh-btn"
+              onClick={() => fetchFeedbacks(true)}
+              disabled={refreshingFeedbacks || loadingFeedbacks}
+              title="ફીડબેક રિફ્રેશ કરો"
+            >
+              <RefreshCw
+                size={16}
+                className={refreshingFeedbacks ? "spinning-icon" : ""}
+              />
+              <span>{refreshingFeedbacks ? "રિફ્રેશિંગ..." : "રિફ્રેશ"}</span>
+            </button>
+          </div>
+
+          {loadingFeedbacks ? (
+            <div className="v-loading-state">
+              <RefreshCw size={28} className="spinning-icon" />
+              <p>ફીડબેક અને રેટિંગ્સ લોડ થઈ રહ્યા છે...</p>
+            </div>
+          ) : (
+            <>
+              {/* FEEDBACK METRIC SUMMARY CARDS */}
+              <div className="v-overview-grid">
+                <div className="v-metric-card">
+                  <div className="v-metric-top">
+                    <span className="v-metric-label">સરેરાશ રેટિંગ</span>
+                    <Star size={20} color="#f59e0b" fill="#f59e0b" />
+                  </div>
+                  <div className="v-metric-number" style={{ color: "#d97706" }}>
+                    {feedbackSummary?.averageRating ? `${feedbackSummary.averageRating} / 5.0` : "5.0 / 5.0"}
+                  </div>
+                  <div className="v-metric-trend">
+                    <span style={{ color: "#d97706", fontWeight: 700 }}>
+                      {"★".repeat(Math.round(feedbackSummary?.averageRating || 5))}
+                    </span>
+                    <span className="v-trend-text">વેબસાઇટ સ્કોર</span>
+                  </div>
+                </div>
+
+                <div className="v-metric-card">
+                  <div className="v-metric-top">
+                    <span className="v-metric-label">કુલ પ્રતિસાદ</span>
+                    <MessageSquare size={20} color="#2563eb" />
+                  </div>
+                  <div className="v-metric-number">
+                    {feedbackSummary?.totalFeedbacks ?? feedbacks.length}
+                  </div>
+                  <div className="v-metric-trend">
+                    <span className="v-trend-text">કુલ સબમિશન</span>
+                  </div>
+                </div>
+
+                <div className="v-metric-card">
+                  <div className="v-metric-top">
+                    <span className="v-metric-label">સૂચનો (Suggestions)</span>
+                    <Lightbulb size={20} color="#059669" />
+                  </div>
+                  <div className="v-metric-number" style={{ color: "#059669" }}>
+                    {feedbackSummary?.categoryCounts?.suggestion || 0}
+                  </div>
+                  <div className="v-metric-trend">
+                    <span className="v-trend-text">નવા સુધારાના વિચારો</span>
+                  </div>
+                </div>
+
+                <div className="v-metric-card">
+                  <div className="v-metric-top">
+                    <span className="v-metric-label">સમસ્યાઓ / બગ્સ</span>
+                    <Bug size={20} color="#dc2626" />
+                  </div>
+                  <div className="v-metric-number" style={{ color: "#dc2626" }}>
+                    {feedbackSummary?.categoryCounts?.bug || 0}
+                  </div>
+                  <div className="v-metric-trend">
+                    <span className="v-trend-text">ટેકનિકલ રિપોર્ટ્સ</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* FILTER CONTROLS */}
+              <div className="admin-feedback-filter-bar">
+                <div className="admin-feedback-filter-group">
+                  <span className="admin-feedback-filter-label">રેટિંગ:</span>
+                  <div className="admin-feedback-pills">
+                    {["all", "5", "4", "3", "2", "1"].map((r) => (
+                      <button
+                        key={r}
+                        type="button"
+                        className={`admin-feedback-pill ${feedbackRatingFilter === r ? "active" : ""}`}
+                        onClick={() => setFeedbackRatingFilter(r)}
+                      >
+                        {r === "all" ? "બધા" : `${r} ★`}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="admin-feedback-filter-group">
+                  <span className="admin-feedback-filter-label">કેટેગરી:</span>
+                  <div className="admin-feedback-pills">
+                    {[
+                      { id: "all", label: "બધા" },
+                      { id: "suggestion", label: "સૂચન" },
+                      { id: "feedback", label: "પ્રતિસાદ" },
+                      { id: "appreciation", label: "પ્રશંસા" },
+                      { id: "bug", label: "બગ" },
+                    ].map((cat) => (
+                      <button
+                        key={cat.id}
+                        type="button"
+                        className={`admin-feedback-pill ${feedbackCategoryFilter === cat.id ? "active" : ""}`}
+                        onClick={() => setFeedbackCategoryFilter(cat.id)}
+                      >
+                        {cat.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="admin-feedback-search-wrap">
+                  <input
+                    type="text"
+                    placeholder="નામ કે મેસેજ શોધો..."
+                    value={feedbackSearch}
+                    onChange={(e) => setFeedbackSearch(e.target.value)}
+                    className="user-search admin-feedback-search-input"
+                  />
+                </div>
+              </div>
+
+              {/* FEEDBACK LIST */}
+              {(() => {
+                const filtered = feedbacks.filter((fb) => {
+                  if (feedbackRatingFilter !== "all" && fb.rating !== Number(feedbackRatingFilter)) {
+                    return false;
+                  }
+                  if (feedbackCategoryFilter !== "all" && fb.category !== feedbackCategoryFilter) {
+                    return false;
+                  }
+                  if (feedbackSearch.trim()) {
+                    const q = feedbackSearch.toLowerCase().trim();
+                    const matchName = fb.name?.toLowerCase().includes(q);
+                    const matchMsg = fb.message?.toLowerCase().includes(q);
+                    const matchEmail = fb.email?.toLowerCase().includes(q);
+                    if (!matchName && !matchMsg && !matchEmail) return false;
+                  }
+                  return true;
+                });
+
+                if (filtered.length === 0) {
+                  return (
+                    <div className="v-empty-card" style={{ padding: "40px 20px", textAlign: "center" }}>
+                      <MessageSquare size={36} color="#94a3b8" style={{ margin: "0 auto 12px" }} />
+                      <p style={{ color: "#64748b", margin: 0, fontWeight: 600 }}>
+                        પસંદ કરેલ ફિલ્ટર મુજબ કોઈ પ્રતિસાદ મળ્યો નથી.
+                      </p>
+                    </div>
+                  );
+                }
+
+                return (
+                  <div className="admin-feedbacks-grid">
+                    {filtered.map((fb) => (
+                      <div key={fb._id} className="admin-feedback-card">
+                        <div className="admin-fb-header">
+                          <div className="admin-fb-user-info">
+                            <div className="admin-fb-avatar">
+                              {(fb.name || "U").charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                              <h4 className="admin-fb-user-name">
+                                {fb.name}
+                                {fb.userId ? (
+                                  <span className="admin-fb-badge registered">રજીસ્ટર્ડ યુઝર</span>
+                                ) : (
+                                  <span className="admin-fb-badge guest">અતિથિ</span>
+                                )}
+                              </h4>
+                              {fb.email && <span className="admin-fb-user-email">{fb.email}</span>}
+                            </div>
+                          </div>
+
+                          <button
+                            type="button"
+                            className="admin-fb-delete-btn"
+                            onClick={() => handleDeleteFeedback(fb._id, fb.name)}
+                            disabled={deletingFeedbackId === fb._id}
+                            title="આ પ્રતિસાદ ડિલીટ કરો"
+                          >
+                            <Trash2 size={16} />
+                            <span>{deletingFeedbackId === fb._id ? "..." : "ડિલીટ"}</span>
+                          </button>
+                        </div>
+
+                        <div className="admin-fb-meta-row">
+                          <div className="admin-fb-stars">
+                            {[1, 2, 3, 4, 5].map((i) => (
+                              <Star
+                                key={i}
+                                size={16}
+                                fill={i <= fb.rating ? "#f59e0b" : "none"}
+                                color="#f59e0b"
+                              />
+                            ))}
+                            <span className="admin-fb-rating-num">{fb.rating}.0</span>
+                          </div>
+
+                          <span className={`admin-fb-category-tag ${fb.category}`}>
+                            {fb.category === "suggestion"
+                              ? "સૂચન"
+                              : fb.category === "bug"
+                              ? "બગ / સમસ્યા"
+                              : fb.category === "appreciation"
+                              ? "પ્રશંસા"
+                              : "પ્રતિસાદ"}
+                          </span>
+
+                          <span className="admin-fb-date">
+                            {formatTimeAgo(fb.createdAt)}
+                          </span>
+                        </div>
+
+                        <div className="admin-fb-message-box">
+                          <p>{fb.message}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
             </>
           )}
         </section>
