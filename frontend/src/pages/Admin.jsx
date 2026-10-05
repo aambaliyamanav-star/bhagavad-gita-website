@@ -26,10 +26,6 @@ import {
   Bell,
   Star,
   MessageSquare,
-  Lightbulb,
-  Bug,
-  Sparkles,
-  Filter,
 } from "lucide-react";
 import "./Admin.css";
 
