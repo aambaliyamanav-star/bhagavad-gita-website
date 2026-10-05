@@ -162,7 +162,7 @@ export default function FeedbackModal() {
     }
 
     if (!message.trim()) {
-      setError("કૃપા કરીને આપનો પ્રતિસાદ અથવા સૂચન લખો (લખાણ લખવું ફરજિયાત છે).");
+      setError("કૃપા કરીને આપનો પ્રતિસાદ અથવા સૂચન લખો.");
       return;
     }
 
@@ -406,10 +406,10 @@ export default function FeedbackModal() {
                     )}
                   </div>
 
-                  {/* Category Selector (Unlimited suggestions) */}
+                  {/* Category Selector */}
                   <div className="feedback-category-group">
                     <label className="feedback-group-title">
-                      પ્રતિસાદનો પ્રકાર (તમે ગમે તેટલી વાર સૂચન આપી શકો છો)
+                      પ્રતિસાદનો પ્રકાર
                     </label>
                     <div className="feedback-categories-grid">
                       {CATEGORIES.map((cat) => {
@@ -461,11 +461,11 @@ export default function FeedbackModal() {
                   {/* Message Textarea */}
                   <div className="feedback-textarea-wrap">
                     <label className="feedback-group-title">
-                      આપનું સૂચન અથવા પ્રતિસાદ <span style={{ color: "#ef4444" }}>* (ફરજિયાત)</span>
+                      આપનું સૂચન અથવા પ્રતિસાદ
                     </label>
                     <textarea
                       className="feedback-textarea"
-                      placeholder="કોઈ નવું સૂચન, સુધારો કે આપનો પવિત્ર અનુભવ અહીં લખો... (લખાણ લખવું ફરજિયાત છે)"
+                      placeholder="કોઈ નવું સૂચન, સુધારો કે આપનો પવિત્ર અનુભવ અહીં લખો..."
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       maxLength={1000}
