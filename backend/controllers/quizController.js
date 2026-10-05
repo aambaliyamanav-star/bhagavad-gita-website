@@ -1,5 +1,6 @@
 const QuizQuestion = require("../models/QuizQuestion");
 const QuizResult = require("../models/QuizResult");
+const Subscription = require("../models/Subscription");
 
 // =====================================================
 // SHUFFLE ARRAY
@@ -526,6 +527,18 @@ const submitQuiz = async (
         completed: true,
       });
 
+    // Sync quiz completion to notification subscribers
+    try {
+      if (userId) {
+        await Subscription.updateMany(
+          { userId },
+          { $set: { lastQuizPlayedDate: new Date() } }
+        );
+      }
+    } catch (subErr) {
+      console.warn("Could not update subscription lastQuizPlayedDate:", subErr);
+    }
+
     // =================================================
     // RESPONSE
     // =================================================
@@ -534,7 +547,7 @@ const submitQuiz = async (
       success: true,
 
       message:
-        "Quiz successfully submit થયો. 🎉",
+        "Quiz successfully submit થયો.",
 
       result: {
         id: result._id,
@@ -1342,7 +1355,7 @@ const deleteQuizQuestion =
         success: true,
 
         message:
-          "Quiz question successfully delete થયો. 🗑️",
+          "Quiz question successfully delete થયો.",
       });
 
     } catch (error) {

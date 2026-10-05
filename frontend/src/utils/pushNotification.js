@@ -240,3 +240,50 @@ export async function recordWebsiteVisit(user = null) {
     console.debug("Could not record site open for push notifications:", err);
   }
 }
+
+// Record user task completion (read_shlok, play_quiz)
+// Allows the notification engine to intelligently stop sending reminders once task is finished!
+export async function recordNotificationAction(action, user = null) {
+  if (typeof window === "undefined" || !action) return;
+
+  try {
+    let endpoint = localStorage.getItem("push_subscription_endpoint");
+
+    if (!endpoint && isPushNotificationSupported()) {
+      try {
+        const registration = await navigator.serviceWorker.ready;
+        const sub = await registration.pushManager.getSubscription();
+        if (sub && sub.endpoint) {
+          endpoint = sub.endpoint;
+          localStorage.setItem("push_subscription_endpoint", endpoint);
+        }
+      } catch (subErr) {
+        // Non-blocking
+      }
+    }
+
+    let userId = user?._id || user?.id || null;
+    if (!userId) {
+      try {
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+          const parsed = JSON.parse(storedUser);
+          userId = parsed?._id || parsed?.id || null;
+        }
+      } catch (e) {
+        // Ignore parse error
+      }
+    }
+
+    if (endpoint || userId) {
+      await apiCall("/api/notifications/record-action", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ endpoint, userId, action }),
+      });
+      console.log(`✅ Action '${action}' successfully synced to push notification system.`);
+    }
+  } catch (err) {
+    console.debug(`Could not record action '${action}':`, err);
+  }
+}
