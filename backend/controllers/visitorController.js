@@ -221,11 +221,11 @@ const getVisitorStats = async (req, res) => {
       { $limit: 10 },
     ]);
 
-    // 12. Recent 15 visitors with registration status
+    // 12. Recent 50 visitors with registration status
     const recentVisitors = await Visitor.find()
       .select("path device browser os isRegistered visitedAt")
       .sort({ visitedAt: -1 })
-      .limit(15)
+      .limit(50)
       .lean();
 
     // 13. Last 7 days trend
