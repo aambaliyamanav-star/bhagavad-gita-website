@@ -49,6 +49,14 @@ const submitFeedback = async (req, res) => {
     const { category, message, device } = req.body;
     let { rating, name, email } = req.body;
 
+    // 1. Text message is COMPULSORY for every submission (first time or updating)
+    if (!message || !message.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "કૃપા કરીને આપનો પ્રતિસાદ અથવા સૂચન અવશ્ય લખો (લખાણ ફરજિયાત છે).",
+      });
+    }
+
     // Handle user identification
     if (req.user) {
       name = name && name.trim().length > 0 ? name.trim() : (req.user.name || "ભક્ત");
@@ -61,18 +69,25 @@ const submitFeedback = async (req, res) => {
     let finalRatingNum = rating !== undefined && rating !== null ? Number(rating) : 0;
     let isRatingLocked = false;
     let ratingUpdated = false;
+    let previousRating = null;
+    let isUpdatedRating = false;
 
     // Handle Star Rating logic (Strictly 1 per account, lockable at 5)
     if (req.userId && finalRatingNum >= 1 && finalRatingNum <= 5) {
       let existingRating = await Rating.findOne({ userId: req.userId });
 
       if (existingRating) {
+        previousRating = existingRating.rating;
         if (existingRating.isLocked || existingRating.rating === 5) {
           // Already locked at 5 stars! Cannot be changed.
           isRatingLocked = true;
           finalRatingNum = 5;
         } else {
-          // Update existing rating without creating a duplicate count!
+          // Update existing rating with old vs new tracking
+          if (previousRating !== finalRatingNum) {
+            isUpdatedRating = true;
+          }
+          existingRating.previousRating = previousRating;
           existingRating.rating = finalRatingNum;
           existingRating.userName = name;
           existingRating.userEmail = email;
@@ -91,54 +106,38 @@ const submitFeedback = async (req, res) => {
           userName: name,
           userEmail: email,
           rating: finalRatingNum,
+          previousRating: null,
           isLocked: lockNow,
         });
         isRatingLocked = lockNow;
         ratingUpdated = true;
       }
     } else if (req.userId) {
-      // If user didn't specify rating in this submission, fetch their current rating if exists
       const existingRating = await Rating.findOne({ userId: req.userId });
       if (existingRating) {
         finalRatingNum = existingRating.rating;
+        previousRating = existingRating.previousRating || null;
         isRatingLocked = existingRating.isLocked;
       }
     }
 
-    // Handle Suggestion / Message submission (Unlimited submissions allowed per account)
-    let savedFeedback = null;
-    const hasMessage = message && message.trim().length > 0;
+    const validCategories = ["suggestion", "feedback", "bug", "appreciation"];
+    const finalCategory = validCategories.includes(category)
+      ? category
+      : "suggestion";
 
-    if (hasMessage) {
-      const validCategories = ["suggestion", "feedback", "bug", "appreciation"];
-      const finalCategory = validCategories.includes(category)
-        ? category
-        : "suggestion";
-
-      savedFeedback = await Feedback.create({
-        userId: req.userId || null,
-        name,
-        email,
-        rating: finalRatingNum > 0 ? finalRatingNum : 5,
-        category: finalCategory,
-        message: message.trim(),
-        device: device || "",
-        status: "active",
-      });
-    } else if (!ratingUpdated && !hasMessage) {
-      return res.status(400).json({
-        success: false,
-        message: "કૃપા કરીને તમારું સૂચન લખો અથવા રેટિંગ આપો.",
-      });
-    }
-
-    // Keep all existing and newly saved feedback records in sync with user's updated rating
-    if (req.userId && finalRatingNum >= 1 && finalRatingNum <= 5) {
-      await Feedback.updateMany(
-        { userId: req.userId },
-        { rating: finalRatingNum }
-      );
-    }
+    const savedFeedback = await Feedback.create({
+      userId: req.userId || null,
+      name,
+      email,
+      rating: finalRatingNum > 0 ? finalRatingNum : 5,
+      previousRating: isUpdatedRating ? previousRating : null,
+      isUpdatedRating: isUpdatedRating,
+      category: finalCategory,
+      message: message.trim(),
+      device: device || "",
+      status: "active",
+    });
 
     let responseMessage = "આપનો પ્રતિસાદ સફળતાપૂર્વક સબમિટ થયો છે. ધન્યવાદ!";
     if (ratingUpdated && isRatingLocked) {
@@ -261,7 +260,7 @@ const getAdminFeedbacks = async (req, res) => {
       ];
     }
 
-    const [feedbacks, totalCount] = await Promise.all([
+    const [rawFeedbacks, totalCount] = await Promise.all([
       Feedback.find(filter)
         .populate("userId", "name email role")
         .sort({ createdAt: -1 })
@@ -271,33 +270,33 @@ const getAdminFeedbacks = async (req, res) => {
       Feedback.countDocuments(filter),
     ]);
 
+    // Mark whether each feedback is the user's latest feedback
+    const seenUsers = new Set();
+    const feedbacks = rawFeedbacks.map((fb) => {
+      const userKey = fb.userId?._id
+        ? String(fb.userId._id)
+        : (fb.email ? `email:${fb.email.toLowerCase()}` : `fb:${fb._id}`);
+      let isLatest = false;
+      if (!seenUsers.has(userKey)) {
+        seenUsers.add(userKey);
+        isLatest = true;
+      }
+      return {
+        ...fb,
+        isLatestUserFeedback: isLatest,
+      };
+    });
+
     // Calculate rating metrics from unique Ratings collection
-    const allRatings = await Rating.find({}, "userId rating").lean();
+    const allRatings = await Rating.find({}, "rating").lean();
     let totalRatings = allRatings.length;
     let sum = 0;
     const distribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-    const userRatingMap = new Map();
 
     allRatings.forEach((item) => {
-      const r = item.rating;
-      sum += r;
-      if (distribution[r] !== undefined) {
-        distribution[r] += 1;
-      }
-      if (item.userId) {
-        userRatingMap.set(String(item.userId), r);
-      }
-    });
-
-    // Ensure all returned feedbacks reflect each user's latest updated star rating
-    feedbacks.forEach((fb) => {
-      const uId = fb.userId?._id
-        ? String(fb.userId._id)
-        : fb.userId
-        ? String(fb.userId)
-        : null;
-      if (uId && userRatingMap.has(uId)) {
-        fb.rating = userRatingMap.get(uId);
+      sum += item.rating;
+      if (distribution[item.rating] !== undefined) {
+        distribution[item.rating] += 1;
       }
     });
 

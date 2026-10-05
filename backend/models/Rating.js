@@ -24,6 +24,12 @@ const ratingSchema = new mongoose.Schema(
       min: 1,
       max: 5,
     },
+    previousRating: {
+      type: Number,
+      default: null,
+      min: 1,
+      max: 5,
+    },
     isLocked: {
       type: Boolean,
       default: false, // Permanently true once rating === 5
