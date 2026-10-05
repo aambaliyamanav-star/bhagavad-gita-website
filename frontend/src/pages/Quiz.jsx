@@ -5,6 +5,7 @@ import {
 } from "react-router-dom";
 import { ArrowLeft, Star, Loader2, BookOpen, AlertCircle, RefreshCw, Trophy, Check, X, Lightbulb, ChevronLeft, ChevronRight, Award } from "lucide-react";
 import SudarshanShimmerLoader from "../components/SudarshanShimmerLoader.jsx";
+import { recordNotificationAction } from "../utils/pushNotification.js";
 import "./Quiz.css";
 
 
@@ -948,6 +949,13 @@ function Quiz() {
           data.message ||
             "Quiz result save થઈ શક્યું નથી."
         );
+      }
+
+      // Sync quiz completed to push notification system
+      try {
+        recordNotificationAction("play_quiz");
+      } catch (e) {
+        // Non-blocking
       }
 
       // =================================================

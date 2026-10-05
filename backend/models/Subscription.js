@@ -10,6 +10,9 @@ const SubscriptionSchema = new mongoose.Schema(
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
     role: { type: String, enum: ["user", "admin"], default: "user" },
     lastOpenedDate: { type: Date, default: null },
+    lastShlokReadDate: { type: Date, default: null },
+    lastQuizPlayedDate: { type: Date, default: null },
+    lastReminderSentDate: { type: Date, default: null },
     reminderCount: { type: Number, default: 0 },
   },
   { timestamps: true }

@@ -237,6 +237,17 @@ const markShlokaRead = async (req, res) => {
 
     await user.save();
 
+    // Sync push notification subscription for this user
+    try {
+      const Subscription = require("../models/Subscription");
+      await Subscription.updateMany(
+        { userId: req.userId },
+        { $set: { lastShlokReadDate: new Date() } }
+      );
+    } catch (subErr) {
+      // Non-blocking
+    }
+
     res.status(200).json({
       success: true,
       message: "શ્લોક વાંચેલ તરીકે માર્ક થયો.",

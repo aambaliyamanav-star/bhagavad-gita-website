@@ -14,6 +14,9 @@ router.post("/unsubscribe", notificationController.unsubscribe);
 // Record site opened (called on any page load or notification click)
 router.post("/record-open", notificationController.recordOpen);
 
+// Record action (called when shlok is read or quiz is played)
+router.post("/record-action", notificationController.recordAction);
+
 // Trigger daily reminder (Can be called by cron-job, GitHub Actions, or Admin)
 router.get("/trigger-daily-reminder", async (req, res) => {
   try {
@@ -40,12 +43,12 @@ router.post("/send-custom", async (req, res) => {
 });
 
 router.post("/test-admin-alert", async (req, res) => {
-  await notificationController.notifyAdminNewUser({
-    name: "ટેસ્ટ ભક્ત",
-    email: "test@example.com",
-  });
+  const testUser = {
+    name: req.body?.name || "ટેસ્ટ યુઝર",
+    email: req.body?.email || "test@example.com",
+  };
+  await notificationController.notifyAdminNewUser(testUser);
   res.json({ success: true, message: "Admin alert test triggered" });
 });
 
 module.exports = router;
-

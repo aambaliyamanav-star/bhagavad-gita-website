@@ -20,13 +20,13 @@ self.addEventListener("push", (event) => {
     try {
       data = event.data.json();
     } catch (e) {
-      data = { title: "🌸 શ્રીમદ્ ભગવદ્ ગીતા", body: event.data.text() };
+      data = { title: "શ્રીમદ્ ભગવદ્ ગીતા", body: event.data.text() };
     }
   }
 
-  const title = data.title || "🌸 શ્રીમદ્ ભગવદ્ ગીતા";
+  const title = data.title || "શ્રીમદ્ ભગવદ્ ગીતા";
   const options = {
-    body: data.body || "આજનો દૈનિક શ્લોક વાંચવા માટે ક્લિક કરો.",
+    body: data.body || "તમારું દૈનિક ગીતા વાંચન અને ક્વિઝ લક્ષ્ય પૂર્ણ કરવા અહીં ક્લિક કરો.",
     icon: "/favicon.ico",
     badge: "/favicon.ico",
     vibrate: [100, 50, 100],

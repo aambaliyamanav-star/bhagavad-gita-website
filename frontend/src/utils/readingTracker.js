@@ -3,6 +3,7 @@
 // ==========================================================================
 
 export const API_TRACKER_URL = "https://bhagavad-gita-website.onrender.com/api/reading-tracker";
+import { recordNotificationAction } from "./pushNotification.js";
 
 // All 18 chapters with names and traditional shloka counts (Total: 700)
 export const CHAPTER_METADATA = [
@@ -254,6 +255,13 @@ export async function trackShlokaRead(chapterNumber, shlokNumber, token = null) 
   });
 
   saveLocalProgress(local);
+
+  // Sync action to push notification targeting system
+  try {
+    recordNotificationAction("read_shlok");
+  } catch (e) {
+    // Non-blocking
+  }
 
   // 2. If User is logged in, sync with Backend API asynchronously
   if (token) {
