@@ -275,6 +275,28 @@
   text-align: center;
 }
 
+.rating-locked-box {
+  background: #fffbeb !important;
+  border-color: #fde68a !important;
+}
+
+.disabled-star {
+  cursor: default !important;
+  transform: none !important;
+}
+
+.disabled-star:hover {
+  transform: none !important;
+}
+
+.feedback-rating-hint {
+  font-size: 0.775rem;
+  color: #64748b;
+  margin: 8px 0 0;
+  text-align: center;
+  line-height: 1.4;
+}
+
 /* Category Pills */
 .feedback-category-group {
   margin-bottom: 18px;

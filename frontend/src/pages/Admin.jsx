@@ -987,59 +987,46 @@ function Admin() {
           ) : (
             <>
               {/* FEEDBACK METRIC SUMMARY CARDS */}
-              <div className="v-overview-grid">
-                <div className="v-metric-card">
-                  <div className="v-metric-top">
-                    <span className="v-metric-label">સરેરાશ રેટિંગ</span>
-                    <Star size={20} color="#f59e0b" fill="#f59e0b" />
+              <div className="visitor-stats-grid" style={{ marginBottom: "22px" }}>
+                <div className="v-stat-card new-guest-card">
+                  <div className="v-stat-icon-box amber-glow">
+                    <Star size={24} fill="#f59e0b" color="#f59e0b" />
                   </div>
-                  <div className="v-metric-number" style={{ color: "#d97706" }}>
-                    {feedbackSummary?.averageRating ? `${feedbackSummary.averageRating} / 5.0` : "5.0 / 5.0"}
-                  </div>
-                  <div className="v-metric-trend">
-                    <span style={{ color: "#d97706", fontWeight: 700 }}>
-                      {"★".repeat(Math.round(feedbackSummary?.averageRating || 5))}
-                    </span>
-                    <span className="v-trend-text">વેબસાઇટ સ્કોર</span>
+                  <div className="v-stat-content">
+                    <h3>{feedbackSummary?.averageRating ? `${feedbackSummary.averageRating} ★` : "5.0 ★"}</h3>
+                    <p className="v-stat-label">
+                      સરેરાશ રેટિંગ ({feedbackSummary?.totalRatings ?? 0} રેટિંગ્સ)
+                    </p>
                   </div>
                 </div>
 
-                <div className="v-metric-card">
-                  <div className="v-metric-top">
-                    <span className="v-metric-label">કુલ પ્રતિસાદ</span>
-                    <MessageSquare size={20} color="#2563eb" />
+                <div className="v-stat-card registered-stat-card">
+                  <div className="v-stat-icon-box blue-glow">
+                    <MessageSquare size={24} />
                   </div>
-                  <div className="v-metric-number">
-                    {feedbackSummary?.totalFeedbacks ?? feedbacks.length}
-                  </div>
-                  <div className="v-metric-trend">
-                    <span className="v-trend-text">કુલ સબમિશન</span>
+                  <div className="v-stat-content">
+                    <h3>{(feedbackSummary?.totalFeedbacks ?? feedbacks.length).toLocaleString()}</h3>
+                    <p className="v-stat-label">કુલ પ્રતિસાદ / સૂચનો</p>
                   </div>
                 </div>
 
-                <div className="v-metric-card">
-                  <div className="v-metric-top">
-                    <span className="v-metric-label">સૂચનો (Suggestions)</span>
-                    <Lightbulb size={20} color="#059669" />
+                <div className="v-stat-card return-card">
+                  <div className="v-stat-icon-box green-glow">
+                    <Lightbulb size={24} />
                   </div>
-                  <div className="v-metric-number" style={{ color: "#059669" }}>
-                    {feedbackSummary?.categoryCounts?.suggestion || 0}
-                  </div>
-                  <div className="v-metric-trend">
-                    <span className="v-trend-text">નવા સુધારાના વિચારો</span>
+                  <div className="v-stat-content">
+                    <h3>{(feedbackSummary?.categoryCounts?.suggestion || 0).toLocaleString()}</h3>
+                    <p className="v-stat-label">નવા સૂચનો (Suggestions)</p>
                   </div>
                 </div>
 
-                <div className="v-metric-card">
-                  <div className="v-metric-top">
-                    <span className="v-metric-label">સમસ્યાઓ / બગ્સ</span>
-                    <Bug size={20} color="#dc2626" />
+                <div className="v-stat-card total-unique-card">
+                  <div className="v-stat-icon-box rose-glow">
+                    <Bug size={24} />
                   </div>
-                  <div className="v-metric-number" style={{ color: "#dc2626" }}>
-                    {feedbackSummary?.categoryCounts?.bug || 0}
-                  </div>
-                  <div className="v-metric-trend">
-                    <span className="v-trend-text">ટેકનિકલ રિપોર્ટ્સ</span>
+                  <div className="v-stat-content">
+                    <h3>{(feedbackSummary?.categoryCounts?.bug || 0).toLocaleString()}</h3>
+                    <p className="v-stat-label">સમસ્યાઓ / બગ્સ (Issues)</p>
                   </div>
                 </div>
               </div>

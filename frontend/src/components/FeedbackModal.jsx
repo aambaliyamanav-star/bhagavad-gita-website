@@ -10,6 +10,7 @@ import {
   MessageSquare,
   Bug,
   Sparkles,
+  Lock,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext.jsx";
 import "./FeedbackModal.css";
@@ -38,6 +39,9 @@ export default function FeedbackModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [rating, setRating] = useState(5);
   const [hoverRating, setHoverRating] = useState(0);
+  const [hasRated, setHasRated] = useState(false);
+  const [isLocked, setIsLocked] = useState(false);
+
   const [category, setCategory] = useState("suggestion");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -56,11 +60,84 @@ export default function FeedbackModal() {
     }
   }, [user]);
 
+  // Fetch user's existing rating and lock status
+  const fetchUserRating = async () => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setHasRated(false);
+      setIsLocked(false);
+      return;
+    }
+
+    const isLocal =
+      typeof window !== "undefined" &&
+      (window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1");
+
+    const targets = isLocal
+      ? [`${LOCAL_API_BASE}/api/feedback/my-rating`, `${PROD_API_BASE}/api/feedback/my-rating`]
+      : [`${PROD_API_BASE}/api/feedback/my-rating`, `${LOCAL_API_BASE}/api/feedback/my-rating`];
+
+    for (const url of targets) {
+      try {
+        const res = await fetch(url, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success) {
+            if (data.hasRated) {
+              setHasRated(true);
+              setRating(data.rating);
+              setIsLocked(Boolean(data.isLocked || data.rating === 5));
+            } else {
+              setHasRated(false);
+              setIsLocked(false);
+              setRating(5);
+            }
+            break;
+          }
+        }
+      } catch {
+        // try next
+      }
+    }
+  };
+
+  // Fetch feedback stats
+  const fetchStats = async () => {
+    const isLocal =
+      typeof window !== "undefined" &&
+      (window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1");
+
+    const targets = isLocal
+      ? [`${LOCAL_API_BASE}/api/feedback/stats`, `${PROD_API_BASE}/api/feedback/stats`]
+      : [`${PROD_API_BASE}/api/feedback/stats`, `${LOCAL_API_BASE}/api/feedback/stats`];
+
+    for (const url of targets) {
+      try {
+        const res = await fetch(url);
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && data.stats) {
+            setStats(data.stats);
+            break;
+          }
+        }
+      } catch {
+        // ignore
+      }
+    }
+  };
+
   // Listen to open-feedback-modal event
   useEffect(() => {
     const handleOpenEvent = () => {
       setIsOpen(true);
       setError("");
+      fetchUserRating();
+      fetchStats();
     };
     window.addEventListener("open-feedback-modal", handleOpenEvent);
     return () => {
@@ -68,48 +145,31 @@ export default function FeedbackModal() {
     };
   }, []);
 
-  // Fetch feedback stats
   useEffect(() => {
-    const fetchStats = async () => {
-      const isLocal =
-        typeof window !== "undefined" &&
-        (window.location.hostname === "localhost" ||
-          window.location.hostname === "127.0.0.1");
-
-      const targets = isLocal
-        ? [`${LOCAL_API_BASE}/api/feedback/stats`, `${PROD_API_BASE}/api/feedback/stats`]
-        : [`${PROD_API_BASE}/api/feedback/stats`, `${LOCAL_API_BASE}/api/feedback/stats`];
-
-      for (const url of targets) {
-        try {
-          const res = await fetch(url);
-          if (res.ok) {
-            const data = await res.json();
-            if (data.success && data.stats) {
-              setStats(data.stats);
-              break;
-            }
-          }
-        } catch {
-          // ignore
-        }
-      }
-    };
-
-    fetchStats();
-  }, []);
+    if (isOpen) {
+      fetchUserRating();
+      fetchStats();
+    }
+  }, [isOpen]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
-    if (!rating || rating < 1 || rating > 5) {
+    // If rating is locked, user must provide a suggestion message
+    if (isLocked && !message.trim()) {
+      setError("આપનું ૫-સ્ટાર રેટિંગ પહેલેથી લૉક છે. કૃપા કરીને નવું સૂચન કે સમસ્યા લખો.");
+      return;
+    }
+
+    // If not locked and no message, user can at least submit a rating
+    if (!isLocked && (!rating || rating < 1 || rating > 5)) {
       setError("કૃપા કરીને ૧ થી ૫ વચ્ચે સ્ટાર રેટિંગ પસંદ કરો.");
       return;
     }
 
-    if (!message.trim()) {
-      setError("કૃપા કરીને તમારું સૂચન કે પ્રતિસાદ લખો.");
+    if (!message.trim() && isLocked) {
+      setError("કૃપા કરીને આપનો પ્રતિસાદ અથવા સૂચન લખો.");
       return;
     }
 
@@ -133,7 +193,7 @@ export default function FeedbackModal() {
     }
 
     const payload = {
-      rating,
+      rating: isLocked ? 5 : rating,
       category,
       name: name.trim() || (user?.name || "અનામી સાધક"),
       email: email.trim() || (user?.email || ""),
@@ -154,6 +214,10 @@ export default function FeedbackModal() {
         const data = await res.json();
         if (res.ok && data.success) {
           success = true;
+          if (data.isLocked) {
+            setIsLocked(true);
+            setRating(5);
+          }
           break;
         } else if (data.message) {
           errorMsg = data.message;
@@ -168,6 +232,8 @@ export default function FeedbackModal() {
     if (success) {
       setSubmitted(true);
       setMessage("");
+      fetchUserRating();
+      fetchStats();
     } else {
       setError(errorMsg);
     }
@@ -181,7 +247,7 @@ export default function FeedbackModal() {
     }, 300);
   };
 
-  const activeRating = hoverRating || rating;
+  const activeRating = isLocked ? 5 : hoverRating || rating;
 
   return (
     <>
@@ -192,6 +258,8 @@ export default function FeedbackModal() {
         onClick={() => {
           setIsOpen(true);
           setError("");
+          fetchUserRating();
+          fetchStats();
         }}
         aria-label="પ્રતિસાદ અને રેટિંગ આપો"
         title="વેબસાઇટ માટે તમારો પ્રતિસાદ અને રેટિંગ આપો"
@@ -227,8 +295,9 @@ export default function FeedbackModal() {
                 </div>
                 <h3 className="feedback-success-title">ધન્યવાદ!</h3>
                 <p className="feedback-success-desc">
-                  આપનો પ્રતિસાદ અને રેટિંગ સફળતાપૂર્વક નોંધાઈ ગયો છે. આપના અમૂલ્ય
-                  સૂચનો આ પવિત્ર પ્લેટફોર્મને વધુ ઉત્કૃષ્ટ બનાવવામાં મદદરૂપ થશે.
+                  {isLocked
+                    ? "આપનો પ્રતિસાદ સફળતાપૂર્વક નોંધાઈ ગયો છે. આપનું ૫-સ્ટાર (સર્વોત્તમ) રેટિંગ લૉક થયેલું છે. આપના અમૂલ્ય સાથ બદલ ખૂબ ખૂબ આભાર!"
+                    : "આપનો પ્રતિસાદ અને રેટિંગ સફળતાપૂર્વક નોંધાઈ ગયો છે. આપના સૂચનો આ પવિત્ર પ્લેટફોર્મને વધુ ઉત્કૃષ્ટ બનાવવામાં મદદરૂપ થશે."}
                 </p>
                 <button
                   type="button"
@@ -285,20 +354,30 @@ export default function FeedbackModal() {
 
                 <form onSubmit={handleSubmit}>
                   {/* Star Rating Section */}
-                  <div className="feedback-rating-section">
-                    <label className="feedback-section-label">
-                      વેબસાઇટને સ્ટાર રેટિંગ આપો
-                    </label>
+                  <div className={`feedback-rating-section ${isLocked ? "rating-locked-box" : ""}`}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
+                      <label className="feedback-section-label" style={{ margin: 0 }}>
+                        {isLocked
+                          ? "આપનું ૫-સ્ટાર રેટિંગ (લૉક થયેલ છે)"
+                          : hasRated
+                          ? "તમારું હાલનું રેટિંગ (તમે બદલી શકો છો)"
+                          : "વેબસાઇટને સ્ટાર રેટિંગ આપો"}
+                      </label>
+                      {isLocked && <Lock size={14} color="#d97706" />}
+                    </div>
+
                     <div className="feedback-stars-row">
                       {[1, 2, 3, 4, 5].map((starNum) => (
                         <button
                           key={starNum}
                           type="button"
-                          className="feedback-star-btn"
-                          onMouseEnter={() => setHoverRating(starNum)}
-                          onMouseLeave={() => setHoverRating(0)}
-                          onClick={() => setRating(starNum)}
+                          className={`feedback-star-btn ${isLocked ? "disabled-star" : ""}`}
+                          disabled={isLocked}
+                          onMouseEnter={() => !isLocked && setHoverRating(starNum)}
+                          onMouseLeave={() => !isLocked && setHoverRating(0)}
+                          onClick={() => !isLocked && setRating(starNum)}
                           aria-label={`${starNum} સ્ટાર`}
+                          title={isLocked ? "૫-સ્ટાર રેટિંગ લૉક છે" : `${starNum} સ્ટાર પસંદ કરો`}
                         >
                           <Star
                             size={32}
@@ -310,15 +389,34 @@ export default function FeedbackModal() {
                         </button>
                       ))}
                     </div>
+
                     <div className="feedback-rating-descriptor">
-                      {RATING_LABELS[activeRating] || ""}
+                      {isLocked ? (
+                        <span style={{ color: "#d97706", display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                          <Lock size={13} /> આપનું ૫-સ્ટાર રેટિંગ નોંધાઈ ગયું છે
+                        </span>
+                      ) : (
+                        RATING_LABELS[activeRating] || ""
+                      )}
                     </div>
+
+                    {!isLocked && hasRated && (
+                      <p className="feedback-rating-hint">
+                        આપે અગાઉ {rating} સ્ટાર આપ્યા છે. તમે તેને વધારી શકો છો. ૫-સ્ટાર થતાં તે લૉક થઈ જશે.
+                      </p>
+                    )}
+
+                    {!isLocked && !hasRated && (
+                      <p className="feedback-rating-hint">
+                        ૧ એકાઉન્ટમાંથી ૧ જ વાર રેટિંગ ગણાશે. ૫-સ્ટાર આપ્યા બાદ તે લૉક થઈ જશે.
+                      </p>
+                    )}
                   </div>
 
-                  {/* Category Selector */}
+                  {/* Category Selector (Unlimited suggestions) */}
                   <div className="feedback-category-group">
                     <label className="feedback-group-title">
-                      પ્રતિસાદનો પ્રકાર
+                      પ્રતિસાદનો પ્રકાર (તમે ગમે તેટલી વાર સૂચન આપી શકો છો)
                     </label>
                     <div className="feedback-categories-grid">
                       {CATEGORIES.map((cat) => {
@@ -348,7 +446,7 @@ export default function FeedbackModal() {
                       <input
                         type="text"
                         className="feedback-text-input"
-                        placeholder="નામ (વૈકલ્પિક)"
+                        placeholder="નામ"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         maxLength={50}
@@ -370,16 +468,16 @@ export default function FeedbackModal() {
                   {/* Message Textarea */}
                   <div className="feedback-textarea-wrap">
                     <label className="feedback-group-title">
-                      આપનું સૂચન અથવા પ્રતિસાદ
+                      આપનું સૂચન અથવા સમસ્યા
                     </label>
                     <textarea
                       className="feedback-textarea"
-                      placeholder="વેબસાઇટમાં શું ગમ્યું અથવા શું નવું ઉમેરવું જોઈએ તે અહીં લખો..."
+                      placeholder="કોઈ નવું સૂચન, સુધારો કે સમસ્યા હોય તો અહીં લખો..."
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       maxLength={1000}
                       rows={4}
-                      required
+                      required={isLocked}
                     />
                     <span className="feedback-char-counter">
                       {message.length} / 1000 અક્ષરો
@@ -411,7 +509,13 @@ export default function FeedbackModal() {
                     ) : (
                       <>
                         <Send size={16} />
-                        <span>પ્રતિસાદ સબમિટ કરો</span>
+                        <span>
+                          {isLocked
+                            ? "સૂચન સબમિટ કરો"
+                            : hasRated
+                            ? "રેટિંગ / સૂચન અપડેટ કરો"
+                            : "રેટિંગ અને સૂચન સબમિટ કરો"}
+                        </span>
                       </>
                     )}
                   </button>

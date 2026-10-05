@@ -624,13 +624,21 @@
 
 .admin-stats {
   display: grid;
-
-  grid-template-columns:
-    repeat(3, 1fr);
-
-  gap: 20px;
-
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
   margin-bottom: 30px;
+}
+
+@media (max-width: 1100px) {
+  .admin-stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .admin-stats {
+    grid-template-columns: 1fr;
+  }
 }
 
 
@@ -2644,6 +2652,13 @@ html[data-theme='dark'] .admin-container,
   color: #b45309;
   border: 1px solid rgba(217, 119, 6, 0.25);
   box-shadow: 0 4px 12px rgba(217, 119, 6, 0.15);
+}
+
+.rose-glow {
+  background: linear-gradient(135deg, #ffe4e6 0%, #fff1f2 100%);
+  color: #e11d48;
+  border: 1px solid rgba(225, 29, 72, 0.25);
+  box-shadow: 0 4px 12px rgba(225, 29, 72, 0.15);
 }
 
 .v-stat-content h3 {
