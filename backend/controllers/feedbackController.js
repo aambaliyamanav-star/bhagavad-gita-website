@@ -132,6 +132,14 @@ const submitFeedback = async (req, res) => {
       });
     }
 
+    // Keep all existing and newly saved feedback records in sync with user's updated rating
+    if (req.userId && finalRatingNum >= 1 && finalRatingNum <= 5) {
+      await Feedback.updateMany(
+        { userId: req.userId },
+        { rating: finalRatingNum }
+      );
+    }
+
     let responseMessage = "આપનો પ્રતિસાદ સફળતાપૂર્વક સબમિટ થયો છે. ધન્યવાદ!";
     if (ratingUpdated && isRatingLocked) {
       responseMessage = "૫-સ્ટાર રેટિંગ અને પ્રતિસાદ સફળતાપૂર્વક સબમિટ થયો. આપનું ૫-સ્ટાર રેટિંગ હવે લૉક થઈ ગયું છે. ખૂબ ખૂબ ધન્યવાદ!";
@@ -264,15 +272,32 @@ const getAdminFeedbacks = async (req, res) => {
     ]);
 
     // Calculate rating metrics from unique Ratings collection
-    const allRatings = await Rating.find({}, "rating").lean();
+    const allRatings = await Rating.find({}, "userId rating").lean();
     let totalRatings = allRatings.length;
     let sum = 0;
     const distribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+    const userRatingMap = new Map();
 
     allRatings.forEach((item) => {
-      sum += item.rating;
-      if (distribution[item.rating] !== undefined) {
-        distribution[item.rating] += 1;
+      const r = item.rating;
+      sum += r;
+      if (distribution[r] !== undefined) {
+        distribution[r] += 1;
+      }
+      if (item.userId) {
+        userRatingMap.set(String(item.userId), r);
+      }
+    });
+
+    // Ensure all returned feedbacks reflect each user's latest updated star rating
+    feedbacks.forEach((fb) => {
+      const uId = fb.userId?._id
+        ? String(fb.userId._id)
+        : fb.userId
+        ? String(fb.userId)
+        : null;
+      if (uId && userRatingMap.has(uId)) {
+        fb.rating = userRatingMap.get(uId);
       }
     });
 
