@@ -66,6 +66,14 @@ const submitFeedback = async (req, res) => {
     const { category, message, device } = req.body;
     let { rating, name, email } = req.body;
 
+    // 1. Enforce compulsory message/text
+    if (!message || message.trim().length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "કૃપા કરીને તમારું સૂચન કે પ્રતિસાદ લખો (લખાણ લખવું ફરજિયાત છે).",
+      });
+    }
+
     // Handle user identification
     if (req.user) {
       name = name && name.trim().length > 0 ? name.trim() : (req.user.name || "ભક્ત");
@@ -90,6 +98,8 @@ const submitFeedback = async (req, res) => {
           finalRatingNum = 5;
         } else {
           // Update existing rating without creating a duplicate count!
+          const oldRatingVal = existingRating.rating;
+          existingRating.previousRating = oldRatingVal;
           existingRating.rating = finalRatingNum;
           existingRating.userName = name;
           existingRating.userEmail = email;
@@ -122,55 +132,45 @@ const submitFeedback = async (req, res) => {
       }
     }
 
-    // Handle Suggestion / Message submission (Unlimited submissions allowed per account)
-    let savedFeedback = null;
-    const hasMessage = message && message.trim().length > 0;
+    // Handle Suggestion / Message submission (Always saved in Feedback collection!)
+    const validCategories = ["suggestion", "feedback", "bug", "appreciation"];
+    const finalCategory = validCategories.includes(category)
+      ? category
+      : "suggestion";
 
-    if (hasMessage) {
-      const validCategories = ["suggestion", "feedback", "bug", "appreciation"];
-      const finalCategory = validCategories.includes(category)
-        ? category
-        : "suggestion";
+    // If user is updating, find their earlier feedback to populate previousMessage & previousRating
+    let prevFeedbackMessage = "";
+    let prevFeedbackRating = null;
 
-      // If user is updating, find their earlier feedback to populate previousMessage & previousRating
-      let prevFeedbackMessage = "";
-      let prevFeedbackRating = null;
+    const userCriteria = [];
+    if (req.userId) userCriteria.push({ userId: req.userId });
+    if (email && email.trim().length > 0) userCriteria.push({ email: email.toLowerCase().trim() });
 
-      const userCriteria = [];
-      if (req.userId) userCriteria.push({ userId: req.userId });
-      if (email && email.trim().length > 0) userCriteria.push({ email: email.toLowerCase().trim() });
-
-      if (userCriteria.length > 0) {
-        const lastFb = await Feedback.findOne({
-          $or: userCriteria,
-          status: "active",
-        }).sort({ createdAt: -1 });
-
-        if (lastFb) {
-          prevFeedbackMessage = lastFb.message || "";
-          prevFeedbackRating = lastFb.rating || null;
-        }
-      }
-
-      savedFeedback = await Feedback.create({
-        userId: req.userId || null,
-        name,
-        email,
-        rating: finalRatingNum > 0 ? finalRatingNum : 5,
-        previousRating: prevFeedbackRating,
-        previousMessage: prevFeedbackMessage,
-        isUpdatedRating: ratingUpdated || Boolean(prevFeedbackRating),
-        category: finalCategory,
-        message: message.trim(),
-        device: device || "",
+    if (userCriteria.length > 0) {
+      const lastFb = await Feedback.findOne({
+        $or: userCriteria,
         status: "active",
-      });
-    } else if (!ratingUpdated && !hasMessage) {
-      return res.status(400).json({
-        success: false,
-        message: "કૃપા કરીને તમારું સૂચન લખો અથવા રેટિંગ આપો.",
-      });
+      }).sort({ createdAt: -1 });
+
+      if (lastFb) {
+        prevFeedbackMessage = lastFb.message || "";
+        prevFeedbackRating = lastFb.rating || null;
+      }
     }
+
+    const savedFeedback = await Feedback.create({
+      userId: req.userId || null,
+      name,
+      email,
+      rating: finalRatingNum > 0 ? finalRatingNum : 5,
+      previousRating: prevFeedbackRating,
+      previousMessage: prevFeedbackMessage,
+      isUpdatedRating: ratingUpdated || Boolean(prevFeedbackRating),
+      category: finalCategory,
+      message: message.trim(),
+      device: device || "",
+      status: "active",
+    });
 
     let responseMessage = "આપનો પ્રતિસાદ સફળતાપૂર્વક સબમિટ થયો છે. ધન્યવાદ!";
     if (ratingUpdated && isRatingLocked) {
