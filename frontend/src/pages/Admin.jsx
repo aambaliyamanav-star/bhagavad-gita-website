@@ -656,10 +656,7 @@ function Admin() {
                   <Activity size={24} className="visitor-activity-icon" />
                 </div>
                 <div>
-                  <h2>📊 એનાલિટિક્સ અને યુઝર રિપોર્ટ્સ (Analytics & Reports)</h2>
-                  <span className="v-header-sub">
-                    વેબસાઇટ મુલાકાતીઓ અથવા એપ ઇન્સ્ટોલેશનની સંપૂર્ણ માહિતી જોવા માટે નીચેના બટન પર ક્લિક કરો
-                  </span>
+                  <h2>એનાલિટિક્સ અને યુઝર રિપોર્ટ્સ</h2>
                 </div>
               </div>
             </div>
@@ -677,16 +674,13 @@ function Admin() {
                   </div>
                   <div className="hub-btn-text">
                     <div className="hub-btn-title-row">
-                      <h4>🌐 વેબસાઇટ મુલાકાતીઓ (Web Visitors)</h4>
+                      <h4>વેબસાઇટ મુલાકાતીઓ</h4>
                       <span className="hub-btn-pill web-pill">
                         {visitorStats?.totalVisits !== undefined
                           ? `${visitorStats.totalVisits.toLocaleString()} મુલાકાતો`
                           : "ડેટા જુઓ"}
                       </span>
                     </div>
-                    <p className="hub-btn-description">
-                      આજની મુલાકાતો: <strong>{visitorStats?.todayVisits || 0}</strong> • ટોપ પેજ, ડિવાઇસ અને બ્રાઉઝર એનાલિટિક્સ
-                    </p>
                   </div>
                 </div>
                 <div className="hub-btn-cta">
@@ -707,16 +701,13 @@ function Admin() {
                   </div>
                   <div className="hub-btn-text">
                     <div className="hub-btn-title-row">
-                      <h4>📱 એપ ઇન્સ્ટોલેશન અને વપરાશ (App Analytics)</h4>
+                      <h4>એપ ઇન્સ્ટોલેશન અને વપરાશ</h4>
                       <span className="hub-btn-pill app-pill">
                         {appStats?.totalInstalls !== undefined
                           ? `${appStats.totalInstalls.toLocaleString()} ઇન્સ્ટોલ્સ`
                           : "ડેટા જુઓ"}
                       </span>
                     </div>
-                    <p className="hub-btn-description">
-                      આજના ઇન્સ્ટોલ: <strong>{appStats?.todayInstalls || 0}</strong> • નોટિફિકેશન: <strong>{appStats?.notificationSubscribers || 0}</strong> • પ્લેટફોર્મ વિગતો
-                    </p>
                   </div>
                 </div>
                 <div className="hub-btn-cta">
@@ -746,10 +737,7 @@ function Admin() {
                     <Globe size={24} className="visitor-activity-icon" />
                   </div>
                   <div>
-                    <h2>🌐 વેબસાઇટ મુલાકાતીઓ (Website Visitors)</h2>
-                    <span className="v-header-sub">
-                      કુલ મુલાકાતો, મુખ્ય પેજીસ, ડિવાઇસ અને બ્રાઉઝર એનાલિટિક્સ
-                    </span>
+                    <h2>વેબસાઇટ મુલાકાતીઓ</h2>
                   </div>
                 </div>
 
@@ -1116,10 +1104,7 @@ function Admin() {
                     <Smartphone size={24} className="visitor-activity-icon" />
                   </div>
                   <div>
-                    <h2>📱 એપ ઇન્સ્ટોલેશન અને વપરાશકર્તા એનાલિટિક્સ (App Analytics)</h2>
-                    <span className="v-header-sub">
-                      ગીતા એપ ઇન્સ્ટોલ કરનાર ભક્તો, દૈનિક નોટિફિકેશન અને ડિવાઇસ પ્રવૃત્તિ
-                    </span>
+                    <h2>એપ ઇન્સ્ટોલેશન અને વપરાશકર્તા એનાલિટિક્સ</h2>
                   </div>
                 </div>
 
@@ -1158,67 +1143,67 @@ function Admin() {
             </div>
           ) : (
             <>
-              {/* TOP 5 APP STATS CARDS */}
-              <div className="v-stat-cards-grid app-stat-cards-grid">
+              {/* TOP 5 APP STATS CARDS - 2 BOXES PER ROW */}
+              <div className="app-stat-cards-grid">
                 {/* 1. TOTAL APP INSTALLS */}
-                <div className="v-stat-card primary">
-                  <div className="v-stat-card-icon-box app-icon-install">
+                <div className="app-stat-card app-stat-primary">
+                  <div className="app-stat-icon-wrap app-icon-install">
                     <Download size={24} />
                   </div>
-                  <div className="v-stat-card-info">
-                    <span className="v-stat-label">કુલ એપ ઇન્સ્ટોલ</span>
-                    <h3 className="v-stat-value">{appStats?.totalInstalls || 0}</h3>
-                    <span className="v-stat-hint">
+                  <div className="app-stat-body">
+                    <span className="app-stat-title">કુલ એપ ઇન્સ્ટોલ</span>
+                    <h3 className="app-stat-num">{appStats?.totalInstalls || 0}</h3>
+                    <span className="app-stat-sub">
                       {appStats?.registeredInstalls || 0} રજીસ્ટર્ડ • {appStats?.guestInstalls || 0} ગેસ્ટ
                     </span>
                   </div>
                 </div>
 
                 {/* 2. TODAY'S NEW INSTALLS */}
-                <div className="v-stat-card success">
-                  <div className="v-stat-card-icon-box app-icon-today">
+                <div className="app-stat-card app-stat-success">
+                  <div className="app-stat-icon-wrap app-icon-today">
                     <Sparkles size={24} />
                   </div>
-                  <div className="v-stat-card-info">
-                    <span className="v-stat-label">આજના નવા ઇન્સ્ટોલ</span>
-                    <h3 className="v-stat-value">{appStats?.todayInstalls || 0}</h3>
-                    <span className="v-stat-hint">છેલ્લા 24 કલાકમાં</span>
+                  <div className="app-stat-body">
+                    <span className="app-stat-title">આજના નવા ઇન્સ્ટોલ</span>
+                    <h3 className="app-stat-num">{appStats?.todayInstalls || 0}</h3>
+                    <span className="app-stat-sub">છેલ્લા 24 કલાકમાં</span>
                   </div>
                 </div>
 
                 {/* 3. TODAY'S ACTIVE USERS */}
-                <div className="v-stat-card warning">
-                  <div className="v-stat-card-icon-box app-icon-active">
+                <div className="app-stat-card app-stat-warning">
+                  <div className="app-stat-icon-wrap app-icon-active">
                     <Activity size={24} />
                   </div>
-                  <div className="v-stat-card-info">
-                    <span className="v-stat-label">આજના સક્રિય એપ યુઝર્સ</span>
-                    <h3 className="v-stat-value">{appStats?.todayActive || 0}</h3>
-                    <span className="v-stat-hint">આજે એપ ખોલનાર ભક્તો</span>
+                  <div className="app-stat-body">
+                    <span className="app-stat-title">આજના સક્રિય એપ યુઝર્સ</span>
+                    <h3 className="app-stat-num">{appStats?.todayActive || 0}</h3>
+                    <span className="app-stat-sub">આજે એપ ખોલનાર ભક્તો</span>
                   </div>
                 </div>
 
                 {/* 4. NOTIFICATION SUBSCRIBERS */}
-                <div className="v-stat-card info">
-                  <div className="v-stat-card-icon-box app-icon-notif">
+                <div className="app-stat-card app-stat-info">
+                  <div className="app-stat-icon-wrap app-icon-notif">
                     <Bell size={24} />
                   </div>
-                  <div className="v-stat-card-info">
-                    <span className="v-stat-label">નોટિફિકેશન સક્રિય (5x Daily)</span>
-                    <h3 className="v-stat-value">{appStats?.notificationSubscribers || 0}</h3>
-                    <span className="v-stat-hint">દરરોજ શ્લોક મેળવનાર</span>
+                  <div className="app-stat-body">
+                    <span className="app-stat-title">નોટિફિકેશન સક્રિય (5x Daily)</span>
+                    <h3 className="app-stat-num">{appStats?.notificationSubscribers || 0}</h3>
+                    <span className="app-stat-sub">દરરોજ શ્લોક મેળવનાર</span>
                   </div>
                 </div>
 
                 {/* 5. TOTAL APP OPENS */}
-                <div className="v-stat-card purple">
-                  <div className="v-stat-card-icon-box app-icon-opens">
+                <div className="app-stat-card app-stat-purple">
+                  <div className="app-stat-icon-wrap app-icon-opens">
                     <Zap size={24} />
                   </div>
-                  <div className="v-stat-card-info">
-                    <span className="v-stat-label">કુલ એપ ઓપનિંગ્સ</span>
-                    <h3 className="v-stat-value">{appStats?.totalOpens || 0}</h3>
-                    <span className="v-stat-hint">એપ લોન્ચ કાઉન્ટ</span>
+                  <div className="app-stat-body">
+                    <span className="app-stat-title">કુલ એપ ઓપનિંગ્સ</span>
+                    <h3 className="app-stat-num">{appStats?.totalOpens || 0}</h3>
+                    <span className="app-stat-sub">એપ લોન્ચ કાઉન્ટ</span>
                   </div>
                 </div>
               </div>

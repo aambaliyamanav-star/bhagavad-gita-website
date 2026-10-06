@@ -163,6 +163,51 @@ const recordAppInstall = async (req, res) => {
 // GET /api/app-analytics/stats (Admin only)
 const getAppStats = async (req, res) => {
   try {
+    // Auto-sync any push subscriptions with isApp: true into AppInstallation
+    try {
+      const appSubs = await Subscription.find({
+        $or: [{ isApp: true }, { isApp: { $exists: false } }, { isApp: null }],
+      }).lean();
+      for (const sub of appSubs) {
+        const subDeviceId = "dev_sub_" + Buffer.from(sub.endpoint).toString("hex").substring(0, 16);
+        const existing = await AppInstallation.findOne({
+          $or: [
+            { notificationEndpoint: sub.endpoint },
+            { deviceId: subDeviceId },
+          ],
+        });
+        if (!existing) {
+          let userName = null;
+          let userEmail = null;
+          if (sub.userId) {
+            try {
+              const u = await User.findById(sub.userId).select("name email").lean();
+              if (u) {
+                userName = u.name;
+                userEmail = u.email;
+              }
+            } catch (e) {}
+          }
+          await AppInstallation.create({
+            deviceId: subDeviceId,
+            userId: sub.userId || null,
+            userName,
+            userEmail,
+            platform: "Android",
+            browser: "Chrome",
+            device: "Mobile",
+            installedAt: sub.createdAt || new Date(),
+            lastOpenedAt: sub.lastOpenedDate || sub.updatedAt || new Date(),
+            hasNotificationEnabled: true,
+            notificationEndpoint: sub.endpoint,
+            openCount: 1,
+          });
+        }
+      }
+    } catch (syncErr) {
+      console.warn("App subscription sync warning:", syncErr.message);
+    }
+
     const now = new Date();
     const istTime = new Date(now.getTime() + 5.5 * 60 * 60 * 1000);
     const startOfTodayIST = new Date(
@@ -210,7 +255,9 @@ const getAppStats = async (req, res) => {
         .sort({ lastOpenedAt: -1, installedAt: -1 })
         .limit(25)
         .lean(),
-      Subscription.countDocuments({ isApp: true }),
+      Subscription.countDocuments({
+        $or: [{ isApp: true }, { isApp: { $exists: false } }, { isApp: null }],
+      }),
     ]);
 
     const totalOpens = openAgg[0]?.totalOpens || 0;

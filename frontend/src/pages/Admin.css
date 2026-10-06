@@ -4470,7 +4470,7 @@ html[data-theme='dark'] .app-icon-opens,
 }
 
 /* =========================================================
-   ANALYTICS HUB (2 POPUP BUTTONS ON ADMIN PAGE)
+   ANALYTICS HUB (2 BUTTONS FOR POPUPS)
    ========================================================= */
 
 .admin-analytics-hub-section {
@@ -4587,20 +4587,19 @@ html[data-theme='dark'] .app-icon-opens,
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
-  margin-bottom: 5px;
 }
 
 .hub-btn-title-row h4 {
   margin: 0;
-  font-size: 1.02rem;
+  font-size: 1.05rem;
   font-weight: 800;
   color: #0f172a;
 }
 
 .hub-btn-pill {
-  font-size: 0.74rem;
+  font-size: 0.76rem;
   font-weight: 700;
-  padding: 3px 9px;
+  padding: 4px 10px;
   border-radius: 9999px;
 }
 
@@ -4614,17 +4613,6 @@ html[data-theme='dark'] .app-icon-opens,
   background: #f3e8ff;
   color: #7e22ce;
   border: 1px solid #e9d5ff;
-}
-
-.hub-btn-description {
-  margin: 0;
-  font-size: 0.82rem;
-  color: #64748b;
-  line-height: 1.4;
-}
-
-.hub-btn-description strong {
-  color: #1e3a8a;
 }
 
 .hub-btn-cta {
@@ -4719,6 +4707,106 @@ html[data-theme='dark'] .app-icon-opens,
   font-weight: 500;
 }
 
+/* =========================================================
+   APP STAT CARDS GRID - 2 BOXES PER ROW LAYOUT
+   ========================================================= */
+
+.app-stat-cards-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, 1fr) !important;
+  gap: 18px !important;
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .app-stat-cards-grid {
+    grid-template-columns: 1fr !important;
+    gap: 14px !important;
+  }
+}
+
+.app-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 20px 22px;
+  border-radius: 20px;
+  background: #ffffff;
+  border: 1.5px solid rgba(226, 232, 240, 0.9);
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  min-height: 98px;
+  position: relative;
+  overflow: hidden;
+}
+
+.app-stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.09);
+  border-color: rgba(37, 99, 235, 0.3);
+}
+
+.app-stat-icon-wrap {
+  width: 54px;
+  height: 54px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.2s ease;
+}
+
+.app-stat-card:hover .app-stat-icon-wrap {
+  transform: scale(1.08);
+}
+
+.app-stat-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.app-stat-title {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #64748b;
+  line-height: 1.3;
+}
+
+.app-stat-num {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+  line-height: 1.15;
+}
+
+.app-stat-sub {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+/* Specific Card Accents */
+.app-stat-primary {
+  border-left: 4px solid #2563eb;
+}
+.app-stat-success {
+  border-left: 4px solid #10b981;
+}
+.app-stat-warning {
+  border-left: 4px solid #f59e0b;
+}
+.app-stat-info {
+  border-left: 4px solid #8b5cf6;
+}
+.app-stat-purple {
+  border-left: 4px solid #06b6d4;
+}
+
 /* Dark Theme Overrides for Analytics Hub & Modals */
 html[data-theme='dark'] .analytics-hub-card,
 .dark .analytics-hub-card {
@@ -4742,16 +4830,6 @@ html[data-theme='dark'] .analytics-hub-btn:hover,
 html[data-theme='dark'] .hub-btn-title-row h4,
 .dark .hub-btn-title-row h4 {
   color: #f1f5f9 !important;
-}
-
-html[data-theme='dark'] .hub-btn-description,
-.dark .hub-btn-description {
-  color: #94a3b8 !important;
-}
-
-html[data-theme='dark'] .hub-btn-description strong,
-.dark .hub-btn-description strong {
-  color: #93c5fd !important;
 }
 
 html[data-theme='dark'] .hub-btn-cta,
@@ -4784,6 +4862,28 @@ html[data-theme='dark'] .analytics-modal-footer,
 html[data-theme='dark'] .analytics-modal-footer-hint,
 .dark .analytics-modal-footer-hint {
   color: #94a3b8 !important;
+}
+
+html[data-theme='dark'] .app-stat-card,
+.dark .app-stat-card {
+  background: #1e293b !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25) !important;
+}
+
+html[data-theme='dark'] .app-stat-title,
+.dark .app-stat-title {
+  color: #94a3b8 !important;
+}
+
+html[data-theme='dark'] .app-stat-num,
+.dark .app-stat-num {
+  color: #f8fafc !important;
+}
+
+html[data-theme='dark'] .app-stat-sub,
+.dark .app-stat-sub {
+  color: #64748b !important;
 }
 
 
