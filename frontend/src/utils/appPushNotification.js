@@ -5,6 +5,7 @@
    ========================================================= */
 
 import { checkIsInstalled } from "./pwaManager.js";
+import { trackAppInstallOrOpen } from "./appAnalytics.js";
 
 const FALLBACK_VAPID_PUBLIC =
   "BBZ0vGL3_MtwlA6Owet6dEptXpiUIKyYdzV9Zy9qeew50cNaYqlRjpeg2qKdJowEnZWQ7vhbWOE-f0xhfMe6EDQ";
@@ -103,6 +104,14 @@ export async function enableAppNotifications(user = null) {
 
     localStorage.setItem("app_push_endpoint", endpoint);
     localStorage.removeItem("app_notif_disabled_by_user");
+
+    // Immediately record installation in app analytics
+    try {
+      trackAppInstallOrOpen(true);
+    } catch (e) {
+      // ignore
+    }
+
     if (typeof window !== "undefined") {
       window.dispatchEvent(
         new CustomEvent("app-notification-status-changed", { detail: { enabled: true } })

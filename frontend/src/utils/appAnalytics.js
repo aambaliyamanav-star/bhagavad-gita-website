@@ -3,8 +3,25 @@
    Tracks app installs, device platforms, and active usage
    ========================================================= */
 
-const API_BASE =
-  import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+function getApiUrls(path) {
+  if (typeof window === "undefined") return [];
+  const isLocal =
+    window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1";
+  const custom = import.meta.env?.VITE_API_URL;
+
+  const bases = [];
+  if (custom) bases.push(custom);
+  if (isLocal) {
+    bases.push("http://localhost:5000/api");
+    bases.push("https://bhagavad-gita-website.onrender.com/api");
+  } else {
+    bases.push("https://bhagavad-gita-website.onrender.com/api");
+    bases.push("http://localhost:5000/api");
+  }
+  const uniqueBases = [...new Set(bases)];
+  return uniqueBases.map((b) => `${b.replace(/\/+$/, "")}${path}`);
+}
 
 // Get or generate persistent unique device ID
 export function getOrCreateDeviceId() {
@@ -62,6 +79,19 @@ export function detectDevice() {
   return "Desktop";
 }
 
+// Check if running inside installed app or user previously installed
+export function checkIsAppRunning() {
+  if (typeof window === "undefined") return false;
+  return Boolean(
+    window.matchMedia("(display-mode: standalone)").matches ||
+    window.matchMedia("(display-mode: fullscreen)").matches ||
+    window.matchMedia("(display-mode: minimal-ui)").matches ||
+    window.navigator.standalone === true ||
+    (document.referrer && document.referrer.includes("android-app://")) ||
+    localStorage.getItem("gita_app_installed") === "true"
+  );
+}
+
 /**
  * Record an app install or app open event to backend
  * @param {boolean} isNewInstall - true if triggered right upon user clicking Install / appinstalled event
@@ -70,13 +100,12 @@ export async function trackAppInstallOrOpen(isNewInstall = false) {
   if (typeof window === "undefined") return;
 
   try {
-    const isStandalone =
-      window.matchMedia("(display-mode: standalone)").matches ||
-      window.navigator.standalone === true ||
-      document.referrer.includes("android-app://");
+    const isApp = checkIsAppRunning();
 
-    // Only record if installed or if explicitly marking a new install
-    if (!isStandalone && !isNewInstall) {
+    // If installed or new install, persist the flag
+    if (isNewInstall || isApp) {
+      localStorage.setItem("gita_app_installed", "true");
+    } else {
       return;
     }
 
@@ -121,24 +150,32 @@ export async function trackAppInstallOrOpen(isNewInstall = false) {
       isNewInstall,
     };
 
-    const endpoint = `${API_BASE}/app-analytics/record-install`;
-
-    // Try sendBeacon for reliability, fallback to fetch
     const bodyStr = JSON.stringify(payload);
-    if (navigator.sendBeacon && isNewInstall) {
-      const blob = new Blob([bodyStr], { type: "application/json" });
-      navigator.sendBeacon(endpoint, blob);
-    } else {
-      await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: bodyStr,
-      });
+    const endpoints = getApiUrls("/app-analytics/record-install");
+
+    // Try endpoints until success
+    for (const endpoint of endpoints) {
+      try {
+        if (navigator.sendBeacon && isNewInstall) {
+          const blob = new Blob([bodyStr], { type: "application/json" });
+          const sent = navigator.sendBeacon(endpoint, blob);
+          if (sent) break;
+        }
+        const res = await fetch(endpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: bodyStr,
+        });
+        if (res.ok) {
+          break;
+        }
+      } catch (err) {
+        // try next endpoint
+      }
     }
   } catch (err) {
     console.debug("App tracking log failed:", err);
   }
 }
-

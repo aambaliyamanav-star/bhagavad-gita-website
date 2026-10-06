@@ -1,5 +1,6 @@
 const webpush = require("web-push");
 const Subscription = require("../models/Subscription");
+const AppInstallation = require("../models/AppInstallation");
 const User = require("../models/User");
 const QuizResult = require("../models/QuizResult");
 
@@ -93,6 +94,46 @@ module.exports = {
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
       );
+
+      // Auto-register/sync in AppInstallation analytics
+      try {
+        const subDeviceId = "dev_sub_" + Buffer.from(endpoint).toString("hex").substring(0, 16);
+        let userName = null;
+        let userEmail = null;
+        if (validUserId) {
+          const u = await User.findById(validUserId).select("name email").lean();
+          if (u) {
+            userName = u.name;
+            userEmail = u.email;
+          }
+        }
+        await AppInstallation.findOneAndUpdate(
+          {
+            $or: [{ notificationEndpoint: endpoint }, { deviceId: subDeviceId }],
+          },
+          {
+            $set: {
+              deviceId: subDeviceId,
+              userId: validUserId,
+              userName,
+              userEmail,
+              platform: "Android",
+              browser: "Chrome",
+              device: "Mobile",
+              lastOpenedAt: new Date(),
+              hasNotificationEnabled: true,
+              notificationEndpoint: endpoint,
+            },
+            $setOnInsert: {
+              installedAt: new Date(),
+            },
+            $inc: { openCount: 1 },
+          },
+          { upsert: true, new: true }
+        );
+      } catch (appErr) {
+        console.warn("AppInstallation auto-sync error in subscribe:", appErr.message);
+      }
 
       // Send initial welcome notification ONLY on first-time subscription
       if (isBrandNew) {
