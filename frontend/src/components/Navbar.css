@@ -553,14 +553,14 @@ body {
 .navbar-side-menu {
   position: fixed;
 
-  top: 50%;
+  top: 76px;
   right: 18px;
 
   width: 325px;
   max-width: calc(100vw - 28px);
 
   height: auto;
-  max-height: calc(100dvh - 36px);
+  max-height: calc(100dvh - 92px);
 
   display: flex;
   flex-direction: column;
@@ -598,21 +598,21 @@ body {
     inset 0 1px 0
       rgba(255, 255, 255, 0.80);
 
-  /* Professional popover animation - vertically centered */
-  transform-origin: center right;
-  transform: translateY(-50%) scale(0.88);
+  /* Professional popover animation */
+  transform-origin: top right;
+  transform: scale(0.86) translateY(-14px);
   visibility: hidden;
   opacity: 0;
   pointer-events: none;
 
   transition:
-    transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.30s cubic-bezier(0.16, 1, 0.3, 1),
     opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1),
-    visibility 0.28s;
+    visibility 0.30s;
 }
 
 .navbar-side-menu.open {
-  transform: translateY(-50%) scale(1);
+  transform: scale(1) translateY(0);
   visibility: visible;
   opacity: 1;
   pointer-events: auto;
@@ -1929,15 +1929,15 @@ a:focus-visible {
    NO SCROLL - AUTO EXPANDS WHEN BUTTONS ARE ADDED
 ===================================================== */
 
-/* Floating container: auto height, vertically centered on screen */
+/* Floating container: auto height, fits all options with NO scroll */
 .navbar-side-menu {
   position: fixed !important;
-  top: 50% !important;
-  right: 18px !important;
+  top: 72px !important;
+  right: 16px !important;
   width: 310px !important;
   max-width: calc(100vw - 24px) !important;
   height: auto !important;
-  max-height: calc(100dvh - 36px) !important;
+  max-height: none !important;
   border-radius: 22px !important;
   display: flex !important;
   flex-direction: column !important;
@@ -1950,22 +1950,6 @@ a:focus-visible {
     0 20px 60px rgba(0, 30, 90, 0.32),
     0 4px 16px rgba(0, 0, 0, 0.10),
     inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
-  transform-origin: center right !important;
-  transform: translateY(-50%) scale(0.88) !important;
-  visibility: hidden;
-  opacity: 0;
-  pointer-events: none;
-  transition:
-    transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 0.22s cubic-bezier(0.16, 1, 0.3, 1),
-    visibility 0.28s !important;
-}
-
-.navbar-side-menu.open {
-  transform: translateY(-50%) scale(1) !important;
-  visibility: visible !important;
-  opacity: 1 !important;
-  pointer-events: auto !important;
 }
 
 /* Staggered entrance animation for menu items */
@@ -2068,35 +2052,25 @@ a:focus-visible {
   background: rgba(255, 255, 255, 0.25) !important;
 }
 
-/* Content: fits all options naturally and scrolls smoothly if needed on small screens */
+/* NO SCROLL Content: fits all options naturally and auto-expands */
 .side-menu-content {
-  flex: 1 1 auto !important;
-  min-height: 0 !important;
+  flex: 0 0 auto !important;
   height: auto !important;
   max-height: none !important;
-  padding: 5px 8px 6px !important;
+  padding: 6px 8px 8px !important;
   display: flex !important;
   flex-direction: column !important;
   justify-content: flex-start !important;
-  gap: 2.5px !important;
-  overflow-y: auto !important;
-  overflow-x: hidden !important;
-  scrollbar-width: thin !important;
-  scrollbar-color: rgba(80, 150, 220, 0.35) transparent !important;
+  gap: 3px !important;
+  overflow: visible !important;
+  overflow-y: visible !important;
+  scrollbar-width: none !important;
 }
 
 .side-menu-content::-webkit-scrollbar {
-  display: block !important;
-  width: 4px !important;
-}
-
-.side-menu-content::-webkit-scrollbar-track {
-  background: transparent !important;
-}
-
-.side-menu-content::-webkit-scrollbar-thumb {
-  background: rgba(80, 150, 220, 0.35) !important;
-  border-radius: 10px !important;
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
 }
 
 /* Sleek Menu Items - Compact & readable */
@@ -2316,27 +2290,27 @@ a:focus-visible {
   cursor: default !important;
 }
 
-/* Mobile Responsiveness - Centered with safe margins */
+/* Mobile Responsiveness - No scroll, auto expands */
 @media (max-width: 600px) {
   .navbar-side-menu {
-    top: 50% !important;
+    top: 66px !important;
     right: 10px !important;
     width: min(310px, calc(100vw - 20px)) !important;
     max-width: calc(100vw - 20px) !important;
     height: auto !important;
-    max-height: calc(100dvh - 24px) !important;
+    max-height: none !important;
     border-radius: 20px !important;
   }
 }
 
 @media (max-width: 400px) {
   .navbar-side-menu {
-    top: 50% !important;
+    top: 62px !important;
     right: 8px !important;
     width: calc(100vw - 16px) !important;
     max-width: calc(100vw - 16px) !important;
     height: auto !important;
-    max-height: calc(100dvh - 20px) !important;
+    max-height: none !important;
     border-radius: 18px !important;
   }
 }

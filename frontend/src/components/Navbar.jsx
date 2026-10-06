@@ -31,7 +31,11 @@ import {
 
 import { useAuth } from "../context/AuthContext.jsx";
 import { useTheme } from "../context/ThemeContext.jsx";
-import { promptInstallApp } from "../utils/pwaManager.js";
+import {
+  promptInstallApp,
+  checkIsInstalled,
+  onInstallPromptChange,
+} from "../utils/pwaManager.js";
 
 import "./Navbar.css";
 
@@ -62,6 +66,20 @@ function Navbar() {
   // =====================================================
 
   const [scrolled, setScrolled] = useState(false);
+
+  // =====================================================
+  // PWA APP INSTALLED STATE (HIDE BUTTON IF INSTALLED)
+  // =====================================================
+
+  const [isAppInstalled, setIsAppInstalled] = useState(() => checkIsInstalled());
+
+  useEffect(() => {
+    setIsAppInstalled(checkIsInstalled());
+    const unsubscribe = onInstallPromptChange((canInstall, isAlreadyInstalled) => {
+      setIsAppInstalled(isAlreadyInstalled || checkIsInstalled());
+    });
+    return () => unsubscribe();
+  }, []);
 
   // =====================================================
   // NAVIGATION HISTORY (ATOMIC STATE & REF)
@@ -1006,35 +1024,37 @@ function Navbar() {
 
 
           {/* =================================================
-              INSTALL APP (PWA)
+              INSTALL APP (PWA) - Only show if not installed
           ================================================= */}
 
-          <button
-            type="button"
-            className="side-menu-item side-menu-button install-app-menu-btn"
-            onClick={async () => {
-              setMenuOpen(false);
-              const res = await promptInstallApp();
-              if (!res.success) {
-                // If not native prompt or iOS, open the install banner/guide modal
-                window.dispatchEvent(new CustomEvent("open-pwa-install-banner"));
-              }
-            }}
-          >
-            <span className="side-menu-icon" style={{ color: "#10b981" }}>
-              <Download size={20} strokeWidth={1.8} />
-            </span>
+          {!isAppInstalled && (
+            <button
+              type="button"
+              className="side-menu-item side-menu-button install-app-menu-btn"
+              onClick={async () => {
+                setMenuOpen(false);
+                const res = await promptInstallApp();
+                if (!res.success) {
+                  // If not native prompt or iOS, open the install banner/guide modal
+                  window.dispatchEvent(new CustomEvent("open-pwa-install-banner"));
+                }
+              }}
+            >
+              <span className="side-menu-icon" style={{ color: "#10b981" }}>
+                <Download size={20} strokeWidth={1.8} />
+              </span>
 
-            <span className="side-menu-text">
-              <strong>
-                📱 એપ ઇન્સ્ટોલ કરો (Install App)
-              </strong>
-            </span>
+              <span className="side-menu-text">
+                <strong>
+                  📱 એપ ઇન્સ્ટોલ કરો (Install App)
+                </strong>
+              </span>
 
-            <span className="side-menu-arrow">
-              <ChevronRight size={18} strokeWidth={2} />
-            </span>
-          </button>
+              <span className="side-menu-arrow">
+                <ChevronRight size={18} strokeWidth={2} />
+              </span>
+            </button>
+          )}
 
 
 
