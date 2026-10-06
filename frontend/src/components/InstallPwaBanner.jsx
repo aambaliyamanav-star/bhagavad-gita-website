@@ -99,7 +99,7 @@ function InstallPwaBanner() {
           </div>
 
           <div className="pwa-banner-text">
-            <span className="pwa-app-name">શ્રીમદ્ ભગવદ્ ગીતા</span>
+            <span className="pwa-app-name">શ્રીમદ્ ભગવદ્ ગીતા APP</span>
           </div>
 
           <div className="pwa-banner-actions">
