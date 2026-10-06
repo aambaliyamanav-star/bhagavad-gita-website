@@ -1133,8 +1133,8 @@ function Navbar() {
 
         <div className="side-menu-footer">
 
-          <span className="side-menu-footer-icon-wrap">
-            <Flower2 size={22} strokeWidth={1.8} className="side-menu-footer-icon" />
+          <span>
+            🕉️
           </span>
 
           <p>
