@@ -20,7 +20,8 @@ router.post("/record-action", notificationController.recordAction);
 // Trigger daily reminder (Can be called by cron-job, GitHub Actions, or Admin)
 router.get("/trigger-daily-reminder", async (req, res) => {
   try {
-    const result = await notificationController.sendDailyReminder();
+    const force = req.query.force === "true" || req.query.force === "1";
+    const result = await notificationController.sendDailyReminder(null, force);
     res.json(result);
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -38,9 +39,11 @@ router.post("/send-custom", async (req, res) => {
   if (!title || !body) {
     return res.status(400).json({ error: "Title અને Body જરૂરી છે" });
   }
-  const result = await notificationController.sendDailyReminder({ title, body, url });
+  const result = await notificationController.sendDailyReminder({ title, body, url }, true);
   res.json(result);
 });
+
+router.post("/send-test-to-endpoint", notificationController.sendTestToEndpoint);
 
 router.post("/test-admin-alert", async (req, res) => {
   const testUser = {

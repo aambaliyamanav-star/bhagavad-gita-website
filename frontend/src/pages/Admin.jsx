@@ -89,8 +89,8 @@ function Admin() {
           window.location.hostname === "127.0.0.1");
 
       const url = isLocal
-        ? "http://localhost:5000/api/notifications/trigger-daily-reminder"
-        : "https://bhagavad-gita-website.onrender.com/api/notifications/trigger-daily-reminder";
+        ? "http://localhost:5000/api/notifications/trigger-daily-reminder?force=true"
+        : "https://bhagavad-gita-website.onrender.com/api/notifications/trigger-daily-reminder?force=true";
 
       let response;
       try {
@@ -98,14 +98,14 @@ function Admin() {
       } catch {
         // Fallback to prod if localhost backend isn't up
         response = await fetch(
-          "https://bhagavad-gita-website.onrender.com/api/notifications/trigger-daily-reminder"
+          "https://bhagavad-gita-website.onrender.com/api/notifications/trigger-daily-reminder?force=true"
         );
       }
 
       const data = await response.json();
       if (data.success) {
         alert(
-          `નોટિફિકેશન સફળતાપૂર્વક મોકલાઈ ગયું!\nકુલ મુલાકાતીઓ: ${data.total || 0}\nસફળ: ${data.sent || 0}`
+          `નોટિફિકેશન સફળતાપૂર્વક મોકલાઈ ગયું!\nકુલ નોંધાયેલા ડિવાઇસ: ${data.total || 0}\nસફળતાપૂર્વક પહોંચ્યું: ${data.sent || 0}\nસ્કીપ: ${data.skipped || 0}`
         );
       } else {
         alert("નોટિફિકેશન મોકલવામાં સમસ્યા આવી: " + (data.error || ""));

@@ -1,0 +1,24 @@
+{
+  "short_name": "ભગવદ્ ગીતા",
+  "name": "શ્રીમદ્ ભગવદ્ ગીતા | Gujarati Bhagavad Gita",
+  "description": "શ્રીમદ્ ભગવદ્ ગીતા ના ૧૮ અધ્યાય અને ૭૦૦ શ્લોકો ગુજરાતી અનુવાદ, અર્થ, સંદેશ અને ક્વિઝ સાથે વાંચો.",
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-192.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#0a1128",
+  "theme_color": "#0a1128",
+  "display": "standalone",
+  "orientation": "portrait"
+}
