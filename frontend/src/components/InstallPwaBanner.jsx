@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Download, X, Smartphone, Sparkles } from "lucide-react";
+import { Download, X, Smartphone } from "lucide-react";
 import {
   promptInstallApp,
   checkIsInstalled,
@@ -99,15 +99,7 @@ function InstallPwaBanner() {
           </div>
 
           <div className="pwa-banner-text">
-            <div className="pwa-banner-title-row">
-              <span className="pwa-app-name">શ્રીમદ્ ભગવદ્ ગીતા</span>
-              <span className="pwa-badge">
-                <Sparkles size={11} /> ફ્રી એપ
-              </span>
-            </div>
-            <p className="pwa-banner-sub">
-              હોમ સ્ક્રીન પર ૧-ક્લિકમાં ઇન્સ્ટોલ કરો • ફાસ્ટ & ઑફલાઇન
-            </p>
+            <span className="pwa-app-name">શ્રીમદ્ ભગવદ્ ગીતા</span>
           </div>
 
           <div className="pwa-banner-actions">
