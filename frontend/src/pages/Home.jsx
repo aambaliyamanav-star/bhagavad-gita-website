@@ -172,6 +172,26 @@ useEffect(() => {
   };
 
   // =====================================================
+  // LOAD TODAY'S SHLOK (PUBLIC FOR EVERYONE)
+  // =====================================================
+
+  useEffect(() => {
+    const fetchTodayShlok = async () => {
+      try {
+        const response = await fetch(`${API_URL}/today`);
+        const data = await response.json();
+        if (data.success && data.shlok) {
+          setTodayShlok(data.shlok);
+        }
+      } catch (err) {
+        console.error("❌ Home Today's Shlok Error:", err);
+      }
+    };
+
+    fetchTodayShlok();
+  }, []);
+
+  // =====================================================
   // LOAD ALL SHLOKAS
   // =====================================================
 
@@ -201,43 +221,21 @@ useEffect(() => {
         setAllShlokas(fetchedShlokas);
 
         // =================================================
-        // SET TODAY'S SHLOK
+        // SET TODAY'S SHLOK (FALLBACK)
         // =================================================
 
         if (fetchedShlokas.length > 0) {
-          const today = new Date();
-
-          const startOfYear = new Date(
-            today.getFullYear(),
-            0,
-            1
-          );
-
-          const currentDate = new Date(
-            today.getFullYear(),
-            today.getMonth(),
-            today.getDate()
-          );
-
-          const difference =
-            currentDate.getTime() -
-            startOfYear.getTime();
-
-          const dayOfYear =
-            Math.floor(
-              difference /
-                (1000 * 60 * 60 * 24)
-            );
-
-          const todayIndex =
-            dayOfYear %
-            fetchedShlokas.length;
-
-          setTodayShlok(
-            fetchedShlokas[todayIndex]
-          );
-        } else {
-          setTodayShlok(null);
+          setTodayShlok((prev) => {
+            if (prev?.sanskrit) return prev;
+            const today = new Date();
+            const startOfYear = new Date(today.getFullYear(), 0, 1);
+            const currentDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            const difference = currentDate.getTime() - startOfYear.getTime();
+            const dayOfYear = Math.floor(difference / (1000 * 60 * 60 * 24));
+            const todayIndex = dayOfYear % fetchedShlokas.length;
+            const candidate = fetchedShlokas[todayIndex];
+            return candidate?.sanskrit ? candidate : prev;
+          });
         }
       } catch (error) {
         console.error(
@@ -447,67 +445,18 @@ useEffect(() => {
 
     const shlokNum = Number(todayShlok.shlokNumber);
 
-    // Logout user માટે: જો શ્લોક 5 થી વધુ હોય તો સીધા Login page પર મોકલો
-    if (!user && shlokNum > 5) {
-      const redirectPath = `/chapter/${todayShlok.chapterNumber}?shloka=${todayShlok.shlokNumber}`;
-      const redirectMsg = `અધ્યાય ${todayShlok.chapterNumber} ના શ્લોક ${todayShlok.shlokNumber} વાંચવા માટે Login કરવું જરૂરી છે.`;
-
-      localStorage.setItem("pendingChapter", String(todayShlok.chapterNumber));
-      localStorage.setItem("pendingShloka", String(todayShlok.shlokNumber));
-
-      sessionStorage.setItem(
-        "authRedirect",
-        JSON.stringify({
-          from: redirectPath,
-          message: redirectMsg,
-        })
-      );
-
-      navigate("/login", {
-        state: {
-          from: redirectPath,
-          message: redirectMsg,
-        },
-      });
-      return;
-    }
-
+    // આજનો શ્લોક બધા માટે મુક્ત છે - Login વગર પણ સંપૂર્ણ વાંચી શકાય
     navigate(
-      `/chapter/${todayShlok.chapterNumber}?shloka=${todayShlok.shlokNumber}`
+      `/chapter/${todayShlok.chapterNumber}?shloka=${todayShlok.shlokNumber}&today=true`
     );
   };
 
   // =====================================================
-  // SHARE TODAY'S SHLOK (1 થી 5 સિવાય Login જરૂરી)
+  // SHARE TODAY'S SHLOK (બધા માટે ઉપલબ્ધ)
   // =====================================================
 
   const handleShareTodayShlok = () => {
     if (!todayShlok) return;
-
-    const shlokNum = Number(todayShlok.shlokNumber);
-
-    // જો user login ન હોય અને શ્લોક 1 થી 5 સિવાયનો હોય
-    if (!user && (shlokNum < 1 || shlokNum > 5)) {
-      const redirectPath = "/";
-      const redirectMsg = `અધ્યાય ${todayShlok.chapterNumber} ના શ્લોક ${todayShlok.shlokNumber} શેર કરવા માટે Login કરવું જરૂરી છે.`;
-
-      sessionStorage.setItem(
-        "authRedirect",
-        JSON.stringify({
-          from: redirectPath,
-          message: redirectMsg,
-        })
-      );
-
-      navigate("/login", {
-        state: {
-          from: redirectPath,
-          message: redirectMsg,
-        },
-      });
-      return;
-    }
-
     setShareModalOpen(true);
   };
 
