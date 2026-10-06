@@ -24,7 +24,6 @@ import {
   TrendingUp,
   UserPlus,
   UserCheck,
-  Bell,
   Star,
   MessageSquare,
   X,
@@ -57,7 +56,6 @@ function Admin() {
   const [visitorStats, setVisitorStats] = useState(null);
   const [loadingVisitors, setLoadingVisitors] = useState(true);
   const [refreshingVisitors, setRefreshingVisitors] = useState(false);
-  const [sendingNotification, setSendingNotification] = useState(false);
 
   // User feedback and ratings state
   const [feedbacks, setFeedbacks] = useState([]);
@@ -73,50 +71,6 @@ function Admin() {
   const navigate = useNavigate();
 
   const { logout } = useAuth();
-
-  const handleSendDailyNotification = async () => {
-    if (sendingNotification) return;
-    const confirmed = window.confirm(
-      "શું તમે તમામ ભક્તો/યુઝર્સના મોબાઈલ પર અત્યારે દૈનિક શ્લોક નોટિફિકેશન મોકલવા માંગો છો?"
-    );
-    if (!confirmed) return;
-
-    setSendingNotification(true);
-    try {
-      const isLocal =
-        typeof window !== "undefined" &&
-        (window.location.hostname === "localhost" ||
-          window.location.hostname === "127.0.0.1");
-
-      const url = isLocal
-        ? "http://localhost:5000/api/notifications/trigger-daily-reminder?force=true"
-        : "https://bhagavad-gita-website.onrender.com/api/notifications/trigger-daily-reminder?force=true";
-
-      let response;
-      try {
-        response = await fetch(url);
-      } catch {
-        // Fallback to prod if localhost backend isn't up
-        response = await fetch(
-          "https://bhagavad-gita-website.onrender.com/api/notifications/trigger-daily-reminder?force=true"
-        );
-      }
-
-      const data = await response.json();
-      if (data.success) {
-        alert(
-          `નોટિફિકેશન સફળતાપૂર્વક મોકલાઈ ગયું!\nકુલ નોંધાયેલા ડિવાઇસ: ${data.total || 0}\nસફળતાપૂર્વક પહોંચ્યું: ${data.sent || 0}\nસ્કીપ: ${data.skipped || 0}`
-        );
-      } else {
-        alert("નોટિફિકેશન મોકલવામાં સમસ્યા આવી: " + (data.error || ""));
-      }
-    } catch (err) {
-      console.error(err);
-      alert("સર્વર સાથે જોડાણ થઈ શક્યું નથી.");
-    } finally {
-      setSendingNotification(false);
-    }
-  };
 
   const fetchVisitorStats = async (isManual = false) => {
     const token = localStorage.getItem("token");
@@ -457,17 +411,6 @@ function Admin() {
           </div>
 
           <div className="admin-header-actions">
-            <button
-              type="button"
-              className="admin-notify-btn"
-              onClick={handleSendDailyNotification}
-              disabled={sendingNotification}
-              title="બધા યુઝર્સને દૈનિક શ્લોક નોટિફિકેશન મોકલો"
-            >
-              <Bell className="btn-icon" size={18} />
-              <span>{sendingNotification ? "મોકલાઈ રહ્યું છે..." : "નોટિફિકેશન મોકલો"}</span>
-            </button>
-
             <button
               className="admin-logout-btn"
               onClick={handleAdminLogout}
