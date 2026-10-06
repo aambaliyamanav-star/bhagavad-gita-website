@@ -373,9 +373,20 @@ const getAllShlokas = async (
     // =====================================================
 
     if (!req.user) {
-      const publicShlokas = shlokas.map((shloka) => {
-        // Shlok 1–5 → Full content
-        if (Number(shloka.shlokNumber) <= 5) {
+      // Calculate today's index in IST so Aaj no shlok is NEVER stripped
+      const today = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Kolkata",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }).format(new Date());
+
+      const dateNumber = Number(today.replace(/-/g, ""));
+      const todayIndex = shlokas.length > 0 ? dateNumber % shlokas.length : -1;
+
+      const publicShlokas = shlokas.map((shloka, index) => {
+        // Shlok 1–5 OR Today's Shlok → Full content
+        if (Number(shloka.shlokNumber) <= 5 || index === todayIndex) {
           return shloka;
         }
 
@@ -461,15 +472,20 @@ const getChapterShlokas = async (
     // =====================================================
 
     if (!req.user) {
+      const isTodayParam = req.query.today === "true";
+      const requestedShlokNum = Number(req.query.todayShloka) || null;
 
       const publicShlokas =
         shlokas.map((shloka) => {
+          const isTodayRequested =
+            isTodayParam && requestedShlokNum && Number(shloka.shlokNumber) === requestedShlokNum;
 
-          // Shlok 1–5 → Full content
+          // Shlok 1–5 OR Today's Shlok when requested → Full content
           if (
             Number(
               shloka.shlokNumber
-            ) <= 5
+            ) <= 5 ||
+            isTodayRequested
           ) {
             return shloka;
           }
