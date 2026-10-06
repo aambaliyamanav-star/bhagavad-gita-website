@@ -15,6 +15,7 @@ const gitaAiRoutes = require("./routes/gitaAiRoutes");
 const visitorRoutes = require("./routes/visitorRoutes");
 const feedbackRoutes = require("./routes/feedbackRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
+const appAnalyticsRoutes = require("./routes/appAnalyticsRoutes");
 const notificationController = require("./controllers/notificationController");
 const cron = require("node-cron");
 
@@ -44,6 +45,7 @@ app.use("/api/gita-ai", gitaAiRoutes);
 app.use("/api/visitors", visitorRoutes);
 app.use("/api/feedback", feedbackRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use("/api/app-analytics", appAnalyticsRoutes);
 
 // =====================================================
 // PUSH NOTIFICATION CRON JOBS (5 TIMES A DAY)

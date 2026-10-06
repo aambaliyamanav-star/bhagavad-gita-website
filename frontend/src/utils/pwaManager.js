@@ -2,6 +2,8 @@
    BHAGAVAD GITA - PWA MANAGER (AUTO-UPDATE & 1-CLICK INSTALL)
    ========================================================= */
 
+import { trackAppInstallOrOpen } from "./appAnalytics";
+
 let deferredPrompt = null;
 const promptListeners = new Set();
 let isInstalled = false;
@@ -50,6 +52,9 @@ export async function promptInstallApp() {
     const { outcome } = await deferredPrompt.userChoice;
     deferredPrompt = null;
     notifyListeners();
+    if (outcome === "accepted") {
+      trackAppInstallOrOpen(true);
+    }
     return { success: outcome === "accepted" };
   } catch (err) {
     console.error("Install prompt error:", err);
@@ -61,7 +66,9 @@ export async function promptInstallApp() {
 export function registerPwa() {
   if (typeof window === "undefined") return;
 
-  checkIsInstalled();
+  if (checkIsInstalled()) {
+    trackAppInstallOrOpen(false);
+  }
 
   // Listen for beforeinstallprompt event
   window.addEventListener("beforeinstallprompt", (e) => {
@@ -77,6 +84,7 @@ export function registerPwa() {
     deferredPrompt = null;
     isInstalled = true;
     notifyListeners();
+    trackAppInstallOrOpen(true);
     console.log("શ્રીમદ્ ભગવદ્ ગીતા એપ સફળતાપૂર્વક ઇન્સ્ટોલ થઈ ગઈ છે.");
   });
 

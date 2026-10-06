@@ -8,6 +8,7 @@ import {
   syncAppSubscription,
   recordAppOpen,
 } from "../utils/appPushNotification.js";
+import { trackAppInstallOrOpen } from "../utils/appAnalytics.js";
 import { useAuth } from "../context/AuthContext.jsx";
 import "./AppNotificationPrompt.css";
 
@@ -22,6 +23,9 @@ function AppNotificationPrompt() {
     if (!checkIsInstalled()) {
       return;
     }
+
+    // Track app open in analytics
+    trackAppInstallOrOpen(false);
 
     // 2. If push not supported in this runtime, skip
     if (!isAppPushSupported()) {
@@ -75,6 +79,7 @@ function AppNotificationPrompt() {
 
     if (res.success) {
       setSuccess(true);
+      trackAppInstallOrOpen(false);
       setTimeout(() => {
         setShowPrompt(false);
       }, 1500);
