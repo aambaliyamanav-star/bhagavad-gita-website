@@ -282,11 +282,11 @@ function About() {
 
       <div className="about-compact-container">
         {/* =====================================================
-            CENTERED TOP BAR: TITLE (CLEAN, NO BOX, ENLARGED)
+            CENTERED TOP BAR: TITLE (CLEAN & COMPACT)
         ===================================================== */}
         <header className="compact-header-centered">
           <div className="compact-title-wrap">
-            <Flower2 size={28} className="compact-logo-flower" />
+            <Flower2 size={24} className="compact-logo-flower" />
             <h1>
               શ્રીમદ્ ભગવદ્ ગીતા <span className="title-sep">•</span>{" "}
               <span className="blue-title-text">તમામ વિશેષતાઓ</span>
@@ -309,8 +309,14 @@ function About() {
                   onClick={() => setSelectedFeature(item)}
                 >
                   <div className="card-top-row">
-                    <span className="card-num-pill">{item.num}</span>
-                    <span className="card-category-tag">{item.category}</span>
+                    <div className="card-top-left">
+                      <span className="card-num-pill">{item.num}</span>
+                      <span className="card-category-tag">{item.category}</span>
+                    </div>
+                    <span className="card-hover-hint">
+                      <span>વિગતવાર</span>
+                      <ChevronRight size={13} />
+                    </span>
                   </div>
 
                   <div className="card-main-content">
@@ -321,11 +327,6 @@ function About() {
                     <div className="card-text-col">
                       <h3 className="card-title">{item.title}</h3>
                     </div>
-                  </div>
-
-                  <div className="card-hover-hint">
-                    <span>વિગતવાર જુઓ</span>
-                    <ChevronRight size={13} />
                   </div>
                 </button>
               );
