@@ -289,15 +289,6 @@
   transform: none !important;
 }
 
-.lower-disabled-star {
-  cursor: not-allowed !important;
-  opacity: 0.75;
-}
-
-.lower-disabled-star:hover {
-  transform: none !important;
-}
-
 .feedback-rating-hint {
   font-size: 0.775rem;
   color: #64748b;

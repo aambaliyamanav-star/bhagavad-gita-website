@@ -165,11 +165,6 @@ export default function FeedbackModal() {
       return;
     }
 
-    if (!isLocked && hasRated && existingRating > 0 && rating < existingRating) {
-      setError(`અગાઉ ${existingRating} સ્ટાર આપેલ હોવાથી તેનાથી ઓછા સ્ટાર આપી શકાશે નહીં.`);
-      return;
-    }
-
     if (!message.trim()) {
       setError("કૃપા કરીને આપનો પ્રતિસાદ અથવા સૂચન લખો.");
       return;
@@ -369,38 +364,33 @@ export default function FeedbackModal() {
                     </div>
 
                     <div className="feedback-stars-row">
-                      {[1, 2, 3, 4, 5].map((starNum) => {
-                        const isLowerThanExisting = Boolean(hasRated && existingRating > 0 && starNum < existingRating);
-                        const isDisabled = isLocked || isLowerThanExisting;
-
-                        return (
-                          <button
-                            key={starNum}
-                            type="button"
-                            className={`feedback-star-btn ${isLocked ? "disabled-star" : ""} ${isLowerThanExisting ? "lower-disabled-star" : ""}`}
-                            disabled={isDisabled}
-                            onMouseEnter={() => !isDisabled && setHoverRating(starNum)}
-                            onMouseLeave={() => !isDisabled && setHoverRating(0)}
-                            onClick={() => !isDisabled && setRating(starNum)}
-                            aria-label={`${starNum} સ્ટાર`}
-                            title={
-                              isLocked
-                                ? "૫-સ્ટાર રેટિંગ લૉક છે"
-                                : isLowerThanExisting
-                                ? `અગાઉ ${existingRating} સ્ટાર આપેલ હોવાથી તેનાથી ઓછા સ્ટાર આપી શકાશે નહીં`
-                                : `${starNum} સ્ટાર પસંદ કરો`
+                      {[1, 2, 3, 4, 5].map((starNum) => (
+                        <button
+                          key={starNum}
+                          type="button"
+                          className={`feedback-star-btn ${isLocked ? "disabled-star" : ""}`}
+                          disabled={isLocked}
+                          onMouseEnter={() => !isLocked && setHoverRating(starNum)}
+                          onMouseLeave={() => !isLocked && setHoverRating(0)}
+                          onClick={() => {
+                            if (isLocked) return;
+                            if (hasRated && existingRating > 0 && starNum < existingRating) {
+                              return;
                             }
-                          >
-                            <Star
-                              size={32}
-                              strokeWidth={1.8}
-                              className={`feedback-star-icon ${
-                                starNum <= activeRating ? "filled" : "empty"
-                              }`}
-                            />
-                          </button>
-                        );
-                      })}
+                            setRating(starNum);
+                          }}
+                          aria-label={`${starNum} સ્ટાર`}
+                          title={isLocked ? "૫-સ્ટાર રેટિંગ લૉક છે" : `${starNum} સ્ટાર`}
+                        >
+                          <Star
+                            size={32}
+                            strokeWidth={1.8}
+                            className={`feedback-star-icon ${
+                              starNum <= activeRating ? "filled" : "empty"
+                            }`}
+                          />
+                        </button>
+                      ))}
                     </div>
 
                     <div className="feedback-rating-descriptor">
@@ -412,12 +402,6 @@ export default function FeedbackModal() {
                         RATING_LABELS[activeRating] || ""
                       )}
                     </div>
-
-                    {!isLocked && hasRated && (
-                      <p className="feedback-rating-hint">
-                        આપે અગાઉ {rating} સ્ટાર આપ્યા છે. તમે તેને વધારી શકો છો. ૫-સ્ટાર થતાં તે લૉક થઈ જશે.
-                      </p>
-                    )}
 
                     {!isLocked && !hasRated && (
                       <p className="feedback-rating-hint">
