@@ -282,11 +282,11 @@ function About() {
 
       <div className="about-compact-container">
         {/* =====================================================
-            CENTERED TOP BAR: TITLE (CLEAN & COMPACT)
+            CENTERED TOP BAR: TITLE (CLEAN, NO BOX, ENLARGED)
         ===================================================== */}
         <header className="compact-header-centered">
           <div className="compact-title-wrap">
-            <Flower2 size={24} className="compact-logo-flower" />
+            <Flower2 size={28} className="compact-logo-flower" />
             <h1>
               શ્રીમદ્ ભગવદ્ ગીતા <span className="title-sep">•</span>{" "}
               <span className="blue-title-text">તમામ વિશેષતાઓ</span>
@@ -315,7 +315,7 @@ function About() {
 
                   <div className="card-main-content">
                     <div className="card-icon-box">
-                      <ItemIcon size={22} />
+                      <ItemIcon size={18} />
                     </div>
 
                     <div className="card-text-col">
@@ -325,7 +325,7 @@ function About() {
 
                   <div className="card-hover-hint">
                     <span>વિગતવાર જુઓ</span>
-                    <ChevronRight size={14} />
+                    <ChevronRight size={13} />
                   </div>
                 </button>
               );
