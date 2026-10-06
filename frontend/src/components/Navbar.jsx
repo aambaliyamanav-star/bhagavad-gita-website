@@ -25,6 +25,7 @@ import {
   Menu,
   Compass,
   Star,
+  Info,
 } from "lucide-react";
 
 import { useAuth } from "../context/AuthContext.jsx";
@@ -116,6 +117,11 @@ function Navbar() {
     // HOME
     if (path === "/") {
       return "હોમ";
+    }
+
+    // ABOUT US
+    if (path === "/about" || path === "/about-us") {
+      return "અમારા વિશે";
     }
 
     // CHAPTERS
@@ -970,6 +976,31 @@ function Navbar() {
               <ChevronRight size={18} strokeWidth={2} />
             </span>
           </button>
+
+
+          {/* =================================================
+              ABOUT US (અમારા વિશે)
+          ================================================= */}
+
+          <Link
+            to="/about"
+            className="side-menu-item"
+            onClick={handleNormalNavigation}
+          >
+            <span className="side-menu-icon" style={{ color: "#38bdf8" }}>
+              <Info size={20} strokeWidth={1.8} />
+            </span>
+
+            <span className="side-menu-text">
+              <strong>
+                અમારા વિશે (About Us)
+              </strong>
+            </span>
+
+            <span className="side-menu-arrow">
+              <ChevronRight size={18} strokeWidth={2} />
+            </span>
+          </Link>
 
 
           {/* =================================================

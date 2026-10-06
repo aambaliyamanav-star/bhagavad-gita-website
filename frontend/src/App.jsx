@@ -35,6 +35,7 @@ import ReadingTracker from "./pages/ReadingTracker.jsx";
 import QuizAchievements from "./pages/QuizAchievements.jsx";
 import GitaAIAssistant from "./components/GitaAIAssistant.jsx";
 import FeedbackModal from "./components/FeedbackModal.jsx";
+import About from "./pages/About.jsx";
 import { trackVisit } from "./utils/visitorTracker.js";
 
 // =====================================================
@@ -124,7 +125,7 @@ function AnimatedRoutes() {
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
     trackVisit(location.pathname);
-  }, [location.pathname]);
+  }, [location.pathname, user]);
 
   return (
     <>
@@ -140,6 +141,20 @@ function AnimatedRoutes() {
             <Route
               path="/"
               element={<Home />}
+            />
+
+            {/* =================================================
+                ABOUT US (અમારા વિશે)
+            ================================================= */}
+
+            <Route
+              path="/about"
+              element={<About />}
+            />
+
+            <Route
+              path="/about-us"
+              element={<About />}
             />
 
 
