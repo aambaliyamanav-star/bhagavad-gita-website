@@ -345,3 +345,32 @@ export async function recordNotificationAction(action, user = null) {
     console.debug(`Could not record action '${action}':`, err);
   }
 }
+
+// Send an instant test notification to current device to verify mobile delivery
+export async function sendTestNotificationToSelf() {
+  if (!isPushNotificationSupported()) {
+    throw new Error("તમારા ડિવાઇસમાં નોટિફિકેશન સપોર્ટ નથી.");
+  }
+
+  let endpoint = localStorage.getItem("push_subscription_endpoint");
+  if (!endpoint) {
+    const registration = await navigator.serviceWorker.ready;
+    const sub = await registration.pushManager.getSubscription();
+    if (sub && sub.endpoint) {
+      endpoint = sub.endpoint;
+      localStorage.setItem("push_subscription_endpoint", endpoint);
+    }
+  }
+
+  if (!endpoint) {
+    throw new Error("નોટિફિકેશન સબસ્ક્રિપ્શન મળ્યું નથી. કૃપા કરીને પહેલાં નોટિફિકેશન સક્રિય કરો.");
+  }
+
+  const res = await apiCall("/api/notifications/send-test-to-endpoint", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ endpoint }),
+  });
+
+  return await res.json();
+}

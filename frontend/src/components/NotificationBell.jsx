@@ -21,6 +21,7 @@ import {
   subscribeUserToPush,
   unsubscribeUserFromPush,
   syncPushSubscriptionWithBackend,
+  sendTestNotificationToSelf,
 } from "../utils/pushNotification.js";
 import "./NotificationBell.css";
 
@@ -37,8 +38,8 @@ export default function NotificationBell() {
   // Settings dropdown modal when subscribed user clicks navbar bell
   const [showSettingsModal, setShowSettingsModal] = useState(false);
 
-  // In-memory dismissal so user can browse other pages during current visit after clicking 'Later'
   const [dismissedThisVisit, setDismissedThisVisit] = useState(false);
+  const [testingDevice, setTestingDevice] = useState(false);
 
   const [statusMsg, setStatusMsg] = useState({ text: "", type: "" });
 
@@ -137,6 +138,34 @@ export default function NotificationBell() {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Handle Send Test Notification to current device
+  const handleSendTest = async () => {
+    setTestingDevice(true);
+    setStatusMsg({ text: "", type: "" });
+    try {
+      const res = await sendTestNotificationToSelf();
+      if (res && res.success) {
+        setStatusMsg({
+          text: "ટેસ્ટ નોટિફિકેશન મોકલાઈ ગયું છે! કૃપા કરીને ફોનની સ્ક્રીન લોક કરીને અથવા એપ બંધ કરીને ચકાસો.",
+          type: "success",
+        });
+      } else {
+        setStatusMsg({
+          text: (res && res.error) || "ટેસ્ટ મોકલવામાં સમસ્યા આવી.",
+          type: "error",
+        });
+      }
+    } catch (err) {
+      console.error(err);
+      setStatusMsg({
+        text: err.message || "ટેસ્ટ મોકલવામાં સમસ્યા આવી.",
+        type: "error",
+      });
+    } finally {
+      setTestingDevice(false);
     }
   };
 
@@ -385,9 +414,36 @@ export default function NotificationBell() {
 
               <button
                 type="button"
+                className="notif-action-btn test-btn"
+                style={{
+                  background: "#175bb5",
+                  color: "#ffffff",
+                  marginBottom: "10px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "8px",
+                  padding: "10px 14px",
+                  borderRadius: "8px",
+                  border: "none",
+                  fontWeight: "600",
+                  cursor: "pointer",
+                  width: "100%",
+                }}
+                onClick={handleSendTest}
+                disabled={testingDevice || loading}
+              >
+                <BellRing size={16} />
+                <span>
+                  {testingDevice ? "મોકલાઈ રહ્યું છે..." : "આ ડિવાઇસ પર ટેસ્ટ નોટિફિકેશન મોકલો"}
+                </span>
+              </button>
+
+              <button
+                type="button"
                 className="notif-action-btn unsubscribe"
                 onClick={handleUnsubscribe}
-                disabled={loading}
+                disabled={loading || testingDevice}
               >
                 <BellOff size={15} />
                 <span>{loading ? "પ્રક્રિયા ચાલુ છે..." : "સૂચનાઓ નિષ્ક્રિય કરો"}</span>

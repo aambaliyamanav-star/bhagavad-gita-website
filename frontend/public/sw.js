@@ -5,8 +5,14 @@ const API_BASE =
     ? "http://localhost:5000"
     : "https://bhagavad-gita-website.onrender.com";
 
+const CACHE_NAME = "gita-notification-assets-v2";
+const ASSETS_TO_CACHE = ["/icon-192.png", "/favicon.ico", "/manifest.json"];
+
 self.addEventListener("install", (event) => {
   self.skipWaiting();
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS_TO_CACHE)).catch(() => {})
+  );
 });
 
 self.addEventListener("activate", (event) => {

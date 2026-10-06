@@ -35,7 +35,6 @@ async function sendPush(subscription, payload) {
   const pushOptions = {
     TTL: 24 * 60 * 60, // 24 hours (86400s): ensures delivery when mobile phone wakes up / reconnects
     urgency: "high",   // Critical for mobile: wakes up Android device from sleep/doze mode
-    topic: "gita-reminder",
   };
 
   try {
@@ -204,7 +203,7 @@ module.exports = {
   // If user hasn't read shlok: send shlok reading reminder to protect streak
   // If user hasn't played quiz: send quiz challenge reminder
   // If neither done: send streak / daily goals reminder
-  sendDailyReminder: async (customMsg = null) => {
+  sendDailyReminder: async (customMsg = null, force = false) => {
     try {
       const subscribers = await Subscription.find({});
 
@@ -362,8 +361,9 @@ module.exports = {
       let lastSentPayload = null;
 
       for (const sub of subscribers) {
-        // Prevent duplicate notifications within 35 minutes on the same device
+        // Prevent duplicate notifications within 35 minutes on the same device (unless forced or custom message)
         if (
+          !force &&
           !customMsg &&
           sub.lastReminderSentDate &&
           Date.now() - new Date(sub.lastReminderSentDate).getTime() < 35 * 60 * 1000
@@ -421,8 +421,8 @@ module.exports = {
           }
         }
 
-        // 3. If user completed BOTH tasks today: STOP reminders for today!
-        if (hasReadShlokToday && hasPlayedQuizToday && !customMsg) {
+        // 3. If user completed BOTH tasks today: STOP reminders for today (unless forced)!
+        if (!force && !customMsg && hasReadShlokToday && hasPlayedQuizToday) {
           skippedCount++;
           continue;
         }
@@ -534,6 +534,37 @@ module.exports = {
       await Subscription.updateMany({}, { $set: { reminderCount: 0 } });
     } catch (err) {
       console.error("Reset daily counters error:", err);
+    }
+  },
+
+  // Send immediate test notification directly to current device endpoint
+  sendTestToEndpoint: async (req, res) => {
+    try {
+      const { endpoint } = req.body;
+      if (!endpoint) {
+        return res.status(400).json({ error: "Endpoint જરૂરી છે." });
+      }
+
+      const sub = await Subscription.findOne({ endpoint });
+      if (!sub) {
+        return res.status(404).json({ error: "આ ડિવાઇસનું સબસ્ક્રિપ્શન મળ્યું નથી." });
+      }
+
+      const siteUrl = process.env.SITE_URL || "https://bhagavad-gita-website-rk1v.vercel.app";
+      const testPayload = {
+        title: "શ્રીમદ્ ભગવદ્ ગીતા | ટેસ્ટ સૂચના",
+        body: "અભિનંદન! તમારા આ ડિવાઇસ પર નોટિફિકેશન સફળતાપૂર્વક ચાલુ થઈ ગયું છે.",
+        icon: `${siteUrl}/icon-192.png`,
+        badge: `${siteUrl}/icon-192.png`,
+        url: siteUrl,
+        tag: `test-device-${Date.now()}`,
+      };
+
+      await sendPush(sub, testPayload);
+      return res.json({ success: true, message: "ટેસ્ટ નોટિફિકેશન સફળતાપૂર્વક મોકલાઈ ગયું છે." });
+    } catch (err) {
+      console.error("sendTestToEndpoint error:", err);
+      return res.status(500).json({ error: err.message || "ટેસ્ટ મોકલવામાં સમસ્યા આવી." });
     }
   },
 };
