@@ -35,6 +35,7 @@ import ReadingTracker from "./pages/ReadingTracker.jsx";
 import QuizAchievements from "./pages/QuizAchievements.jsx";
 import GitaAIAssistant from "./components/GitaAIAssistant.jsx";
 import FeedbackModal from "./components/FeedbackModal.jsx";
+import InstallPwaBanner from "./components/InstallPwaBanner.jsx";
 import About from "./pages/About.jsx";
 import { trackVisit } from "./utils/visitorTracker.js";
 
@@ -406,6 +407,10 @@ function App() {
               GITA AI ASSISTANT (FLOATING BOTTOM-RIGHT WIDGET)
           ================================================= */}
           <GitaAIAssistant />
+          {/* =================================================
+              PWA INSTALL BANNER / PROMPT
+          ================================================= */}
+          <InstallPwaBanner />
         </BrowserRouter>
       </AuthProvider>
     </ThemeProvider>
