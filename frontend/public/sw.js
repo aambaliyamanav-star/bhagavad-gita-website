@@ -25,20 +25,35 @@ self.addEventListener("push", (event) => {
   }
 
   const title = data.title || "શ્રીમદ્ ભગવદ્ ગીતા";
+  const origin = self.location.origin;
+
+  const iconUrl = data.icon || `${origin}/icon-192.png`;
+  const badgeUrl = data.badge || `${origin}/icon-192.png`;
+
   const options = {
     body: data.body || "તમારું દૈનિક ગીતા વાંચન અને ક્વિઝ લક્ષ્ય પૂર્ણ કરવા અહીં ક્લિક કરો.",
-    icon: "/favicon.ico",
-    badge: "/favicon.ico",
-    vibrate: [100, 50, 100],
+    icon: iconUrl,
+    badge: badgeUrl,
+    vibrate: [200, 100, 200, 100, 200],
     data: {
-      url: data.url || "/",
+      url: data.url || `${origin}/`,
       dateOfArrival: Date.now(),
     },
-    tag: data.tag || "bhagavad-gita-notification",
+    tag: data.tag || `gita-reminder-${Date.now()}`,
     renotify: true,
   };
 
-  event.waitUntil(self.registration.showNotification(title, options));
+  event.waitUntil(
+    self.registration
+      .showNotification(title, options)
+      .catch((err) => {
+        console.warn("Primary notification failed, showing minimal fallback:", err);
+        return self.registration.showNotification(title, {
+          body: options.body,
+          data: options.data,
+        });
+      })
+  );
 });
 
 // Notification Click Event: Opens the site and records the visit
@@ -48,7 +63,7 @@ self.addEventListener("notificationclick", (event) => {
 
   event.waitUntil(
     (async () => {
-      // 1. Tell backend that site was opened via this subscription so no more reminders are sent today
+      // 1. Tell backend that site was opened via this subscription
       try {
         const sub = await self.registration.pushManager.getSubscription();
         if (sub && sub.endpoint) {
@@ -83,4 +98,3 @@ self.addEventListener("notificationclick", (event) => {
     })()
   );
 });
-

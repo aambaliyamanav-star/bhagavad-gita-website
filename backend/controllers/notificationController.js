@@ -31,13 +31,21 @@ function ensureVapidConfig() {
 // Helper to send push
 async function sendPush(subscription, payload) {
   if (!ensureVapidConfig()) return;
+
+  const pushOptions = {
+    TTL: 24 * 60 * 60, // 24 hours (86400s): ensures delivery when mobile phone wakes up / reconnects
+    urgency: "high",   // Critical for mobile: wakes up Android device from sleep/doze mode
+    topic: "gita-reminder",
+  };
+
   try {
     await webpush.sendNotification(
       {
         endpoint: subscription.endpoint,
         keys: subscription.keys,
       },
-      JSON.stringify(payload)
+      JSON.stringify(payload),
+      pushOptions
     );
     return true;
   } catch (err) {
@@ -69,6 +77,9 @@ module.exports = {
       const userRole = role === "admin" ? "admin" : "user";
       const validUserId = userId || null;
 
+      const existingSub = await Subscription.findOne({ endpoint });
+      const isBrandNew = !existingSub;
+
       const subscription = await Subscription.findOneAndUpdate(
         { endpoint },
         {
@@ -82,18 +93,23 @@ module.exports = {
         { upsert: true, new: true, setDefaultsOnInsert: true }
       );
 
-      // Send initial welcome notification
-      const welcomePayload = {
-        title: "શ્રીમદ્ ભગવદ્ ગીતા | સ્વાગત છે",
-        body: "દૈનિક પ્રેરણા સૂચનાઓ સફળતાપૂર્વક સક્રિય થઈ ગઈ છે.",
-        url: process.env.SITE_URL || "https://bhagavad-gita-website-rk1v.vercel.app",
-        tag: "welcome-notification",
-      };
+      // Send initial welcome notification ONLY on first-time subscription
+      if (isBrandNew) {
+        const siteUrl = process.env.SITE_URL || "https://bhagavad-gita-website-rk1v.vercel.app";
+        const welcomePayload = {
+          title: "શ્રીમદ્ ભગવદ્ ગીતા | સ્વાગત છે",
+          body: "દૈનિક પ્રેરણા સૂચનાઓ સફળતાપૂર્વક સક્રિય થઈ ગઈ છે.",
+          icon: `${siteUrl}/icon-192.png`,
+          badge: `${siteUrl}/icon-192.png`,
+          url: siteUrl,
+          tag: "welcome-notification",
+        };
 
-      try {
-        await sendPush(subscription, welcomePayload);
-      } catch (err) {
-        console.warn("Welcome push notification delivery warning:", err.message);
+        try {
+          await sendPush(subscription, welcomePayload);
+        } catch (err) {
+          console.warn("Welcome push notification delivery warning:", err.message);
+        }
       }
 
       return res.status(201).json({
@@ -130,12 +146,16 @@ module.exports = {
         return res.status(400).json({ error: "Endpoint અથવા UserId જરૂરી છે" });
       }
 
-      const filter = endpoint ? { endpoint } : { userId };
-      await Subscription.updateMany(filter, {
-        $set: {
-          lastOpenedDate: new Date(),
-        },
-      });
+      const updateData = { lastOpenedDate: new Date() };
+      if (userId) {
+        updateData.userId = userId;
+      }
+
+      if (endpoint) {
+        await Subscription.updateOne({ endpoint }, { $set: updateData });
+      } else if (userId) {
+        await Subscription.updateMany({ userId }, { $set: updateData });
+      }
 
       return res.json({
         success: true,
@@ -342,21 +362,12 @@ module.exports = {
       let lastSentPayload = null;
 
       for (const sub of subscribers) {
-        // Automatically reset reminder count if last reminder was sent before today
-        let currentReminderCount = sub.reminderCount || 0;
+        // Prevent duplicate notifications within 35 minutes on the same device
         if (
+          !customMsg &&
           sub.lastReminderSentDate &&
-          new Date(sub.lastReminderSentDate) < startOfTodayIST
+          Date.now() - new Date(sub.lastReminderSentDate).getTime() < 35 * 60 * 1000
         ) {
-          currentReminderCount = 0;
-          await Subscription.updateOne(
-            { _id: sub._id },
-            { $set: { reminderCount: 0 } }
-          );
-        }
-
-        // Cap max reminders per day to 5 (8 AM, 12 PM, 4 PM, 7 PM, 10 PM)
-        if (currentReminderCount >= 5 && !customMsg) {
           skippedCount++;
           continue;
         }
@@ -422,8 +433,10 @@ module.exports = {
           payload = {
             title: customMsg.title,
             body: customMsg.body,
+            icon: `${targetUrl}/icon-192.png`,
+            badge: `${targetUrl}/icon-192.png`,
             url: customMsg.url || targetUrl,
-            tag: "custom-notification",
+            tag: `custom-${Date.now()}`,
           };
         } else {
           let poolKey = "neither";
@@ -444,8 +457,10 @@ module.exports = {
           payload = {
             title: selected.title,
             body: selected.body,
+            icon: `${targetUrl}/icon-192.png`,
+            badge: `${targetUrl}/icon-192.png`,
             url: selected.url || targetUrl,
-            tag: "daily-smart-reminder",
+            tag: `gita-${poolKey}-${timeOfDay}-${todayStringIST}`,
           };
         }
 
@@ -493,10 +508,13 @@ module.exports = {
       const userName = newUser.name || "નવો ભક્ત";
       const userEmail = newUser.email || "";
 
+      const siteUrl = process.env.SITE_URL || "https://bhagavad-gita-website-rk1v.vercel.app";
       const payload = {
         title: "નવો વપરાશકર્તા જોડાયો",
         body: `${userName} (${userEmail}) એ ભગવદ્ ગીતા વેબસાઇટ પર સફળતાપૂર્વક રજીસ્ટ્રેશન કર્યું.`,
-        url: process.env.ADMIN_DASHBOARD_URL || "https://bhagavad-gita-website-rk1v.vercel.app/admin",
+        icon: `${siteUrl}/icon-192.png`,
+        badge: `${siteUrl}/icon-192.png`,
+        url: process.env.ADMIN_DASHBOARD_URL || `${siteUrl}/admin`,
         tag: "new-user-registered",
       };
 

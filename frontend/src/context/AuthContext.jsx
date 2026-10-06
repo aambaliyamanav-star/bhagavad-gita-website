@@ -1,5 +1,6 @@
 
 import { createContext, useContext, useState } from "react";
+import { syncPushSubscriptionWithBackend } from "../utils/pushNotification.js";
 
 // =====================================================
 // AUTH CONTEXT
@@ -49,6 +50,7 @@ export function AuthProvider({ children }) {
 
     setUser(userData);
     setToken(userToken);
+    syncPushSubscriptionWithBackend(userData);
   };
 
   // ===================================================
