@@ -1,8 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   BookOpen,
-  Volume2,
   Brain,
   Compass,
   Trophy,
@@ -13,15 +12,13 @@ import {
   Sun,
   Star,
   ShieldCheck,
-  ChevronLeft,
-  ChevronRight,
-  ArrowRight,
   Flower2,
   CheckCircle2,
   Award,
   HelpCircle,
-  Play,
-  Pause,
+  X,
+  ArrowRight,
+  ChevronRight,
 } from "lucide-react";
 import "./About.css";
 
@@ -32,7 +29,7 @@ const FEATURES_DATA = [
     category: "વાંચન & અધ્યયન",
     icon: BookOpen,
     iconColor: "#2563eb",
-    bgGlow: "rgba(37, 99, 235, 0.18)",
+    bgGlow: "rgba(37, 99, 235, 0.16)",
     badge: "સંપૂર્ણ જ્ઞાન",
     title: "18 અધ્યાય અને 700 શ્લોક વાચન",
     shortDesc: "મૂળ સંસ્કૃત શ્લોકો, અન્વય, શબ્દાર્થ અને સરળ ગુજરાતી અનુવાદ સાથે અધ્યયન.",
@@ -48,33 +45,12 @@ const FEATURES_DATA = [
     linkText: "18 અધ્યાય વાંચો",
   },
   {
-    id: "audio",
-    num: "02",
-    category: "શ્રવણ ભક્તિ",
-    icon: Volume2,
-    iconColor: "#059669",
-    bgGlow: "rgba(5, 150, 105, 0.18)",
-    badge: "દિવ્ય ઉચ્ચારણ",
-    title: "દિવ્ય ઓડિયો શ્લોક પ્લેયર",
-    shortDesc: "દરેક શ્લોકનું પવિત્ર અને શુદ્ધ સંસ્કૃત ઉચ્ચારણ સાથે ઓડિયો શ્રવણ.",
-    description:
-      "દરેક શ્લોકનું શુદ્ધ અને કર્ણપ્રિય સંસ્કૃત ઉચ્ચારણ સાથે ઓડિયો શ્રવણ. શ્લોકો કંઠસ્થ કરવા, સાચું ઉચ્ચારણ શીખવા અને મનની પરમ એકાગ્રતા માટે અનુકૂળ ઓડિયો પ્લેયર.",
-    highlights: [
-      "શુદ્ધ વૈદિક સંસ્કૃત ઉચ્ચારણ ઓડિયો",
-      "Play, Pause અને સીક કંટ્રોલ",
-      "Loop મોડ (શ્લોક વારંવાર સાંભળી યાદ રાખવા)",
-      "Playback સ્પીડ કંટ્રોલ (0.75x, 1x, 1.25x)",
-    ],
-    link: "/chapter/1",
-    linkText: "ઓડિયો સાંભળો",
-  },
-  {
     id: "ai",
-    num: "03",
+    num: "02",
     category: "આધુનિક AI",
     icon: Brain,
     iconColor: "#7c3aed",
-    bgGlow: "rgba(124, 58, 237, 0.18)",
+    bgGlow: "rgba(124, 58, 237, 0.16)",
     badge: "Gemini AI",
     title: "ગીતા AI આધ્યાત્મિક સહાયક",
     shortDesc: "જીવનના પ્રશ્નો અને મૂંઝવણનું ગીતાના શ્લોકો મુજબ ત્વરિત AI સમાધાન.",
@@ -91,11 +67,11 @@ const FEATURES_DATA = [
   },
   {
     id: "guidance",
-    num: "04",
+    num: "03",
     category: "જીવન વ્યવહાર",
     icon: Compass,
     iconColor: "#d97706",
-    bgGlow: "rgba(217, 119, 6, 0.18)",
+    bgGlow: "rgba(217, 119, 6, 0.16)",
     badge: "કૃષ્ણ વાણી",
     title: "જીવન માર્ગદર્શન (Life Guidance)",
     shortDesc: "તણાવ, ક્રોધ, સંબંધો અને કર્મયોગ માટે ગીતાજીના સર્વોત્તમ શ્લોકો.",
@@ -112,11 +88,11 @@ const FEATURES_DATA = [
   },
   {
     id: "quiz",
-    num: "05",
+    num: "04",
     category: "જ્ઞાન કસોટી",
     icon: HelpCircle,
     iconColor: "#0891b2",
-    bgGlow: "rgba(8, 145, 178, 0.18)",
+    bgGlow: "rgba(8, 145, 178, 0.16)",
     badge: "MCQ કસોટી",
     title: "ઇન્ટરેક્ટિવ ગીતા ક્વિઝ",
     shortDesc: "અધ્યાયવાર બહુવિકલ્પી ક્વિઝ રમીને ગીતાજીના ગહન સિદ્ધાંતો શીખો.",
@@ -133,11 +109,11 @@ const FEATURES_DATA = [
   },
   {
     id: "achievements",
-    num: "06",
+    num: "05",
     category: "સિદ્ધિઓ",
     icon: Award,
     iconColor: "#ca8a04",
-    bgGlow: "rgba(202, 138, 4, 0.18)",
+    bgGlow: "rgba(202, 138, 4, 0.16)",
     badge: "ડિજિટલ બેજીસ",
     title: "ક્વિઝ અચીવમેન્ટ્સ અને બેજીસ",
     shortDesc: "જ્ઞાનના સ્તર પ્રમાણે જિજ્ઞાસુ, સાધક, જ્ઞાનરત્ન જેવા બેજીસ અનલૉક કરો.",
@@ -154,11 +130,11 @@ const FEATURES_DATA = [
   },
   {
     id: "tracker",
-    num: "07",
+    num: "06",
     category: "દૈનિક સ્વાધ્યાય",
     icon: Flame,
     iconColor: "#dc2626",
-    bgGlow: "rgba(220, 38, 38, 0.18)",
+    bgGlow: "rgba(220, 38, 38, 0.16)",
     badge: "Daily Streak",
     title: "વાંચન પ્રગતિ ટ્રેકર અને સ્ટ્રીક્સ",
     shortDesc: "દૈનિક Streak, વાંચેલા શ્લોકો અને અધ્યાયની ટકાવારીનો લાઈવ આલેખ.",
@@ -175,11 +151,11 @@ const FEATURES_DATA = [
   },
   {
     id: "daily-shlok",
-    num: "08",
+    num: "07",
     category: "દૈનિક પ્રેરણા",
     icon: Sparkles,
     iconColor: "#db2777",
-    bgGlow: "rgba(219, 39, 119, 0.18)",
+    bgGlow: "rgba(219, 39, 119, 0.16)",
     badge: "આજનો શ્લોક",
     title: "આજનો શ્લોક & સોશિયલ કાર્ડ શેરિંગ",
     shortDesc: "રોજ સવારે નવો પ્રેરક શ્લોક અને HD ઇમેજ કાર્ડ બનાવી શેરિંગ સુવિધા.",
@@ -196,11 +172,11 @@ const FEATURES_DATA = [
   },
   {
     id: "favorites",
-    num: "09",
+    num: "08",
     category: "અંગત સંગ્રહ",
     icon: Heart,
     iconColor: "#e11d48",
-    bgGlow: "rgba(225, 29, 72, 0.18)",
+    bgGlow: "rgba(225, 29, 72, 0.16)",
     badge: "Bookmarks",
     title: "મનપસંદ શ્લોક (Bookmarks)",
     shortDesc: "ગમતા શ્લોકોને એક જ ક્લિકમાં બુકમાર્ક કરી પર્સનલ લિસ્ટમાં સાચવો.",
@@ -217,11 +193,11 @@ const FEATURES_DATA = [
   },
   {
     id: "history",
-    num: "10",
+    num: "09",
     category: "ઇતિહાસ",
     icon: Clock,
     iconColor: "#475569",
-    bgGlow: "rgba(71, 85, 105, 0.18)",
+    bgGlow: "rgba(71, 85, 105, 0.16)",
     badge: "Cloud Sync",
     title: "વાંચન અને ક્વિઝ ઇતિહાસ",
     shortDesc: "વાંચેલા શ્લોકો અને અગાઉ આપેલી ક્વિઝનો સંપૂર્ણ કાલક્રમિક રેકોર્ડ.",
@@ -238,11 +214,11 @@ const FEATURES_DATA = [
   },
   {
     id: "theme",
-    num: "11",
+    num: "10",
     category: "સુગમ વાચન",
     icon: Sun,
     iconColor: "#ea580c",
-    bgGlow: "rgba(234, 88, 12, 0.18)",
+    bgGlow: "rgba(234, 88, 12, 0.16)",
     badge: "થીમ્સ & ફૉન્ટ",
     title: "ડાર્ક & લાઇટ મોડ અને ફૉન્ટ કંટ્રોલ",
     shortDesc: "આંખોને અનુકૂળ ડાર્ક/લાઇટ થીમ અને ફૉન્ટ સાઈઝ નાની-મોટી કરવાની સુવિધા.",
@@ -259,11 +235,11 @@ const FEATURES_DATA = [
   },
   {
     id: "feedback",
-    num: "12",
+    num: "11",
     category: "યુઝર સંવાદ",
     icon: Star,
     iconColor: "#d97706",
-    bgGlow: "rgba(217, 119, 6, 0.18)",
+    bgGlow: "rgba(217, 119, 6, 0.16)",
     badge: "૫-સ્ટાર રેટિંગ",
     title: "પ્રતિસાદ & 5-સ્ટાર રેટિંગ સિસ્ટમ",
     shortDesc: "વપરાશકર્તાઓનો સીધો પ્રતિભાવ, અનુભવ અને સૂચનો આપવાની સરળ વ્યવસ્થા.",
@@ -281,47 +257,26 @@ const FEATURES_DATA = [
 ];
 
 function About() {
-  const [selectedIndex, setSelectedIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(true);
-  const timerRef = useRef(null);
+  const [selectedFeature, setSelectedFeature] = useState(null);
 
-  const activeFeature = FEATURES_DATA[selectedIndex];
-  const ActiveIcon = activeFeature.icon;
-
-  // Auto-play feature slider every 6 seconds
+  // Close modal on Escape key
   useEffect(() => {
-    if (isPlaying) {
-      timerRef.current = setInterval(() => {
-        setSelectedIndex((prev) => (prev + 1) % FEATURES_DATA.length);
-      }, 5500);
-    }
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current);
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setSelectedFeature(null);
+      }
     };
-  }, [isPlaying]);
-
-  const handleSelectFeature = (index) => {
-    setSelectedIndex(index);
-    setIsPlaying(false);
-  };
-
-  const handlePrev = () => {
-    setSelectedIndex((prev) =>
-      prev === 0 ? FEATURES_DATA.length - 1 : prev - 1
-    );
-    setIsPlaying(false);
-  };
-
-  const handleNext = () => {
-    setSelectedIndex((prev) => (prev + 1) % FEATURES_DATA.length);
-    setIsPlaying(false);
-  };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const openAiAssistant = () => {
+    setSelectedFeature(null);
     window.dispatchEvent(new CustomEvent("open-gita-ai-assistant"));
   };
 
   const openFeedback = () => {
+    setSelectedFeature(null);
     window.dispatchEvent(new CustomEvent("open-feedback-modal"));
   };
 
@@ -338,21 +293,20 @@ function About() {
 
       <div className="about-compact-container">
         {/* =====================================================
-            TOP BAR: COMPACT HEADER WITH STATS CHIPS
+            CENTERED TOP BAR: TITLE, SUBTITLE & STATS CHIPS
         ===================================================== */}
-        <header className="compact-header">
-          <div className="compact-header-left">
-            <div className="compact-title-wrap">
-              <Flower2 size={22} className="compact-logo-flower" />
-              <h1>
-                શ્રીમદ્ ભગવદ્ ગીતા <span className="title-sep">•</span>{" "}
-                <span className="gold-text">તમામ વિશેષતાઓ</span>
-              </h1>
-            </div>
-            <p className="compact-subtitle">
-              સનાતન દિવ્ય જ્ઞાન અને આધુનિક ટેક્નોલોજીનો અદ્ભુત સમન્વય
-            </p>
+        <header className="compact-header-centered">
+          <div className="compact-title-wrap">
+            <Flower2 size={24} className="compact-logo-flower" />
+            <h1>
+              શ્રીમદ્ ભગવદ્ ગીતા <span className="title-sep">•</span>{" "}
+              <span className="gold-text">તમામ વિશેષતાઓ</span>
+            </h1>
           </div>
+
+          <p className="compact-subtitle">
+            સનાતન દિવ્ય જ્ઞાન અને આધુનિક ટેક્નોલોજીનો અદ્ભુત સમન્વય
+          </p>
 
           <div className="compact-stats-strip">
             <div className="stat-chip">
@@ -362,9 +316,9 @@ function About() {
               </span>
             </div>
             <div className="stat-chip">
-              <Volume2 size={14} className="chip-icon green" />
+              <Sparkles size={14} className="chip-icon gold" />
               <span>
-                <strong>700+</strong> શ્લોક
+                <strong>700</strong> શ્લોક
               </span>
             </div>
             <div className="stat-chip">
@@ -374,254 +328,178 @@ function About() {
               </span>
             </div>
             <div className="stat-chip">
-              <ShieldCheck size={14} className="chip-icon gold" />
+              <ShieldCheck size={14} className="chip-icon green" />
               <span>100% Ad-Free</span>
             </div>
           </div>
         </header>
 
         {/* =====================================================
-            MAIN CONTENT: SPLIT SCREEN (12 FEATURES & SPOTLIGHT)
+            CENTERED GRID: 11 PROPER FEATURE BUTTONS
         ===================================================== */}
-        <div className="compact-main-split">
-          {/* --- LEFT PANEL: 12 INTERACTIVE FEATURE CARDS --- */}
-          <section className="compact-nav-panel">
-            <div className="nav-panel-header">
-              <span className="panel-label">
-                <Sparkles size={14} /> ૧૨ અજોડ વિશેષતાઓ (ક્લિક કરીને જુઓ)
-              </span>
-              <div className="nav-play-controls">
+        <section className="compact-grid-wrapper">
+          <div className="features-centered-grid">
+            {FEATURES_DATA.map((item) => {
+              const ItemIcon = item.icon;
+              return (
                 <button
+                  key={item.id}
                   type="button"
-                  className="control-icon-btn"
-                  onClick={() => setIsPlaying((p) => !p)}
-                  title={isPlaying ? "ઓટો-પ્લે થોભો" : "ઓટો-પ્લે શરૂ કરો"}
+                  className="feature-btn-card"
+                  onClick={() => setSelectedFeature(item)}
+                  style={{
+                    "--card-color": item.iconColor,
+                    "--card-glow": item.bgGlow,
+                  }}
                 >
-                  {isPlaying ? <Pause size={14} /> : <Play size={14} />}
-                </button>
-                <button
-                  type="button"
-                  className="control-icon-btn"
-                  onClick={handlePrev}
-                  title="અગાઉનું ફીચર"
-                >
-                  <ChevronLeft size={16} />
-                </button>
-                <button
-                  type="button"
-                  className="control-icon-btn"
-                  onClick={handleNext}
-                  title="આગળનું ફીચર"
-                >
-                  <ChevronRight size={16} />
-                </button>
-              </div>
-            </div>
+                  <div className="card-top-row">
+                    <span className="card-num-pill">{item.num}</span>
+                    <span className="card-category-tag">{item.category}</span>
+                  </div>
 
-            <div className="features-nav-grid">
-              {FEATURES_DATA.map((item, idx) => {
-                const ItemIcon = item.icon;
-                const isSelected = idx === selectedIndex;
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    className={`feature-nav-item ${isSelected ? "selected" : ""}`}
-                    onClick={() => handleSelectFeature(idx)}
-                    style={{
-                      "--item-glow": item.bgGlow,
-                      "--item-color": item.iconColor,
-                    }}
-                  >
+                  <div className="card-main-content">
                     <div
-                      className="nav-item-icon-box"
+                      className="card-icon-box"
                       style={{
                         color: item.iconColor,
                         background: item.bgGlow,
                       }}
                     >
-                      <ItemIcon size={18} />
+                      <ItemIcon size={22} />
                     </div>
 
-                    <div className="nav-item-text">
-                      <div className="nav-item-title-row">
-                        <span className="nav-item-num">{item.num}</span>
-                        <h3 className="nav-item-title">{item.title}</h3>
-                      </div>
-                      <p className="nav-item-short">{item.shortDesc}</p>
+                    <div className="card-text-col">
+                      <h3 className="card-title">{item.title}</h3>
+                      <p className="card-desc">{item.shortDesc}</p>
                     </div>
+                  </div>
 
-                    {isSelected && <div className="active-glow-bar" />}
-                  </button>
-                );
-              })}
-            </div>
-          </section>
+                  <div className="card-hover-hint">
+                    <span>વિગતવાર જુઓ</span>
+                    <ChevronRight size={14} />
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+      </div>
 
-          {/* --- RIGHT PANEL: ACTIVE SPOTLIGHT STAGE --- */}
-          <section className="compact-stage-panel">
-            <div
-              className="stage-card"
-              style={{
-                "--stage-glow": activeFeature.bgGlow,
-                "--stage-color": activeFeature.iconColor,
-              }}
-            >
-              {/* Radial Aura Glow */}
-              <div
-                className="stage-radial-glow"
-                style={{ background: activeFeature.bgGlow }}
-              />
-
-              {/* Stage Top Bar */}
-              <div className="stage-top-bar">
-                <span className="stage-badge">{activeFeature.category}</span>
-                <span className="stage-counter">
-                  {activeFeature.num} / 12 • {activeFeature.badge}
+      {/* =====================================================
+          CENTERED MODAL POPUP FOR FEATURE DETAILS
+      ===================================================== */}
+      {selectedFeature && (
+        <div
+          className="about-modal-backdrop"
+          onClick={() => setSelectedFeature(null)}
+        >
+          <div
+            className="about-modal-box"
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              "--modal-color": selectedFeature.iconColor,
+              "--modal-glow": selectedFeature.bgGlow,
+            }}
+          >
+            {/* Modal Header */}
+            <div className="modal-header">
+              <div className="modal-header-left">
+                <span className="modal-category-badge">
+                  {selectedFeature.category}
+                </span>
+                <span className="modal-num-badge">
+                  {selectedFeature.num} / 11 • {selectedFeature.badge}
                 </span>
               </div>
 
-              {/* Stage Hero Title & Icon */}
-              <div className="stage-hero-row">
-                <div
-                  className="stage-hero-icon-box"
-                  style={{
-                    color: activeFeature.iconColor,
-                    background: activeFeature.bgGlow,
-                    borderColor: activeFeature.iconColor,
-                  }}
-                >
-                  <ActiveIcon size={32} />
-                </div>
-                <div className="stage-hero-text">
-                  <h2>{activeFeature.title}</h2>
-                  <p className="stage-full-desc">{activeFeature.description}</p>
-                </div>
+              <button
+                type="button"
+                className="modal-close-btn"
+                onClick={() => setSelectedFeature(null)}
+                aria-label="Close"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            {/* Modal Hero Row */}
+            <div className="modal-hero-row">
+              <div
+                className="modal-icon-box"
+                style={{
+                  color: selectedFeature.iconColor,
+                  background: selectedFeature.bgGlow,
+                  borderColor: selectedFeature.iconColor,
+                }}
+              >
+                <selectedFeature.icon size={32} />
               </div>
 
-              {/* Highlights 4-Grid */}
-              <div className="stage-highlights-grid">
-                {activeFeature.highlights.map((hl, hlIdx) => (
-                  <div key={hlIdx} className="stage-hl-item">
-                    <CheckCircle2
-                      size={15}
-                      className="hl-check"
-                      style={{ color: activeFeature.iconColor }}
-                    />
-                    <span>{hl}</span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Stage Action Footer */}
-              <div className="stage-action-footer">
-                <div className="stage-action-left">
-                  {activeFeature.link ? (
-                    <Link
-                      to={activeFeature.link}
-                      className="stage-primary-btn"
-                      style={{ background: activeFeature.iconColor }}
-                    >
-                      <span>{activeFeature.linkText}</span>
-                      <ArrowRight size={16} />
-                    </Link>
-                  ) : activeFeature.actionType === "ai" ? (
-                    <button
-                      type="button"
-                      onClick={openAiAssistant}
-                      className="stage-primary-btn"
-                      style={{ background: activeFeature.iconColor }}
-                    >
-                      <Brain size={16} />
-                      <span>{activeFeature.linkText}</span>
-                    </button>
-                  ) : (
-                    <button
-                      type="button"
-                      onClick={openFeedback}
-                      className="stage-primary-btn"
-                      style={{ background: activeFeature.iconColor }}
-                    >
-                      <Star size={16} />
-                      <span>{activeFeature.linkText}</span>
-                    </button>
-                  )}
-                </div>
-
-                <div className="stage-action-right">
-                  <div className="stage-dots-indicator">
-                    {FEATURES_DATA.map((_, dotIdx) => (
-                      <span
-                        key={dotIdx}
-                        className={`dot-indicator ${dotIdx === selectedIndex ? "active" : ""}`}
-                        onClick={() => handleSelectFeature(dotIdx)}
-                        style={{
-                          background:
-                            dotIdx === selectedIndex
-                              ? activeFeature.iconColor
-                              : undefined,
-                        }}
-                      />
-                    ))}
-                  </div>
-
-                  <div className="stage-next-prev">
-                    <button
-                      type="button"
-                      className="stage-nav-arrow"
-                      onClick={handlePrev}
-                      aria-label="Previous Feature"
-                    >
-                      <ChevronLeft size={16} />
-                    </button>
-                    <button
-                      type="button"
-                      className="stage-nav-arrow"
-                      onClick={handleNext}
-                      aria-label="Next Feature"
-                    >
-                      <ChevronRight size={16} />
-                    </button>
-                  </div>
-                </div>
+              <div className="modal-hero-text">
+                <h2>{selectedFeature.title}</h2>
+                <p>{selectedFeature.description}</p>
               </div>
             </div>
-          </section>
+
+            {/* Modal Highlights 2x2 Grid */}
+            <div className="modal-highlights-grid">
+              {selectedFeature.highlights.map((hl, hlIdx) => (
+                <div key={hlIdx} className="modal-hl-item">
+                  <CheckCircle2
+                    size={16}
+                    className="modal-hl-check"
+                    style={{ color: selectedFeature.iconColor }}
+                  />
+                  <span>{hl}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* Modal Footer Action */}
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="modal-secondary-btn"
+                onClick={() => setSelectedFeature(null)}
+              >
+                બંધ કરો
+              </button>
+
+              {selectedFeature.link ? (
+                <Link
+                  to={selectedFeature.link}
+                  className="modal-primary-btn"
+                  style={{ background: selectedFeature.iconColor }}
+                  onClick={() => setSelectedFeature(null)}
+                >
+                  <span>{selectedFeature.linkText}</span>
+                  <ArrowRight size={16} />
+                </Link>
+              ) : selectedFeature.actionType === "ai" ? (
+                <button
+                  type="button"
+                  onClick={openAiAssistant}
+                  className="modal-primary-btn"
+                  style={{ background: selectedFeature.iconColor }}
+                >
+                  <Brain size={16} />
+                  <span>{selectedFeature.linkText}</span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={openFeedback}
+                  className="modal-primary-btn"
+                  style={{ background: selectedFeature.iconColor }}
+                >
+                  <Star size={16} />
+                  <span>{selectedFeature.linkText}</span>
+                </button>
+              )}
+            </div>
+          </div>
         </div>
-
-        {/* =====================================================
-            BOTTOM BAR: SACRED MANTRA & QUICK ACTIONS
-        ===================================================== */}
-        <footer className="compact-footer">
-          <div className="compact-footer-pranam">
-            <Flower2 size={16} className="compact-om-flower spin-slow" />
-            <span className="mantra-text">॥ ॐ तत्સત્ શ્રીકૃષ્ણાર્પણમસ્તુ ॥</span>
-            <span className="mantra-sub">
-              સર્વે ભવન્તુ સુખિનઃ • સમસ્ત માનવ કલ્યાણ માટે સમર્પિત
-            </span>
-          </div>
-
-          <div className="compact-footer-actions">
-            <Link to="/chapters" className="footer-quick-link">
-              <BookOpen size={14} /> 18 અધ્યાય
-            </Link>
-            <button
-              type="button"
-              onClick={openAiAssistant}
-              className="footer-quick-btn"
-            >
-              <Brain size={14} /> ગીતા AI
-            </button>
-            <button
-              type="button"
-              onClick={openFeedback}
-              className="footer-quick-btn feedback"
-            >
-              <Star size={14} /> પ્રતિસાદ
-            </button>
-          </div>
-        </footer>
-      </div>
+      )}
     </main>
   );
 }

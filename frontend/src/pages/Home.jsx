@@ -3,7 +3,7 @@ import {
   useRef,
   useState,
 } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
 import { 
   BookOpen, 
@@ -14,8 +14,6 @@ import {
   Share2,
   Trophy,
   Flame,
-  Info,
-  ArrowRight,
 } from "lucide-react";
 import "./Home.css";
 import ShareShlokaModal from "../components/ShareShlokaModal.jsx";
@@ -1358,30 +1356,6 @@ useEffect(() => {
           }}
         />
       )}
-
-      {/* =================================================
-          ABOUT US QUICK DISCOVERY BANNER
-      ================================================= */}
-      <section className="home-about-banner">
-        <div className="home-about-inner">
-          <div className="home-about-icon-box">
-            <Info size={28} />
-          </div>
-          <div className="home-about-text">
-            <span className="home-about-badge">
-              <Sparkles size={13} /> ૧૨+ વિશેષતાઓ & અમારું મિશન
-            </span>
-            <h3>ભગવદ્ ગીતા પ્લેટફોર્મ વિશે વધુ જાણો</h3>
-            <p>
-              18 અધ્યાય, 700 શ્લોક, દિવ્ય ઓડિયો, ગીતા AI આધ્યાત્મિક સહાયક, ક્વિઝ અને વાંચન ટ્રેકર — અમારી તમામ વિશેષતાઓ જુઓ.
-            </p>
-          </div>
-          <Link to="/about" className="home-about-btn">
-            <span>અમારા વિશે (About Us)</span>
-            <ArrowRight size={16} />
-          </Link>
-        </div>
-      </section>
 
     </main>
   );
