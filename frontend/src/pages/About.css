@@ -14,7 +14,7 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  padding: 6px 16px 8px;
+  padding: 8px 16px 12px;
   box-sizing: border-box;
 
   background:
@@ -110,55 +110,53 @@
   100% { transform: translateY(22px) scale(1.05); }
 }
 
-/* --- CENTERED TOP HEADER (CLEAN, NO BOX, PROMINENT) --- */
+/* --- CENTERED TOP HEADER (SLIM & PERFECTLY SPACED) --- */
 .compact-header-centered {
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 4px 0 6px 0;
-  background: transparent;
-  backdrop-filter: none;
-  border: none;
-  box-shadow: none;
-  margin-bottom: 6px;
+  padding: 8px 18px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(14px);
+  border: 1.5px solid rgba(26, 115, 232, 0.15);
+  border-radius: 14px;
+  box-shadow: 0 4px 16px rgba(15, 39, 68, 0.04);
+  margin-bottom: 8px;
   overflow: visible;
 }
 
 [data-theme="dark"] .compact-header-centered {
-  background: transparent;
-  border: none;
-  box-shadow: none;
+  background: rgba(16, 38, 64, 0.88);
+  border-color: rgba(56, 189, 248, 0.2);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
 }
 
 .compact-title-wrap {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
   overflow: visible;
 }
 
 .compact-logo-flower {
   color: #1a73e8;
   flex-shrink: 0;
-  filter: drop-shadow(0 2px 8px rgba(26, 115, 232, 0.3));
 }
 
 [data-theme="dark"] .compact-logo-flower {
   color: #38bdf8;
-  filter: drop-shadow(0 2px 8px rgba(56, 189, 248, 0.4));
 }
 
 .compact-header-centered h1 {
-  font-size: clamp(22px, 2.7vw, 29px);
+  font-size: clamp(18px, 2.1vw, 23px);
   font-weight: 800;
   margin: 0;
   color: #0f2744;
   line-height: 1.5;
   padding: 2px 0;
-  letter-spacing: -0.2px;
   overflow: visible;
 }
 
@@ -190,59 +188,62 @@
   min-height: 0;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
   box-sizing: border-box;
   overflow: visible;
+  padding: 4px 0 10px;
 }
 
 .features-centered-grid {
-  flex: 1;
-  min-height: 0;
+  width: 100%;
+  max-width: 1260px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  grid-template-rows: repeat(3, 1fr);
-  gap: 8px 10px;
+  gap: 12px 14px;
   padding: 4px 2px;
   overflow: visible;
   box-sizing: border-box;
 }
 
-/* Feature Button Card (Compact & Blue Themed) */
+/* Feature Button Card (Slim Rectangle & Blue Themed) */
 .feature-btn-card {
   position: relative;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 8px 12px;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 13px;
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(12px);
-  border: 1.5px solid rgba(26, 115, 232, 0.14);
+  border: 1.5px solid rgba(26, 115, 232, 0.15);
   text-align: left;
   cursor: pointer;
   outline: none;
-  box-shadow: 0 2px 8px rgba(15, 39, 68, 0.04);
+  box-shadow: 0 2px 10px rgba(15, 39, 68, 0.04);
   transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
   overflow: visible;
   box-sizing: border-box;
 }
 
 [data-theme="dark"] .feature-btn-card {
-  background: rgba(16, 38, 64, 0.82);
-  border-color: rgba(56, 189, 248, 0.16);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.22);
+  background: rgba(16, 38, 64, 0.85);
+  border-color: rgba(56, 189, 248, 0.18);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.24);
 }
 
 .feature-btn-card:hover {
   transform: translateY(-2px);
   border-color: #1a73e8;
-  box-shadow: 0 6px 18px rgba(26, 115, 232, 0.2);
+  box-shadow: 0 6px 20px rgba(26, 115, 232, 0.22);
   background: rgba(255, 255, 255, 0.98);
 }
 
 [data-theme="dark"] .feature-btn-card:hover {
-  background: rgba(20, 48, 78, 0.95);
+  background: rgba(20, 48, 78, 0.96);
   border-color: #38bdf8;
-  box-shadow: 0 6px 18px rgba(56, 189, 248, 0.24);
+  box-shadow: 0 6px 20px rgba(56, 189, 248, 0.26);
 }
 
 /* Card Top Row */
@@ -250,7 +251,13 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 2px;
+  width: 100%;
+}
+
+.card-top-left {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .card-num-pill {
@@ -278,19 +285,40 @@
   color: #60a5fa;
 }
 
+/* Card Hover Hint (Inline on Top Right) */
+.card-hover-hint {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #1a73e8;
+  opacity: 0.75;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+[data-theme="dark"] .card-hover-hint {
+  color: #38bdf8;
+}
+
+.feature-btn-card:hover .card-hover-hint {
+  opacity: 1;
+  transform: translateX(2px);
+}
+
 /* Card Main Row */
 .card-main-content {
   display: flex;
   align-items: center;
   gap: 10px;
-  flex: 1;
+  width: 100%;
   overflow: visible;
 }
 
 .card-icon-box {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -298,7 +326,7 @@
   background: rgba(26, 115, 232, 0.1);
   color: #1a73e8;
   border: 1px solid rgba(26, 115, 232, 0.2);
-  box-shadow: 0 2px 8px rgba(26, 115, 232, 0.12);
+  box-shadow: 0 2px 6px rgba(26, 115, 232, 0.12);
   transition: transform 0.2s ease;
 }
 
@@ -306,7 +334,7 @@
   background: rgba(56, 189, 248, 0.14);
   color: #38bdf8;
   border-color: rgba(56, 189, 248, 0.25);
-  box-shadow: 0 2px 8px rgba(56, 189, 248, 0.15);
+  box-shadow: 0 2px 6px rgba(56, 189, 248, 0.15);
 }
 
 .feature-btn-card:hover .card-icon-box {
@@ -329,7 +357,7 @@
   color: #0f2744;
   margin: 0;
   line-height: 1.38;
-  padding-top: 2px;
+  padding-top: 1px;
   padding-bottom: 1px;
   overflow: visible;
   word-break: break-word;
@@ -337,29 +365,6 @@
 
 [data-theme="dark"] .card-title {
   color: #f1f5f9;
-}
-
-/* Card Bottom Hint */
-.card-hover-hint {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 3px;
-  margin-top: 2px;
-  font-size: 10.5px;
-  font-weight: 600;
-  color: #1a73e8;
-  opacity: 0.88;
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-
-[data-theme="dark"] .card-hover-hint {
-  color: #38bdf8;
-}
-
-.feature-btn-card:hover .card-hover-hint {
-  opacity: 1;
-  transform: translateX(3px);
 }
 
 /* --- CENTERED MODAL POPUP (BLUE THEME) --- */
