@@ -29,6 +29,11 @@ import {
   X,
   Sparkles,
   Clock,
+  Bell,
+  Download,
+  Zap,
+  CheckCircle2,
+  XCircle,
 } from "lucide-react";
 import "./Admin.css";
 
@@ -57,6 +62,11 @@ function Admin() {
   const [loadingVisitors, setLoadingVisitors] = useState(true);
   const [refreshingVisitors, setRefreshingVisitors] = useState(false);
 
+  // App Installation & Analytics state
+  const [appStats, setAppStats] = useState(null);
+  const [loadingAppStats, setLoadingAppStats] = useState(true);
+  const [refreshingAppStats, setRefreshingAppStats] = useState(false);
+
   // User feedback and ratings state
   const [feedbacks, setFeedbacks] = useState([]);
   const [feedbackSummary, setFeedbackSummary] = useState(null);
@@ -71,6 +81,57 @@ function Admin() {
   const navigate = useNavigate();
 
   const { logout } = useAuth();
+
+  const fetchAppStats = async (isManual = false) => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    if (isManual) setRefreshingAppStats(true);
+    else setLoadingAppStats(true);
+
+    try {
+      const isLocal =
+        typeof window !== "undefined" &&
+        (window.location.hostname === "localhost" ||
+          window.location.hostname === "127.0.0.1");
+
+      const urls = isLocal
+        ? [
+            "http://localhost:5000/api/app-analytics/stats",
+            "https://bhagavad-gita-website.onrender.com/api/app-analytics/stats",
+          ]
+        : ["https://bhagavad-gita-website.onrender.com/api/app-analytics/stats"];
+
+      let fetchedData = null;
+      for (const url of urls) {
+        try {
+          const response = await fetch(url, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (response.ok) {
+            const data = await response.json();
+            if (data.success && data.stats) {
+              fetchedData = data.stats;
+              break;
+            }
+          }
+        } catch {
+          // try next url
+        }
+      }
+
+      if (fetchedData) {
+        setAppStats(fetchedData);
+      }
+    } catch (error) {
+      console.error("Error fetching app stats:", error);
+    } finally {
+      setLoadingAppStats(false);
+      setRefreshingAppStats(false);
+    }
+  };
 
   const fetchVisitorStats = async (isManual = false) => {
     const token = localStorage.getItem("token");
@@ -263,6 +324,7 @@ function Admin() {
   useEffect(() => {
     fetchUsers();
     fetchVisitorStats();
+    fetchAppStats();
     fetchFeedbacks();
   }, []);
 
@@ -887,6 +949,352 @@ function Admin() {
                             </td>
                             <td className="v-table-time">
                               {formatTimeAgo(v.visitedAt)}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </section>
+
+        {/* =================================================
+            APP INSTALLATION & USAGE ANALYTICS SECTION
+        ================================================= */}
+        <section className="visitor-analytics-section app-analytics-section" aria-label="App Installations">
+          <div className="visitor-section-header">
+            <div className="visitor-title-wrap">
+              <div className="visitor-header-icon-box app-header-icon-box">
+                <Smartphone size={24} className="visitor-activity-icon" />
+              </div>
+              <div>
+                <h2>📱 એપ ઇન્સ્ટોલેશન અને વપરાશકર્તા એનાલિટિક્સ (App Analytics)</h2>
+                <span className="v-header-sub">
+                  ગીતા એપ ઇન્સ્ટોલ કરનાર ભક્તો, દૈનિક નોટિફિકેશન અને ડિવાઇસ પ્રવૃત્તિ
+                </span>
+              </div>
+            </div>
+
+            <button
+              type="button"
+              className="visitor-refresh-btn"
+              onClick={() => fetchAppStats(true)}
+              disabled={refreshingAppStats || loadingAppStats}
+              title="એપ એનાલિટિક્સ રિફ્રેશ કરો"
+            >
+              <RefreshCw
+                size={16}
+                className={refreshingAppStats ? "spinning-icon" : ""}
+              />
+              <span>{refreshingAppStats ? "રિફ્રેશિંગ..." : "રિફ્રેશ"}</span>
+            </button>
+          </div>
+
+          {loadingAppStats && !appStats ? (
+            <div className="v-loading-box">
+              <RefreshCw size={24} className="spinning-icon" />
+              <p>એપ ઇન્સ્ટોલેશન ડેટા લોડ થઈ રહ્યો છે...</p>
+            </div>
+          ) : (
+            <>
+              {/* TOP 5 APP STATS CARDS */}
+              <div className="v-stat-cards-grid app-stat-cards-grid">
+                {/* 1. TOTAL APP INSTALLS */}
+                <div className="v-stat-card primary">
+                  <div className="v-stat-card-icon-box app-icon-install">
+                    <Download size={24} />
+                  </div>
+                  <div className="v-stat-card-info">
+                    <span className="v-stat-label">કુલ એપ ઇન્સ્ટોલ</span>
+                    <h3 className="v-stat-value">{appStats?.totalInstalls || 0}</h3>
+                    <span className="v-stat-hint">
+                      {appStats?.registeredInstalls || 0} રજીસ્ટર્ડ • {appStats?.guestInstalls || 0} ગેસ્ટ
+                    </span>
+                  </div>
+                </div>
+
+                {/* 2. TODAY'S NEW INSTALLS */}
+                <div className="v-stat-card success">
+                  <div className="v-stat-card-icon-box app-icon-today">
+                    <Sparkles size={24} />
+                  </div>
+                  <div className="v-stat-card-info">
+                    <span className="v-stat-label">આજના નવા ઇન્સ્ટોલ</span>
+                    <h3 className="v-stat-value">{appStats?.todayInstalls || 0}</h3>
+                    <span className="v-stat-hint">છેલ્લા 24 કલાકમાં</span>
+                  </div>
+                </div>
+
+                {/* 3. TODAY'S ACTIVE USERS */}
+                <div className="v-stat-card warning">
+                  <div className="v-stat-card-icon-box app-icon-active">
+                    <Activity size={24} />
+                  </div>
+                  <div className="v-stat-card-info">
+                    <span className="v-stat-label">આજના સક્રિય એપ યુઝર્સ</span>
+                    <h3 className="v-stat-value">{appStats?.todayActive || 0}</h3>
+                    <span className="v-stat-hint">આજે એપ ખોલનાર ભક્તો</span>
+                  </div>
+                </div>
+
+                {/* 4. NOTIFICATION SUBSCRIBERS */}
+                <div className="v-stat-card info">
+                  <div className="v-stat-card-icon-box app-icon-notif">
+                    <Bell size={24} />
+                  </div>
+                  <div className="v-stat-card-info">
+                    <span className="v-stat-label">નોટિફિકેશન સક્રિય (5x Daily)</span>
+                    <h3 className="v-stat-value">{appStats?.notificationSubscribers || 0}</h3>
+                    <span className="v-stat-hint">દરરોજ શ્લોક મેળવનાર</span>
+                  </div>
+                </div>
+
+                {/* 5. TOTAL APP OPENS */}
+                <div className="v-stat-card purple">
+                  <div className="v-stat-card-icon-box app-icon-opens">
+                    <Zap size={24} />
+                  </div>
+                  <div className="v-stat-card-info">
+                    <span className="v-stat-label">કુલ એપ ઓપનિંગ્સ</span>
+                    <h3 className="v-stat-value">{appStats?.totalOpens || 0}</h3>
+                    <span className="v-stat-hint">એપ લોન્ચ કાઉન્ટ</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* PLATFORM BREAKDOWN & DETAILED INFO */}
+              <div className="v-details-grid">
+                {/* PLATFORMS */}
+                <div className="v-detail-card devices-card">
+                  <div className="v-card-header">
+                    <h4>
+                      <Smartphone size={20} /> ઓપરેટિંગ સિસ્ટમ (Platforms)
+                    </h4>
+                    <span className="v-card-subhead">ઇન્સ્ટોલ ડિવાઇસ પ્રકાર</span>
+                  </div>
+                  <div className="v-device-bars">
+                    {(() => {
+                      const total = appStats?.totalInstalls || 1;
+                      const platforms = appStats?.platformStats || {};
+                      const android = platforms["Android"] || 0;
+                      const ios = platforms["iOS"] || 0;
+                      const windows = platforms["Windows"] || 0;
+                      const other = Object.entries(platforms)
+                        .filter(([k]) => !["Android", "iOS", "Windows"].includes(k))
+                        .reduce((sum, [, v]) => sum + v, 0);
+
+                      const androidPct = Math.round((android / total) * 100);
+                      const iosPct = Math.round((ios / total) * 100);
+                      const winPct = Math.round((windows / total) * 100);
+                      const otherPct = Math.round((other / total) * 100);
+
+                      return (
+                        <>
+                          <div className="device-bar-row">
+                            <div className="device-bar-label">
+                              <span className="device-label-text">
+                                <Smartphone size={16} /> એન્ડ્રોઇડ (Android)
+                              </span>
+                              <strong>{android} ({androidPct}%)</strong>
+                            </div>
+                            <div className="device-progress-track">
+                              <div
+                                className="device-progress-fill mobile-fill"
+                                style={{ width: `${androidPct}%` }}
+                              />
+                            </div>
+                          </div>
+
+                          <div className="device-bar-row">
+                            <div className="device-bar-label">
+                              <span className="device-label-text">
+                                <Smartphone size={16} /> એપલ (iOS / iPhone)
+                              </span>
+                              <strong>{ios} ({iosPct}%)</strong>
+                            </div>
+                            <div className="device-progress-track">
+                              <div
+                                className="device-progress-fill desktop-fill"
+                                style={{ width: `${iosPct}%` }}
+                              />
+                            </div>
+                          </div>
+
+                          <div className="device-bar-row">
+                            <div className="device-bar-label">
+                              <span className="device-label-text">
+                                <Monitor size={16} /> વિન્ડોઝ પીસી (Windows)
+                              </span>
+                              <strong>{windows} ({winPct}%)</strong>
+                            </div>
+                            <div className="device-progress-track">
+                              <div
+                                className="device-progress-fill tablet-fill"
+                                style={{ width: `${winPct}%` }}
+                              />
+                            </div>
+                          </div>
+
+                          {other > 0 && (
+                            <div className="device-bar-row">
+                              <div className="device-bar-label">
+                                <span className="device-label-text">
+                                  <Globe size={16} /> અન્ય (macOS / Linux)
+                                </span>
+                                <strong>{other} ({otherPct}%)</strong>
+                              </div>
+                              <div className="device-progress-track">
+                                <div
+                                  className="device-progress-fill"
+                                  style={{
+                                    width: `${otherPct}%`,
+                                    background: "#f59e0b",
+                                  }}
+                                />
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      );
+                    })()}
+                  </div>
+                </div>
+
+                {/* USER SEGMENTS */}
+                <div className="v-detail-card pages-card">
+                  <div className="v-card-header">
+                    <h4>
+                      <Users size={20} /> યુઝર સેગમેન્ટ (Install Distribution)
+                    </h4>
+                  </div>
+                  <div className="v-pages-list">
+                    <div className="v-page-row">
+                      <span className="v-page-rank" style={{ background: "#10b981" }}>1</span>
+                      <span className="v-page-path">રજીસ્ટર્ડ ભક્તો (Registered Users)</span>
+                      <span className="v-page-count" style={{ background: "#dcfce7", color: "#15803d" }}>
+                        {appStats?.registeredInstalls || 0}
+                      </span>
+                    </div>
+                    <div className="v-page-row">
+                      <span className="v-page-rank" style={{ background: "#6366f1" }}>2</span>
+                      <span className="v-page-path">અતિથિ ભક્તો (Guest / Direct Installs)</span>
+                      <span className="v-page-count" style={{ background: "#ede9fe", color: "#6d28d9" }}>
+                        {appStats?.guestInstalls || 0}
+                      </span>
+                    </div>
+                    <div className="v-page-row">
+                      <span className="v-page-rank" style={{ background: "#f59e0b" }}>3</span>
+                      <span className="v-page-path">દૈનિક નોટિફિકેશન સબસ્ક્રાઇબર્સ</span>
+                      <span className="v-page-count" style={{ background: "#fef3c7", color: "#b45309" }}>
+                        {appStats?.notificationSubscribers || 0}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* BROWSERS USED */}
+                <div className="v-detail-card tech-card">
+                  <div className="v-card-header">
+                    <h4>
+                      <Globe size={20} /> ઇન્સ્ટોલેશન બ્રાઉઝર્સ (Browsers)
+                    </h4>
+                  </div>
+                  <div className="v-tech-group">
+                    <p className="v-tech-label">બ્રાઉઝર વિગતો:</p>
+                    <div className="v-pills-wrap">
+                      {appStats?.browserStats && Object.keys(appStats.browserStats).length > 0 ? (
+                        Object.entries(appStats.browserStats).map(([bName, bCount], idx) => (
+                          <span key={idx} className="v-pill">
+                            {bName}: <strong>{bCount}</strong>
+                          </span>
+                        ))
+                      ) : (
+                        <span className="v-pill">કોઈ ડેટા નથી</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* RECENT APP INSTALLATIONS TABLE */}
+              {appStats?.recentInstallations && appStats.recentInstallations.length > 0 && (
+                <div className="v-recent-card">
+                  <div className="v-card-header">
+                    <h4>
+                      <Smartphone size={20} /> તાજેતરના એપ ઇન્સ્ટોલેશન્સ અને વપરાશકર્તા (Recent App Users)
+                    </h4>
+                    <span className="v-card-subhead">
+                      છેલ્લા {appStats.recentInstallations.length} ડિવાઇસ
+                    </span>
+                  </div>
+
+                  <div className="v-table-wrapper">
+                    <table className="v-table">
+                      <thead>
+                        <tr>
+                          <th>ડિવાઇસ આઇડી / યુઝર</th>
+                          <th>પ્લેટફોર્મ (OS)</th>
+                          <th>બ્રાઉઝર</th>
+                          <th>નોટિફિકેશન</th>
+                          <th>ઓપન કાઉન્ટ</th>
+                          <th>ઇન્સ્ટોલ તારીખ</th>
+                          <th>છેલ્લે સક્રિય</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {appStats.recentInstallations.map((item, i) => (
+                          <tr key={i}>
+                            <td className="v-table-path">
+                              <div>
+                                {item.userName ? (
+                                  <strong style={{ color: "#1e3a8a", display: "block" }}>
+                                    {item.userName}
+                                  </strong>
+                                ) : (
+                                  <span style={{ color: "#64748b", fontStyle: "italic" }}>
+                                    ગેસ્ટ ભક્ત (Guest)
+                                  </span>
+                                )}
+                                <code>{item.deviceId ? `${item.deviceId.substring(0, 16)}...` : "ID"}</code>
+                              </div>
+                            </td>
+                            <td>
+                              <span className={`v-device-badge ${item.platform?.toLowerCase() || "mobile"}`}>
+                                {item.platform === "Windows" ? (
+                                  <Monitor size={14} />
+                                ) : (
+                                  <Smartphone size={14} />
+                                )}
+                                {item.platform || "Android"}
+                              </span>
+                            </td>
+                            <td className="v-table-browser">
+                              {item.browser || "Chrome"}
+                            </td>
+                            <td>
+                              {item.hasNotificationEnabled ? (
+                                <span className="v-user-type-badge registered" style={{ background: "#dcfce7", color: "#15803d" }}>
+                                  <CheckCircle2 size={13} /> ચાલુ (5x/દિન)
+                                </span>
+                              ) : (
+                                <span className="v-user-type-badge guest" style={{ background: "#f1f5f9", color: "#64748b" }}>
+                                  <XCircle size={13} /> બંધ (OFF)
+                                </span>
+                              )}
+                            </td>
+                            <td style={{ fontWeight: 700, color: "#1e3a8a" }}>
+                              {item.openCount || 1} વાર
+                            </td>
+                            <td className="v-table-time">
+                              {item.installedAt
+                                ? new Date(item.installedAt).toLocaleDateString("gu-IN")
+                                : "-"}
+                            </td>
+                            <td className="v-table-time">
+                              {formatTimeAgo(item.lastOpenedAt || item.installedAt)}
                             </td>
                           </tr>
                         ))}

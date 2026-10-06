@@ -445,67 +445,18 @@ useEffect(() => {
 
     const shlokNum = Number(todayShlok.shlokNumber);
 
-    // Logout user માટે: જો શ્લોક 5 થી વધુ હોય તો સીધા Login page પર મોકલો
-    if (!user && shlokNum > 5) {
-      const redirectPath = `/chapter/${todayShlok.chapterNumber}?shloka=${todayShlok.shlokNumber}`;
-      const redirectMsg = `અધ્યાય ${todayShlok.chapterNumber} ના શ્લોક ${todayShlok.shlokNumber} વાંચવા માટે Login કરવું જરૂરી છે.`;
-
-      localStorage.setItem("pendingChapter", String(todayShlok.chapterNumber));
-      localStorage.setItem("pendingShloka", String(todayShlok.shlokNumber));
-
-      sessionStorage.setItem(
-        "authRedirect",
-        JSON.stringify({
-          from: redirectPath,
-          message: redirectMsg,
-        })
-      );
-
-      navigate("/login", {
-        state: {
-          from: redirectPath,
-          message: redirectMsg,
-        },
-      });
-      return;
-    }
-
+    // આજનો શ્લોક બધા માટે મુક્ત છે - Login વગર પણ સંપૂર્ણ વાંચી શકાય
     navigate(
-      `/chapter/${todayShlok.chapterNumber}?shloka=${todayShlok.shlokNumber}`
+      `/chapter/${todayShlok.chapterNumber}?shloka=${todayShlok.shlokNumber}&today=true`
     );
   };
 
   // =====================================================
-  // SHARE TODAY'S SHLOK (1 થી 5 સિવાય Login જરૂરી)
+  // SHARE TODAY'S SHLOK (બધા માટે ઉપલબ્ધ)
   // =====================================================
 
   const handleShareTodayShlok = () => {
     if (!todayShlok) return;
-
-    const shlokNum = Number(todayShlok.shlokNumber);
-
-    // જો user login ન હોય અને શ્લોક 1 થી 5 સિવાયનો હોય તો Login જરૂરી
-    if (!user && (shlokNum < 1 || shlokNum > 5)) {
-      const redirectPath = "/";
-      const redirectMsg = `અધ્યાય ${todayShlok.chapterNumber} ના શ્લોક ${todayShlok.shlokNumber} શેર કરવા માટે Login કરવું જરૂરી છે.`;
-
-      sessionStorage.setItem(
-        "authRedirect",
-        JSON.stringify({
-          from: redirectPath,
-          message: redirectMsg,
-        })
-      );
-
-      navigate("/login", {
-        state: {
-          from: redirectPath,
-          message: redirectMsg,
-        },
-      });
-      return;
-    }
-
     setShareModalOpen(true);
   };
 

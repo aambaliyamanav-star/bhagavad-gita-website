@@ -42,6 +42,7 @@ import {
   unsubscribeAppNotifications,
   enableAppNotifications,
 } from "../utils/appPushNotification.js";
+import { trackAppInstallOrOpen } from "../utils/appAnalytics.js";
 
 import "./Navbar.css";
 
@@ -114,10 +115,12 @@ function Navbar() {
       if (notifEnabled) {
         await unsubscribeAppNotifications();
         setNotifEnabled(false);
+        trackAppInstallOrOpen(false);
       } else {
         const res = await enableAppNotifications(user);
         if (res.success) {
           setNotifEnabled(true);
+          trackAppInstallOrOpen(false);
         }
       }
     } finally {
