@@ -1081,11 +1081,11 @@ function Admin() {
                     {filtered.map((fb) => (
                       <div
                         key={fb._id}
-                        className="admin-feedback-compact-card"
+                        className={`admin-feedback-compact-card ${!fb.isLatestUserFeedback ? "is-older" : ""}`}
                         onClick={() => setActiveFeedbackModal(fb)}
                         role="button"
                         tabIndex={0}
-                        title="સંપૂર્ણ વિગત અને સંદેશ જોવા માટે ક્લિક કરો"
+                        title={fb.isLatestUserFeedback ? "સંપૂર્ણ વિગત અને સંદેશ જોવા માટે ક્લિક કરો" : "સંપૂર્ણ વિગત અને સંદેશ જોવા માટે ક્લિક કરો (અગાઉનો જૂનો પ્રતિસાદ)"}
                       >
                         <div className="admin-fb-compact-top">
                           <div className="admin-fb-compact-user">
