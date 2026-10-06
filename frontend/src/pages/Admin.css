@@ -4469,5 +4469,323 @@ html[data-theme='dark'] .app-icon-opens,
   color: #67e8f9 !important;
 }
 
+/* =========================================================
+   ANALYTICS HUB (2 POPUP BUTTONS ON ADMIN PAGE)
+   ========================================================= */
+
+.admin-analytics-hub-section {
+  margin-bottom: 30px;
+}
+
+.analytics-hub-card {
+  position: relative;
+  padding: 24px 28px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #ffffff 0%, #f4f8ff 100%);
+  border: 1px solid rgba(37, 99, 235, 0.16);
+  box-shadow: 0 10px 30px rgba(30, 64, 175, 0.08);
+}
+
+.analytics-hub-header {
+  margin-bottom: 18px;
+}
+
+.analytics-hub-buttons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 18px;
+}
+
+.analytics-hub-btn {
+  background: #ffffff;
+  border: 1.5px solid rgba(37, 99, 235, 0.15);
+  border-radius: 18px;
+  padding: 18px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.03);
+  position: relative;
+  overflow: hidden;
+}
+
+.analytics-hub-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  transition: width 0.25s ease;
+}
+
+.analytics-hub-btn.web-hub-btn::before {
+  background: #2563eb;
+}
+
+.analytics-hub-btn.app-hub-btn::before {
+  background: #7c3aed;
+}
+
+.analytics-hub-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 28px rgba(37, 99, 235, 0.12);
+}
+
+.analytics-hub-btn.web-hub-btn:hover {
+  border-color: #2563eb;
+}
+
+.analytics-hub-btn.app-hub-btn:hover {
+  border-color: #7c3aed;
+}
+
+.hub-btn-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex: 1;
+  min-width: 0;
+}
+
+.hub-btn-icon-box {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+}
+
+.analytics-hub-btn:hover .hub-btn-icon-box {
+  transform: scale(1.08);
+}
+
+.hub-btn-icon-box.web-icon-box {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(59, 130, 246, 0.22));
+  color: #2563eb;
+}
+
+.hub-btn-icon-box.app-icon-box {
+  background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(168, 85, 247, 0.22));
+  color: #7c3aed;
+}
+
+.hub-btn-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.hub-btn-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 5px;
+}
+
+.hub-btn-title-row h4 {
+  margin: 0;
+  font-size: 1.02rem;
+  font-weight: 800;
+  color: #0f172a;
+}
+
+.hub-btn-pill {
+  font-size: 0.74rem;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 9999px;
+}
+
+.hub-btn-pill.web-pill {
+  background: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid #bae6fd;
+}
+
+.hub-btn-pill.app-pill {
+  background: #f3e8ff;
+  color: #7e22ce;
+  border: 1px solid #e9d5ff;
+}
+
+.hub-btn-description {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+.hub-btn-description strong {
+  color: #1e3a8a;
+}
+
+.hub-btn-cta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.84rem;
+  font-weight: 700;
+  color: #2563eb;
+  padding: 8px 14px;
+  background: #eff6ff;
+  border-radius: 10px;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+}
+
+.analytics-hub-btn.app-hub-btn .hub-btn-cta {
+  color: #7c3aed;
+  background: #f5f3ff;
+}
+
+.analytics-hub-btn:hover .hub-btn-cta {
+  padding-right: 10px;
+}
+
+.analytics-hub-btn:hover .hub-btn-cta svg {
+  transform: translateX(4px);
+  transition: transform 0.2s ease;
+}
+
+/* =========================================================
+   ANALYTICS POPUP MODAL (EXPANDED TO FULL VIEWPORT CENTER)
+   ========================================================= */
+
+.admin-modal-content.analytics-detail-modal {
+  width: 95vw;
+  max-width: 1080px;
+  max-height: 88vh;
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: modalScaleIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.analytics-modal-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 28px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.analytics-modal-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.analytics-modal-body {
+  overflow-y: auto;
+  flex: 1;
+  padding: 26px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  max-height: calc(88vh - 145px);
+}
+
+.analytics-modal-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 28px;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+}
+
+.analytics-modal-footer-hint {
+  font-size: 0.8rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+/* Dark Theme Overrides for Analytics Hub & Modals */
+html[data-theme='dark'] .analytics-hub-card,
+.dark .analytics-hub-card {
+  background: linear-gradient(135deg, #131d31 0%, #0f172a 100%) !important;
+  border-color: rgba(96, 165, 250, 0.2) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4) !important;
+}
+
+html[data-theme='dark'] .analytics-hub-btn,
+.dark .analytics-hub-btn {
+  background: #1e293b !important;
+  border-color: rgba(148, 163, 184, 0.15) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25) !important;
+}
+
+html[data-theme='dark'] .analytics-hub-btn:hover,
+.dark .analytics-hub-btn:hover {
+  background: #24324a !important;
+}
+
+html[data-theme='dark'] .hub-btn-title-row h4,
+.dark .hub-btn-title-row h4 {
+  color: #f1f5f9 !important;
+}
+
+html[data-theme='dark'] .hub-btn-description,
+.dark .hub-btn-description {
+  color: #94a3b8 !important;
+}
+
+html[data-theme='dark'] .hub-btn-description strong,
+.dark .hub-btn-description strong {
+  color: #93c5fd !important;
+}
+
+html[data-theme='dark'] .hub-btn-cta,
+.dark .hub-btn-cta {
+  background: rgba(37, 99, 235, 0.2) !important;
+  color: #93c5fd !important;
+}
+
+html[data-theme='dark'] .analytics-hub-btn.app-hub-btn .hub-btn-cta,
+.dark .analytics-hub-btn.app-hub-btn .hub-btn-cta {
+  background: rgba(124, 58, 237, 0.2) !important;
+  color: #d8b4fe !important;
+}
+
+html[data-theme='dark'] .admin-modal-content.analytics-detail-modal,
+.dark .admin-modal-content.analytics-detail-modal {
+  background: #0f172a !important;
+  border-color: #334155 !important;
+  box-shadow: 0 30px 60px -15px rgba(0, 0, 0, 0.7) !important;
+}
+
+html[data-theme='dark'] .analytics-modal-header,
+.dark .analytics-modal-header,
+html[data-theme='dark'] .analytics-modal-footer,
+.dark .analytics-modal-footer {
+  background: #1e293b !important;
+  border-color: #334155 !important;
+}
+
+html[data-theme='dark'] .analytics-modal-footer-hint,
+.dark .analytics-modal-footer-hint {
+  color: #94a3b8 !important;
+}
+
+
 
 
