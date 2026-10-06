@@ -1,5 +1,16 @@
 import { useState, useEffect } from "react";
-import { Bell, Sparkles, X, Check } from "lucide-react";
+import {
+  Bell,
+  Sparkles,
+  X,
+  Check,
+  Smartphone,
+  Sunrise,
+  Sun,
+  Clock,
+  Sunset,
+  Moon,
+} from "lucide-react";
 import { checkIsInstalled } from "../utils/pwaManager.js";
 import {
   isAppPushSupported,
@@ -105,12 +116,14 @@ function AppNotificationPrompt() {
               <Check size={22} strokeWidth={3} />
             </div>
             <h3>નોટિફિકેશન સક્રિય થઈ ગયા છે!</h3>
-            <p>હવે તમને દિવસમાં ૫ વખત પવિત્ર ગીતા પ્રેરણા મળશે. 🙏</p>
+            <p>હવે તમને દિવસમાં ૫ વખત પવિત્ર ગીતા પ્રેરણા મળશે.</p>
           </div>
         ) : (
           <>
             <div className="app-notif-header">
-              <span className="app-notif-badge">📱 એપ સ્પેશિયલ</span>
+              <span className="app-notif-badge">
+                <Smartphone size={12} strokeWidth={2.2} /> એપ સ્પેશિયલ
+              </span>
               <h3 className="app-notif-title">
                 દૈનિક ગીતા નોટિફિકેશન (૫ વખત)
               </h3>
@@ -120,11 +133,21 @@ function AppNotificationPrompt() {
             </div>
 
             <div className="app-notif-schedule-pills">
-              <span className="schedule-pill">🌅 08:00 AM</span>
-              <span className="schedule-pill">🌞 12:00 PM</span>
-              <span className="schedule-pill">🌿 04:00 PM</span>
-              <span className="schedule-pill">🌆 07:00 PM</span>
-              <span className="schedule-pill">🌙 10:00 PM</span>
+              <span className="schedule-pill">
+                <Sunrise size={13} strokeWidth={2} /> 08:00 AM
+              </span>
+              <span className="schedule-pill">
+                <Sun size={13} strokeWidth={2} /> 12:00 PM
+              </span>
+              <span className="schedule-pill">
+                <Clock size={13} strokeWidth={2} /> 04:00 PM
+              </span>
+              <span className="schedule-pill">
+                <Sunset size={13} strokeWidth={2} /> 07:00 PM
+              </span>
+              <span className="schedule-pill">
+                <Moon size={13} strokeWidth={2} /> 10:00 PM
+              </span>
             </div>
 
             <div className="app-notif-actions">

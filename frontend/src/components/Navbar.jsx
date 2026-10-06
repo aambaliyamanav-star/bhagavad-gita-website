@@ -27,6 +27,7 @@ import {
   Star,
   Info,
   Download,
+  Smartphone,
 } from "lucide-react";
 
 import { useAuth } from "../context/AuthContext.jsx";
@@ -1041,12 +1042,12 @@ function Navbar() {
               }}
             >
               <span className="side-menu-icon" style={{ color: "#10b981" }}>
-                <Download size={20} strokeWidth={1.8} />
+                <Smartphone size={20} strokeWidth={1.8} />
               </span>
 
               <span className="side-menu-text">
                 <strong>
-                  📱 એપ ઇન્સ્ટોલ કરો (Install App)
+                  એપ ઇન્સ્ટોલ કરો (Install App)
                 </strong>
               </span>
 
