@@ -1,6 +1,5 @@
 const QuizQuestion = require("../models/QuizQuestion");
 const QuizResult = require("../models/QuizResult");
-const Subscription = require("../models/Subscription");
 
 // =====================================================
 // SHUFFLE ARRAY
@@ -526,18 +525,6 @@ const submitQuiz = async (
 
         completed: true,
       });
-
-    // Sync quiz completion to notification subscribers
-    try {
-      if (userId) {
-        await Subscription.updateMany(
-          { userId },
-          { $set: { lastQuizPlayedDate: new Date() } }
-        );
-      }
-    } catch (subErr) {
-      console.warn("Could not update subscription lastQuizPlayedDate:", subErr);
-    }
 
     // =================================================
     // RESPONSE

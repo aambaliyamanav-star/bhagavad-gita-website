@@ -29,7 +29,6 @@ import {
 
 import { useAuth } from "../context/AuthContext.jsx";
 import { useTheme } from "../context/ThemeContext.jsx";
-import NotificationBell from "./NotificationBell.jsx";
 
 import "./Navbar.css";
 
@@ -609,9 +608,6 @@ function Navbar() {
           <span className="current-page-title">
             {getPageTitle()}
           </span>
-
-          {/* NOTIFICATION BELL */}
-          <NotificationBell />
 
           {/* HAMBURGER */}
 

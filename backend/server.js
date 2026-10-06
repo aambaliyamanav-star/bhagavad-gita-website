@@ -13,10 +13,7 @@ const quizRoutes = require("./routes/quizRoutes");
 const readingTrackerRoutes = require("./routes/readingTrackerRoutes");
 const gitaAiRoutes = require("./routes/gitaAiRoutes");
 const visitorRoutes = require("./routes/visitorRoutes");
-const notificationRoutes = require("./routes/notificationRoutes");
 const feedbackRoutes = require("./routes/feedbackRoutes");
-const notificationController = require("./controllers/notificationController");
-const cron = require("node-cron");
 
 const app = express();
 
@@ -42,42 +39,7 @@ app.use("/api/quiz", quizRoutes);
 app.use("/api/reading-tracker", readingTrackerRoutes);
 app.use("/api/gita-ai", gitaAiRoutes);
 app.use("/api/visitors", visitorRoutes);
-app.use("/api/notifications", notificationRoutes);
 app.use("/api/feedback", feedbackRoutes);
-
-// =====================================================
-// PUSH NOTIFICATION CRON JOBS
-// Send 5 times a day (IST): 8:00 AM, 12:00 PM, 4:00 PM, 7:00 PM, 10:00 PM
-// Automatically skips users who completed their daily goals (shlok + quiz)!
-// =====================================================
-const reminderTimes = [
-  "0 8 * * *",   // 08:00 AM IST
-  "0 12 * * *",  // 12:00 PM IST
-  "0 16 * * *",  // 04:00 PM IST
-  "0 19 * * *",  // 07:00 PM IST
-  "0 22 * * *",  // 10:00 PM IST
-];
-
-reminderTimes.forEach((scheduleTime) => {
-  cron.schedule(
-    scheduleTime,
-    async () => {
-      console.log(`⏰ [Cron ${scheduleTime}] Running daily shloka reminder check...`);
-      await notificationController.sendDailyReminder();
-    },
-    { timezone: "Asia/Kolkata" }
-  );
-});
-
-// Midnight reset (00:00)
-cron.schedule(
-  "0 0 * * *",
-  async () => {
-    console.log("🌙 [Cron Midnight] Resetting daily notification counters...");
-    await notificationController.resetDailyCounters();
-  },
-  { timezone: "Asia/Kolkata" }
-);
 
 
 app.get("/", (req, res) => {
