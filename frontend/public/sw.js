@@ -5,14 +5,8 @@ const API_BASE =
     ? "http://localhost:5000"
     : "https://bhagavad-gita-website.onrender.com";
 
-const CACHE_NAME = "gita-notification-assets-v2";
-const ASSETS_TO_CACHE = ["/icon-192.png", "/favicon.ico", "/manifest.json"];
-
 self.addEventListener("install", (event) => {
   self.skipWaiting();
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS_TO_CACHE)).catch(() => {})
-  );
 });
 
 self.addEventListener("activate", (event) => {
@@ -40,13 +34,14 @@ self.addEventListener("push", (event) => {
     body: data.body || "તમારું દૈનિક ગીતા વાંચન અને ક્વિઝ લક્ષ્ય પૂર્ણ કરવા અહીં ક્લિક કરો.",
     icon: iconUrl,
     badge: badgeUrl,
-    vibrate: [200, 100, 200, 100, 200],
+    vibrate: [300, 150, 300, 150, 300],
     data: {
       url: data.url || `${origin}/`,
       dateOfArrival: Date.now(),
     },
-    tag: data.tag || `gita-reminder-${Date.now()}`,
+    tag: data.tag ? `${data.tag}-${Date.now()}` : `gita-${Date.now()}`,
     renotify: true,
+    requireInteraction: true,
   };
 
   event.waitUntil(
