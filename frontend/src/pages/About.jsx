@@ -259,6 +259,19 @@ function About() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  // Lock window and body scrolling to guarantee 100% zero-scroll on About page
+  useEffect(() => {
+    const origHtmlOverflow = document.documentElement.style.overflow;
+    const origBodyOverflow = document.body.style.overflow;
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.documentElement.style.overflow = origHtmlOverflow;
+      document.body.style.overflow = origBodyOverflow;
+    };
+  }, []);
+
   const openAiAssistant = () => {
     setSelectedFeature(null);
     window.dispatchEvent(new CustomEvent("open-gita-ai-assistant"));
@@ -286,7 +299,7 @@ function About() {
         ===================================================== */}
         <header className="compact-header-centered">
           <div className="compact-title-wrap">
-            <Flower2 size={34} className="compact-logo-flower" />
+            <Flower2 size={24} className="compact-logo-flower" />
             <h1>
               શ્રીમદ્ ભગવદ્ ગીતા <span className="title-sep">•</span>{" "}
               <span className="blue-title-text">તમામ વિશેષતાઓ</span>

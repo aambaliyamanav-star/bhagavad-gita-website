@@ -4,17 +4,20 @@
    ========================================================= */
 
 /* --- MAIN PAGE WRAPPER (VIEWPORT-LOCKED) --- */
+/* --- MAIN PAGE WRAPPER (VIEWPORT-LOCKED, ZERO SCROLL) --- */
 .about-compact-page {
-  height: calc(100vh - 50px);
-  height: calc(100dvh - 50px);
-  max-height: calc(100vh - 50px);
-  max-height: calc(100dvh - 50px);
+  height: calc(100vh - 68px);
+  height: calc(100dvh - 68px);
+  max-height: calc(100vh - 68px);
+  max-height: calc(100dvh - 68px);
   width: 100%;
   position: relative;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  padding: 8px 16px 12px;
+  justify-content: center;
+  align-items: center;
+  padding: 0 16px;
   box-sizing: border-box;
 
   background:
@@ -36,12 +39,11 @@
 }
 
 .about-compact-container {
-  max-width: 1280px;
+  max-width: 1260px;
   width: 100%;
-  height: 100%;
-  margin: 0 auto;
   display: flex;
   flex-direction: column;
+  align-items: center;
   position: relative;
   z-index: 2;
   box-sizing: border-box;
@@ -110,20 +112,20 @@
   100% { transform: translateY(22px) scale(1.05); }
 }
 
-/* --- CENTERED TOP HEADER (TRANSPARENT, NO BOX, PROMINENT & WELL-SPACED) --- */
+/* --- CENTERED TOP HEADER (TRANSPARENT, NO BOX, PROMINENT & EQUALLY SPACED) --- */
 .compact-header-centered {
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 14px 0 10px 0;
+  padding: 0;
+  margin: 14px 0 14px 0;
   background: transparent;
   backdrop-filter: none;
   border: none;
   border-radius: 0;
   box-shadow: none;
-  margin-bottom: 4px;
   overflow: visible;
 }
 
@@ -153,7 +155,7 @@
 }
 
 .compact-header-centered h1 {
-  font-size: clamp(25px, 3.2vw, 36px);
+  font-size: clamp(24px, 3.1vw, 34px);
   font-weight: 800;
   margin: 0;
   color: #0f2744;
@@ -187,15 +189,14 @@
 
 /* --- CENTERED FEATURES GRID WRAPPER --- */
 .compact-grid-wrapper {
-  flex: 1;
-  min-height: 0;
+  width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   box-sizing: border-box;
   overflow: visible;
-  padding: 4px 0 10px;
+  padding: 0;
+  margin-bottom: 8px;
 }
 
 .features-centered-grid {
@@ -203,8 +204,8 @@
   max-width: 1260px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 12px 14px;
-  padding: 4px 2px;
+  gap: 10px 14px;
+  padding: 2px;
   overflow: visible;
   box-sizing: border-box;
 }
