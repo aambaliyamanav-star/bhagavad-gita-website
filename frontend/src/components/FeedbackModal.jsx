@@ -38,6 +38,7 @@ export default function FeedbackModal() {
 
   const [isOpen, setIsOpen] = useState(false);
   const [rating, setRating] = useState(5);
+  const [existingRating, setExistingRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [hasRated, setHasRated] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
@@ -65,6 +66,7 @@ export default function FeedbackModal() {
     const token = localStorage.getItem("token");
     if (!token) {
       setHasRated(false);
+      setExistingRating(0);
       setIsLocked(false);
       return;
     }
@@ -88,10 +90,12 @@ export default function FeedbackModal() {
           if (data.success) {
             if (data.hasRated) {
               setHasRated(true);
+              setExistingRating(data.rating || 0);
               setRating(data.rating);
               setIsLocked(Boolean(data.isLocked || data.rating === 5));
             } else {
               setHasRated(false);
+              setExistingRating(0);
               setIsLocked(false);
               setRating(5);
             }
@@ -158,6 +162,11 @@ export default function FeedbackModal() {
 
     if (!isLocked && (!rating || rating < 1 || rating > 5)) {
       setError("કૃપા કરીને ૧ થી ૫ વચ્ચે સ્ટાર રેટિંગ પસંદ કરો.");
+      return;
+    }
+
+    if (!isLocked && hasRated && existingRating > 0 && rating < existingRating) {
+      setError(`અગાઉ ${existingRating} સ્ટાર આપેલ હોવાથી તેનાથી ઓછા સ્ટાર આપી શકાશે નહીં.`);
       return;
     }
 
@@ -353,34 +362,45 @@ export default function FeedbackModal() {
                         {isLocked
                           ? "આપનું ૫-સ્ટાર રેટિંગ (લૉક થયેલ છે)"
                           : hasRated
-                          ? "તમારું હાલનું રેટિંગ (તમે બદલી શકો છો)"
+                          ? "તમારું હાલનું રેટિંગ"
                           : "વેબસાઇટને સ્ટાર રેટિંગ આપો"}
                       </label>
                       {isLocked && <Lock size={14} color="#d97706" />}
                     </div>
 
                     <div className="feedback-stars-row">
-                      {[1, 2, 3, 4, 5].map((starNum) => (
-                        <button
-                          key={starNum}
-                          type="button"
-                          className={`feedback-star-btn ${isLocked ? "disabled-star" : ""}`}
-                          disabled={isLocked}
-                          onMouseEnter={() => !isLocked && setHoverRating(starNum)}
-                          onMouseLeave={() => !isLocked && setHoverRating(0)}
-                          onClick={() => !isLocked && setRating(starNum)}
-                          aria-label={`${starNum} સ્ટાર`}
-                          title={isLocked ? "૫-સ્ટાર રેટિંગ લૉક છે" : `${starNum} સ્ટાર પસંદ કરો`}
-                        >
-                          <Star
-                            size={32}
-                            strokeWidth={1.8}
-                            className={`feedback-star-icon ${
-                              starNum <= activeRating ? "filled" : "empty"
-                            }`}
-                          />
-                        </button>
-                      ))}
+                      {[1, 2, 3, 4, 5].map((starNum) => {
+                        const isLowerThanExisting = Boolean(hasRated && existingRating > 0 && starNum < existingRating);
+                        const isDisabled = isLocked || isLowerThanExisting;
+
+                        return (
+                          <button
+                            key={starNum}
+                            type="button"
+                            className={`feedback-star-btn ${isLocked ? "disabled-star" : ""} ${isLowerThanExisting ? "lower-disabled-star" : ""}`}
+                            disabled={isDisabled}
+                            onMouseEnter={() => !isDisabled && setHoverRating(starNum)}
+                            onMouseLeave={() => !isDisabled && setHoverRating(0)}
+                            onClick={() => !isDisabled && setRating(starNum)}
+                            aria-label={`${starNum} સ્ટાર`}
+                            title={
+                              isLocked
+                                ? "૫-સ્ટાર રેટિંગ લૉક છે"
+                                : isLowerThanExisting
+                                ? `અગાઉ ${existingRating} સ્ટાર આપેલ હોવાથી તેનાથી ઓછા સ્ટાર આપી શકાશે નહીં`
+                                : `${starNum} સ્ટાર પસંદ કરો`
+                            }
+                          >
+                            <Star
+                              size={32}
+                              strokeWidth={1.8}
+                              className={`feedback-star-icon ${
+                                starNum <= activeRating ? "filled" : "empty"
+                              }`}
+                            />
+                          </button>
+                        );
+                      })}
                     </div>
 
                     <div className="feedback-rating-descriptor">

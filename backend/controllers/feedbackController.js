@@ -96,10 +96,15 @@ const submitFeedback = async (req, res) => {
           // Already locked at 5 stars! Cannot be changed.
           isRatingLocked = true;
           finalRatingNum = 5;
+        } else if (finalRatingNum < existingRating.rating) {
+          // Cannot decrease rating! Keep existing rating
+          finalRatingNum = existingRating.rating;
         } else {
           // Update existing rating without creating a duplicate count!
           const oldRatingVal = existingRating.rating;
-          existingRating.previousRating = oldRatingVal;
+          if (finalRatingNum > oldRatingVal) {
+            existingRating.previousRating = oldRatingVal;
+          }
           existingRating.rating = finalRatingNum;
           existingRating.userName = name;
           existingRating.userEmail = email;
@@ -108,7 +113,7 @@ const submitFeedback = async (req, res) => {
             isRatingLocked = true;
           }
           await existingRating.save();
-          ratingUpdated = true;
+          ratingUpdated = finalRatingNum > oldRatingVal;
         }
       } else {
         // First-time rating for this user account
