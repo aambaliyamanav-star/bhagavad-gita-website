@@ -28,11 +28,10 @@ const FEATURES_DATA = [
     num: "01",
     category: "વાંચન & અધ્યયન",
     icon: BookOpen,
-    iconColor: "#2563eb",
-    bgGlow: "rgba(37, 99, 235, 0.16)",
+    iconColor: "#1a73e8",
+    bgGlow: "rgba(26, 115, 232, 0.12)",
     badge: "સંપૂર્ણ જ્ઞાન",
     title: "18 અધ્યાય અને 700 શ્લોક વાચન",
-    shortDesc: "મૂળ સંસ્કૃત શ્લોકો, અન્વય, શબ્દાર્થ અને સરળ ગુજરાતી અનુવાદ સાથે અધ્યયન.",
     description:
       "મૂળ સંસ્કૃત શ્લોકો, સચોટ અન્વય, શબ્દાર્થ, સરળ ગુજરાતી ભાવાર્થ અને તાત્પર્ય સાથે ઊંડાણપૂર્વક અભ્યાસ. વક્તા ઓળખ (શ્રીભગવાનુવાચ, અર્જુન ઉવાચ વગેરે) અને શ્લોક નેવિગેશન સુવિધા.",
     highlights: [
@@ -49,11 +48,10 @@ const FEATURES_DATA = [
     num: "02",
     category: "આધુનિક AI",
     icon: Brain,
-    iconColor: "#7c3aed",
-    bgGlow: "rgba(124, 58, 237, 0.16)",
+    iconColor: "#1a73e8",
+    bgGlow: "rgba(26, 115, 232, 0.12)",
     badge: "Gemini AI",
     title: "ગીતા AI આધ્યાત્મિક સહાયક",
-    shortDesc: "જીવનના પ્રશ્નો અને મૂંઝવણનું ગીતાના શ્લોકો મુજબ ત્વરિત AI સમાધાન.",
     description:
       "અત્યાધુનિક AI ટેકનોલોજી દ્વારા તમારા અંગત પ્રશ્નો, માનસિક મૂંઝવણો કે ધર્મ સંકટનું ભગવદ્ ગીતાના શ્લોકો અને શ્રીકૃષ્ણના ઉપદેશો આધારે તુરંત સચોટ સમાધાન.",
     highlights: [
@@ -70,11 +68,10 @@ const FEATURES_DATA = [
     num: "03",
     category: "જીવન વ્યવહાર",
     icon: Compass,
-    iconColor: "#d97706",
-    bgGlow: "rgba(217, 119, 6, 0.16)",
+    iconColor: "#1a73e8",
+    bgGlow: "rgba(26, 115, 232, 0.12)",
     badge: "કૃષ્ણ વાણી",
     title: "જીવન માર્ગદર્શન (Life Guidance)",
-    shortDesc: "તણાવ, ક્રોધ, સંબંધો અને કર્મયોગ માટે ગીતાજીના સર્વોત્તમ શ્લોકો.",
     description:
       "આજના આધુનિક જીવનની મુખ્ય સમસ્યાઓ જેવી કે તણાવ, ક્રોધ, સંબંધો, નિર્ણયશક્તિ અને કર્મયોગ માટે ગીતાજીના સર્વોત્તમ શ્લોકોનું વ્યવહારિક સંકલન.",
     highlights: [
@@ -91,11 +88,10 @@ const FEATURES_DATA = [
     num: "04",
     category: "જ્ઞાન કસોટી",
     icon: HelpCircle,
-    iconColor: "#0891b2",
-    bgGlow: "rgba(8, 145, 178, 0.16)",
+    iconColor: "#1a73e8",
+    bgGlow: "rgba(26, 115, 232, 0.12)",
     badge: "MCQ કસોટી",
     title: "ઇન્ટરેક્ટિવ ગીતા ક્વિઝ",
-    shortDesc: "અધ્યાયવાર બહુવિકલ્પી ક્વિઝ રમીને ગીતાજીના ગહન સિદ્ધાંતો શીખો.",
     description:
       "અધ્યાય વાઇઝ અને વિવિધ વિષયો પર રસપ્રદ બહુવિકલ્પી (MCQ) પ્રશ્નોત્તરી. રમતા રમતા ગીતાજીના ગહન સિદ્ધાંતો શીખો અને તમારો સ્કોર તપાસો.",
     highlights: [
@@ -112,11 +108,10 @@ const FEATURES_DATA = [
     num: "05",
     category: "સિદ્ધિઓ",
     icon: Award,
-    iconColor: "#ca8a04",
-    bgGlow: "rgba(202, 138, 4, 0.16)",
+    iconColor: "#1a73e8",
+    bgGlow: "rgba(26, 115, 232, 0.12)",
     badge: "ડિજિટલ બેજીસ",
     title: "ક્વિઝ અચીવમેન્ટ્સ અને બેજીસ",
-    shortDesc: "જ્ઞાનના સ્તર પ્રમાણે જિજ્ઞાસુ, સાધક, જ્ઞાનરત્ન જેવા બેજીસ અનલૉક કરો.",
     description:
       "જેમ જેમ તમે ક્વિઝ રમતા જશો અને શ્લોકો શીખતા જશો, તેમ તેમ તમને વિશેષ ડિજિટલ આધ્યાત્મિક સિદ્ધિ બેજીસ અને ટ્રોફીઝ પ્રાપ્ત થશે.",
     highlights: [
@@ -133,11 +128,10 @@ const FEATURES_DATA = [
     num: "06",
     category: "દૈનિક સ્વાધ્યાય",
     icon: Flame,
-    iconColor: "#dc2626",
-    bgGlow: "rgba(220, 38, 38, 0.16)",
+    iconColor: "#1a73e8",
+    bgGlow: "rgba(26, 115, 232, 0.12)",
     badge: "Daily Streak",
     title: "વાંચન પ્રગતિ ટ્રેકર અને સ્ટ્રીક્સ",
-    shortDesc: "દૈનિક Streak, વાંચેલા શ્લોકો અને અધ્યાયની ટકાવારીનો લાઈવ આલેખ.",
     description:
       "રોજિંદા ગીતા વાચનની ટેવ કેળવો. તમારી દૈનિક Streak (સતત કેટલા દિવસ વાંચ્યું), કેટલા શ્લોકો પૂર્ણ કર્યા અને કેટલા અધ્યાય બાકી છે તેનો લાઈવ આલેખ.",
     highlights: [
@@ -154,11 +148,10 @@ const FEATURES_DATA = [
     num: "07",
     category: "દૈનિક પ્રેરણા",
     icon: Sparkles,
-    iconColor: "#db2777",
-    bgGlow: "rgba(219, 39, 119, 0.16)",
+    iconColor: "#1a73e8",
+    bgGlow: "rgba(26, 115, 232, 0.12)",
     badge: "આજનો શ્લોક",
     title: "આજનો શ્લોક & સોશિયલ કાર્ડ શેરિંગ",
-    shortDesc: "રોજ સવારે નવો પ્રેરક શ્લોક અને HD ઇમેજ કાર્ડ બનાવી શેરિંગ સુવિધા.",
     description:
       "રોજ સવારે એક નવો પ્રેરણાદાયક શ્લોક, ગુજરાતી અર્થ અને આજના દિવસ માટેનો સંદેશ. વ્હોટ્સએપ કે સોશિયલ મીડિયા પર શેર કરવા માટે સુંદર HD કાર્ડ બનાવો.",
     highlights: [
@@ -175,11 +168,10 @@ const FEATURES_DATA = [
     num: "08",
     category: "અંગત સંગ્રહ",
     icon: Heart,
-    iconColor: "#e11d48",
-    bgGlow: "rgba(225, 29, 72, 0.16)",
+    iconColor: "#1a73e8",
+    bgGlow: "rgba(26, 115, 232, 0.12)",
     badge: "Bookmarks",
     title: "મનપસંદ શ્લોક (Bookmarks)",
-    shortDesc: "ગમતા શ્લોકોને એક જ ક્લિકમાં બુકમાર્ક કરી પર્સનલ લિસ્ટમાં સાચવો.",
     description:
       "જે શ્લોક તમને ખાસ ગમી જાય કે જીવનમાં માર્ગદર્શક લાગે તેને એક જ ક્લિકમાં બુકમાર્ક કરીને તમારા પર્સનલ કલેક્શનમાં સાચવો.",
     highlights: [
@@ -196,11 +188,10 @@ const FEATURES_DATA = [
     num: "09",
     category: "ઇતિહાસ",
     icon: Clock,
-    iconColor: "#475569",
-    bgGlow: "rgba(71, 85, 105, 0.16)",
+    iconColor: "#1a73e8",
+    bgGlow: "rgba(26, 115, 232, 0.12)",
     badge: "Cloud Sync",
     title: "વાંચન અને ક્વિઝ ઇતિહાસ",
-    shortDesc: "વાંચેલા શ્લોકો અને અગાઉ આપેલી ક્વિઝનો સંપૂર્ણ કાલક્રમિક રેકોર્ડ.",
     description:
       "તમે ક્યારે કયો શ્લોક વાંચ્યો અને ભૂતકાળમાં કઈ ક્વિઝ આપી હતી તેનો સંપૂર્ણ કાલક્રમિક ઇતિહાસ. કોઈપણ શ્લોક કે રિઝલ્ટ પર ફરી જવા માટે સીધો શોર્ટકટ.",
     highlights: [
@@ -217,11 +208,10 @@ const FEATURES_DATA = [
     num: "10",
     category: "સુગમ વાચન",
     icon: Sun,
-    iconColor: "#ea580c",
-    bgGlow: "rgba(234, 88, 12, 0.16)",
+    iconColor: "#1a73e8",
+    bgGlow: "rgba(26, 115, 232, 0.12)",
     badge: "થીમ્સ & ફૉન્ટ",
     title: "ડાર્ક & લાઇટ મોડ અને ફૉન્ટ કંટ્રોલ",
-    shortDesc: "આંખોને અનુકૂળ ડાર્ક/લાઇટ થીમ અને ફૉન્ટ સાઈઝ નાની-મોટી કરવાની સુવિધા.",
     description:
       "રાત્રિના સમયે આંખો પર તાણ ન પડે તે માટે રૉયલ ડાર્ક થીમ અને દિવસ માટે ક્લીન લાઇટ થીમ. સાથે ફૉન્ટ સાઈઝ નાના-મોટા કરવાની અનુકૂળતા.",
     highlights: [
@@ -238,11 +228,10 @@ const FEATURES_DATA = [
     num: "11",
     category: "યુઝર સંવાદ",
     icon: Star,
-    iconColor: "#d97706",
-    bgGlow: "rgba(217, 119, 6, 0.16)",
+    iconColor: "#1a73e8",
+    bgGlow: "rgba(26, 115, 232, 0.12)",
     badge: "૫-સ્ટાર રેટિંગ",
     title: "પ્રતિસાદ & 5-સ્ટાર રેટિંગ સિસ્ટમ",
-    shortDesc: "વપરાશકર્તાઓનો સીધો પ્રતિભાવ, અનુભવ અને સૂચનો આપવાની સરળ વ્યવસ્થા.",
     description:
       "આ પ્લેટફોર્મ તમને કેવું લાગ્યું તે અંગે તમારો કિંમતી અભિપ્રાય આપો. વપરાશકર્તાઓના ફીડબેકના આધારે અમે સતત નવી સુવિધાઓ ઉમેરીએ છીએ.",
     highlights: [
@@ -293,49 +282,20 @@ function About() {
 
       <div className="about-compact-container">
         {/* =====================================================
-            CENTERED TOP BAR: TITLE, SUBTITLE & STATS CHIPS
+            CENTERED TOP BAR: TITLE (CLEAN & COMPACT)
         ===================================================== */}
         <header className="compact-header-centered">
           <div className="compact-title-wrap">
             <Flower2 size={24} className="compact-logo-flower" />
             <h1>
               શ્રીમદ્ ભગવદ્ ગીતા <span className="title-sep">•</span>{" "}
-              <span className="gold-text">તમામ વિશેષતાઓ</span>
+              <span className="blue-title-text">તમામ વિશેષતાઓ</span>
             </h1>
-          </div>
-
-          <p className="compact-subtitle">
-            સનાતન દિવ્ય જ્ઞાન અને આધુનિક ટેક્નોલોજીનો અદ્ભુત સમન્વય
-          </p>
-
-          <div className="compact-stats-strip">
-            <div className="stat-chip">
-              <BookOpen size={14} className="chip-icon blue" />
-              <span>
-                <strong>18</strong> અધ્યાય
-              </span>
-            </div>
-            <div className="stat-chip">
-              <Sparkles size={14} className="chip-icon gold" />
-              <span>
-                <strong>700</strong> શ્લોક
-              </span>
-            </div>
-            <div className="stat-chip">
-              <Brain size={14} className="chip-icon purple" />
-              <span>
-                <strong>Gemini</strong> AI
-              </span>
-            </div>
-            <div className="stat-chip">
-              <ShieldCheck size={14} className="chip-icon green" />
-              <span>100% Ad-Free</span>
-            </div>
           </div>
         </header>
 
         {/* =====================================================
-            CENTERED GRID: 11 PROPER FEATURE BUTTONS
+            CENTERED GRID: 11 COMPACT FEATURE BUTTONS
         ===================================================== */}
         <section className="compact-grid-wrapper">
           <div className="features-centered-grid">
@@ -347,10 +307,6 @@ function About() {
                   type="button"
                   className="feature-btn-card"
                   onClick={() => setSelectedFeature(item)}
-                  style={{
-                    "--card-color": item.iconColor,
-                    "--card-glow": item.bgGlow,
-                  }}
                 >
                   <div className="card-top-row">
                     <span className="card-num-pill">{item.num}</span>
@@ -358,19 +314,12 @@ function About() {
                   </div>
 
                   <div className="card-main-content">
-                    <div
-                      className="card-icon-box"
-                      style={{
-                        color: item.iconColor,
-                        background: item.bgGlow,
-                      }}
-                    >
+                    <div className="card-icon-box">
                       <ItemIcon size={22} />
                     </div>
 
                     <div className="card-text-col">
                       <h3 className="card-title">{item.title}</h3>
-                      <p className="card-desc">{item.shortDesc}</p>
                     </div>
                   </div>
 
@@ -396,10 +345,6 @@ function About() {
           <div
             className="about-modal-box"
             onClick={(e) => e.stopPropagation()}
-            style={{
-              "--modal-color": selectedFeature.iconColor,
-              "--modal-glow": selectedFeature.bgGlow,
-            }}
           >
             {/* Modal Header */}
             <div className="modal-header">
@@ -424,15 +369,8 @@ function About() {
 
             {/* Modal Hero Row */}
             <div className="modal-hero-row">
-              <div
-                className="modal-icon-box"
-                style={{
-                  color: selectedFeature.iconColor,
-                  background: selectedFeature.bgGlow,
-                  borderColor: selectedFeature.iconColor,
-                }}
-              >
-                <selectedFeature.icon size={32} />
+              <div className="modal-icon-box">
+                <selectedFeature.icon size={30} />
               </div>
 
               <div className="modal-hero-text">
@@ -448,7 +386,6 @@ function About() {
                   <CheckCircle2
                     size={16}
                     className="modal-hl-check"
-                    style={{ color: selectedFeature.iconColor }}
                   />
                   <span>{hl}</span>
                 </div>
@@ -469,7 +406,6 @@ function About() {
                 <Link
                   to={selectedFeature.link}
                   className="modal-primary-btn"
-                  style={{ background: selectedFeature.iconColor }}
                   onClick={() => setSelectedFeature(null)}
                 >
                   <span>{selectedFeature.linkText}</span>
@@ -480,7 +416,6 @@ function About() {
                   type="button"
                   onClick={openAiAssistant}
                   className="modal-primary-btn"
-                  style={{ background: selectedFeature.iconColor }}
                 >
                   <Brain size={16} />
                   <span>{selectedFeature.linkText}</span>
@@ -490,7 +425,6 @@ function About() {
                   type="button"
                   onClick={openFeedback}
                   className="modal-primary-btn"
-                  style={{ background: selectedFeature.iconColor }}
                 >
                   <Star size={16} />
                   <span>{selectedFeature.linkText}</span>
