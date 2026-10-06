@@ -1,0 +1,15 @@
+name: Keep Render Server Awake
+
+on:
+  schedule:
+    # Runs every 14 minutes to prevent Render free instance from sleeping
+    - cron: '*/14 * * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Bhagavad Gita Backend
+        run: |
+          curl -sS --max-time 60 "https://bhagavad-gita-website.onrender.com/" || true

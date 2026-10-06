@@ -36,7 +36,7 @@ import QuizAchievements from "./pages/QuizAchievements.jsx";
 import GitaAIAssistant from "./components/GitaAIAssistant.jsx";
 import FeedbackModal from "./components/FeedbackModal.jsx";
 import { trackVisit } from "./utils/visitorTracker.js";
-import { recordWebsiteVisit } from "./utils/pushNotification.js";
+import { recordWebsiteVisit, syncPushSubscriptionWithBackend } from "./utils/pushNotification.js";
 
 // =====================================================
 // PROTECTED ROUTE COMPONENT
@@ -126,6 +126,7 @@ function AnimatedRoutes() {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
     trackVisit(location.pathname);
     recordWebsiteVisit(user);
+    syncPushSubscriptionWithBackend(user);
   }, [location.pathname, user]);
 
   return (

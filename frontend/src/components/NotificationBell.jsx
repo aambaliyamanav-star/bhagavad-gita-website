@@ -20,6 +20,7 @@ import {
   getExistingSubscription,
   subscribeUserToPush,
   unsubscribeUserFromPush,
+  syncPushSubscriptionWithBackend,
 } from "../utils/pushNotification.js";
 import "./NotificationBell.css";
 
@@ -54,6 +55,9 @@ export default function NotificationBell() {
     getExistingSubscription().then((sub) => {
       const active = !!sub && currentPerm === "granted";
       setIsSubscribed(active);
+      if (active) {
+        syncPushSubscriptionWithBackend(user);
+      }
 
       // If user has NOT turned on notifications and hasn't dismissed it in this visit:
       // Show the Welcome Popup on website open

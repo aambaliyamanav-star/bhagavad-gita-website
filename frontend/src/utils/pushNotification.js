@@ -197,6 +197,64 @@ export async function unsubscribeUserFromPush() {
   }
 }
 
+// Automatically sync push subscription with backend whenever user visits or logs in
+export async function syncPushSubscriptionWithBackend(user = null) {
+  if (!isPushNotificationSupported()) return;
+  if (getNotificationPermission() !== "granted") return;
+
+  try {
+    const registration = await registerServiceWorker();
+    if (!registration) return;
+
+    let subscription = await registration.pushManager.getSubscription();
+
+    // If permission is already granted in browser but subscription object is missing, auto-subscribe
+    if (!subscription) {
+      let publicKey = FALLBACK_VAPID_PUBLIC;
+      try {
+        const res = await apiCall("/api/notifications/public-key");
+        const data = await res.json();
+        if (data?.publicKey) publicKey = data.publicKey;
+      } catch (err) {
+        // fallback
+      }
+      const convertedVapidKey = urlBase64ToUint8Array(publicKey);
+      subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: convertedVapidKey,
+      });
+    }
+
+    if (subscription) {
+      const subJson = subscription.toJSON();
+      const endpoint = subscription.endpoint;
+      const keys = {
+        p256dh: subJson.keys?.p256dh,
+        auth: subJson.keys?.auth,
+      };
+
+      const role = user?.role === "admin" ? "admin" : "user";
+      const userId = user?._id || user?.id || localStorage.getItem("gita_registered_user_id") || null;
+
+      await apiCall("/api/notifications/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          endpoint,
+          keys,
+          role,
+          userId,
+        }),
+      });
+
+      localStorage.setItem("push_subscription_endpoint", endpoint);
+      console.log("🔔 Push notification device synced with userId:", userId);
+    }
+  } catch (err) {
+    console.debug("Push auto-sync error:", err);
+  }
+}
+
 // Record website visit (Called on App mount/visit)
 // Ensures users who open the site directly without clicking a notification
 // will NOT receive further daily reminders today!
