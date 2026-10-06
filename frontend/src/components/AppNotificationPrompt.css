@@ -132,7 +132,9 @@
 }
 
 .app-notif-badge {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   font-size: 11px;
   font-weight: 700;
   color: #1a73e8;
@@ -179,6 +181,9 @@
 }
 
 .schedule-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
   font-size: 11.5px;
   font-weight: 600;
   padding: 3px 8px;
