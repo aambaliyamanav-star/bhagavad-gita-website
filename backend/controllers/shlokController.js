@@ -472,20 +472,13 @@ const getChapterShlokas = async (
     // =====================================================
 
     if (!req.user) {
-      const isTodayParam = req.query.today === "true";
-      const requestedShlokNum = Number(req.query.todayShloka) || null;
-
       const publicShlokas =
         shlokas.map((shloka) => {
-          const isTodayRequested =
-            isTodayParam && requestedShlokNum && Number(shloka.shlokNumber) === requestedShlokNum;
-
-          // Shlok 1–5 OR Today's Shlok when requested → Full content
+          // Shlok 1–5 → Full content
           if (
             Number(
               shloka.shlokNumber
-            ) <= 5 ||
-            isTodayRequested
+            ) <= 5
           ) {
             return shloka;
           }

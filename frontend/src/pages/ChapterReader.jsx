@@ -257,11 +257,8 @@ useEffect(() => {
 const token =
   localStorage.getItem("token");
 
-const isToday = searchParams.get("today") === "true";
-const todayQuery = isToday && requestedShloka ? `?today=true&todayShloka=${requestedShloka}` : "";
-
 const response = await fetch(
-  `${API_URL}/chapter/${currentChapterNumber}${todayQuery}`,
+  `${API_URL}/chapter/${currentChapterNumber}`,
   {
     headers: token
       ? {
@@ -326,12 +323,9 @@ const response = await fetch(
         // =================================================
 
         if (requestedShloka) {
-          const isTodayShloka = searchParams.get("today") === "true";
-
           if (
             !user &&
-            requestedShloka > 5 &&
-            !isTodayShloka
+            requestedShloka > 5
           ) {
             const redirectPath = `/chapter/${currentChapterNumber}?shloka=${requestedShloka}`;
             const redirectMsg = `અધ્યાય ${currentChapterNumber} ના શ્લોક ${requestedShloka} વાંચવા માટે Login કરવું જરૂરી છે.`;
