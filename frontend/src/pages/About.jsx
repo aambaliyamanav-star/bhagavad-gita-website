@@ -202,7 +202,7 @@ function About() {
       description:
         "રોજિંદા ગીતા વાચનની ટેવ કેળવો. તમારી દૈનિક Streak (સતત કેટલા દિવસ વાંચ્યું), કેટલા શ્લોકો પૂર્ણ કર્યા અને કેટલા અધ્યાય બાકી છે તેનો લાઈવ આલેખ.",
       highlights: [
-        "દૈનિક સ્ટ્રીક કાઉન્ટર (Reading Streak 🔥)",
+        "દૈનિક સ્ટ્રીક કાઉન્ટર (Reading Streak)",
         "કુલ વાંચેલા શ્લોકો અને અધ્યાયની ટકાવારી",
         "દૈનિક વાચન ટાર્ગેટ અને પૂર્ણતા પ્રગતિ",
         "આધ્યાત્મિક શિસ્ત જાળવવામાં મદદરૂપ",
@@ -697,7 +697,9 @@ function About() {
             SPIRITUAL FOOTER PRANAM
         ===================================================== */}
         <div className="about-footer-pranam">
-          <span className="om-symbol">🕉️</span>
+          <div className="om-symbol-wrapper">
+            <Flower2 size={34} strokeWidth={1.8} className="om-symbol-flower spin-slow" />
+          </div>
           <p className="pranam-mantra">
             ॥ ॐ तत्सत् શ્રીકૃષ્ણાર્પણમસ્તુ ॥
           </p>
