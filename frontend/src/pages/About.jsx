@@ -286,7 +286,7 @@ function About() {
         ===================================================== */}
         <header className="compact-header-centered">
           <div className="compact-title-wrap">
-            <Flower2 size={24} className="compact-logo-flower" />
+            <Flower2 size={34} className="compact-logo-flower" />
             <h1>
               શ્રીમદ્ ભગવદ્ ગીતા <span className="title-sep">•</span>{" "}
               <span className="blue-title-text">તમામ વિશેષતાઓ</span>
