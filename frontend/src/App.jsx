@@ -36,6 +36,7 @@ import QuizAchievements from "./pages/QuizAchievements.jsx";
 import GitaAIAssistant from "./components/GitaAIAssistant.jsx";
 import FeedbackModal from "./components/FeedbackModal.jsx";
 import InstallPwaBanner from "./components/InstallPwaBanner.jsx";
+import AppNotificationPrompt from "./components/AppNotificationPrompt.jsx";
 import About from "./pages/About.jsx";
 import { trackVisit } from "./utils/visitorTracker.js";
 
@@ -411,6 +412,10 @@ function App() {
               PWA INSTALL BANNER / PROMPT
           ================================================= */}
           <InstallPwaBanner />
+          {/* =================================================
+              APP ONLY: 5x DAILY NOTIFICATIONS PROMPT
+          ================================================= */}
+          <AppNotificationPrompt />
         </BrowserRouter>
       </AuthProvider>
     </ThemeProvider>

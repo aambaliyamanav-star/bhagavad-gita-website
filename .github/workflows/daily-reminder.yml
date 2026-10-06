@@ -1,0 +1,26 @@
+name: Daily Gita Push Notifications (5 Times A Day)
+
+on:
+  schedule:
+    # 8:00 AM IST = 02:30 AM UTC
+    - cron: '30 2 * * *'
+    # 12:00 PM IST = 06:30 AM UTC
+    - cron: '30 6 * * *'
+    # 4:00 PM IST = 10:30 AM UTC
+    - cron: '30 10 * * *'
+    # 7:00 PM IST = 01:30 PM (13:30) UTC
+    - cron: '30 13 * * *'
+    # 10:00 PM IST = 04:30 PM (16:30) UTC
+    - cron: '30 16 * * *'
+  workflow_dispatch:
+
+jobs:
+  send-reminder:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Daily Gita Push Notification (5 Times A Day)
+        run: |
+          echo "Sending Daily Shloka Push Notification to App users..."
+          curl --retry 5 --retry-delay 10 --retry-all-errors --max-time 180 --connect-timeout 60 -sS -X GET "https://bhagavad-gita-website.onrender.com/api/notifications/trigger-daily-reminder"
+          echo ""
+          echo "Notification trigger completed."

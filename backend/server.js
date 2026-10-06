@@ -14,6 +14,9 @@ const readingTrackerRoutes = require("./routes/readingTrackerRoutes");
 const gitaAiRoutes = require("./routes/gitaAiRoutes");
 const visitorRoutes = require("./routes/visitorRoutes");
 const feedbackRoutes = require("./routes/feedbackRoutes");
+const notificationRoutes = require("./routes/notificationRoutes");
+const notificationController = require("./controllers/notificationController");
+const cron = require("node-cron");
 
 const app = express();
 
@@ -40,6 +43,41 @@ app.use("/api/reading-tracker", readingTrackerRoutes);
 app.use("/api/gita-ai", gitaAiRoutes);
 app.use("/api/visitors", visitorRoutes);
 app.use("/api/feedback", feedbackRoutes);
+app.use("/api/notifications", notificationRoutes);
+
+// =====================================================
+// PUSH NOTIFICATION CRON JOBS (5 TIMES A DAY)
+// 08:00 AM, 12:00 PM, 04:00 PM, 07:00 PM, 10:00 PM IST
+// Sends to App subscribers only!
+// =====================================================
+const reminderTimes = [
+  "0 8 * * *",   // 08:00 AM IST - પ્રભાત
+  "0 12 * * *",  // 12:00 PM IST - બપોર
+  "0 16 * * *",  // 04:00 PM IST - સાંજ
+  "0 19 * * *",  // 07:00 PM IST - સંધ્યા
+  "0 22 * * *",  // 10:00 PM IST - રાત્રિ
+];
+
+reminderTimes.forEach((scheduleTime) => {
+  cron.schedule(
+    scheduleTime,
+    async () => {
+      console.log(`⏰ [Cron ${scheduleTime}] Running 5x daily Gita reminder...`);
+      await notificationController.sendDailyReminder();
+    },
+    { timezone: "Asia/Kolkata" }
+  );
+});
+
+// Midnight reset (00:00 IST)
+cron.schedule(
+  "0 0 * * *",
+  async () => {
+    console.log("🌙 [Cron Midnight] Resetting daily notification counters...");
+    await notificationController.resetDailyCounters();
+  },
+  { timezone: "Asia/Kolkata" }
+);
 
 
 app.get("/", (req, res) => {
