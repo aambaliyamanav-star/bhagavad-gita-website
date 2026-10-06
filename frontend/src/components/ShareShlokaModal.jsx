@@ -7,7 +7,8 @@ import {
   Check,
   Sparkles,
   Palette,
-  MessageCircle
+  MessageCircle,
+  Link2,
 } from "lucide-react";
 import "./ShareShlokaModal.css";
 
@@ -677,7 +678,7 @@ export default function ShareShlokaModal({
 
       ctx.font = 'bold 38px "Noto Sans Gujarati", sans-serif';
       ctx.fillStyle = currentTheme.sanskritAccent;
-      ctx.fillText("✨ દિવ્ય સંદેશ / જીવન બોધ ✨", width / 2, currY + 12);
+      ctx.fillText("દિવ્ય સંદેશ / જીવન બોધ", width / 2, currY + 12);
       currY += msgTitleH;
 
       ctx.font = `bold ${msgFontSize}px "Noto Sans Gujarati", sans-serif`;
@@ -699,7 +700,7 @@ export default function ShareShlokaModal({
 
     // Sleek Website Link Pill (Professional & Prominent)
     const siteUrl = "bhagavad-gita-website-rk1v.vercel.app";
-    const pillText = `🔗 ${siteUrl}`;
+    const pillText = siteUrl;
     ctx.font = '600 18px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
     const pillMetrics = ctx.measureText(pillText);
     const pillW = Math.min(width - 220, pillMetrics.width + 48);
@@ -793,18 +794,18 @@ export default function ShareShlokaModal({
     );
     const messagePoints = extractMessagePoints(shlokaData.message);
 
-    let copyText = `॥ શ્રીમદ્ભગવદ્ગીતા ॥\n📌 અધ્યાય ${ch}${chName} • શ્લોક ${shl}\n\n`;
+    let copyText = `॥ શ્રીમદ્ભગવદ્ગીતા ॥\nઅધ્યાય ${ch}${chName} • શ્લોક ${shl}\n\n`;
     if (cleanSpeaker) {
-      copyText += `🎙️ ~ ${cleanSpeaker} ~\n\n`;
+      copyText += `~ ${cleanSpeaker} ~\n\n`;
     }
     if (cleanSanskrit) {
-      copyText += `🕉️ સંસ્કૃત શ્લોક:\n${cleanSanskrit}\n\n`;
+      copyText += `સંસ્કૃત શ્લોક:\n${cleanSanskrit}\n\n`;
     }
     if (cleanTranslation) {
-      copyText += `📖 ગુજરાતી ભાવાર્થ:\n${cleanTranslation}\n\n`;
+      copyText += `ગુજરાતી ભાવાર્થ:\n${cleanTranslation}\n\n`;
     }
     if (messagePoints && messagePoints.length > 0) {
-      copyText += `✨ દિવ્ય સંદેશ / જીવન બોધ:\n`;
+      copyText += `દિવ્ય સંદેશ / જીવન બોધ:\n`;
       messagePoints.forEach((point) => {
         let prefix = "• ";
         if (/^\d+[.)]/.test(point) || /^•/.test(point) || /^✦/.test(point)) {
@@ -814,7 +815,7 @@ export default function ShareShlokaModal({
       });
       copyText += `\n`;
     }
-    copyText += `🔗 https://bhagavad-gita-website-rk1v.vercel.app`;
+    copyText += `https://bhagavad-gita-website-rk1v.vercel.app`;
 
     navigator.clipboard.writeText(copyText);
     setCopied(true);
@@ -925,7 +926,8 @@ export default function ShareShlokaModal({
               className="share-preview-clickable-link"
               title="વેબસાઇટ પર સીધા જવા અહીં ક્લિક કરો"
             >
-              <span>🔗 bhagavad-gita-website-rk1v.vercel.app</span>
+              <Link2 size={15} style={{ display: "inline-block", verticalAlign: "middle", marginRight: "6px" }} />
+              <span>bhagavad-gita-website-rk1v.vercel.app</span>
             </a>
           </div>
 

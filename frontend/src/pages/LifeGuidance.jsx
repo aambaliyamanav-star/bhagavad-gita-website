@@ -15,7 +15,8 @@ import {
   Users,
   Sparkles,
   BookOpen,
-  ChevronRight
+  ChevronRight,
+  Lightbulb,
 } from "lucide-react";
 import "./LifeGuidance.css";
 
@@ -588,7 +589,7 @@ function LifeGuidance() {
                   className="lesson-header-tag"
                   style={{ color: currentTopic.color }}
                 >
-                  💡 વ્યવહારિક જીવનમાં ઉપયોગ:
+                  <Lightbulb size={16} style={{ display: "inline-block", verticalAlign: "middle", marginRight: "6px" }} /> વ્યવહારિક જીવનમાં ઉપયોગ:
                 </span>
                 <p>{shlok.lifeLesson}</p>
               </div>
