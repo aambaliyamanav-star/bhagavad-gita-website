@@ -141,3 +141,4 @@ export async function trackAppInstallOrOpen(isNewInstall = false) {
     console.debug("App tracking log failed:", err);
   }
 }
+

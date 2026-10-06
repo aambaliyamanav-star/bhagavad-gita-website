@@ -78,6 +78,9 @@ function Admin() {
   const [deletingFeedbackId, setDeletingFeedbackId] = useState(null);
   const [activeFeedbackModal, setActiveFeedbackModal] = useState(null);
 
+  // Active analytics popup modal: 'web' | 'app' | null
+  const [activeAnalyticsModal, setActiveAnalyticsModal] = useState(null);
+
   const navigate = useNavigate();
 
   const { logout } = useAuth();
@@ -326,6 +329,15 @@ function Admin() {
     fetchVisitorStats();
     fetchAppStats();
     fetchFeedbacks();
+
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setActiveAnalyticsModal(null);
+        setActiveFeedbackModal(null);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
   // =====================================================
@@ -633,33 +645,141 @@ function Admin() {
         )}
 
         {/* =================================================
-            WEBSITE VISITOR ANALYTICS SECTION
+            ANALYTICS HUB: 2 BUTTONS (WEB & APP POPUPS)
+            Opens detailed analytics in centered popups
         ================================================= */}
-        <section className="visitor-analytics-section" aria-label="Website Visitors">
-          <div className="visitor-section-header">
-            <div className="visitor-title-wrap">
-              <div className="visitor-header-icon-box">
-                <Activity size={24} className="visitor-activity-icon" />
-              </div>
-              <div>
-                <h2>વેબસાઇટ મુલાકાતીઓ (Website Visitors)</h2>
+        <section className="admin-analytics-hub-section" aria-label="Analytics Hub">
+          <div className="analytics-hub-card">
+            <div className="analytics-hub-header">
+              <div className="visitor-title-wrap">
+                <div className="visitor-header-icon-box" style={{ background: "rgba(37, 99, 235, 0.12)", color: "#2563eb" }}>
+                  <Activity size={24} className="visitor-activity-icon" />
+                </div>
+                <div>
+                  <h2>📊 એનાલિટિક્સ અને યુઝર રિપોર્ટ્સ (Analytics & Reports)</h2>
+                  <span className="v-header-sub">
+                    વેબસાઇટ મુલાકાતીઓ અથવા એપ ઇન્સ્ટોલેશનની સંપૂર્ણ માહિતી જોવા માટે નીચેના બટન પર ક્લિક કરો
+                  </span>
+                </div>
               </div>
             </div>
 
-            <button
-              type="button"
-              className="visitor-refresh-btn"
-              onClick={() => fetchVisitorStats(true)}
-              disabled={refreshingVisitors || loadingVisitors}
-              title="વિઝિટર ડેટા રિફ્રેશ કરો"
-            >
-              <RefreshCw
-                size={16}
-                className={refreshingVisitors ? "spinning-icon" : ""}
-              />
-              <span>{refreshingVisitors ? "રિફ્રેશિંગ..." : "રિફ્રેશ"}</span>
-            </button>
+            <div className="analytics-hub-buttons-grid">
+              {/* BUTTON 1: WEBSITE ANALYTICS POPUP */}
+              <button
+                type="button"
+                className="analytics-hub-btn web-hub-btn"
+                onClick={() => setActiveAnalyticsModal("web")}
+              >
+                <div className="hub-btn-left">
+                  <div className="hub-btn-icon-box web-icon-box">
+                    <Globe size={28} />
+                  </div>
+                  <div className="hub-btn-text">
+                    <div className="hub-btn-title-row">
+                      <h4>🌐 વેબસાઇટ મુલાકાતીઓ (Web Visitors)</h4>
+                      <span className="hub-btn-pill web-pill">
+                        {visitorStats?.totalVisits !== undefined
+                          ? `${visitorStats.totalVisits.toLocaleString()} મુલાકાતો`
+                          : "ડેટા જુઓ"}
+                      </span>
+                    </div>
+                    <p className="hub-btn-description">
+                      આજની મુલાકાતો: <strong>{visitorStats?.todayVisits || 0}</strong> • ટોપ પેજ, ડિવાઇસ અને બ્રાઉઝર એનાલિટિક્સ
+                    </p>
+                  </div>
+                </div>
+                <div className="hub-btn-cta">
+                  <span>વિગતો જુઓ</span>
+                  <ArrowRight size={18} />
+                </div>
+              </button>
+
+              {/* BUTTON 2: APP ANALYTICS POPUP */}
+              <button
+                type="button"
+                className="analytics-hub-btn app-hub-btn"
+                onClick={() => setActiveAnalyticsModal("app")}
+              >
+                <div className="hub-btn-left">
+                  <div className="hub-btn-icon-box app-icon-box">
+                    <Smartphone size={28} />
+                  </div>
+                  <div className="hub-btn-text">
+                    <div className="hub-btn-title-row">
+                      <h4>📱 એપ ઇન્સ્ટોલેશન અને વપરાશ (App Analytics)</h4>
+                      <span className="hub-btn-pill app-pill">
+                        {appStats?.totalInstalls !== undefined
+                          ? `${appStats.totalInstalls.toLocaleString()} ઇન્સ્ટોલ્સ`
+                          : "ડેટા જુઓ"}
+                      </span>
+                    </div>
+                    <p className="hub-btn-description">
+                      આજના ઇન્સ્ટોલ: <strong>{appStats?.todayInstalls || 0}</strong> • નોટિફિકેશન: <strong>{appStats?.notificationSubscribers || 0}</strong> • પ્લેટફોર્મ વિગતો
+                    </p>
+                  </div>
+                </div>
+                <div className="hub-btn-cta">
+                  <span>વિગતો જુઓ</span>
+                  <ArrowRight size={18} />
+                </div>
+              </button>
+            </div>
           </div>
+        </section>
+
+        {/* =================================================
+            WEBSITE ANALYTICS POPUP MODAL (CENTERED POPUP)
+        ================================================= */}
+        {activeAnalyticsModal === "web" && typeof document !== "undefined" && createPortal(
+          <div
+            className="admin-modal-overlay"
+            onClick={() => setActiveAnalyticsModal(null)}
+          >
+            <div
+              className="admin-modal-content analytics-detail-modal"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="admin-modal-header analytics-modal-header">
+                <div className="visitor-title-wrap">
+                  <div className="visitor-header-icon-box">
+                    <Globe size={24} className="visitor-activity-icon" />
+                  </div>
+                  <div>
+                    <h2>🌐 વેબસાઇટ મુલાકાતીઓ (Website Visitors)</h2>
+                    <span className="v-header-sub">
+                      કુલ મુલાકાતો, મુખ્ય પેજીસ, ડિવાઇસ અને બ્રાઉઝર એનાલિટિક્સ
+                    </span>
+                  </div>
+                </div>
+
+                <div className="analytics-modal-header-actions">
+                  <button
+                    type="button"
+                    className="visitor-refresh-btn"
+                    onClick={() => fetchVisitorStats(true)}
+                    disabled={refreshingVisitors || loadingVisitors}
+                    title="વિઝિટર ડેટા રિફ્રેશ કરો"
+                  >
+                    <RefreshCw
+                      size={16}
+                      className={refreshingVisitors ? "spinning-icon" : ""}
+                    />
+                    <span>{refreshingVisitors ? "રિફ્રેશિંગ..." : "રિફ્રેશ"}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className="admin-modal-close-btn"
+                    onClick={() => setActiveAnalyticsModal(null)}
+                    title="બંધ કરો"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+              </div>
+
+              <div className="admin-modal-body analytics-modal-body">
 
           {loadingVisitors ? (
             <div className="visitor-loading-state">
@@ -959,39 +1079,77 @@ function Admin() {
               )}
             </>
           )}
-        </section>
-
-        {/* =================================================
-            APP INSTALLATION & USAGE ANALYTICS SECTION
-        ================================================= */}
-        <section className="visitor-analytics-section app-analytics-section" aria-label="App Installations">
-          <div className="visitor-section-header">
-            <div className="visitor-title-wrap">
-              <div className="visitor-header-icon-box app-header-icon-box">
-                <Smartphone size={24} className="visitor-activity-icon" />
               </div>
-              <div>
-                <h2>📱 એપ ઇન્સ્ટોલેશન અને વપરાશકર્તા એનાલિટિક્સ (App Analytics)</h2>
-                <span className="v-header-sub">
-                  ગીતા એપ ઇન્સ્ટોલ કરનાર ભક્તો, દૈનિક નોટિફિકેશન અને ડિવાઇસ પ્રવૃત્તિ
+
+              <div className="admin-modal-footer analytics-modal-footer">
+                <span className="analytics-modal-footer-hint">
+                  લાઈવ ડેટા • છેલ્લી માહિતી: {new Date().toLocaleTimeString("gu-IN")}
                 </span>
+                <button
+                  type="button"
+                  className="admin-modal-close-action"
+                  onClick={() => setActiveAnalyticsModal(null)}
+                >
+                  બંધ કરો
+                </button>
               </div>
             </div>
+          </div>,
+          document.body
+        )}
 
-            <button
-              type="button"
-              className="visitor-refresh-btn"
-              onClick={() => fetchAppStats(true)}
-              disabled={refreshingAppStats || loadingAppStats}
-              title="એપ એનાલિટિક્સ રિફ્રેશ કરો"
+        {/* =================================================
+            APP ANALYTICS POPUP MODAL (CENTERED POPUP)
+        ================================================= */}
+        {activeAnalyticsModal === "app" && typeof document !== "undefined" && createPortal(
+          <div
+            className="admin-modal-overlay"
+            onClick={() => setActiveAnalyticsModal(null)}
+          >
+            <div
+              className="admin-modal-content analytics-detail-modal"
+              onClick={(e) => e.stopPropagation()}
             >
-              <RefreshCw
-                size={16}
-                className={refreshingAppStats ? "spinning-icon" : ""}
-              />
-              <span>{refreshingAppStats ? "રિફ્રેશિંગ..." : "રિફ્રેશ"}</span>
-            </button>
-          </div>
+              <div className="admin-modal-header analytics-modal-header">
+                <div className="visitor-title-wrap">
+                  <div className="visitor-header-icon-box app-header-icon-box">
+                    <Smartphone size={24} className="visitor-activity-icon" />
+                  </div>
+                  <div>
+                    <h2>📱 એપ ઇન્સ્ટોલેશન અને વપરાશકર્તા એનાલિટિક્સ (App Analytics)</h2>
+                    <span className="v-header-sub">
+                      ગીતા એપ ઇન્સ્ટોલ કરનાર ભક્તો, દૈનિક નોટિફિકેશન અને ડિવાઇસ પ્રવૃત્તિ
+                    </span>
+                  </div>
+                </div>
+
+                <div className="analytics-modal-header-actions">
+                  <button
+                    type="button"
+                    className="visitor-refresh-btn"
+                    onClick={() => fetchAppStats(true)}
+                    disabled={refreshingAppStats || loadingAppStats}
+                    title="એપ એનાલિટિક્સ રિફ્રેશ કરો"
+                  >
+                    <RefreshCw
+                      size={16}
+                      className={refreshingAppStats ? "spinning-icon" : ""}
+                    />
+                    <span>{refreshingAppStats ? "રિફ્રેશિંગ..." : "રિફ્રેશ"}</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    className="admin-modal-close-btn"
+                    onClick={() => setActiveAnalyticsModal(null)}
+                    title="બંધ કરો"
+                  >
+                    <X size={20} />
+                  </button>
+                </div>
+              </div>
+
+              <div className="admin-modal-body analytics-modal-body">
 
           {loadingAppStats && !appStats ? (
             <div className="v-loading-box">
@@ -1305,7 +1463,24 @@ function Admin() {
               )}
             </>
           )}
-        </section>
+        </div>
+
+              <div className="admin-modal-footer analytics-modal-footer">
+                <span className="analytics-modal-footer-hint">
+                  લાઈવ ડેટા • છેલ્લી માહિતી: {new Date().toLocaleTimeString("gu-IN")}
+                </span>
+                <button
+                  type="button"
+                  className="admin-modal-close-action"
+                  onClick={() => setActiveAnalyticsModal(null)}
+                >
+                  બંધ કરો
+                </button>
+              </div>
+            </div>
+          </div>,
+          document.body
+        )}
 
         {/* =================================================
             USER FEEDBACKS & STAR RATINGS SECTION
