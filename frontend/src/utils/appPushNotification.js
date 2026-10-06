@@ -102,6 +102,12 @@ export async function enableAppNotifications(user = null) {
     });
 
     localStorage.setItem("app_push_endpoint", endpoint);
+    localStorage.removeItem("app_notif_disabled_by_user");
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(
+        new CustomEvent("app-notification-status-changed", { detail: { enabled: true } })
+      );
+    }
     console.log("🔔 Bhagavad Gita App Push Notifications registered (5/day)!");
     return { success: true };
   } catch (err) {
@@ -114,6 +120,7 @@ export async function enableAppNotifications(user = null) {
 export async function syncAppSubscription(user = null) {
   if (!isAppPushSupported()) return;
   if (Notification.permission !== "granted") return;
+  if (localStorage.getItem("app_notif_disabled_by_user") === "true") return;
 
   try {
     const registration = await navigator.serviceWorker.ready;
@@ -190,5 +197,46 @@ export async function recordAppAction(action, user = null) {
     }
   } catch (err) {
     console.debug("Record app action error:", err);
+  }
+}
+
+// Check if notifications are currently enabled
+export function isAppNotificationEnabled() {
+  if (typeof window === "undefined" || !("Notification" in window)) return false;
+  if (localStorage.getItem("app_notif_disabled_by_user") === "true") return false;
+  return Notification.permission === "granted";
+}
+
+// Unsubscribe from app notifications
+export async function unsubscribeAppNotifications() {
+  try {
+    const endpoint = localStorage.getItem("app_push_endpoint");
+    if (endpoint) {
+      await fetch(`${getApiBase()}/api/notifications/unsubscribe`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ endpoint }),
+      });
+    }
+
+    if ("serviceWorker" in navigator) {
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.getSubscription();
+      if (subscription) {
+        await subscription.unsubscribe();
+      }
+    }
+
+    localStorage.removeItem("app_push_endpoint");
+    localStorage.setItem("app_notif_disabled_by_user", "true");
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(
+        new CustomEvent("app-notification-status-changed", { detail: { enabled: false } })
+      );
+    }
+    return { success: true };
+  } catch (err) {
+    console.error("Failed to unsubscribe app notifications:", err);
+    return { success: false, error: err };
   }
 }

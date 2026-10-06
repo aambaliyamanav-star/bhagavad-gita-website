@@ -1,19 +1,9 @@
 import { useState, useEffect } from "react";
-import {
-  Bell,
-  Sparkles,
-  X,
-  Check,
-  Smartphone,
-  Sunrise,
-  Sun,
-  Clock,
-  Sunset,
-  Moon,
-} from "lucide-react";
+import { Bell, Sparkles, X, Check } from "lucide-react";
 import { checkIsInstalled } from "../utils/pwaManager.js";
 import {
   isAppPushSupported,
+  isAppNotificationEnabled,
   enableAppNotifications,
   syncAppSubscription,
   recordAppOpen,
@@ -41,30 +31,42 @@ function AppNotificationPrompt() {
     // Record open in app for daily goal tracking
     recordAppOpen(user);
 
-    // 3. If permission already granted, auto-sync and skip prompt
-    if (Notification.permission === "granted") {
+    // 3. If notifications already enabled, auto-sync and skip prompt
+    if (isAppNotificationEnabled()) {
       syncAppSubscription(user);
       return;
     }
 
-    // 4. If permission denied, skip
+    // 4. If permission denied in browser/system settings, skip
     if (Notification.permission === "denied") {
       return;
     }
 
-    // 5. If dismissed in the last 7 days, skip
-    const dismissedUntil = localStorage.getItem("app_notif_prompt_dismissed_until");
-    if (dismissedUntil && Date.now() < Number(dismissedUntil)) {
+    // 5. If dismissed in the current session, don't nag repeatedly on every page navigation
+    if (sessionStorage.getItem("app_notif_dismissed_session") === "true") {
       return;
     }
 
-    // Gentle 2-second delay after opening the app
+    // Gentle 1.5-second delay after opening the app to remind user
     const timer = setTimeout(() => {
       setShowPrompt(true);
-    }, 2000);
+    }, 1500);
 
     return () => clearTimeout(timer);
   }, [user]);
+
+  // Listen for manual changes from Navbar toggle
+  useEffect(() => {
+    const handleStatusChanged = (e) => {
+      if (e.detail?.enabled) {
+        setShowPrompt(false);
+      }
+    };
+    window.addEventListener("app-notification-status-changed", handleStatusChanged);
+    return () => {
+      window.removeEventListener("app-notification-status-changed", handleStatusChanged);
+    };
+  }, []);
 
   const handleEnable = async () => {
     setLoading(true);
@@ -75,7 +77,7 @@ function AppNotificationPrompt() {
       setSuccess(true);
       setTimeout(() => {
         setShowPrompt(false);
-      }, 1800);
+      }, 1500);
     } else {
       setShowPrompt(false);
     }
@@ -83,11 +85,8 @@ function AppNotificationPrompt() {
 
   const handleDismiss = () => {
     setShowPrompt(false);
-    // Dismiss for 5 days
-    localStorage.setItem(
-      "app_notif_prompt_dismissed_until",
-      String(Date.now() + 5 * 24 * 60 * 60 * 1000)
-    );
+    // Dismiss only for this active browsing session; reminds them on next app open
+    sessionStorage.setItem("app_notif_dismissed_session", "true");
   };
 
   if (!showPrompt) return null;
@@ -116,38 +115,17 @@ function AppNotificationPrompt() {
               <Check size={22} strokeWidth={3} />
             </div>
             <h3>નોટિફિકેશન સક્રિય થઈ ગયા છે!</h3>
-            <p>હવે તમને દિવસમાં ૫ વખત પવિત્ર ગીતા પ્રેરણા મળશે.</p>
+            <p>હવે તમને પવિત્ર ગીતા પ્રેરણા મળશે. 🙏</p>
           </div>
         ) : (
           <>
             <div className="app-notif-header">
-              <span className="app-notif-badge">
-                <Smartphone size={12} strokeWidth={2.2} /> એપ સ્પેશિયલ
-              </span>
               <h3 className="app-notif-title">
-                દૈનિક ગીતા નોટિફિકેશન (૫ વખત)
+                દૈનિક ગીતા નોટિફિકેશન
               </h3>
               <p className="app-notif-sub">
-                દિવસમાં ૫ વખત (સવાર, બપોર, સાંજ અને રાત્રિ) ભગવાન શ્રીકૃષ્ણના પવિત્ર શ્લોકો, અર્થ અને પ્રેરણા મેળવો.
+                દરરોજ પવિત્ર શ્લોક અને પ્રેરણા મેળવો.
               </p>
-            </div>
-
-            <div className="app-notif-schedule-pills">
-              <span className="schedule-pill">
-                <Sunrise size={13} strokeWidth={2} /> 08:00 AM
-              </span>
-              <span className="schedule-pill">
-                <Sun size={13} strokeWidth={2} /> 12:00 PM
-              </span>
-              <span className="schedule-pill">
-                <Clock size={13} strokeWidth={2} /> 04:00 PM
-              </span>
-              <span className="schedule-pill">
-                <Sunset size={13} strokeWidth={2} /> 07:00 PM
-              </span>
-              <span className="schedule-pill">
-                <Moon size={13} strokeWidth={2} /> 10:00 PM
-              </span>
             </div>
 
             <div className="app-notif-actions">
@@ -158,7 +136,7 @@ function AppNotificationPrompt() {
                 disabled={loading}
               >
                 <Bell size={16} />
-                <span>{loading ? "ચાલુ થઈ રહ્યું છે..." : "હા, નોટિફિકેશન ચાલુ કરો"}</span>
+                <span>{loading ? "ચાલુ થઈ રહ્યું છે..." : "ચાલુ કરો"}</span>
               </button>
 
               <button

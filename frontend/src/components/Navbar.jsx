@@ -27,7 +27,7 @@ import {
   Star,
   Info,
   Download,
-  Smartphone,
+  Bell,
 } from "lucide-react";
 
 import { useAuth } from "../context/AuthContext.jsx";
@@ -37,6 +37,11 @@ import {
   checkIsInstalled,
   onInstallPromptChange,
 } from "../utils/pwaManager.js";
+import {
+  isAppNotificationEnabled,
+  unsubscribeAppNotifications,
+  enableAppNotifications,
+} from "../utils/appPushNotification.js";
 
 import "./Navbar.css";
 
@@ -81,6 +86,44 @@ function Navbar() {
     });
     return () => unsubscribe();
   }, []);
+
+  // =====================================================
+  // APP NOTIFICATIONS STATE (INSIDE INSTALLED APP)
+  // =====================================================
+
+  const [notifEnabled, setNotifEnabled] = useState(false);
+  const [notifLoading, setNotifLoading] = useState(false);
+
+  useEffect(() => {
+    if (isAppInstalled) {
+      setNotifEnabled(isAppNotificationEnabled());
+    }
+    const handleNotifStatus = (e) => {
+      setNotifEnabled(Boolean(e.detail?.enabled));
+    };
+    window.addEventListener("app-notification-status-changed", handleNotifStatus);
+    return () => {
+      window.removeEventListener("app-notification-status-changed", handleNotifStatus);
+    };
+  }, [isAppInstalled]);
+
+  const handleToggleNotification = async () => {
+    if (notifLoading) return;
+    setNotifLoading(true);
+    try {
+      if (notifEnabled) {
+        await unsubscribeAppNotifications();
+        setNotifEnabled(false);
+      } else {
+        const res = await enableAppNotifications(user);
+        if (res.success) {
+          setNotifEnabled(true);
+        }
+      }
+    } finally {
+      setNotifLoading(false);
+    }
+  };
 
   // =====================================================
   // NAVIGATION HISTORY (ATOMIC STATE & REF)
@@ -1042,7 +1085,7 @@ function Navbar() {
               }}
             >
               <span className="side-menu-icon" style={{ color: "#10b981" }}>
-                <Smartphone size={20} strokeWidth={1.8} />
+                <Download size={20} strokeWidth={1.8} />
               </span>
 
               <span className="side-menu-text">
@@ -1053,6 +1096,46 @@ function Navbar() {
 
               <span className="side-menu-arrow">
                 <ChevronRight size={18} strokeWidth={2} />
+              </span>
+            </button>
+          )}
+
+          {/* =================================================
+              NOTIFICATION TOGGLE (Inside App Only)
+          ================================================= */}
+
+          {isAppInstalled && (
+            <button
+              type="button"
+              className="side-menu-theme side-menu-notif-btn"
+              onClick={handleToggleNotification}
+              disabled={notifLoading}
+              aria-label="Toggle App Notifications"
+            >
+              <span className="theme-left">
+                <span
+                  className="theme-icon"
+                  style={{
+                    background: notifEnabled
+                      ? "rgba(16, 185, 129, 0.15)"
+                      : "rgba(148, 163, 184, 0.15)",
+                    color: notifEnabled ? "#10b981" : "#64748b",
+                  }}
+                >
+                  <Bell size={18} strokeWidth={1.8} />
+                </span>
+
+                <span className="side-menu-text">
+                  <strong>
+                    {notifEnabled ? "નોટિફિકેશન (ચાલુ)" : "નોટિફિકેશન (બંધ)"}
+                  </strong>
+                </span>
+              </span>
+
+              <span className={`theme-switch ${notifEnabled ? "active-notif" : ""}`}>
+                <span
+                  className={`theme-switch-dot ${notifEnabled ? "active-notif" : ""}`}
+                />
               </span>
             </button>
           )}
