@@ -1471,8 +1471,17 @@ body {
   transition: transform 0.25s ease;
 }
 
-.theme-switch-dot.dark {
+.theme-switch-dot.dark,
+.theme-switch-dot.active-notif {
   transform: translateX(11px);
+}
+
+.theme-switch.active-notif {
+  background: #10b981;
+}
+
+[data-theme="dark"] .theme-switch.active-notif {
+  background: #10b981;
 }
 
 
@@ -2220,8 +2229,13 @@ a:focus-visible {
   height: 11px !important;
 }
 
-.theme-switch-dot.dark {
+.theme-switch-dot.dark,
+.theme-switch-dot.active-notif {
   transform: translateX(11px) !important;
+}
+
+.theme-switch.active-notif {
+  background: #10b981 !important;
 }
 
 /* Compact Logout Button */
