@@ -80,7 +80,6 @@ function Admin() {
 
   // Active analytics popup modal: 'web' | 'app' | null
   const [activeAnalyticsModal, setActiveAnalyticsModal] = useState(null);
-  const [deletingInstallId, setDeletingInstallId] = useState(null);
 
   const navigate = useNavigate();
 
@@ -134,44 +133,6 @@ function Admin() {
     } finally {
       setLoadingAppStats(false);
       setRefreshingAppStats(false);
-    }
-  };
-
-  const handleDeleteInstallation = async (installId) => {
-    if (!window.confirm("શું તમે આ ડિવાઇસને ઇન્સ્ટોલેશન લિસ્ટમાંથી દૂર કરવા માંગો છો?")) return;
-    const token = localStorage.getItem("token");
-    if (!token) return;
-
-    setDeletingInstallId(installId);
-    try {
-      const isLocal =
-        typeof window !== "undefined" &&
-        (window.location.hostname === "localhost" ||
-          window.location.hostname === "127.0.0.1");
-
-      const urls = isLocal
-        ? [
-            `http://localhost:5000/api/app-analytics/installation/${installId}`,
-            `https://bhagavad-gita-website.onrender.com/api/app-analytics/installation/${installId}`,
-          ]
-        : [`https://bhagavad-gita-website.onrender.com/api/app-analytics/installation/${installId}`];
-
-      for (const url of urls) {
-        try {
-          const res = await fetch(url, {
-            method: "DELETE",
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          if (res.ok) break;
-        } catch {
-          // try next url
-        }
-      }
-      await fetchAppStats(true);
-    } catch (err) {
-      console.error("Delete installation error:", err);
-    } finally {
-      setDeletingInstallId(null);
     }
   };
 
@@ -687,83 +648,66 @@ function Admin() {
             ANALYTICS HUB: 2 BUTTONS (WEB & APP POPUPS)
             Opens detailed analytics in centered popups
         ================================================= */}
-        <section className="admin-analytics-hub-section" aria-label="Analytics Hub">
-          <div className="analytics-hub-card">
-            <div className="analytics-hub-header">
-              <div className="visitor-title-wrap">
-                <div className="visitor-header-icon-box" style={{ background: "rgba(37, 99, 235, 0.12)", color: "#2563eb" }}>
-                  <Activity size={24} className="visitor-activity-icon" />
-                </div>
-                <div>
-                  <h2>📊 એનાલિટિક્સ અને યુઝર રિપોર્ટ્સ (Analytics & Reports)</h2>
-                  <span className="v-header-sub">
-                    વેબસાઇટ મુલાકાતીઓ અથવા એપ ઇન્સ્ટોલેશનની સંપૂર્ણ માહિતી જોવા માટે નીચેના બટન પર ક્લિક કરો
-                  </span>
-                </div>
+        {/* =================================================
+            ANALYTICS HUB: 2 BUTTONS (WEB & APP POPUPS)
+            Opens detailed analytics in centered popups
+        ================================================= */}
+        <section className="feedback-section-box analytics-hub-section-box" aria-label="Analytics Hub">
+          <div className="feedback-section-header analytics-hub-section-header">
+            <div className="visitor-title-wrap">
+              <div className="visitor-header-icon-box" style={{ background: "rgba(37, 99, 235, 0.12)", color: "#2563eb" }}>
+                <Activity size={24} className="visitor-activity-icon" />
+              </div>
+              <div>
+                <h2>એનાલિટિક્સ અને યુઝર રિપોર્ટ્સ (Analytics & Reports)</h2>
               </div>
             </div>
+          </div>
 
-            <div className="analytics-hub-buttons-grid">
-              {/* BUTTON 1: WEBSITE ANALYTICS POPUP */}
-              <button
-                type="button"
-                className="analytics-hub-btn web-hub-btn"
-                onClick={() => setActiveAnalyticsModal("web")}
-              >
-                <div className="hub-btn-left">
-                  <div className="hub-btn-icon-box web-icon-box">
-                    <Globe size={28} />
-                  </div>
-                  <div className="hub-btn-text">
-                    <div className="hub-btn-title-row">
-                      <h4>🌐 વેબસાઇટ મુલાકાતીઓ (Web Visitors)</h4>
-                      <span className="hub-btn-pill web-pill">
-                        {visitorStats?.totalVisits !== undefined
-                          ? `${visitorStats.totalVisits.toLocaleString()} મુલાકાતો`
-                          : "ડેટા જુઓ"}
-                      </span>
-                    </div>
-                    <p className="hub-btn-description">
-                      આજની મુલાકાતો: <strong>{visitorStats?.todayVisits || 0}</strong> • ટોપ પેજ, ડિવાઇસ અને બ્રાઉઝર એનાલિટિક્સ
-                    </p>
-                  </div>
-                </div>
-                <div className="hub-btn-cta">
-                  <span>વિગતો જુઓ</span>
-                  <ArrowRight size={18} />
-                </div>
-              </button>
+          <div className="analytics-hub-buttons-grid">
+            {/* BUTTON 1: WEBSITE ANALYTICS POPUP */}
+            <button
+              type="button"
+              className="management-card analytics-hub-card-btn"
+              onClick={() => setActiveAnalyticsModal("web")}
+            >
+              <div className="management-icon">
+                <Globe size={40} color="#175bb5" strokeWidth={1.6} />
+              </div>
+              <div className="management-content">
+                <h2>વેબસાઇટ મુલાકાતીઓ</h2>
+                <p>
+                  {visitorStats?.totalVisits !== undefined
+                    ? `${visitorStats.totalVisits.toLocaleString()} મુલાકાતો`
+                    : "ડેટા જુઓ"}
+                </p>
+              </div>
+              <div className="management-arrow">
+                <ArrowRight size={22} className="management-arrow-icon" />
+              </div>
+            </button>
 
-              {/* BUTTON 2: APP ANALYTICS POPUP */}
-              <button
-                type="button"
-                className="analytics-hub-btn app-hub-btn"
-                onClick={() => setActiveAnalyticsModal("app")}
-              >
-                <div className="hub-btn-left">
-                  <div className="hub-btn-icon-box app-icon-box">
-                    <Smartphone size={28} />
-                  </div>
-                  <div className="hub-btn-text">
-                    <div className="hub-btn-title-row">
-                      <h4>📱 એપ ઇન્સ્ટોલેશન અને વપરાશ (App Analytics)</h4>
-                      <span className="hub-btn-pill app-pill">
-                        {appStats?.totalInstalls !== undefined
-                          ? `${appStats.totalInstalls.toLocaleString()} ઇન્સ્ટોલ્સ`
-                          : "ડેટા જુઓ"}
-                      </span>
-                    </div>
-                    <p className="hub-btn-description">
-                      આજના ઇન્સ્ટોલ: <strong>{appStats?.todayInstalls || 0}</strong> • નોટિફિકેશન: <strong>{appStats?.notificationSubscribers || 0}</strong> • પ્લેટફોર્મ વિગતો
-                    </p>
-                  </div>
-                </div>
-                <div className="hub-btn-cta">
-                  <span>વિગતો જુઓ</span>
-                  <ArrowRight size={18} />
-                </div>
-              </button>
-            </div>
+            {/* BUTTON 2: APP ANALYTICS POPUP */}
+            <button
+              type="button"
+              className="management-card analytics-hub-card-btn"
+              onClick={() => setActiveAnalyticsModal("app")}
+            >
+              <div className="management-icon">
+                <Smartphone size={40} color="#175bb5" strokeWidth={1.6} />
+              </div>
+              <div className="management-content">
+                <h2>એપ ઇન્સ્ટોલેશન</h2>
+                <p>
+                  {appStats?.totalInstalls !== undefined
+                    ? `${appStats.totalInstalls.toLocaleString()} ઇન્સ્ટોલ્સ`
+                    : "ડેટા જુઓ"}
+                </p>
+              </div>
+              <div className="management-arrow">
+                <ArrowRight size={22} className="management-arrow-icon" />
+              </div>
+            </button>
           </div>
         </section>
 
@@ -785,10 +729,7 @@ function Admin() {
                     <Globe size={24} className="visitor-activity-icon" />
                   </div>
                   <div>
-                    <h2>🌐 વેબસાઇટ મુલાકાતીઓ (Website Visitors)</h2>
-                    <span className="v-header-sub">
-                      કુલ મુલાકાતો, મુખ્ય પેજીસ, ડિવાઇસ અને બ્રાઉઝર એનાલિટિક્સ
-                    </span>
+                    <h2>વેબસાઇટ મુલાકાતીઓ (Website Visitors)</h2>
                   </div>
                 </div>
 
@@ -1155,7 +1096,7 @@ function Admin() {
                     <Smartphone size={24} className="visitor-activity-icon" />
                   </div>
                   <div>
-                    <h2>એપ ઇન્સ્ટોલેશન અને વપરાશકર્તા એનાલિટિક્સ</h2>
+                    <h2>એપ ઇન્સ્ટોલેશન અને વપરાશકર્તા એનાલિટિક્સ (App Analytics)</h2>
                   </div>
                 </div>
 
@@ -1194,68 +1135,67 @@ function Admin() {
             </div>
           ) : (
             <>
-              {/* TOP 5 APP STATS CARDS - 2 BOXES PER ROW */}
-              <div className="app-stat-cards-grid">
-                {/* 1. TOTAL ACTIVE APP INSTALLS */}
-                <div className="app-stat-card app-stat-primary">
-                  <div className="app-stat-icon-wrap app-icon-install">
-                    <Download size={26} />
+              {/* TOP 5 APP STATS CARDS */}
+              <div className="v-stat-cards-grid app-stat-cards-grid">
+                {/* 1. TOTAL APP INSTALLS */}
+                <div className="v-stat-card primary">
+                  <div className="v-stat-card-icon-box app-icon-install">
+                    <Download size={24} />
                   </div>
-                  <div className="app-stat-body">
-                    <span className="app-stat-title">કુલ સક્રિય એપ ઇન્સ્ટોલ</span>
-                    <h3 className="app-stat-num">{appStats?.totalInstalls || 0}</h3>
-                    <span className="app-stat-sub">
+                  <div className="v-stat-card-info">
+                    <span className="v-stat-label">કુલ એપ ઇન્સ્ટોલ</span>
+                    <h3 className="v-stat-value">{appStats?.totalInstalls || 0}</h3>
+                    <span className="v-stat-hint">
                       {appStats?.registeredInstalls || 0} રજીસ્ટર્ડ • {appStats?.guestInstalls || 0} ગેસ્ટ
-                      {appStats?.uninstalledInstalls > 0 ? ` • ${appStats.uninstalledInstalls} અનઇન્સ્ટોલ` : ""}
                     </span>
                   </div>
                 </div>
 
                 {/* 2. TODAY'S NEW INSTALLS */}
-                <div className="app-stat-card app-stat-success">
-                  <div className="app-stat-icon-wrap app-icon-today">
-                    <Sparkles size={26} />
+                <div className="v-stat-card success">
+                  <div className="v-stat-card-icon-box app-icon-today">
+                    <Sparkles size={24} />
                   </div>
-                  <div className="app-stat-body">
-                    <span className="app-stat-title">આજના નવા ઇન્સ્ટોલ</span>
-                    <h3 className="app-stat-num">{appStats?.todayInstalls || 0}</h3>
-                    <span className="app-stat-sub">છેલ્લા 24 કલાકમાં</span>
+                  <div className="v-stat-card-info">
+                    <span className="v-stat-label">આજના નવા ઇન્સ્ટોલ</span>
+                    <h3 className="v-stat-value">{appStats?.todayInstalls || 0}</h3>
+                    <span className="v-stat-hint">છેલ્લા 24 કલાકમાં</span>
                   </div>
                 </div>
 
                 {/* 3. TODAY'S ACTIVE USERS */}
-                <div className="app-stat-card app-stat-warning">
-                  <div className="app-stat-icon-wrap app-icon-active">
-                    <Activity size={26} />
+                <div className="v-stat-card warning">
+                  <div className="v-stat-card-icon-box app-icon-active">
+                    <Activity size={24} />
                   </div>
-                  <div className="app-stat-body">
-                    <span className="app-stat-title">આજના સક્રિય એપ યુઝર્સ</span>
-                    <h3 className="app-stat-num">{appStats?.todayActive || 0}</h3>
-                    <span className="app-stat-sub">આજે એપ ખોલનાર ભક્તો</span>
+                  <div className="v-stat-card-info">
+                    <span className="v-stat-label">આજના સક્રિય એપ યુઝર્સ</span>
+                    <h3 className="v-stat-value">{appStats?.todayActive || 0}</h3>
+                    <span className="v-stat-hint">આજે એપ ખોલનાર ભક્તો</span>
                   </div>
                 </div>
 
                 {/* 4. NOTIFICATION SUBSCRIBERS */}
-                <div className="app-stat-card app-stat-info">
-                  <div className="app-stat-icon-wrap app-icon-notif">
-                    <Bell size={26} />
+                <div className="v-stat-card info">
+                  <div className="v-stat-card-icon-box app-icon-notif">
+                    <Bell size={24} />
                   </div>
-                  <div className="app-stat-body">
-                    <span className="app-stat-title">નોટિફિકેશન સક્રિય (5x Daily)</span>
-                    <h3 className="app-stat-num">{appStats?.notificationSubscribers || 0}</h3>
-                    <span className="app-stat-sub">દરરોજ શ્લોક મેળવનાર</span>
+                  <div className="v-stat-card-info">
+                    <span className="v-stat-label">નોટિફિકેશન સક્રિય (5x Daily)</span>
+                    <h3 className="v-stat-value">{appStats?.notificationSubscribers || 0}</h3>
+                    <span className="v-stat-hint">દરરોજ શ્લોક મેળવનાર</span>
                   </div>
                 </div>
 
                 {/* 5. TOTAL APP OPENS */}
-                <div className="app-stat-card app-stat-purple">
-                  <div className="app-stat-icon-wrap app-icon-opens">
-                    <Zap size={26} />
+                <div className="v-stat-card purple">
+                  <div className="v-stat-card-icon-box app-icon-opens">
+                    <Zap size={24} />
                   </div>
-                  <div className="app-stat-body">
-                    <span className="app-stat-title">કુલ એપ ઓપનિંગ્સ</span>
-                    <h3 className="app-stat-num">{appStats?.totalOpens || 0}</h3>
-                    <span className="app-stat-sub">એપ લોન્ચ કાઉન્ટ</span>
+                  <div className="v-stat-card-info">
+                    <span className="v-stat-label">કુલ એપ ઓપનિંગ્સ</span>
+                    <h3 className="v-stat-value">{appStats?.totalOpens || 0}</h3>
+                    <span className="v-stat-hint">એપ લોન્ચ કાઉન્ટ</span>
                   </div>
                 </div>
               </div>
@@ -1368,14 +1308,14 @@ function Admin() {
                   <div className="v-pages-list">
                     <div className="v-page-row">
                       <span className="v-page-rank" style={{ background: "#10b981" }}>1</span>
-                      <span className="v-page-path">રજીસ્ટર્ડ ડિવાઇસ (Registered Devices)</span>
+                      <span className="v-page-path">રજીસ્ટર્ડ ભક્તો (Registered Users)</span>
                       <span className="v-page-count" style={{ background: "#dcfce7", color: "#15803d" }}>
                         {appStats?.registeredInstalls || 0}
                       </span>
                     </div>
                     <div className="v-page-row">
                       <span className="v-page-rank" style={{ background: "#6366f1" }}>2</span>
-                      <span className="v-page-path">અતિથિ ડિવાઇસ (Guest / Direct Installs)</span>
+                      <span className="v-page-path">અતિથિ ભક્તો (Guest / Direct Installs)</span>
                       <span className="v-page-count" style={{ background: "#ede9fe", color: "#6d28d9" }}>
                         {appStats?.guestInstalls || 0}
                       </span>
@@ -1387,19 +1327,7 @@ function Admin() {
                         {appStats?.notificationSubscribers || 0}
                       </span>
                     </div>
-                    {appStats?.uninstalledInstalls > 0 && (
-                      <div className="v-page-row">
-                        <span className="v-page-rank" style={{ background: "#ef4444" }}>4</span>
-                        <span className="v-page-path">અનઇન્સ્ટોલ કરેલ ડિવાઇસ (Uninstalled)</span>
-                        <span className="v-page-count" style={{ background: "#fee2e2", color: "#b91c1c" }}>
-                          {appStats.uninstalledInstalls}
-                        </span>
-                      </div>
-                    )}
                   </div>
-                  <p style={{ margin: "10px 0 0", fontSize: "0.78rem", color: "#64748b", fontStyle: "italic" }}>
-                    * જો એક જ યુઝર ૨ અલગ ફોનમાં એપ ઇન્સ્ટોલ કરે, તો બંને ફોન અલગ ડિવાઇસ તરીકે કાઉન્ટ થાય છે.
-                  </p>
                 </div>
 
                 {/* BROWSERS USED */}
@@ -1445,12 +1373,10 @@ function Admin() {
                           <th>ડિવાઇસ આઇડી / યુઝર</th>
                           <th>પ્લેટફોર્મ (OS)</th>
                           <th>બ્રાઉઝર</th>
-                          <th>સ્થિતિ</th>
                           <th>નોટિફિકેશન</th>
                           <th>ઓપન કાઉન્ટ</th>
                           <th>ઇન્સ્ટોલ તારીખ</th>
                           <th>છેલ્લે સક્રિય</th>
-                          <th>ઍક્શન</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -1484,17 +1410,6 @@ function Admin() {
                               {item.browser || "Chrome"}
                             </td>
                             <td>
-                              {item.isInstalled === false ? (
-                                <span className="v-user-type-badge guest" style={{ background: "#fee2e2", color: "#b91c1c" }}>
-                                  <XCircle size={13} /> અનઇન્સ્ટોલ
-                                </span>
-                              ) : (
-                                <span className="v-user-type-badge registered" style={{ background: "#dcfce7", color: "#15803d" }}>
-                                  <CheckCircle2 size={13} /> સક્રિય (Active)
-                                </span>
-                              )}
-                            </td>
-                            <td>
                               {item.hasNotificationEnabled ? (
                                 <span className="v-user-type-badge registered" style={{ background: "#dcfce7", color: "#15803d" }}>
                                   <CheckCircle2 size={13} /> ચાલુ (5x/દિન)
@@ -1515,18 +1430,6 @@ function Admin() {
                             </td>
                             <td className="v-table-time">
                               {formatTimeAgo(item.lastOpenedAt || item.installedAt)}
-                            </td>
-                            <td>
-                              <button
-                                type="button"
-                                className="admin-delete-user-btn"
-                                onClick={() => handleDeleteInstallation(item._id)}
-                                disabled={deletingInstallId === item._id}
-                                title="આ ડિવાઇસને દૂર કરો"
-                                style={{ padding: "6px 8px" }}
-                              >
-                                <Trash2 size={14} />
-                              </button>
                             </td>
                           </tr>
                         ))}

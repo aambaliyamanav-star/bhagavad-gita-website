@@ -4469,5 +4469,83 @@ html[data-theme='dark'] .app-icon-opens,
   color: #67e8f9 !important;
 }
 
+/* =========================================================
+   ANALYTICS HUB BUTTONS (2 PROPER CARDS IN 1 ROW)
+   ========================================================= */
+
+.analytics-hub-section-box {
+  margin-bottom: 34px;
+}
+
+.analytics-hub-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 22px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid rgba(37, 99, 235, 0.1);
+}
+
+.analytics-hub-buttons-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 22px;
+  width: 100%;
+}
+
+.analytics-hub-card-btn {
+  appearance: none;
+  -webkit-appearance: none;
+  border: 1px solid rgba(37, 99, 235, 0.16);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  width: 100%;
+  min-height: 125px;
+  background: linear-gradient(135deg, #ffffff 0%, #f1f7ff 100%);
+  display: flex;
+  align-items: center;
+}
+
+.analytics-hub-card-btn .management-content h2 {
+  margin: 0 0 6px;
+  font-size: 20px;
+  font-weight: 800;
+  color: #164e96;
+}
+
+.analytics-hub-card-btn .management-content p {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  color: #2563eb;
+}
+
+html[data-theme='dark'] .analytics-hub-card-btn,
+.dark .analytics-hub-card-btn,
+[data-theme="dark"] .analytics-hub-card-btn {
+  background: linear-gradient(135deg, #0f263d, #0b1f33) !important;
+  border-color: rgba(96, 165, 250, 0.18) !important;
+}
+
+html[data-theme='dark'] .analytics-hub-card-btn .management-content h2,
+.dark .analytics-hub-card-btn .management-content h2 {
+  color: #bfdbfe !important;
+}
+
+html[data-theme='dark'] .analytics-hub-card-btn .management-content p,
+.dark .analytics-hub-card-btn .management-content p {
+  color: #60a5fa !important;
+}
+
+@media (max-width: 768px) {
+  .analytics-hub-buttons-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+
 
 
