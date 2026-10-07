@@ -51,16 +51,8 @@ async function sendPush(subscription, payload) {
     return true;
   } catch (err) {
     if (err.statusCode === 404 || err.statusCode === 410) {
-      console.log(`Expired/Uninstalled subscription ${subscription._id}, removing from DB and updating app analytics...`);
+      console.log(`Expired subscription ${subscription._id}, deleting from DB...`);
       await Subscription.deleteOne({ _id: subscription._id });
-      try {
-        await AppInstallation.updateMany(
-          { notificationEndpoint: subscription.endpoint },
-          { $set: { isInstalled: false, uninstalledAt: new Date(), hasNotificationEnabled: false } }
-        );
-      } catch (appErr) {
-        console.warn("Could not mark AppInstallation as uninstalled:", appErr.message);
-      }
     } else {
       console.error(`WebPush send failed for ${subscription._id}:`, err.message);
     }
@@ -78,18 +70,13 @@ module.exports = {
   // POST /api/notifications/subscribe (Called ONLY from Installed App)
   subscribe: async (req, res) => {
     try {
-      const { endpoint, keys, role, userId, isApp = true, deviceId: clientDeviceId } = req.body;
+      const { endpoint, keys, role, userId, isApp = true } = req.body;
       if (!endpoint || !keys || !keys.p256dh || !keys.auth) {
         return res.status(400).json({ error: "અમાન્ય સબસ્ક્રિપ્શન વિગતો." });
       }
 
       const userRole = role === "admin" ? "admin" : "user";
       const validUserId = userId || null;
-
-      const crypto = require("crypto");
-      const fallbackDeviceId =
-        "dev_sub_" + crypto.createHash("md5").update(endpoint).digest("hex").substring(0, 16);
-      const targetDeviceId = clientDeviceId || fallbackDeviceId;
 
       const existingSub = await Subscription.findOne({ endpoint });
       const isBrandNew = !existingSub;
@@ -101,7 +88,6 @@ module.exports = {
           keys,
           role: userRole,
           userId: validUserId,
-          deviceId: targetDeviceId,
           isApp: Boolean(isApp),
           lastOpenedDate: new Date(),
           reminderCount: 0,
@@ -111,6 +97,7 @@ module.exports = {
 
       // Auto-register/sync in AppInstallation analytics
       try {
+        const subDeviceId = "dev_sub_" + Buffer.from(endpoint).toString("hex").substring(0, 16);
         let userName = null;
         let userEmail = null;
         if (validUserId) {
@@ -122,11 +109,11 @@ module.exports = {
         }
         await AppInstallation.findOneAndUpdate(
           {
-            $or: [{ notificationEndpoint: endpoint }, { deviceId: targetDeviceId }],
+            $or: [{ notificationEndpoint: endpoint }, { deviceId: subDeviceId }],
           },
           {
             $set: {
-              deviceId: targetDeviceId,
+              deviceId: subDeviceId,
               userId: validUserId,
               userName,
               userEmail,
@@ -136,8 +123,6 @@ module.exports = {
               lastOpenedAt: new Date(),
               hasNotificationEnabled: true,
               notificationEndpoint: endpoint,
-              isInstalled: true,
-              uninstalledAt: null,
             },
             $setOnInsert: {
               installedAt: new Date(),

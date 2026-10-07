@@ -13,14 +13,10 @@ export function checkIsInstalled() {
   if (typeof window === "undefined") return false;
   const isStandalone =
     window.matchMedia("(display-mode: standalone)").matches ||
-    window.matchMedia("(display-mode: fullscreen)").matches ||
-    window.matchMedia("(display-mode: minimal-ui)").matches ||
     window.navigator.standalone === true ||
-    (document.referrer && document.referrer.includes("android-app://")) ||
-    (window.location.search && window.location.search.includes("source=pwa")) ||
-    localStorage.getItem("gita_app_installed") === "true";
-  isInstalled = Boolean(isStandalone);
-  return isInstalled;
+    document.referrer.includes("android-app://");
+  isInstalled = isStandalone;
+  return isStandalone;
 }
 
 // Subscribe to install availability changes
