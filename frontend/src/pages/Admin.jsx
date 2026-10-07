@@ -80,6 +80,7 @@ function Admin() {
 
   // Active analytics popup modal: 'web' | 'app' | null
   const [activeAnalyticsModal, setActiveAnalyticsModal] = useState(null);
+  const [deletingInstallId, setDeletingInstallId] = useState(null);
 
   const navigate = useNavigate();
 
@@ -133,6 +134,44 @@ function Admin() {
     } finally {
       setLoadingAppStats(false);
       setRefreshingAppStats(false);
+    }
+  };
+
+  const handleDeleteInstallation = async (installId) => {
+    if (!window.confirm("શું તમે આ ડિવાઇસને ઇન્સ્ટોલેશન લિસ્ટમાંથી દૂર કરવા માંગો છો?")) return;
+    const token = localStorage.getItem("token");
+    if (!token) return;
+
+    setDeletingInstallId(installId);
+    try {
+      const isLocal =
+        typeof window !== "undefined" &&
+        (window.location.hostname === "localhost" ||
+          window.location.hostname === "127.0.0.1");
+
+      const urls = isLocal
+        ? [
+            `http://localhost:5000/api/app-analytics/installation/${installId}`,
+            `https://bhagavad-gita-website.onrender.com/api/app-analytics/installation/${installId}`,
+          ]
+        : [`https://bhagavad-gita-website.onrender.com/api/app-analytics/installation/${installId}`];
+
+      for (const url of urls) {
+        try {
+          const res = await fetch(url, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (res.ok) break;
+        } catch {
+          // try next url
+        }
+      }
+      await fetchAppStats(true);
+    } catch (err) {
+      console.error("Delete installation error:", err);
+    } finally {
+      setDeletingInstallId(null);
     }
   };
 
@@ -656,7 +695,10 @@ function Admin() {
                   <Activity size={24} className="visitor-activity-icon" />
                 </div>
                 <div>
-                  <h2>એનાલિટિક્સ અને યુઝર રિપોર્ટ્સ</h2>
+                  <h2>📊 એનાલિટિક્સ અને યુઝર રિપોર્ટ્સ (Analytics & Reports)</h2>
+                  <span className="v-header-sub">
+                    વેબસાઇટ મુલાકાતીઓ અથવા એપ ઇન્સ્ટોલેશનની સંપૂર્ણ માહિતી જોવા માટે નીચેના બટન પર ક્લિક કરો
+                  </span>
                 </div>
               </div>
             </div>
@@ -674,13 +716,16 @@ function Admin() {
                   </div>
                   <div className="hub-btn-text">
                     <div className="hub-btn-title-row">
-                      <h4>વેબસાઇટ મુલાકાતીઓ</h4>
+                      <h4>🌐 વેબસાઇટ મુલાકાતીઓ (Web Visitors)</h4>
                       <span className="hub-btn-pill web-pill">
                         {visitorStats?.totalVisits !== undefined
                           ? `${visitorStats.totalVisits.toLocaleString()} મુલાકાતો`
                           : "ડેટા જુઓ"}
                       </span>
                     </div>
+                    <p className="hub-btn-description">
+                      આજની મુલાકાતો: <strong>{visitorStats?.todayVisits || 0}</strong> • ટોપ પેજ, ડિવાઇસ અને બ્રાઉઝર એનાલિટિક્સ
+                    </p>
                   </div>
                 </div>
                 <div className="hub-btn-cta">
@@ -701,13 +746,16 @@ function Admin() {
                   </div>
                   <div className="hub-btn-text">
                     <div className="hub-btn-title-row">
-                      <h4>એપ ઇન્સ્ટોલેશન અને વપરાશ</h4>
+                      <h4>📱 એપ ઇન્સ્ટોલેશન અને વપરાશ (App Analytics)</h4>
                       <span className="hub-btn-pill app-pill">
                         {appStats?.totalInstalls !== undefined
                           ? `${appStats.totalInstalls.toLocaleString()} ઇન્સ્ટોલ્સ`
                           : "ડેટા જુઓ"}
                       </span>
                     </div>
+                    <p className="hub-btn-description">
+                      આજના ઇન્સ્ટોલ: <strong>{appStats?.todayInstalls || 0}</strong> • નોટિફિકેશન: <strong>{appStats?.notificationSubscribers || 0}</strong> • પ્લેટફોર્મ વિગતો
+                    </p>
                   </div>
                 </div>
                 <div className="hub-btn-cta">
@@ -737,7 +785,10 @@ function Admin() {
                     <Globe size={24} className="visitor-activity-icon" />
                   </div>
                   <div>
-                    <h2>વેબસાઇટ મુલાકાતીઓ</h2>
+                    <h2>🌐 વેબસાઇટ મુલાકાતીઓ (Website Visitors)</h2>
+                    <span className="v-header-sub">
+                      કુલ મુલાકાતો, મુખ્ય પેજીસ, ડિવાઇસ અને બ્રાઉઝર એનાલિટિક્સ
+                    </span>
                   </div>
                 </div>
 
@@ -1145,16 +1196,17 @@ function Admin() {
             <>
               {/* TOP 5 APP STATS CARDS - 2 BOXES PER ROW */}
               <div className="app-stat-cards-grid">
-                {/* 1. TOTAL APP INSTALLS */}
+                {/* 1. TOTAL ACTIVE APP INSTALLS */}
                 <div className="app-stat-card app-stat-primary">
                   <div className="app-stat-icon-wrap app-icon-install">
-                    <Download size={24} />
+                    <Download size={26} />
                   </div>
                   <div className="app-stat-body">
-                    <span className="app-stat-title">કુલ એપ ઇન્સ્ટોલ</span>
+                    <span className="app-stat-title">કુલ સક્રિય એપ ઇન્સ્ટોલ</span>
                     <h3 className="app-stat-num">{appStats?.totalInstalls || 0}</h3>
                     <span className="app-stat-sub">
                       {appStats?.registeredInstalls || 0} રજીસ્ટર્ડ • {appStats?.guestInstalls || 0} ગેસ્ટ
+                      {appStats?.uninstalledInstalls > 0 ? ` • ${appStats.uninstalledInstalls} અનઇન્સ્ટોલ` : ""}
                     </span>
                   </div>
                 </div>
@@ -1162,7 +1214,7 @@ function Admin() {
                 {/* 2. TODAY'S NEW INSTALLS */}
                 <div className="app-stat-card app-stat-success">
                   <div className="app-stat-icon-wrap app-icon-today">
-                    <Sparkles size={24} />
+                    <Sparkles size={26} />
                   </div>
                   <div className="app-stat-body">
                     <span className="app-stat-title">આજના નવા ઇન્સ્ટોલ</span>
@@ -1174,7 +1226,7 @@ function Admin() {
                 {/* 3. TODAY'S ACTIVE USERS */}
                 <div className="app-stat-card app-stat-warning">
                   <div className="app-stat-icon-wrap app-icon-active">
-                    <Activity size={24} />
+                    <Activity size={26} />
                   </div>
                   <div className="app-stat-body">
                     <span className="app-stat-title">આજના સક્રિય એપ યુઝર્સ</span>
@@ -1186,7 +1238,7 @@ function Admin() {
                 {/* 4. NOTIFICATION SUBSCRIBERS */}
                 <div className="app-stat-card app-stat-info">
                   <div className="app-stat-icon-wrap app-icon-notif">
-                    <Bell size={24} />
+                    <Bell size={26} />
                   </div>
                   <div className="app-stat-body">
                     <span className="app-stat-title">નોટિફિકેશન સક્રિય (5x Daily)</span>
@@ -1198,7 +1250,7 @@ function Admin() {
                 {/* 5. TOTAL APP OPENS */}
                 <div className="app-stat-card app-stat-purple">
                   <div className="app-stat-icon-wrap app-icon-opens">
-                    <Zap size={24} />
+                    <Zap size={26} />
                   </div>
                   <div className="app-stat-body">
                     <span className="app-stat-title">કુલ એપ ઓપનિંગ્સ</span>
@@ -1316,14 +1368,14 @@ function Admin() {
                   <div className="v-pages-list">
                     <div className="v-page-row">
                       <span className="v-page-rank" style={{ background: "#10b981" }}>1</span>
-                      <span className="v-page-path">રજીસ્ટર્ડ ભક્તો (Registered Users)</span>
+                      <span className="v-page-path">રજીસ્ટર્ડ ડિવાઇસ (Registered Devices)</span>
                       <span className="v-page-count" style={{ background: "#dcfce7", color: "#15803d" }}>
                         {appStats?.registeredInstalls || 0}
                       </span>
                     </div>
                     <div className="v-page-row">
                       <span className="v-page-rank" style={{ background: "#6366f1" }}>2</span>
-                      <span className="v-page-path">અતિથિ ભક્તો (Guest / Direct Installs)</span>
+                      <span className="v-page-path">અતિથિ ડિવાઇસ (Guest / Direct Installs)</span>
                       <span className="v-page-count" style={{ background: "#ede9fe", color: "#6d28d9" }}>
                         {appStats?.guestInstalls || 0}
                       </span>
@@ -1335,7 +1387,19 @@ function Admin() {
                         {appStats?.notificationSubscribers || 0}
                       </span>
                     </div>
+                    {appStats?.uninstalledInstalls > 0 && (
+                      <div className="v-page-row">
+                        <span className="v-page-rank" style={{ background: "#ef4444" }}>4</span>
+                        <span className="v-page-path">અનઇન્સ્ટોલ કરેલ ડિવાઇસ (Uninstalled)</span>
+                        <span className="v-page-count" style={{ background: "#fee2e2", color: "#b91c1c" }}>
+                          {appStats.uninstalledInstalls}
+                        </span>
+                      </div>
+                    )}
                   </div>
+                  <p style={{ margin: "10px 0 0", fontSize: "0.78rem", color: "#64748b", fontStyle: "italic" }}>
+                    * જો એક જ યુઝર ૨ અલગ ફોનમાં એપ ઇન્સ્ટોલ કરે, તો બંને ફોન અલગ ડિવાઇસ તરીકે કાઉન્ટ થાય છે.
+                  </p>
                 </div>
 
                 {/* BROWSERS USED */}
@@ -1381,10 +1445,12 @@ function Admin() {
                           <th>ડિવાઇસ આઇડી / યુઝર</th>
                           <th>પ્લેટફોર્મ (OS)</th>
                           <th>બ્રાઉઝર</th>
+                          <th>સ્થિતિ</th>
                           <th>નોટિફિકેશન</th>
                           <th>ઓપન કાઉન્ટ</th>
                           <th>ઇન્સ્ટોલ તારીખ</th>
                           <th>છેલ્લે સક્રિય</th>
+                          <th>ઍક્શન</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -1418,6 +1484,17 @@ function Admin() {
                               {item.browser || "Chrome"}
                             </td>
                             <td>
+                              {item.isInstalled === false ? (
+                                <span className="v-user-type-badge guest" style={{ background: "#fee2e2", color: "#b91c1c" }}>
+                                  <XCircle size={13} /> અનઇન્સ્ટોલ
+                                </span>
+                              ) : (
+                                <span className="v-user-type-badge registered" style={{ background: "#dcfce7", color: "#15803d" }}>
+                                  <CheckCircle2 size={13} /> સક્રિય (Active)
+                                </span>
+                              )}
+                            </td>
+                            <td>
                               {item.hasNotificationEnabled ? (
                                 <span className="v-user-type-badge registered" style={{ background: "#dcfce7", color: "#15803d" }}>
                                   <CheckCircle2 size={13} /> ચાલુ (5x/દિન)
@@ -1438,6 +1515,18 @@ function Admin() {
                             </td>
                             <td className="v-table-time">
                               {formatTimeAgo(item.lastOpenedAt || item.installedAt)}
+                            </td>
+                            <td>
+                              <button
+                                type="button"
+                                className="admin-delete-user-btn"
+                                onClick={() => handleDeleteInstallation(item._id)}
+                                disabled={deletingInstallId === item._id}
+                                title="આ ડિવાઇસને દૂર કરો"
+                                style={{ padding: "6px 8px" }}
+                              >
+                                <Trash2 size={14} />
+                              </button>
                             </td>
                           </tr>
                         ))}

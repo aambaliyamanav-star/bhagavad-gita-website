@@ -1,3 +1,4 @@
+const crypto = require("crypto");
 const AppInstallation = require("../models/AppInstallation");
 const Subscription = require("../models/Subscription");
 const User = require("../models/User");
@@ -107,6 +108,8 @@ const recordAppInstall = async (req, res) => {
       const updateData = {
         lastOpenedAt: new Date(),
         hasNotificationEnabled: Boolean(hasNotification),
+        isInstalled: true,
+        uninstalledAt: null,
         ip,
       };
 
@@ -146,6 +149,8 @@ const recordAppInstall = async (req, res) => {
       openCount: 1,
       hasNotificationEnabled: Boolean(hasNotification),
       notificationEndpoint: notificationEndpoint || null,
+      isInstalled: true,
+      uninstalledAt: null,
       ip,
     });
 
@@ -160,22 +165,92 @@ const recordAppInstall = async (req, res) => {
   }
 };
 
+// POST /api/app-analytics/record-uninstall (Triggered when app is uninstalled or subscription revoked)
+const recordAppUninstall = async (req, res) => {
+  try {
+    const { deviceId, endpoint } = req.body;
+    if (!deviceId && !endpoint) {
+      return res.status(400).json({ success: false, message: "deviceId or endpoint is required" });
+    }
+
+    const filter = {};
+    if (deviceId) filter.deviceId = deviceId;
+    if (endpoint) filter.notificationEndpoint = endpoint;
+
+    const updated = await AppInstallation.findOneAndUpdate(
+      filter,
+      {
+        $set: {
+          isInstalled: false,
+          uninstalledAt: new Date(),
+          hasNotificationEnabled: false,
+        },
+      },
+      { new: true }
+    );
+
+    if (endpoint) {
+      await Subscription.deleteOne({ endpoint });
+    }
+
+    return res.json({
+      success: true,
+      message: "App marked as uninstalled",
+      installation: updated,
+    });
+  } catch (error) {
+    console.error("Record App Uninstall Error:", error);
+    return res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+// DELETE /api/app-analytics/installation/:id (Admin delete device record)
+const deleteAppInstallation = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const install = await AppInstallation.findById(id);
+    if (!install) {
+      return res.status(404).json({ success: false, message: "Installation not found" });
+    }
+
+    if (install.notificationEndpoint) {
+      await Subscription.deleteOne({ endpoint: install.notificationEndpoint });
+    }
+
+    await AppInstallation.findByIdAndDelete(id);
+
+    return res.json({ success: true, message: "Installation deleted successfully" });
+  } catch (error) {
+    console.error("Delete App Installation Error:", error);
+    return res.status(500).json({ success: false, error: error.message });
+  }
+};
+
 // GET /api/app-analytics/stats (Admin only)
 const getAppStats = async (req, res) => {
   try {
-    // Auto-sync any push subscriptions with isApp: true into AppInstallation
+    // 1. Clean legacy buggy dummy record if any
+    try {
+      await AppInstallation.deleteMany({ deviceId: "dev_sub_68747470733a2f2f" });
+    } catch (e) {}
+
+    // 2. Auto-sync any push subscriptions into AppInstallation with unique hashes
     try {
       const appSubs = await Subscription.find({
         $or: [{ isApp: true }, { isApp: { $exists: false } }, { isApp: null }],
       }).lean();
+
       for (const sub of appSubs) {
-        const subDeviceId = "dev_sub_" + Buffer.from(sub.endpoint).toString("hex").substring(0, 16);
+        const subHash = crypto.createHash("md5").update(sub.endpoint).digest("hex").substring(0, 16);
+        const subDeviceId = sub.deviceId || ("dev_sub_" + subHash);
+
         const existing = await AppInstallation.findOne({
           $or: [
             { notificationEndpoint: sub.endpoint },
             { deviceId: subDeviceId },
           ],
         });
+
         if (!existing) {
           let userName = null;
           let userEmail = null;
@@ -200,8 +275,17 @@ const getAppStats = async (req, res) => {
             lastOpenedAt: sub.lastOpenedDate || sub.updatedAt || new Date(),
             hasNotificationEnabled: true,
             notificationEndpoint: sub.endpoint,
+            isInstalled: true,
             openCount: 1,
           });
+        } else {
+          // If already in AppInstallation, ensure notificationEndpoint and notification flag are synced
+          if (!existing.notificationEndpoint || !existing.hasNotificationEnabled) {
+            await AppInstallation.updateOne(
+              { _id: existing._id },
+              { $set: { notificationEndpoint: sub.endpoint, hasNotificationEnabled: true, isInstalled: true } }
+            );
+          }
         }
       }
     } catch (syncErr) {
@@ -221,6 +305,9 @@ const getAppStats = async (req, res) => {
       ) - 5.5 * 60 * 60 * 1000
     );
 
+    // Active installed filter (installed = true, not uninstalled)
+    const activeFilter = { isInstalled: { $ne: false } };
+
     const [
       totalInstalls,
       todayInstalls,
@@ -228,32 +315,37 @@ const getAppStats = async (req, res) => {
       notifCount,
       registeredCount,
       guestCount,
+      uninstalledCount,
       openAgg,
       platformAgg,
       browserAgg,
       recentList,
       totalSubscribers,
     ] = await Promise.all([
-      AppInstallation.countDocuments(),
-      AppInstallation.countDocuments({ installedAt: { $gte: startOfTodayIST } }),
-      AppInstallation.countDocuments({ lastOpenedAt: { $gte: startOfTodayIST } }),
-      AppInstallation.countDocuments({ hasNotificationEnabled: true }),
-      AppInstallation.countDocuments({ userId: { $ne: null } }),
-      AppInstallation.countDocuments({ userId: null }),
+      AppInstallation.countDocuments(activeFilter),
+      AppInstallation.countDocuments({ ...activeFilter, installedAt: { $gte: startOfTodayIST } }),
+      AppInstallation.countDocuments({ ...activeFilter, lastOpenedAt: { $gte: startOfTodayIST } }),
+      AppInstallation.countDocuments({ ...activeFilter, hasNotificationEnabled: true }),
+      AppInstallation.countDocuments({ ...activeFilter, userId: { $ne: null } }),
+      AppInstallation.countDocuments({ ...activeFilter, userId: null }),
+      AppInstallation.countDocuments({ isInstalled: false }),
       AppInstallation.aggregate([
+        { $match: activeFilter },
         { $group: { _id: null, totalOpens: { $sum: "$openCount" } } },
       ]),
       AppInstallation.aggregate([
+        { $match: activeFilter },
         { $group: { _id: "$platform", count: { $sum: 1 } } },
         { $sort: { count: -1 } },
       ]),
       AppInstallation.aggregate([
+        { $match: activeFilter },
         { $group: { _id: "$browser", count: { $sum: 1 } } },
         { $sort: { count: -1 } },
       ]),
       AppInstallation.find()
         .sort({ lastOpenedAt: -1, installedAt: -1 })
-        .limit(25)
+        .limit(50)
         .lean(),
       Subscription.countDocuments({
         $or: [{ isApp: true }, { isApp: { $exists: false } }, { isApp: null }],
@@ -283,6 +375,7 @@ const getAppStats = async (req, res) => {
         notificationSubscribers: Math.max(notifCount, totalSubscribers),
         registeredInstalls: registeredCount,
         guestInstalls: guestCount,
+        uninstalledInstalls: uninstalledCount,
         totalOpens,
         platformStats,
         browserStats,
@@ -297,5 +390,7 @@ const getAppStats = async (req, res) => {
 
 module.exports = {
   recordAppInstall,
+  recordAppUninstall,
+  deleteAppInstallation,
   getAppStats,
 };
