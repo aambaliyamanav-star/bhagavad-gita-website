@@ -8,6 +8,7 @@ const SubscriptionSchema = new mongoose.Schema(
       auth: { type: String, required: true },
     },
     userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
+    deviceId: { type: String, default: null },
     role: { type: String, enum: ["user", "admin"], default: "user" },
     isApp: { type: Boolean, default: true },
     lastOpenedDate: { type: Date, default: null },
