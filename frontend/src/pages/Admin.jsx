@@ -81,6 +81,26 @@ function Admin() {
   // Active analytics popup modal: 'web' | 'app' | null
   const [activeAnalyticsModal, setActiveAnalyticsModal] = useState(null);
 
+  // Lock background scroll and handle Escape key when analytics modal is open
+  useEffect(() => {
+    if (!activeAnalyticsModal) return;
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") {
+        setActiveAnalyticsModal(null);
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [activeAnalyticsModal]);
+
   const navigate = useNavigate();
 
   const { logout } = useAuth();
