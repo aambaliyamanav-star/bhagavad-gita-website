@@ -8,39 +8,42 @@ let deferredPrompt = null;
 const promptListeners = new Set();
 let isInstalled = false;
 
-// Check if running in standalone mode (already installed app)
-export function checkIsInstalled() {
+// Check if running in standalone mode (already running inside installed app)
+export function isRunningInStandaloneApp() {
   if (typeof window === "undefined") return false;
-  const isStandalone =
+  return Boolean(
     window.matchMedia("(display-mode: standalone)").matches ||
     window.matchMedia("(display-mode: fullscreen)").matches ||
     window.matchMedia("(display-mode: minimal-ui)").matches ||
     window.navigator.standalone === true ||
     (document.referrer && document.referrer.includes("android-app://")) ||
-    (window.location.search && window.location.search.includes("source=pwa")) ||
-    localStorage.getItem("gita_app_installed") === "true";
-  isInstalled = Boolean(isStandalone);
-  return isInstalled;
+    (window.location.search && window.location.search.includes("source=pwa"))
+  );
+}
+
+// Backwards compatibility alias
+export function checkIsInstalled() {
+  return isRunningInStandaloneApp();
 }
 
 // Subscribe to install availability changes
 export function onInstallPromptChange(callback) {
   promptListeners.add(callback);
   // Immediately call with current state
-  callback(Boolean(deferredPrompt), isInstalled);
+  callback(Boolean(deferredPrompt), isRunningInStandaloneApp());
   return () => promptListeners.delete(callback);
 }
 
 function notifyListeners() {
   const canInstall = Boolean(deferredPrompt);
-  promptListeners.forEach((cb) => cb(canInstall, isInstalled));
+  const isStandalone = isRunningInStandaloneApp();
+  promptListeners.forEach((cb) => cb(canInstall, isStandalone));
 }
 
 // Check if already installed
 export async function isAppAlreadyInstalled() {
   if (typeof window === "undefined") return false;
-  if (localStorage.getItem("gita_app_installed") === "true") return true;
-  if (checkIsInstalled()) return true;
+  if (isRunningInStandaloneApp()) return true;
   if ("getInstalledRelatedApps" in navigator) {
     try {
       const apps = await navigator.getInstalledRelatedApps();
@@ -50,13 +53,16 @@ export async function isAppAlreadyInstalled() {
       }
     } catch (e) {}
   }
-  return false;
+  if (deferredPrompt) {
+    localStorage.removeItem("gita_app_installed");
+    return false;
+  }
+  return localStorage.getItem("gita_app_installed") === "true";
 }
 
 // Trigger native browser install prompt
 export async function promptInstallApp() {
-  const alreadyInstalled = await isAppAlreadyInstalled();
-  if (alreadyInstalled) {
+  if (isRunningInStandaloneApp()) {
     return {
       success: false,
       alreadyInstalled: true,
@@ -64,53 +70,73 @@ export async function promptInstallApp() {
     };
   }
 
-  if (!deferredPrompt) {
-    if (
-      localStorage.getItem("gita_app_installed_attempted") === "true" ||
-      localStorage.getItem("gita_app_installed") === "true"
-    ) {
-      return {
-        success: false,
-        alreadyInstalled: true,
-        message: "આ એપ તમારા ડિવાઇસ પર પહેલેથી જ સફળતાપૂર્વક ઇન્સ્ટોલ કરેલી છે! 📱\nતમારા ફોનની હોમ સ્ક્રીન અથવા એપ લિસ્ટમાંથી 'ભગવદ્ ગીતા' એપ ખોલો.",
-      };
-    }
+  // 1. Check if browser can confirm it is installed
+  if ("getInstalledRelatedApps" in navigator) {
+    try {
+      const apps = await navigator.getInstalledRelatedApps();
+      if (apps && apps.length > 0) {
+        localStorage.setItem("gita_app_installed", "true");
+        return {
+          success: false,
+          alreadyInstalled: true,
+          message: "આ એપ તમારા ડિવાઇસ પર પહેલેથી જ સફળતાપૂર્વક ઇન્સ્ટોલ કરેલી છે! 📱\nતમારા ફોનની હોમ સ્ક્રીન અથવા એપ લિસ્ટમાંથી 'ભગવદ્ ગીતા' એપ ખોલો.",
+        };
+      }
+    } catch (e) {}
+  }
 
-    // If iOS Safari or unsupported, return instructions
-    const isIos =
-      /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  // 2. If deferredPrompt is ready, trigger native browser install prompt
+  if (deferredPrompt) {
+    try {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      notifyListeners();
+      if (outcome === "accepted") {
+        localStorage.setItem("gita_app_installed", "true");
+        localStorage.setItem("gita_app_installed_attempted", "true");
+        trackAppInstallOrOpen(true);
+        return { success: true, message: "એપ સફળતાપૂર્વક ઇન્સ્ટોલ થઈ ગઈ છે! 📱" };
+      }
+      return { success: false, dismissed: true };
+    } catch (err) {
+      console.error("Install prompt error:", err);
+      return { success: false, error: err };
+    }
+  }
+
+  // 3. If deferredPrompt is NOT ready, but localStorage says it was installed:
+  if (localStorage.getItem("gita_app_installed") === "true") {
     return {
       success: false,
-      isIos,
-      message: isIos
-        ? "iOS પર Safari માં 'Share' બટન દબાવો અને 'Add to Home Screen' પસંદ કરો."
-        : "એપ ઇન્સ્ટોલ કરવા માટે બ્રાઉઝર મેનૂમાંથી 'Install App' અથવા 'Add to Home screen' પસંદ કરો.",
+      alreadyInstalled: true,
+      message: "આ એપ તમારા ડિવાઇસ પર પહેલેથી જ સફળતાપૂર્વક ઇન્સ્ટોલ કરેલી છે! 📱\nતમારા ફોનની હોમ સ્ક્રીન અથવા એપ લિસ્ટમાંથી 'ભગવદ્ ગીતા' એપ ખોલો.\n(જો તમે એપ અનઇન્સ્ટોલ કરી હોય, તો બ્રાઉઝર મેનૂમાંથી 'Add to Home screen' અથવા 'Install' પસંદ કરો.)",
     };
   }
 
-  try {
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
-    deferredPrompt = null;
-    notifyListeners();
-    if (outcome === "accepted") {
-      localStorage.setItem("gita_app_installed", "true");
-      localStorage.setItem("gita_app_installed_attempted", "true");
-      trackAppInstallOrOpen(true);
-      return { success: true, message: "એપ સફળતાપૂર્વક ઇન્સ્ટોલ થઈ ગઈ છે! 📱" };
-    }
-    return { success: false };
-  } catch (err) {
-    console.error("Install prompt error:", err);
-    return { success: false, error: err };
+  // 4. iOS Safari check
+  const isIos =
+    /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  if (isIos) {
+    return {
+      success: false,
+      isIos: true,
+      message: "iOS પર Safari માં નીચે 'Share' (શેર) બટન દબાવો અને 'Add to Home Screen' પસંદ કરો.",
+    };
   }
+
+  // 5. Fallback for browsers that don't support beforeinstallprompt or prompt isn't fired yet
+  return {
+    success: false,
+    message: "એપ ઇન્સ્ટોલ કરવા માટે બ્રાઉઝરના ઉપર/નીચે આપેલા 3-ડોટ (⋮) મેનૂમાંથી 'Install app' અથવા 'Add to Home screen' પસંદ કરો.",
+  };
 }
 
 // Initialize PWA event listeners & Service Worker registration
 export function registerPwa() {
   if (typeof window === "undefined") return;
 
-  if (checkIsInstalled()) {
+  if (isRunningInStandaloneApp()) {
     trackAppInstallOrOpen(false);
   }
 
@@ -118,6 +144,9 @@ export function registerPwa() {
   window.addEventListener("beforeinstallprompt", (e) => {
     e.preventDefault();
     deferredPrompt = e;
+    // Browser allows install -> app is NOT currently installed!
+    localStorage.removeItem("gita_app_installed");
+    localStorage.removeItem("gita_app_installed_attempted");
     notifyListeners();
     // Dispatch custom event for React components
     window.dispatchEvent(new CustomEvent("pwa-can-install"));
@@ -126,7 +155,7 @@ export function registerPwa() {
   // Listen for appinstalled event
   window.addEventListener("appinstalled", () => {
     deferredPrompt = null;
-    isInstalled = true;
+    localStorage.setItem("gita_app_installed", "true");
     notifyListeners();
     trackAppInstallOrOpen(true);
     console.log("શ્રીમદ્ ભગવદ્ ગીતા એપ સફળતાપૂર્વક ઇન્સ્ટોલ થઈ ગઈ છે.");
