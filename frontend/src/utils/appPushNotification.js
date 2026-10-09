@@ -5,7 +5,7 @@
    ========================================================= */
 
 import { checkIsInstalled } from "./pwaManager.js";
-import { trackAppInstallOrOpen } from "./appAnalytics.js";
+import { trackAppInstallOrOpen, getOrCreateDeviceId } from "./appAnalytics.js";
 
 const FALLBACK_VAPID_PUBLIC =
   "BBZ0vGL3_MtwlA6Owet6dEptXpiUIKyYdzV9Zy9qeew50cNaYqlRjpeg2qKdJowEnZWQ7vhbWOE-f0xhfMe6EDQ";
@@ -99,6 +99,7 @@ export async function enableAppNotifications(user = null) {
         role,
         userId,
         isApp: true,
+        deviceId: getOrCreateDeviceId(),
       }),
     });
 
@@ -158,6 +159,7 @@ export async function syncAppSubscription(user = null) {
         role,
         userId,
         isApp: true,
+        deviceId: getOrCreateDeviceId(),
       }),
     });
 

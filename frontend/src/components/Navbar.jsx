@@ -1081,6 +1081,10 @@ function Navbar() {
               onClick={async () => {
                 setMenuOpen(false);
                 const res = await promptInstallApp();
+                if (res.alreadyInstalled) {
+                  alert(res.message);
+                  return;
+                }
                 if (!res.success) {
                   // If not native prompt or iOS, open the install banner/guide modal
                   window.dispatchEvent(new CustomEvent("open-pwa-install-banner"));

@@ -13,10 +13,14 @@ export function checkIsInstalled() {
   if (typeof window === "undefined") return false;
   const isStandalone =
     window.matchMedia("(display-mode: standalone)").matches ||
+    window.matchMedia("(display-mode: fullscreen)").matches ||
+    window.matchMedia("(display-mode: minimal-ui)").matches ||
     window.navigator.standalone === true ||
-    document.referrer.includes("android-app://");
-  isInstalled = isStandalone;
-  return isStandalone;
+    (document.referrer && document.referrer.includes("android-app://")) ||
+    (window.location.search && window.location.search.includes("source=pwa")) ||
+    localStorage.getItem("gita_app_installed") === "true";
+  isInstalled = Boolean(isStandalone);
+  return isInstalled;
 }
 
 // Subscribe to install availability changes
@@ -32,9 +36,46 @@ function notifyListeners() {
   promptListeners.forEach((cb) => cb(canInstall, isInstalled));
 }
 
+// Check if already installed
+export async function isAppAlreadyInstalled() {
+  if (typeof window === "undefined") return false;
+  if (localStorage.getItem("gita_app_installed") === "true") return true;
+  if (checkIsInstalled()) return true;
+  if ("getInstalledRelatedApps" in navigator) {
+    try {
+      const apps = await navigator.getInstalledRelatedApps();
+      if (apps && apps.length > 0) {
+        localStorage.setItem("gita_app_installed", "true");
+        return true;
+      }
+    } catch (e) {}
+  }
+  return false;
+}
+
 // Trigger native browser install prompt
 export async function promptInstallApp() {
+  const alreadyInstalled = await isAppAlreadyInstalled();
+  if (alreadyInstalled) {
+    return {
+      success: false,
+      alreadyInstalled: true,
+      message: "આ એપ તમારા ડિવાઇસ પર પહેલેથી જ સફળતાપૂર્વક ઇન્સ્ટોલ કરેલી છે! 📱\nતમારા ફોનની હોમ સ્ક્રીન અથવા એપ લિસ્ટમાંથી 'ભગવદ્ ગીતા' એપ ખોલો.",
+    };
+  }
+
   if (!deferredPrompt) {
+    if (
+      localStorage.getItem("gita_app_installed_attempted") === "true" ||
+      localStorage.getItem("gita_app_installed") === "true"
+    ) {
+      return {
+        success: false,
+        alreadyInstalled: true,
+        message: "આ એપ તમારા ડિવાઇસ પર પહેલેથી જ સફળતાપૂર્વક ઇન્સ્ટોલ કરેલી છે! 📱\nતમારા ફોનની હોમ સ્ક્રીન અથવા એપ લિસ્ટમાંથી 'ભગવદ્ ગીતા' એપ ખોલો.",
+      };
+    }
+
     // If iOS Safari or unsupported, return instructions
     const isIos =
       /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -53,9 +94,12 @@ export async function promptInstallApp() {
     deferredPrompt = null;
     notifyListeners();
     if (outcome === "accepted") {
+      localStorage.setItem("gita_app_installed", "true");
+      localStorage.setItem("gita_app_installed_attempted", "true");
       trackAppInstallOrOpen(true);
+      return { success: true, message: "એપ સફળતાપૂર્વક ઇન્સ્ટોલ થઈ ગઈ છે! 📱" };
     }
-    return { success: outcome === "accepted" };
+    return { success: false };
   } catch (err) {
     console.error("Install prompt error:", err);
     return { success: false, error: err };
