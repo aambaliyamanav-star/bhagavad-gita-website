@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Download, X, Smartphone } from "lucide-react";
 import {
   promptInstallApp,
-  checkIsInstalled,
+  isRunningInStandaloneApp,
   onInstallPromptChange,
 } from "../utils/pwaManager.js";
 import "./InstallPwaBanner.css";
@@ -13,24 +13,37 @@ function InstallPwaBanner() {
   const [showIosGuide, setShowIosGuide] = useState(false);
 
   useEffect(() => {
-    // Check if already installed in standalone mode
-    if (checkIsInstalled()) {
+    // 1. STRICT: If already running inside installed standalone app, NEVER show install banner
+    if (isRunningInStandaloneApp()) {
       setShowBanner(false);
       return;
     }
 
-    // Check if dismissed in the last 3 days
-    const dismissedUntil = localStorage.getItem("pwa_banner_dismissed_until");
-    if (dismissedUntil && Date.now() < Number(dismissedUntil)) {
-      return;
-    }
+    // Clean up old legacy 3-day suppression
+    try {
+      localStorage.removeItem("pwa_banner_dismissed_until");
+    } catch (e) {}
+
+    // Check if dismissed in the current session
+    const isDismissedInSession =
+      sessionStorage.getItem("pwa_banner_dismissed_session") === "true";
 
     // Check if iOS Safari
     const isIos =
       /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     setIsIosDevice(isIos);
 
-    // Listen for custom trigger from Navbar/menu
+    // If not running in standalone app and not dismissed in this session, show after a gentle 1.5s delay
+    let timer = null;
+    if (!isDismissedInSession) {
+      timer = setTimeout(() => {
+        if (!isRunningInStandaloneApp()) {
+          setShowBanner(true);
+        }
+      }, 1500);
+    }
+
+    // Listen for custom trigger from Navbar/menu (always shows even if previously dismissed)
     const handleOpenCustom = () => {
       setShowBanner(true);
       if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
@@ -40,19 +53,16 @@ function InstallPwaBanner() {
     window.addEventListener("open-pwa-install-banner", handleOpenCustom);
 
     // Listen for install prompt readiness
-    const unsubscribe = onInstallPromptChange((canInstall, isAlreadyInstalled) => {
-      if (isAlreadyInstalled) {
+    const unsubscribe = onInstallPromptChange((canInstall, isStandalone) => {
+      if (isStandalone) {
         setShowBanner(false);
-      } else if (canInstall || isIos) {
-        // Show after a gentle 3-second delay so it doesn't pop up immediately on first second
-        const timer = setTimeout(() => {
-          setShowBanner(true);
-        }, 3000);
-        return () => clearTimeout(timer);
+      } else if ((canInstall || isIos) && !isDismissedInSession) {
+        setShowBanner(true);
       }
     });
 
     return () => {
+      if (timer) clearTimeout(timer);
       unsubscribe();
       window.removeEventListener("open-pwa-install-banner", handleOpenCustom);
     };
@@ -79,11 +89,10 @@ function InstallPwaBanner() {
 
   const handleDismiss = () => {
     setShowBanner(false);
-    // Dismiss for 3 days
-    localStorage.setItem(
-      "pwa_banner_dismissed_until",
-      String(Date.now() + 3 * 24 * 60 * 60 * 1000)
-    );
+    // Dismiss only for the current browser session
+    try {
+      sessionStorage.setItem("pwa_banner_dismissed_session", "true");
+    } catch (e) {}
   };
 
   if (!showBanner) return null;

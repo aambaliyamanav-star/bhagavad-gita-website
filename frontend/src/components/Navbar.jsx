@@ -34,7 +34,7 @@ import { useAuth } from "../context/AuthContext.jsx";
 import { useTheme } from "../context/ThemeContext.jsx";
 import {
   promptInstallApp,
-  checkIsInstalled,
+  isRunningInStandaloneApp,
   onInstallPromptChange,
 } from "../utils/pwaManager.js";
 import {
@@ -75,15 +75,15 @@ function Navbar() {
   const [scrolled, setScrolled] = useState(false);
 
   // =====================================================
-  // PWA APP INSTALLED STATE (HIDE BUTTON IF INSTALLED)
+  // PWA APP RUNTIME STATE (SHOW INSTALL IN BROWSER, NOTIF IN APP)
   // =====================================================
 
-  const [isAppInstalled, setIsAppInstalled] = useState(() => checkIsInstalled());
+  const [isStandaloneApp, setIsStandaloneApp] = useState(() => isRunningInStandaloneApp());
 
   useEffect(() => {
-    setIsAppInstalled(checkIsInstalled());
-    const unsubscribe = onInstallPromptChange((canInstall, isAlreadyInstalled) => {
-      setIsAppInstalled(isAlreadyInstalled || checkIsInstalled());
+    setIsStandaloneApp(isRunningInStandaloneApp());
+    const unsubscribe = onInstallPromptChange((canInstall, isStandalone) => {
+      setIsStandaloneApp(isStandalone);
     });
     return () => unsubscribe();
   }, []);
@@ -96,7 +96,7 @@ function Navbar() {
   const [notifLoading, setNotifLoading] = useState(false);
 
   useEffect(() => {
-    if (isAppInstalled) {
+    if (isStandaloneApp) {
       setNotifEnabled(isAppNotificationEnabled());
     }
     const handleNotifStatus = (e) => {
@@ -106,7 +106,7 @@ function Navbar() {
     return () => {
       window.removeEventListener("app-notification-status-changed", handleNotifStatus);
     };
-  }, [isAppInstalled]);
+  }, [isStandaloneApp]);
 
   const handleToggleNotification = async () => {
     if (notifLoading) return;
@@ -1071,10 +1071,10 @@ function Navbar() {
 
 
           {/* =================================================
-              INSTALL APP (PWA) - Only show if not installed
+              INSTALL APP (PWA) - Show in any browser outside standalone app
           ================================================= */}
 
-          {!isAppInstalled && (
+          {!isStandaloneApp && (
             <button
               type="button"
               className="side-menu-item side-menu-button install-app-menu-btn"
@@ -1111,7 +1111,7 @@ function Navbar() {
               NOTIFICATION TOGGLE (Inside App Only)
           ================================================= */}
 
-          {isAppInstalled && (
+          {isStandaloneApp && (
             <button
               type="button"
               className="side-menu-theme side-menu-notif-btn"
