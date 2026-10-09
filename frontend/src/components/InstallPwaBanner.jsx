@@ -65,6 +65,11 @@ function InstallPwaBanner() {
     }
 
     const res = await promptInstallApp();
+    if (res.alreadyInstalled) {
+      alert(res.message);
+      setShowBanner(false);
+      return;
+    }
     if (res.success) {
       setShowBanner(false);
     } else if (res.message) {

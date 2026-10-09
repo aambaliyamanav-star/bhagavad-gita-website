@@ -2517,23 +2517,39 @@ html[data-theme='dark'] .admin-container,
 }
 
 /* 5 Visitor Stat Cards Grid */
-.visitor-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-  gap: 16px;
-  margin-bottom: 22px;
+.visitor-stats-grid,
+.app-stat-cards-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)) !important;
+  gap: 16px !important;
+  margin-bottom: 22px !important;
 }
 
 @media (max-width: 1024px) {
-  .visitor-stats-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .visitor-stats-grid,
+  .app-stat-cards-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
   }
 }
 
 @media (max-width: 540px) {
-  .visitor-stats-grid {
-    grid-template-columns: 1fr;
+  .visitor-stats-grid,
+  .app-stat-cards-grid {
+    grid-template-columns: 1fr !important;
   }
+}
+
+.v-stat-hint {
+  display: block;
+  font-size: 11px;
+  color: #64748b;
+  margin-top: 3px;
+  font-weight: 500;
+}
+
+html[data-theme='dark'] .v-stat-hint,
+.dark .v-stat-hint {
+  color: #94a3b8 !important;
 }
 
 .v-stat-card {

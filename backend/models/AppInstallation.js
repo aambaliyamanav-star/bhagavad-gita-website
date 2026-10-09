@@ -14,6 +14,8 @@ const AppInstallationSchema = new mongoose.Schema(
     openCount: { type: Number, default: 1 },
     hasNotificationEnabled: { type: Boolean, default: false },
     notificationEndpoint: { type: String, default: null },
+    isInstalled: { type: Boolean, default: true },
+    uninstalledAt: { type: Date, default: null },
     ip: { type: String, default: "Unknown" },
   },
   { timestamps: true }
