@@ -614,8 +614,8 @@ function FavouriteShlokas() {
               shlok.shlokNumber;
 
             const localizedChapterName = isHindi
-              ? (CHAPTER_NAMES[chapterNumber]?.nameHi || shlok.chapterNameHi || item.chapterName)
-              : (CHAPTER_NAMES[chapterNumber]?.name || item.chapterName || shlok.chapterName);
+              ? (CHAPTER_NAMES?.[chapterNumber]?.nameHi || CHAPTER_NAMES?.[chapterNumber]?.hi || shlok.chapterNameHi || item.chapterName)
+              : (CHAPTER_NAMES?.[chapterNumber]?.name || CHAPTER_NAMES?.[chapterNumber]?.gu || item.chapterName || shlok.chapterName);
 
             return (
               <article

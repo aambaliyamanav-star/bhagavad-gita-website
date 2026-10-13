@@ -576,8 +576,8 @@ function LifeGuidance() {
         <div className="guidance-shlokas-grid">
           {currentTopic.shlokas.map((shlok, index) => {
             const localizedChapterName = isHindi
-              ? (CHAPTER_NAMES[shlok.chapterNumber]?.nameHi || shlok.chapterName)
-              : (CHAPTER_NAMES[shlok.chapterNumber]?.name || shlok.chapterName);
+              ? (CHAPTER_NAMES?.[shlok.chapterNumber]?.nameHi || CHAPTER_NAMES?.[shlok.chapterNumber]?.hi || shlok.chapterName)
+              : (CHAPTER_NAMES?.[shlok.chapterNumber]?.name || CHAPTER_NAMES?.[shlok.chapterNumber]?.gu || shlok.chapterName);
 
             return (
               <article
