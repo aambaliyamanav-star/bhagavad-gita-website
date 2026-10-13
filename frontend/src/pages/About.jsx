@@ -20,6 +20,7 @@ import {
   ArrowRight,
   ChevronRight,
 } from "lucide-react";
+import { useLanguage } from "../context/LanguageContext.jsx";
 import "./About.css";
 
 const FEATURES_DATA = [
@@ -246,6 +247,7 @@ const FEATURES_DATA = [
 ];
 
 function About() {
+  const { isHindi } = useLanguage();
   const [selectedFeature, setSelectedFeature] = useState(null);
 
   // Close modal on Escape key
@@ -301,8 +303,8 @@ function About() {
           <div className="compact-title-wrap">
             <Flower2 size={24} className="compact-logo-flower" />
             <h1>
-              શ્રીમદ્ ભગવદ્ ગીતા <span className="title-sep">•</span>{" "}
-              <span className="blue-title-text">તમામ વિશેષતાઓ</span>
+              {isHindi ? "श्रीमद्भगवद्गीता" : "શ્રીમદ્ ભગવદ્ ગીતા"} <span className="title-sep">•</span>{" "}
+              <span className="blue-title-text">{isHindi ? "सभी विशेषताएं" : "તમામ વિશેષતાઓ"}</span>
             </h1>
           </div>
         </header>
@@ -327,7 +329,7 @@ function About() {
                       <span className="card-category-tag">{item.category}</span>
                     </div>
                     <span className="card-hover-hint">
-                      <span>વિગતવાર</span>
+                      <span>{isHindi ? "विस्तार से" : "વિગતવાર"}</span>
                       <ChevronRight size={13} />
                     </span>
                   </div>
@@ -375,7 +377,7 @@ function About() {
                 type="button"
                 className="modal-close-btn"
                 onClick={() => setSelectedFeature(null)}
-                aria-label="Close"
+                aria-label={isHindi ? "बंद करें" : "Close"}
               >
                 <X size={18} />
               </button>
@@ -413,7 +415,7 @@ function About() {
                 className="modal-secondary-btn"
                 onClick={() => setSelectedFeature(null)}
               >
-                બંધ કરો
+                {isHindi ? "बंद करें" : "બંધ કરો"}
               </button>
 
               {selectedFeature.link ? (

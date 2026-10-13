@@ -17,6 +17,7 @@ import {
   BookOpen,
   ChevronRight
 } from "lucide-react";
+import { useLanguage } from "../context/LanguageContext.jsx";
 import "./LifeGuidance.css";
 
 const GUIDANCE_TOPICS = [
@@ -456,8 +457,24 @@ const GUIDANCE_TOPICS = [
 
 function LifeGuidance() {
   const navigate = useNavigate();
+  const { isHindi, CHAPTER_NAMES } = useLanguage();
   const [selectedTopicId, setSelectedTopicId] = useState(GUIDANCE_TOPICS[0].id);
   const shlokasSectionRef = useRef(null);
+
+  const TOPIC_TITLES_HI = {
+    anger: "क्रोध और आवेग",
+    stress: "चिंता और तनाव",
+    focus: "मन की अशांति और एकाग्रता",
+    grief: "शोक और निराशा",
+    karma: "कर्म और कर्तव्य",
+    relationships: "संबंध और प्रेम",
+    faith: "विश्वास और भक्ति",
+    dharma: "सच्चा धर्म और अधर्म",
+    life_death: "जीवन और मृत्यु",
+    success: "सच्ची सफलता और शांति",
+    forgiveness: "क्षमा और सहनशीलता",
+    speech: "वाणी और वाणी का तप",
+  };
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -489,11 +506,17 @@ function LifeGuidance() {
       {/* PAGE HEADER */}
       <header className="guidance-header-banner">
         <h1>
-          જીવનની મૂંઝવણ અને <span className="highlight-text">ગીતા ઉકેલ</span>
+          {isHindi ? (
+            <>जीवन की उलझन और <span className="highlight-text">गीता समाधान</span></>
+          ) : (
+            <>જીવનની મૂંઝવણ અને <span className="highlight-text">ગીતા ઉકેલ</span></>
+          )}
         </h1>
 
         <p className="guidance-intro">
-          તમારી વર્તમાન મનોસ્થિતિ કે પડકાર પસંદ કરો અને ભગવાન શ્રીકૃષ્ણના અમૃતમય શબ્દોમાંથી પ્રેરણા, સાચો નિર્ણય અને આંતરિક શાંતિ પ્રાપ્ત કરો.
+          {isHindi
+            ? "अपनी वर्तमान मनःस्थिति या चुनौती चुनें और भगवान श्रीकृष्ण के अमृतमयी वचनों से प्रेरणा, सही निर्णय और आंतरिक शांति प्राप्त करें।"
+            : "તમારી વર્તમાન મનોસ્થિતિ કે પડકાર પસંદ કરો અને ભગવાન શ્રીકૃષ્ણના અમૃતમય શબ્દોમાંથી પ્રેરણા, સાચો નિર્ણય અને આંતરિક શાંતિ પ્રાપ્ત કરો."}
         </p>
 
         {/* TOPIC SELECTOR GRID (HORIZONTAL SCROLL ON MOBILE) */}
@@ -502,6 +525,7 @@ function LifeGuidance() {
             {GUIDANCE_TOPICS.map((topic) => {
               const IconComponent = topic.icon;
               const isSelected = topic.id === selectedTopicId;
+              const displayedTitle = isHindi ? (TOPIC_TITLES_HI[topic.id] || topic.title) : topic.title;
 
               return (
                 <button
@@ -519,7 +543,7 @@ function LifeGuidance() {
                     <IconComponent size={18} strokeWidth={2.2} />
                   </span>
                   <span className="pill-text">
-                    <strong>{topic.title}</strong>
+                    <strong>{displayedTitle}</strong>
                   </span>
                 </button>
               );
@@ -550,62 +574,68 @@ function LifeGuidance() {
 
         {/* SHLOKAS SECTION */}
         <div className="guidance-shlokas-grid">
-          {currentTopic.shlokas.map((shlok, index) => (
-            <article
-              className="guidance-card"
-              key={`${currentTopic.id}-${index}`}
-            >
-              {/* CARD TOP META */}
-              <div className="card-header-meta">
-                <span className="card-ref-badge">
-                  અધ્યાય {shlok.chapterNumber} • શ્લોક {shlok.shlokNumber}
-                </span>
-                <span className="card-chapter-title">{shlok.chapterName}</span>
-              </div>
+          {currentTopic.shlokas.map((shlok, index) => {
+            const localizedChapterName = isHindi
+              ? (CHAPTER_NAMES[shlok.chapterNumber]?.nameHi || shlok.chapterName)
+              : (CHAPTER_NAMES[shlok.chapterNumber]?.name || shlok.chapterName);
 
-              {/* SANSKRIT VERSE */}
-              <div className="card-sanskrit-block">
-                <p className="sanskrit-text">"{shlok.sanskritExcerpt}"</p>
-              </div>
-
-              {/* GUJARATI TRANSLATION */}
-              <div className="card-meaning-block">
-                <h4>
-                  <BookOpen size={16} /> સરળ ગુજરાતી અર્થ
-                </h4>
-                <p>{shlok.gujaratiSummary}</p>
-              </div>
-
-              {/* PRACTICAL LIFE LESSON */}
-              <div
-                className="card-lesson-block"
-                style={{
-                  borderColor: `${currentTopic.color}45`,
-                  background: currentTopic.bgColor
-                }}
+            return (
+              <article
+                className="guidance-card"
+                key={`${currentTopic.id}-${index}`}
               >
-                <span
-                  className="lesson-header-tag"
-                  style={{ color: currentTopic.color }}
+                {/* CARD TOP META */}
+                <div className="card-header-meta">
+                  <span className="card-ref-badge">
+                    {isHindi ? "अध्याय" : "અધ્યાય"} {shlok.chapterNumber} • {isHindi ? "श्लोक" : "શ્લોક"} {shlok.shlokNumber}
+                  </span>
+                  <span className="card-chapter-title">{localizedChapterName}</span>
+                </div>
+
+                {/* SANSKRIT VERSE */}
+                <div className="card-sanskrit-block">
+                  <p className="sanskrit-text">"{shlok.sanskritExcerpt}"</p>
+                </div>
+
+                {/* TRANSLATION */}
+                <div className="card-meaning-block">
+                  <h4>
+                    <BookOpen size={16} /> {isHindi ? "सरल अर्थ" : "સરળ ગુજરાતી અર્થ"}
+                  </h4>
+                  <p>{shlok.gujaratiSummary}</p>
+                </div>
+
+                {/* PRACTICAL LIFE LESSON */}
+                <div
+                  className="card-lesson-block"
+                  style={{
+                    borderColor: `${currentTopic.color}45`,
+                    background: currentTopic.bgColor
+                  }}
                 >
-                  💡 વ્યવહારિક જીવનમાં ઉપયોગ:
-                </span>
-                <p>{shlok.lifeLesson}</p>
-              </div>
+                  <span
+                    className="lesson-header-tag"
+                    style={{ color: currentTopic.color }}
+                  >
+                    💡 {isHindi ? "व्यावहारिक जीवन में उपयोग:" : "વ્યવહારિક જીવનમાં ઉપયોગ:"}
+                  </span>
+                  <p>{shlok.lifeLesson}</p>
+                </div>
 
-              {/* ACTION BUTTON */}
-              <button
-                type="button"
-                className="card-navigate-btn"
-                onClick={() =>
-                  handleReadFullShlok(shlok.chapterNumber, shlok.shlokNumber)
-                }
-              >
-                <span>સંપૂર્ણ શ્લોક વાંચો</span>
-                <ChevronRight size={18} />
-              </button>
-            </article>
-          ))}
+                {/* ACTION BUTTON */}
+                <button
+                  type="button"
+                  className="card-navigate-btn"
+                  onClick={() =>
+                    handleReadFullShlok(shlok.chapterNumber, shlok.shlokNumber)
+                  }
+                >
+                  <span>{isHindi ? "सम्पूर्ण श्लोक पढ़ें" : "સંપૂર્ણ શ્લોક વાંચો"}</span>
+                  <ChevronRight size={18} />
+                </button>
+              </article>
+            );
+          })}
         </div>
       </section>
     </main>

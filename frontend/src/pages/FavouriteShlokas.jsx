@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Heart, Lock, Loader2, AlertCircle, RefreshCw, BookOpen, Trash2 } from "lucide-react";
 import { useAuth } from "../context/AuthContext.jsx";
+import { useLanguage } from "../context/LanguageContext.jsx";
 import SudarshanShimmerLoader from "../components/SudarshanShimmerLoader.jsx";
 import "./FavouriteShlokas.css";
 
 function FavouriteShlokas() {
   const navigate = useNavigate();
+  const { isHindi, CHAPTER_NAMES } = useLanguage();
 
   // =====================================================
   // AUTH CONTEXT
@@ -326,8 +328,7 @@ function FavouriteShlokas() {
           </h1>
 
           <p>
-            તમારા મનપસંદ શ્લોક જોવા માટે
-            Login કરો.
+            {isHindi ? "अपने पसंदीदा श्लोक देखने के लिए Login करें।" : "તમારા મનપસંદ શ્લોક જોવા માટે Login કરો."}
           </p>
 
         </section>
@@ -339,34 +340,38 @@ function FavouriteShlokas() {
           </div>
 
           <h2>
-            Login જરૂરી છે
+            {isHindi ? "Login आवश्यक है" : "Login જરૂરી છે"}
           </h2>
 
           <p>
-            Favourite શ્લોક save કરવા અને
-            જોવા માટે કૃપા કરીને Login કરો.
+            {isHindi
+              ? "पसंदीदा श्लोक सुरक्षित करने और देखने के लिए कृपया Login करें।"
+              : "Favourite શ્લોક save કરવા અને જોવા માટે કૃપા કરીને Login કરો."}
           </p>
 
           <button
             type="button"
             className="favourite-back-btn"
             onClick={() => {
+              const loginMsg = isHindi
+                ? "पसंदीदा श्लोक देखने के लिए Login करना आवश्यक है।"
+                : "મનપસંદ શ્લોક જોવા માટે Login કરવું જરૂરી છે.";
               sessionStorage.setItem(
                 "authRedirect",
                 JSON.stringify({
                   from: "/favorites",
-                  message: "મનપસંદ શ્લોક જોવા માટે Login કરવું જરૂરી છે.",
+                  message: loginMsg,
                 })
               );
               navigate("/login", {
                 state: {
                   from: "/favorites",
-                  message: "મનપસંદ શ્લોક જોવા માટે Login કરવું જરૂરી છે.",
+                  message: loginMsg,
                 },
               });
             }}
           >
-            <Lock className="btn-icon" size={18} /> Login કરો
+            <Lock className="btn-icon" size={18} /> {isHindi ? "Login करें" : "Login કરો"}
           </button>
 
         </section>
@@ -394,15 +399,15 @@ function FavouriteShlokas() {
           </p>
 
           <h1>
-            <Heart className="btn-icon" size={28} /> Favourite શ્લોક
+            <Heart className="btn-icon" size={28} /> {isHindi ? "पसंदीदा श्लोक" : "Favourite શ્લોક"}
           </h1>
 
         </section>
 
         <SudarshanShimmerLoader
           type="cards"
-          title="તમારા મનપસંદ શ્લોક લોડ થઈ રહ્યા છે..."
-          subtitle="પવિત્ર ગીતા વાણીનું સંકલન થઈ રહ્યું છે..."
+          title={isHindi ? "आपके पसंदीदा श्लोक लोड हो रहे हैं..." : "તમારા મનપસંદ શ્લોક લોડ થઈ રહ્યા છે..."}
+          subtitle={isHindi ? "पवित्र गीता वाणी का संकलन हो रहा है..." : "પવિત્ર ગીતા વાણીનું સંકલન થઈ રહ્યું છે..."}
           count={3}
         />
 
@@ -429,7 +434,7 @@ function FavouriteShlokas() {
           </p>
 
           <h1>
-            <Heart className="btn-icon" size={28} /> Favourite શ્લોક
+            <Heart className="btn-icon" size={28} /> {isHindi ? "पसंदीदा श्लोक" : "Favourite શ્લોક"}
           </h1>
 
         </section>
@@ -441,7 +446,7 @@ function FavouriteShlokas() {
           </div>
 
           <h2>
-            કંઈક સમસ્યા આવી
+            {isHindi ? "कोई समस्या आई" : "કંઈક સમસ્યા આવી"}
           </h2>
 
           <p>
@@ -455,7 +460,7 @@ function FavouriteShlokas() {
               window.location.reload()
             }
           >
-            <RefreshCw className="btn-icon" size={18} /> ફરી પ્રયાસ કરો
+            <RefreshCw className="btn-icon" size={18} /> {isHindi ? "पुनः प्रयास करें" : "ફરી પ્રયાસ કરો"}
           </button>
 
         </section>
@@ -483,11 +488,11 @@ function FavouriteShlokas() {
           </div>
 
           <p className="favourite-sacred-title">
-            ॥ श्रीमद्भगवद्गीता ॥
+            ॥ श्रीमद्भगવद्गीता ॥
           </p>
 
           <h1>
-            <Heart className="btn-icon" size={28} /> Favourite શ્લોક
+            <Heart className="btn-icon" size={28} /> {isHindi ? "पसंदीदा श्लोक" : "Favourite શ્લોક"}
           </h1>
 
         </section>
@@ -503,7 +508,7 @@ function FavouriteShlokas() {
           </div>
 
           <h2>
-            હજુ કોઈ Favourite શ્લોક નથી
+            {isHindi ? "अभी तक कोई पसंदीदा श्लोक नहीं" : "હજુ કોઈ Favourite શ્લોક નથી"}
           </h2>
 
           <button
@@ -513,7 +518,7 @@ function FavouriteShlokas() {
               navigate("/chapters")
             }
           >
-            <BookOpen className="btn-icon" size={18} /> ગીતા વાંચવાનું શરૂ કરો
+            <BookOpen className="btn-icon" size={18} /> {isHindi ? "गीता पढ़ना शुरू करें" : "ગીતા વાંચવાનું શરૂ કરો"}
           </button>
 
         </section>
@@ -540,15 +545,15 @@ function FavouriteShlokas() {
         </div>
 
         <p className="favourite-sacred-title">
-          ॥ श्रीमद्भगवद्गीता ॥
+          ॥ श्रीमद्भगવद्गीता ॥
         </p>
 
         <h1>
-          <Heart className="btn-icon" size={28} /> Favourite શ્લોક
+          <Heart className="btn-icon" size={28} /> {isHindi ? "पसंदीदा श्लोक" : "Favourite શ્લોક"}
         </h1>
 
         <p>
-          તમારા પસંદ કરેલા શ્લોક
+          {isHindi ? "आपके चुने हुए श्लोक" : "તમારા પસંદ કરેલા શ્લોક"}
         </p>
 
       </section>
@@ -566,7 +571,7 @@ function FavouriteShlokas() {
           </strong>
 
           <span>
-            Favourite શ્લોક
+            {isHindi ? "पसंदीदा श्लोक" : "Favourite શ્લોક"}
           </span>
 
         </div>
@@ -578,7 +583,7 @@ function FavouriteShlokas() {
             clearAllFavourites
           }
         >
-          <Trash2 className="btn-icon" size={16} /> બધા દૂર કરો
+          <Trash2 className="btn-icon" size={16} /> {isHindi ? "सभी हटाएं" : "બધા દૂર કરો"}
         </button>
 
       </section>
@@ -608,9 +613,9 @@ function FavouriteShlokas() {
               item.shlokNumber ||
               shlok.shlokNumber;
 
-            const chapterName =
-              item.chapterName ||
-              shlok.chapterName;
+            const localizedChapterName = isHindi
+              ? (CHAPTER_NAMES[chapterNumber]?.nameHi || shlok.chapterNameHi || item.chapterName)
+              : (CHAPTER_NAMES[chapterNumber]?.name || item.chapterName || shlok.chapterName);
 
             return (
               <article
@@ -627,7 +632,7 @@ function FavouriteShlokas() {
                 <div className="favourite-card-header">
 
                   <div className="favourite-number">
-                    શ્લોક{" "}
+                    {isHindi ? "श्लोक" : "શ્લોક"}{" "}
                     {shlokNumber}
                   </div>
 
@@ -637,8 +642,8 @@ function FavouriteShlokas() {
                     onClick={() =>
                       removeFavourite(item)
                     }
-                    title="Favourite દૂર કરો"
-                    aria-label="Favourite દૂર કરો"
+                    title={isHindi ? "पसंदीदा से हटाएं" : "Favourite દૂર કરો"}
+                    aria-label={isHindi ? "पसंदीदा से हटाएं" : "Favourite દૂર કરો"}
                   >
                     <Heart fill="#ef4444" color="#ef4444" size={20} />
                   </button>
@@ -651,13 +656,13 @@ function FavouriteShlokas() {
 
                 <div className="favourite-card-body">
                   <div className="favourite-chapter">
-                    અધ્યાય{" "}
+                    {isHindi ? "अध्याय" : "અધ્યાય"}{" "}
                     {chapterNumber}
 
-                    {chapterName && (
+                    {localizedChapterName && (
                       <>
                         {" • "}
-                        {chapterName}
+                        {localizedChapterName}
                       </>
                     )}
                   </div>
@@ -669,7 +674,7 @@ function FavouriteShlokas() {
                       openShloka(item)
                     }
                   >
-                    <BookOpen className="btn-icon" size={15} /> શ્લોક વાંચો
+                    <BookOpen className="btn-icon" size={15} /> {isHindi ? "श्लोक पढ़ें" : "શ્લોક વાંચો"}
                   </button>
                 </div>
 

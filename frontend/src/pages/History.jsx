@@ -1,10 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { History as HistoryIcon, ClipboardList, ChevronRight, BookMarked, Award, Sparkles } from "lucide-react";
+import { useLanguage } from "../context/LanguageContext.jsx";
 
 import "./History.css";
 
 function History() {
   const navigate = useNavigate();
+  const { isHindi } = useLanguage();
 
   // =====================================================
   // QUIZ HISTORY
@@ -44,7 +46,7 @@ function History() {
         </p>
 
         <h1>
-          History
+          {isHindi ? "इतिहास (History)" : "History"}
         </h1>
       </section>
 
@@ -72,7 +74,7 @@ function History() {
           <div className="history-option-content">
 
             <h2>
-              Quiz History
+              {isHindi ? "क्विज़ इतिहास (Quiz History)" : "Quiz History"}
             </h2>
 
           </div>
@@ -99,7 +101,7 @@ function History() {
           <div className="history-option-content">
 
             <h2>
-              ક્વિઝ સિદ્ધિઓ (Achievements)
+              {isHindi ? "क्विज़ उपलब्धियां (Achievements)" : "ક્વિઝ સિદ્ધિઓ (Achievements)"}
             </h2>
 
           </div>
@@ -127,7 +129,7 @@ function History() {
           <div className="history-option-content">
 
             <h2>
-              વાંચન પ્રગતિ
+              {isHindi ? "पठन प्रगति" : "વાંચન પ્રગતિ"}
             </h2>
 
           </div>

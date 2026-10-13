@@ -13,12 +13,13 @@ import {
   Lock,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext.jsx";
+import { useLanguage } from "../context/LanguageContext.jsx";
 import "./FeedbackModal.css";
 
 const PROD_API_BASE = "https://bhagavad-gita-website.onrender.com";
 const LOCAL_API_BASE = "http://localhost:5000";
 
-const RATING_LABELS = {
+const RATING_LABELS_GU = {
   1: "સુધારવાની જરૂર છે",
   2: "સામાન્ય",
   3: "સારું",
@@ -26,15 +27,31 @@ const RATING_LABELS = {
   5: "અદ્ભુત અને દિવ્ય અનુભવ",
 };
 
-const CATEGORIES = [
+const RATING_LABELS_HI = {
+  1: "सुधार की आवश्यकता है",
+  2: "सामान्य",
+  3: "अच्छा",
+  4: "बहुत अच्छा",
+  5: "अद्भुत और दिव्य अनुभव",
+};
+
+const CATEGORIES_GU = [
   { id: "suggestion", label: "સૂચન", icon: Lightbulb },
   { id: "feedback", label: "પ્રતિસાદ", icon: MessageSquare },
   { id: "appreciation", label: "પ્રશંસા", icon: Sparkles },
   { id: "bug", label: "સમસ્યા / બગ", icon: Bug },
 ];
 
+const CATEGORIES_HI = [
+  { id: "suggestion", label: "सुझाव", icon: Lightbulb },
+  { id: "feedback", label: "प्रतिक्रिया", icon: MessageSquare },
+  { id: "appreciation", label: "प्रशंसा", icon: Sparkles },
+  { id: "bug", label: "समस्या / बग", icon: Bug },
+];
+
 export default function FeedbackModal() {
   const { user } = useAuth();
+  const { isHindi } = useLanguage();
 
   const [isOpen, setIsOpen] = useState(false);
   const [rating, setRating] = useState(5);
@@ -245,6 +262,8 @@ export default function FeedbackModal() {
   };
 
   const activeRating = isLocked ? 5 : hoverRating || rating;
+  const ratingLabels = isHindi ? RATING_LABELS_HI : RATING_LABELS_GU;
+  const categories = isHindi ? CATEGORIES_HI : CATEGORIES_GU;
 
   return (
     <>
@@ -258,11 +277,13 @@ export default function FeedbackModal() {
           fetchUserRating();
           fetchStats();
         }}
-        aria-label="પ્રતિસાદ અને રેટિંગ આપો"
-        title="વેબસાઇટ માટે તમારો પ્રતિસાદ અને રેટિંગ આપો"
+        aria-label={isHindi ? "प्रतिक्रिया और रेटिंग दें" : "પ્રતિસાદ અને રેટિંગ આપો"}
+        title={isHindi ? "वेबसाइट के लिए अपनी प्रतिक्रिया और रेटिंग दें" : "વેબસાઇટ માટે તમારો પ્રતિસાદ અને રેટિંગ આપો"}
       >
         <Star size={18} className="feedback-fab-star-icon" />
-        <span className="feedback-fab-text">પ્રતિસાદ / રેટિંગ</span>
+        <span className="feedback-fab-text">
+          {isHindi ? "प्रतिक्रिया / रेटिंग" : "પ્રતિસાદ / રેટિંગ"}
+        </span>
       </button>
 
       {/* Modal Dialog */}
@@ -279,7 +300,7 @@ export default function FeedbackModal() {
               type="button"
               className="feedback-modal-close"
               onClick={handleClose}
-              aria-label="બંધ કરો"
+              aria-label={isHindi ? "बंद करें" : "બંધ કરો"}
             >
               <X size={18} />
             </button>
@@ -290,18 +311,24 @@ export default function FeedbackModal() {
                 <div className="feedback-success-icon-box">
                   <CheckCircle2 size={42} strokeWidth={2.5} />
                 </div>
-                <h3 className="feedback-success-title">ધન્યવાદ!</h3>
+                <h3 className="feedback-success-title">
+                  {isHindi ? "धन्यवाद!" : "ધન્યવાદ!"}
+                </h3>
                 <p className="feedback-success-desc">
                   {isLocked
-                    ? "આપનો પ્રતિસાદ સફળતાપૂર્વક નોંધાઈ ગયો છે. આપનું ૫-સ્ટાર (સર્વોત્તમ) રેટિંગ લૉક થયેલું છે. આપના અમૂલ્ય સાથ બદલ ખૂબ ખૂબ આભાર!"
-                    : "આપનો પ્રતિસાદ અને રેટિંગ સફળતાપૂર્વક નોંધાઈ ગયો છે. આપના સૂચનો આ પવિત્ર પ્લેટફોર્મને વધુ ઉત્કૃષ્ટ બનાવવામાં મદદરૂપ થશે."}
+                    ? (isHindi
+                        ? "आपकी प्रतिक्रिया सफलतापूर्वक दर्ज हो गई है। आपकी 5-स्टार (सर्वोत्तम) रेटिंग लॉक है। आपके अमूल्य सहयोग के लिए बहुत-बहुत धन्यवाद!"
+                        : "આપનો પ્રતિસાદ સફળતાપૂર્વક નોંધાઈ ગયો છે. આપનું ૫-સ્ટાર (સર્વોત્તમ) રેટિંગ લૉક થયેલું છે. આપના અમૂલ્ય સાથ બદલ ખૂબ ખૂબ આભાર!")
+                    : (isHindi
+                        ? "आपकी प्रतिक्रिया और रेटिंग सफलतापूर्वक दर्ज हो गई है। आपके सुझाव इस पवित्र मंच को और अधिक उत्कृष्ट बनाने में मदद करेंगे।"
+                        : "આપનો પ્રતિસાદ અને રેટિંગ સફળતાપૂર્વક નોંધાઈ ગયો છે. આપના સૂચનો આ પવિત્ર પ્લેટફોર્મને વધુ ઉત્કૃષ્ટ બનાવવામાં મદદરૂપ થશે.")}
                 </p>
                 <button
                   type="button"
                   className="feedback-close-success-btn"
                   onClick={handleClose}
                 >
-                  બંધ કરો
+                  {isHindi ? "बंद करें" : "બંધ કરો"}
                 </button>
               </div>
             ) : (
@@ -310,14 +337,15 @@ export default function FeedbackModal() {
                 <div className="feedback-modal-header">
                   <span className="feedback-header-badge">
                     <Sparkles size={12} />
-                    તમારો અભિપ્રાય
+                    {isHindi ? "आपकी राय" : "તમારો અભિપ્રાય"}
                   </span>
                   <h2 className="feedback-modal-title">
-                    પ્રતિસાદ અને સ્ટાર રેટિંગ
+                    {isHindi ? "प्रतिक्रिया और स्टार रेटिंग" : "પ્રતિસાદ અને સ્ટાર રેટિંગ"}
                   </h2>
                   <p className="feedback-modal-subtitle">
-                    શ્રીમદ્ ભગવદ્ ગીતા વેબસાઇટ વિશે આપનો પવિત્ર અનુભવ અને સૂચન
-                    જણાવો.
+                    {isHindi
+                      ? "श्रीमद्भगवद्गीता वेबसाइट के बारे में अपना पवित्र अनुभव और सुझाव बताएं।"
+                      : "શ્રીમદ્ ભગવદ્ ગીતા વેબસાઇટ વિશે આપનો પવિત્ર અનુભવ અને સૂચન જણાવો."}
                   </p>
                 </div>
 
@@ -344,7 +372,7 @@ export default function FeedbackModal() {
                       </div>
                     </div>
                     <span className="feedback-score-count">
-                      {stats.totalCount} ભક્તો દ્વારા રેટિંગ
+                      {stats.totalCount} {isHindi ? "भक्तों द्वारा रेटिंग" : "ભક્તો દ્વારા રેટિંગ"}
                     </span>
                   </div>
                 )}
@@ -355,10 +383,10 @@ export default function FeedbackModal() {
                     <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "8px" }}>
                       <label className="feedback-section-label" style={{ margin: 0 }}>
                         {isLocked
-                          ? "આપનું ૫-સ્ટાર રેટિંગ (લૉક થયેલ છે)"
+                          ? (isHindi ? "आपकी 5-स्टार रेटिंग (लॉक है)" : "આપનું ૫-સ્ટાર રેટિંગ (લૉક થયેલ છે)")
                           : hasRated
-                          ? "તમારું હાલનું રેટિંગ"
-                          : "વેબસાઇટને સ્ટાર રેટિંગ આપો"}
+                          ? (isHindi ? "आपकी वर्तमान रेटिंग" : "તમારું હાલનું રેટિંગ")
+                          : (isHindi ? "वेबसाइट को स्टार रेटिंग दें" : "વેબસાઇટને સ્ટાર રેટિંગ આપો")}
                       </label>
                       {isLocked && <Lock size={14} color="#d97706" />}
                     </div>
@@ -379,8 +407,8 @@ export default function FeedbackModal() {
                             }
                             setRating(starNum);
                           }}
-                          aria-label={`${starNum} સ્ટાર`}
-                          title={isLocked ? "૫-સ્ટાર રેટિંગ લૉક છે" : `${starNum} સ્ટાર`}
+                          aria-label={`${starNum} ${isHindi ? "स्टार" : "સ્ટાર"}`}
+                          title={isLocked ? (isHindi ? "5-स्टार रेटिंग लॉक है" : "૫-સ્ટાર રેટિંગ લૉક છે") : `${starNum} ${isHindi ? "स्टार" : "સ્ટાર"}`}
                         >
                           <Star
                             size={32}
@@ -396,16 +424,18 @@ export default function FeedbackModal() {
                     <div className="feedback-rating-descriptor">
                       {isLocked ? (
                         <span style={{ color: "#d97706", display: "inline-flex", alignItems: "center", gap: "4px" }}>
-                          <Lock size={13} /> આપનું ૫-સ્ટાર રેટિંગ નોંધાઈ ગયું છે
+                          <Lock size={13} /> {isHindi ? "आपकी 5-स्टार रेटिंग दर्ज हो गई है" : "આપનું ૫-સ્ટાર રેટિંગ નોંધાઈ ગયું છે"}
                         </span>
                       ) : (
-                        RATING_LABELS[activeRating] || ""
+                        ratingLabels[activeRating] || ""
                       )}
                     </div>
 
                     {!isLocked && !hasRated && (
                       <p className="feedback-rating-hint">
-                        ૧ એકાઉન્ટમાંથી ૧ જ વાર રેટિંગ ગણાશે. ૫-સ્ટાર આપ્યા બાદ તે લૉક થઈ જશે.
+                        {isHindi
+                          ? "1 खाते से केवल 1 बार रेटिंग मान्य होगी। 5-स्टार देने के बाद यह लॉक हो जाएगी।"
+                          : "૧ એકાઉન્ટમાંથી ૧ જ વાર રેટિંગ ગણાશે. ૫-સ્ટાર આપ્યા બાદ તે લૉક થઈ જશે."}
                       </p>
                     )}
                   </div>
@@ -413,10 +443,10 @@ export default function FeedbackModal() {
                   {/* Category Selector */}
                   <div className="feedback-category-group">
                     <label className="feedback-group-title">
-                      પ્રતિસાદનો પ્રકાર
+                      {isHindi ? "प्रतिक्रिया का प्रकार" : "પ્રતિસાદનો પ્રકાર"}
                     </label>
                     <div className="feedback-categories-grid">
-                      {CATEGORIES.map((cat) => {
+                      {categories.map((cat) => {
                         const Icon = cat.icon;
                         const isSelected = category === cat.id;
                         return (
@@ -439,22 +469,26 @@ export default function FeedbackModal() {
                   {/* Name and Email Inputs */}
                   <div className="feedback-input-row">
                     <div className="feedback-field">
-                      <label className="feedback-field-label">આપનું નામ</label>
+                      <label className="feedback-field-label">
+                        {isHindi ? "आपका नाम" : "આપનું નામ"}
+                      </label>
                       <input
                         type="text"
                         className="feedback-text-input"
-                        placeholder="નામ"
+                        placeholder={isHindi ? "नाम" : "નામ"}
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                         maxLength={50}
                       />
                     </div>
                     <div className="feedback-field">
-                      <label className="feedback-field-label">ઈમેઇલ</label>
+                      <label className="feedback-field-label">
+                        {isHindi ? "ईमेल" : "ઈમેઇલ"}
+                      </label>
                       <input
                         type="email"
                         className="feedback-text-input"
-                        placeholder="ઈમેઇલ (વૈકલ્પિક)"
+                        placeholder={isHindi ? "ईमेल (वैकल्पिक)" : "ઈમેઇલ (વૈકલ્પિક)"}
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         maxLength={80}
@@ -465,11 +499,15 @@ export default function FeedbackModal() {
                   {/* Message Textarea */}
                   <div className="feedback-textarea-wrap">
                     <label className="feedback-group-title">
-                      આપનું સૂચન અથવા પ્રતિસાદ
+                      {isHindi ? "आपका सुझाव या प्रतिक्रिया" : "આપનું સૂચન અથવા પ્રતિસાદ"}
                     </label>
                     <textarea
                       className="feedback-textarea"
-                      placeholder="કોઈ નવું સૂચન, સુધારો કે આપનો પવિત્ર અનુભવ અહીં લખો..."
+                      placeholder={
+                        isHindi
+                          ? "कोई नया सुझाव, सुधार या अपना पवित्र अनुभव यहाँ लिखें..."
+                          : "કોઈ નવું સૂચન, સુધારો કે આપનો પવિત્ર અનુભવ અહીં લખો..."
+                      }
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       maxLength={1000}
@@ -477,7 +515,7 @@ export default function FeedbackModal() {
                       required
                     />
                     <span className="feedback-char-counter">
-                      {message.length} / 1000 અક્ષરો
+                      {message.length} / 1000 {isHindi ? "अक्षर" : "અક્ષરો"}
                     </span>
                   </div>
 
@@ -501,17 +539,19 @@ export default function FeedbackModal() {
                           size={18}
                           className="feedback-spinning"
                         />
-                        <span>સબમિટ થઈ રહ્યું છે...</span>
+                        <span>
+                          {isHindi ? "सबमिट हो रहा है..." : "સબમિટ થઈ રહ્યું છે..."}
+                        </span>
                       </>
                     ) : (
                       <>
                         <Send size={16} />
                         <span>
                           {isLocked
-                            ? "સૂચન સબમિટ કરો"
+                            ? (isHindi ? "सुझाव सबमिट करें" : "સૂચન સબમિટ કરો")
                             : hasRated
-                            ? "રેટિંગ / સૂચન અપડેટ કરો"
-                            : "રેટિંગ અને સૂચન સબમિટ કરો"}
+                            ? (isHindi ? "रेटिंग / सुझाव अपडेट करें" : "રેટિંગ / સૂચન અપડેટ કરો")
+                            : (isHindi ? "रेटिंग और सुझाव सबमिट करें" : "રેટિંગ અને સૂચન સબમિટ કરો")}
                         </span>
                       </>
                     )}
