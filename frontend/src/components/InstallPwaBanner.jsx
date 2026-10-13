@@ -19,31 +19,25 @@ function InstallPwaBanner() {
       return;
     }
 
-    // Clean up old legacy 3-day suppression
+    // Clean up old legacy suppressions so refresh always brings it back
     try {
       localStorage.removeItem("pwa_banner_dismissed_until");
+      sessionStorage.removeItem("pwa_banner_dismissed_session");
     } catch (e) {}
-
-    // Check if dismissed in the current session
-    const isDismissedInSession =
-      sessionStorage.getItem("pwa_banner_dismissed_session") === "true";
 
     // Check if iOS Safari
     const isIos =
       /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     setIsIosDevice(isIos);
 
-    // If not running in standalone app and not dismissed in this session, show after a gentle 1.5s delay
-    let timer = null;
-    if (!isDismissedInSession) {
-      timer = setTimeout(() => {
-        if (!isRunningInStandaloneApp()) {
-          setShowBanner(true);
-        }
-      }, 1500);
-    }
+    // Show after a gentle 1.5s delay
+    const timer = setTimeout(() => {
+      if (!isRunningInStandaloneApp()) {
+        setShowBanner(true);
+      }
+    }, 1500);
 
-    // Listen for custom trigger from Navbar/menu (always shows even if previously dismissed)
+    // Listen for custom trigger from Navbar/menu (always shows even if previously closed)
     const handleOpenCustom = () => {
       setShowBanner(true);
       if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
@@ -56,7 +50,7 @@ function InstallPwaBanner() {
     const unsubscribe = onInstallPromptChange((canInstall, isStandalone) => {
       if (isStandalone) {
         setShowBanner(false);
-      } else if ((canInstall || isIos) && !isDismissedInSession) {
+      } else if (canInstall || isIos) {
         setShowBanner(true);
       }
     });
@@ -88,11 +82,8 @@ function InstallPwaBanner() {
   };
 
   const handleDismiss = () => {
+    // Closes the banner now; upon refresh, it will reappear
     setShowBanner(false);
-    // Dismiss only for the current browser session
-    try {
-      sessionStorage.setItem("pwa_banner_dismissed_session", "true");
-    } catch (e) {}
   };
 
   if (!showBanner) return null;
