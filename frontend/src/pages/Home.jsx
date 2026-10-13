@@ -18,9 +18,16 @@ import {
 import "./Home.css";
 import ShareShlokaModal from "../components/ShareShlokaModal.jsx";
 import { getLocalProgress } from "../utils/readingTracker.js";
+import { useLanguage } from "../context/LanguageContext.jsx";
 
 function Home() {
   const navigate = useNavigate();
+
+  // =====================================================
+  // LANGUAGE CONTEXT
+  // =====================================================
+
+  const { isHindi, t, getLocalizedShlok } = useLanguage();
 
   // =====================================================
   // AUTH CONTEXT
@@ -169,6 +176,27 @@ useEffect(() => {
     16: "દૈવાસુરસંપદ્વિભાગ યોગ",
     17: "શ્રદ્ધાત્રયવિભાગ યોગ",
     18: "મોક્ષસંન્યાસ યોગ",
+  };
+
+  const chapterNamesHi = {
+    1: "अर्जुनविषाद योग",
+    2: "सांख्य योग",
+    3: "कर्म योग",
+    4: "ज्ञानकर्मसंन्यास योग",
+    5: "कर्मसंन्यास योग",
+    6: "आत्मसंयम योग",
+    7: "ज्ञानविज्ञान योग",
+    8: "अक्षरब्रह्म योग",
+    9: "राजविद्या राजगुह्य योग",
+    10: "विभूति योग",
+    11: "विश्वरूपदर्शन योग",
+    12: "भक्ति योग",
+    13: "क्षेत्र-क्षेत्रज्ञ विभाग योग",
+    14: "गुणत्रय विभाग योग",
+    15: "पुरुषोत्तम योग",
+    16: "दैवासुरसम्पद्विभाग योग",
+    17: "श्रद्धात्रयविभाग योग",
+    18: "मोक्षसंन्यास योग",
   };
 
   // =====================================================
@@ -1169,142 +1197,139 @@ useEffect(() => {
           TODAY'S SHLOK
       ================================================= */}
 
-      {todayShlok && (
-        <section className="today-shlok">
+      {todayShlok && (() => {
+        const localizedToday = getLocalizedShlok(todayShlok);
+        const todayChapterName = isHindi
+          ? (todayShlok.chapterNameHi || chapterNamesHi[todayShlok.chapterNumber] || todayShlok.chapterName)
+          : (todayShlok.chapterName || chapterNames[todayShlok.chapterNumber] || `અધ્યાય ${todayShlok.chapterNumber}`);
 
-          <div className="today-shlok-header">
+        return (
+          <section className="today-shlok">
 
-            <span className="today-shlok-icon">
-              <Sparkles size={28} />
-            </span>
+            <div className="today-shlok-header">
+              <span className="today-shlok-icon">
+                <Sparkles size={28} />
+              </span>
 
-            <div>
-
-              <h2>
-                આજનો શ્લોક
-              </h2>
-
+              <div>
+                <h2>
+                  {isHindi ? "आज का श्लोक" : "આજનો શ્લોક"}
+                </h2>
+              </div>
             </div>
 
-          </div>
+            <div className="today-shlok-meta">
+              <span>
+                {isHindi ? `अध्याय ${todayShlok.chapterNumber}` : `અધ્યાય ${todayShlok.chapterNumber}`}
+              </span>
 
-          <div className="today-shlok-meta">
+              <span>
+                {todayChapterName}
+              </span>
 
-            <span>
-              અધ્યાય{" "}
-              {todayShlok.chapterNumber}
-            </span>
+              <span>
+                {isHindi ? `श्लोक ${todayShlok.shlokNumber}` : `શ્લોક ${todayShlok.shlokNumber}`}
+              </span>
+            </div>
 
-            <span>
-              {todayShlok.chapterName ||
-                chapterNames[
-                  todayShlok.chapterNumber
-                ] ||
-                `અધ્યાય ${todayShlok.chapterNumber}`}
-            </span>
-
-            <span>
-              શ્લોક{" "}
-              {todayShlok.shlokNumber}
-            </span>
-
-          </div>
-
-          <div className="today-shlok-content">
-
- <div className="today-sanskrit">
-
-  {todayShlok.sanskrit && (
-    <div
-      ref={todaySanskritRef}
-      className="today-sanskrit-text"
-      dangerouslySetInnerHTML={{
-        __html:
-          todayShlok.sanskrit,
-      }}
-    />
-  )}
-
-</div>
-
-            {todayShlok.translation && (
-              <div className="today-translation">
-
-                <h3>
-                  <BookOpen className="section-icon" size={20} /> ગુજરાતી અનુવાદ
-                </h3>
-
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html:
-                      todayShlok.translation,
-                  }}
-                />
-
+            <div className="today-shlok-content">
+              {/* SANSKRIT SHLOK - PURE SANSKRIT */}
+              <div className="today-sanskrit">
+                {todayShlok.sanskrit && (
+                  <div
+                    ref={todaySanskritRef}
+                    className="today-sanskrit-text"
+                    dangerouslySetInnerHTML={{
+                      __html: todayShlok.sanskrit,
+                    }}
+                  />
+                )}
               </div>
-            )}
 
-            {todayShlok.message && (
-              <div className="today-message">
+              {(localizedToday.translation || todayShlok.translation) && (
+                <div className="today-translation">
+                  <h3>
+                    <BookOpen className="section-icon" size={20} />{" "}
+                    {isHindi ? "हिन्दी अनुवाद" : "ગુજરાતી અનુવાદ"}
+                  </h3>
 
-                <h3>
-                  <Sparkles className="section-icon" size={20} /> આજનો સંદેશ
-                </h3>
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        localizedToday.translation ||
+                        todayShlok.translation,
+                    }}
+                  />
+                </div>
+              )}
 
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html:
-                      todayShlok.message,
-                  }}
-                />
+              {(localizedToday.message || todayShlok.message) && (
+                <div className="today-message">
+                  <h3>
+                    <Sparkles className="section-icon" size={20} />{" "}
+                    {isHindi ? "आज का सन्देश" : "આજનો સંદેશ"}
+                  </h3>
 
-              </div>
-            )}
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        localizedToday.message ||
+                        todayShlok.message,
+                    }}
+                  />
+                </div>
+              )}
+            </div>
 
-          </div>
+            <div className="today-shlok-actions">
+              <button
+                type="button"
+                className="today-shlok-button"
+                onClick={handleTodayShlok}
+              >
+                <BookOpen className="btn-icon" size={18} />{" "}
+                {isHindi ? "सम्पूर्ण श्लोक पढ़ें" : "સંપૂર્ણ શ્લોક વાંચો"}
+              </button>
+              <button
+                type="button"
+                className="today-shlok-button today-share-button"
+                onClick={handleShareTodayShlok}
+                title={isHindi ? "श्लोक कार्ड शेयर / डाउनलोड करें" : "શ્લોક કાર્ડ શેર કરો / ડાઉનલોડ કરો"}
+              >
+                <Share2 className="btn-icon" size={18} />{" "}
+                {isHindi ? "श्लोक कार्ड शेयर करें" : "શ્લોક કાર્ડ શેર કરો"}
+              </button>
+            </div>
 
-          <div className="today-shlok-actions">
-            <button
-              type="button"
-              className="today-shlok-button"
-              onClick={handleTodayShlok}
-            >
-              <BookOpen className="btn-icon" size={18} /> સંપૂર્ણ શ્લોક વાંચો
-            </button>
-            <button
-              type="button"
-              className="today-shlok-button today-share-button"
-              onClick={handleShareTodayShlok}
-              title="શ્લોક કાર્ડ શેર કરો / ડાઉનલોડ કરો"
-            >
-              <Share2 className="btn-icon" size={18} /> શ્લોક કાર્ડ શેર કરો
-            </button>
-          </div>
-
-        </section>
-      )}
+          </section>
+        );
+      })()}
 
       {/* =================================================
           SHARE SHLOKA CARD MODAL (TODAY'S SHLOK)
       ================================================= */}
-      {todayShlok && (
-        <ShareShlokaModal
-          isOpen={shareModalOpen}
-          onClose={() => setShareModalOpen(false)}
-          shlokaData={{
-            chapterNumber: todayShlok.chapterNumber,
-            chapterName:
-              todayShlok.chapterName ||
-              (typeof chapterNames !== "undefined" && chapterNames[todayShlok.chapterNumber]) ||
-              `અધ્યાય ${todayShlok.chapterNumber}`,
-            shlokNumber: todayShlok.shlokNumber,
-            sanskrit: todayShlok.sanskrit,
-            translation: todayShlok.translation,
-            speaker: todayShlok.speaker,
-            message: todayShlok.message,
-          }}
-        />
-      )}
+      {todayShlok && (() => {
+        const localizedToday = getLocalizedShlok(todayShlok);
+        const todayChapterName = isHindi
+          ? (todayShlok.chapterNameHi || chapterNamesHi[todayShlok.chapterNumber] || todayShlok.chapterName)
+          : (todayShlok.chapterName || (typeof chapterNames !== "undefined" && chapterNames[todayShlok.chapterNumber]) || `અધ્યાય ${todayShlok.chapterNumber}`);
+
+        return (
+          <ShareShlokaModal
+            isOpen={shareModalOpen}
+            onClose={() => setShareModalOpen(false)}
+            shlokaData={{
+              chapterNumber: todayShlok.chapterNumber,
+              chapterName: todayChapterName,
+              shlokNumber: todayShlok.shlokNumber,
+              sanskrit: todayShlok.sanskrit,
+              translation: localizedToday.translation || todayShlok.translation,
+              speaker: localizedToday.speaker || todayShlok.speaker,
+              message: localizedToday.message || todayShlok.message,
+            }}
+          />
+        );
+      })()}
 
     </main>
   );

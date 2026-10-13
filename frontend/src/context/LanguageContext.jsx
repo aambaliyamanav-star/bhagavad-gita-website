@@ -1,0 +1,172 @@
+import React, { createContext, useContext, useState, useEffect } from "react";
+
+// =====================================================
+// CHAPTER NAMES (GUJARATI & HINDI)
+// =====================================================
+
+export const CHAPTER_NAMES = {
+  1: { gu: "અર્જુનવિષાદયોગ", hi: "अर्जुनविषादयोग" },
+  2: { gu: "સાંખ્યયોગ", hi: "सांख्ययोग" },
+  3: { gu: "કર્મયોગ", hi: "कर्मयोग" },
+  4: { gu: "જ્ઞાનકર્મસંન્યાસયોગ", hi: "ज्ञानकर्मसंन्यासयोग" },
+  5: { gu: "કર્મસંન્યાસયોગ", hi: "कर्मसंन्यासयोग" },
+  6: { gu: "આત્મસંયમયોગ", hi: "आत्मसंयमयोग" },
+  7: { gu: "જ્ઞાનવિજ્ઞાનયોગ", hi: "ज्ञानविज्ञानयोग" },
+  8: { gu: "અક્ષરબ્રહ્મયોગ", hi: "अक्षरब्रह्मयोग" },
+  9: { gu: "રાજવિદ્યારાજગુહ્યયોગ", hi: "राजविद्याराजगुह्ययोग" },
+  10: { gu: "વિભૂતિયોગ", hi: "विभूतियोग" },
+  11: { gu: "વિશ્વરૂપદર્શનયોગ", hi: "विश्वरूपदर्शनयोग" },
+  12: { gu: "ભક્તિયોગ", hi: "भक्तियोग" },
+  13: { gu: "ક્ષેત્ર-ક્ષેત્રજ્ઞવિભાગયોગ", hi: "क्षेत्र-क्षेत्रज्ञविभागयोग" },
+  14: { gu: "ગુણત્રયવિભાગયોગ", hi: "गुणत्रयविभागयोग" },
+  15: { gu: "પુરુષોત્તમયોગ", hi: "पुरुषोत्तमयोग" },
+  16: { gu: "દૈવાસુરસમ્પદ્વિભાગયોગ", hi: "दैवासुरसम्पद्विभागयोग" },
+  17: { gu: "શ્રદ્ધાત્રયવિભાગયોગ", hi: "श्रद्धात्रयविभागयोग" },
+  18: { gu: "મોક્ષસંન્યાસયોગ", hi: "मोक्षसंन्यासयोग" },
+};
+
+// =====================================================
+// UI TRANSLATION DICTIONARY (GUJARATI & HINDI)
+// =====================================================
+
+const UI_DICTIONARY = {
+  // Navigation
+  nav_home: { gu: "મુખ્ય પેજ", hi: "मुख्य पृष्ठ" },
+  nav_chapters: { gu: "અધ્યાયો", hi: "अध्याय" },
+  nav_today_shlok: { gu: "આજનો શ્લોક", hi: "आज का श्लोક" },
+  nav_ai: { gu: "ગીતા AI", hi: "गीता AI" },
+  nav_quiz: { gu: "ક્વિઝ", hi: "क्विज़" },
+  nav_favorites: { gu: "મનપસંદ શ્લોક", hi: "पसंदीदा श्लोक" },
+  nav_about: { gu: "અમારા વિશે", hi: "हमारे बारे में" },
+  nav_admin: { gu: "એડમિન પેનલ", hi: "एडमिन पैनल" },
+  nav_login: { gu: "લોગિન", hi: "लॉगिन" },
+  nav_profile: { gu: "પ્રોફાઇલ", hi: "प्रोफ़ाइल" },
+  nav_install_app: { gu: "એપ ઇન્સ્ટોલ કરો", hi: "ऐप इंस्टॉल करें" },
+  nav_logout: { gu: "લોગ આઉટ", hi: "लॉग आउट" },
+
+  // Shlok & Reader
+  shlok_label: { gu: "શ્લોક", hi: "श्लोक" },
+  chapter_label: { gu: "અધ્યાય", hi: "अध्याय" },
+  word_meanings_tab: { gu: "શબ્દાર્થ", hi: "शब्दार्थ" },
+  translation_tab: { gu: "અનુવાદ", hi: "अनुवाद" },
+  message_tab: { gu: "ગીતા સંદેશ", hi: "गीता संदेश" },
+  play_audio: { gu: "ઓડિયો સાંભળો", hi: "ऑडियो सुनें" },
+  stop_audio: { gu: "ઓડિયો બંધ કરો", hi: "ऑडियो रोकें" },
+  share_shlok: { gu: "શ્લોક શેર કરો", hi: "श्लोक शेयर करें" },
+  favorite_add: { gu: "મનપસંદમાં ઉમેરો", hi: "पसंदीदा में जोड़ें" },
+  favorite_remove: { gu: "મનપસંદમાંથી હટાવો", hi: "पसंदीदा से हटाएं" },
+  copied: { gu: "કોપી થઈ ગયું!", hi: "कॉपी हो गया!" },
+  copy_text: { gu: "કોપી કરો", hi: "कॉपी करें" },
+  next_shlok: { gu: "આગળનો શ્લોક", hi: "अगला श्लोक" },
+  prev_shlok: { gu: "પાછળનો શ્લોક", hi: "पिछला श्लोक" },
+  today_special: { gu: "આજનો વિશેષ શ્લોક", hi: "आज का विशेष श्लोक" },
+  daily_wisdom: { gu: "દૈનિક પ્રેરણા", hi: "दैनिक प्रेरणा" },
+
+  // Common Buttons & Labels
+  read_full: { gu: "સંપૂર્ણ વાંચો", hi: "पूरा पढ़ें" },
+  explore: { gu: "અધ્યાયો જુઓ", hi: "अध्याय देखें" },
+  close: { gu: "બંધ કરો", hi: "बंद करें" },
+  save: { gu: "સાચવો", hi: "सहेजें" },
+  cancel: { gu: "રદ કરો", hi: "रद्द करें" },
+  loading: { gu: "લોડ થઈ રહ્યું છે...", hi: "लोड हो रहा है..." },
+};
+
+const LanguageContext = createContext();
+
+export function LanguageProvider({ children }) {
+  const [language, setLanguageState] = useState(() => {
+    try {
+      return localStorage.getItem("gita_language") || "gu";
+    } catch (e) {
+      return "gu";
+    }
+  });
+
+  const setLanguage = (lang) => {
+    const validLang = lang === "hi" ? "hi" : "gu";
+    setLanguageState(validLang);
+    try {
+      localStorage.setItem("gita_language", validLang);
+      document.documentElement.lang = validLang;
+    } catch (e) {}
+  };
+
+  const toggleLanguage = () => {
+    setLanguage(language === "gu" ? "hi" : "gu");
+  };
+
+  useEffect(() => {
+    try {
+      document.documentElement.lang = language;
+    } catch (e) {}
+  }, [language]);
+
+  // Translate helper function
+  const t = (key) => {
+    if (!UI_DICTIONARY[key]) return key;
+    return UI_DICTIONARY[key][language] || UI_DICTIONARY[key]["gu"] || key;
+  };
+
+  // Helper to extract localized shlok fields while ensuring Sanskrit is 100% untouched
+  const getLocalizedShlok = (shlok) => {
+    if (!shlok) return null;
+    const isHi = language === "hi";
+
+    return {
+      ...shlok,
+      // SANSKRIT ALWAYS STAYS IN PURE SANSKRIT
+      sanskrit: shlok.sanskrit,
+
+      // Localized fields
+      chapterName:
+        (isHi && shlok.chapterNameHi) ||
+        (isHi && CHAPTER_NAMES[shlok.chapterNumber]?.hi) ||
+        shlok.chapterName,
+
+      speaker: (isHi && shlok.speakerHi) || shlok.speaker,
+
+      translation: (isHi && shlok.translationHi) || shlok.translation,
+
+      message: (isHi && shlok.messageHi) || shlok.message,
+
+      // Word meanings: Sanskrit 'word' stays untouched, 'meaning' switches to Hindi if available
+      wordMeanings: (shlok.wordMeanings || []).map((w) => ({
+        ...w,
+        word: w.word, // Sanskrit stays untouched
+        meaning: (isHi && w.meaningHi) || w.meaning,
+      })),
+    };
+  };
+
+  // Helper for chapter names
+  const getChapterName = (chapterNumber, defaultName = "") => {
+    if (CHAPTER_NAMES[chapterNumber]) {
+      return CHAPTER_NAMES[chapterNumber][language] || defaultName;
+    }
+    return defaultName;
+  };
+
+  return (
+    <LanguageContext.Provider
+      value={{
+        language,
+        setLanguage,
+        toggleLanguage,
+        t,
+        getLocalizedShlok,
+        getChapterName,
+        isHindi: language === "hi",
+      }}
+    >
+      {children}
+    </LanguageContext.Provider>
+  );
+}
+
+export function useLanguage() {
+  const context = useContext(LanguageContext);
+  if (!context) {
+    throw new Error("useLanguage must be used within a LanguageProvider");
+  }
+  return context;
+}

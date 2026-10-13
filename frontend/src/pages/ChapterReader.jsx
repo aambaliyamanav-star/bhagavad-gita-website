@@ -11,12 +11,19 @@ import {
 } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext.jsx";
+import { useLanguage } from "../context/LanguageContext.jsx";
 import { trackShlokaRead } from "../utils/readingTracker.js";
 
 function ChapterReader() {
   const { chapterNumber } = useParams();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+
+  // =====================================================
+  // LANGUAGE CONTEXT
+  // =====================================================
+
+  const { isHindi, t, getLocalizedShlok } = useLanguage();
 
   // =====================================================
   // AUTH CONTEXT
@@ -184,6 +191,27 @@ useEffect(() => {
     16: "દૈવાસુરસંપદ્વિભાગ યોગ",
     17: "શ્રદ્ધાત્રયવિભાગ યોગ",
     18: "મોક્ષસંન્યાસ યોગ",
+  };
+
+  const chapterNamesHi = {
+    1: "अर्जुनविषाद योग",
+    2: "सांख्य योग",
+    3: "कर्म योग",
+    4: "ज्ञानकर्मसंन्यास योग",
+    5: "कर्मसंन्यास योग",
+    6: "आत्मसंयम योग",
+    7: "ज्ञानविज्ञान योग",
+    8: "अक्षरब्रह्म योग",
+    9: "राजविद्या राजगुह्य योग",
+    10: "विभूति योग",
+    11: "विश्वरूपदर्शन योग",
+    12: "भक्ति योग",
+    13: "क्षेत्र-क्षेत्रज्ञ विभाग योग",
+    14: "गुणत्रय विभाग योग",
+    15: "पुरुषोत्तम योग",
+    16: "दैवासुरसम्पद्विभाग योग",
+    17: "श्रद्धात्रयविभाग योग",
+    18: "मोक्षसंन्यास योग",
   };
 
   // =====================================================
@@ -984,7 +1012,14 @@ if (
   // =====================================================
 
   const shloka =
-    shlokas[currentShloka];
+    shlokas[currentShloka] || {};
+
+  const localized =
+    getLocalizedShlok(shloka);
+
+  const currentChapterTitle = isHindi
+    ? (shloka.chapterNameHi || chapterNamesHi[currentChapterNumber] || chapterName)
+    : (chapterName || chapterNames[currentChapterNumber] || `અધ્યાય ${currentChapterNumber}`);
 
 
 
@@ -1363,9 +1398,9 @@ const prepareSanskritLines = () => {
                             </span>
 
                             <span className="word-meaning-gujarati">
-                              {
-                                meaning.meaning
-                              }
+                              {isHindi && meaning.meaningHi
+                                ? meaning.meaningHi
+                                : meaning.meaning}
                             </span>
                           </span>
                         )}
@@ -1397,12 +1432,13 @@ const prepareSanskritLines = () => {
         </div>
 
         <h1>
-          અધ્યાય{" "}
-          {currentChapterNumber}
+          {isHindi
+            ? `अध्याय ${currentChapterNumber}`
+            : `અધ્યાય ${currentChapterNumber}`}
         </h1>
 
         <h2>
-          {chapterName}
+          {currentChapterTitle}
         </h2>
       </section>
 
@@ -1413,7 +1449,7 @@ const prepareSanskritLines = () => {
       <section className="reader-progress">
         <div className="progress-info">
           <span>
-            શ્લોક{" "}
+            {isHindi ? "श्लोक " : "શ્લોક "}
             {shloka.shlokNumber}
             {" / "}
             {shlokas.length}
@@ -1449,8 +1485,8 @@ const prepareSanskritLines = () => {
           disabled={
             currentShloka === 0
           }
-          aria-label="પાછલો શ્લોક"
-          title="પાછલો શ્લોક"
+          aria-label={isHindi ? "पिछला श्लोक" : "પાછલો શ્લોક"}
+          title={isHindi ? "पिछला श्लोक" : "પાછલો શ્લોક"}
         >
           <ChevronLeft size={28} />
         </button>
@@ -1462,7 +1498,7 @@ const prepareSanskritLines = () => {
           {/* SHLOK NUMBER */}
 
           <div className="shloka-number">
-            શ્લોક{" "}
+            {isHindi ? "श्लोक " : "શ્લોક "}
             {shloka.shlokNumber}
           </div>
 
@@ -1473,8 +1509,8 @@ const prepareSanskritLines = () => {
               type="button"
               className="share-shloka-button"
               onClick={() => setShareModalOpen(true)}
-              aria-label="શ્લોક કાર્ડ શેર કરો"
-              title="શ્લોક કાર્ડ શેર કરો / ડાઉનલોડ કરો"
+              aria-label={isHindi ? "श्लोक कार्ड शेयर करें" : "શ્લોક કાર્ડ શેર કરો"}
+              title={isHindi ? "श्लोक कार्ड शेयर / डाउनलोड करें" : "શ્લોક કાર્ડ શેર કરો / ડાઉનલોડ કરો"}
             >
               <Share2 size={20} />
             </button>
@@ -1492,13 +1528,13 @@ const prepareSanskritLines = () => {
               disabled={favoriteLoading}
               aria-label={
                 isFavorite(shloka)
-                  ? "Favouriteમાંથી દૂર કરો"
-                  : "Favouriteમાં ઉમેરો"
+                  ? (isHindi ? "पसंदीदा से हटाएं" : "Favouriteમાંથી દૂર કરો")
+                  : (isHindi ? "पसंदीदा में जोड़ें" : "Favouriteમાં ઉમેરો")
               }
               title={
                 isFavorite(shloka)
-                  ? "Favouriteમાંથી દૂર કરો"
-                  : "Favouriteમાં ઉમેરો"
+                  ? (isHindi ? "पसंदीदा से हटाएं" : "Favouriteમાંથી દૂર કરો")
+                  : (isHindi ? "पसंदीदा में जोड़ें" : "Favouriteમાં ઉમેરો")
               }
             >
               {isFavorite(shloka)
@@ -1510,17 +1546,17 @@ const prepareSanskritLines = () => {
           {/* SPEAKER */}
 
           <div className="speaker">
-            <Mic className="btn-icon" size={16} /> {shloka.speaker}
+            <Mic className="btn-icon" size={16} /> {localized.speaker || shloka.speaker}
           </div>
 
           {/* =================================================
-              SANSKRIT
+              SANSKRIT (PURE SANSKRIT - PRESERVED 100%)
           ================================================= */}
 
           <div className="content-box sanskrit-box">
 
             <h3>
-              <Sparkles className="btn-icon" size={18} /> સંસ્કૃત શ્લોક
+              <Sparkles className="btn-icon" size={18} /> {isHindi ? "संस्कृत श्लोक" : "સંસ્કૃત શ્લોક"}
             </h3>
 
 <div
@@ -1536,9 +1572,10 @@ const prepareSanskritLines = () => {
             {/* WORD MEANING INFO */}
 
             <div className="word-meaning-info">
-              <BookOpen className="btn-icon" size={14} /> સંસ્કૃત શબ્દનો અર્થ
-              ઉપલબ્ધ છે તેના પર click
-              કરીને ગુજરાતી અર્થ જુઓ.
+              <BookOpen className="btn-icon" size={14} />{" "}
+              {isHindi
+                ? "संस्कृत शब्द पर क्लिक करके उसका हिन्दी अर्थ देखें।"
+                : "સંસ્કૃત શબ્દનો અર્થ ઉપલબ્ધ છે તેના પર click કરીને ગુજરાતી અર્થ જુઓ."}
             </div>
 
           </div>
@@ -1550,15 +1587,16 @@ const prepareSanskritLines = () => {
           <div className="content-box translation-box">
 
             <h3>
-              <BookOpen className="btn-icon" size={18} /> ગુજરાતી અનુવાદ
+              <BookOpen className="btn-icon" size={18} /> {isHindi ? "हिन्दी अनुवाद" : "ગુજરાતી અનુવાદ"}
             </h3>
 
             <div
               className="gujarati-meaning formatted-content"
               dangerouslySetInnerHTML={{
                 __html:
+                  localized.translation ||
                   shloka.translation ||
-                  "ગુજરાતી અનુવાદ ઉપલબ્ધ નથી.",
+                  (isHindi ? "हिन्दी अनुवाद उपलब्ध नहीं है।" : "ગુજરાતી અનુવાદ ઉપલબ્ધ નથી."),
               }}
             />
 
@@ -1571,15 +1609,16 @@ const prepareSanskritLines = () => {
           <div className="content-box message-box">
 
             <h3>
-              <Sparkles className="btn-icon" size={18} /> સંદેશ / સમજણ
+              <Sparkles className="btn-icon" size={18} /> {isHindi ? "सन्देश / व्याख्या" : "સંદેશ / સમજણ"}
             </h3>
 
             <div
               className="message-text formatted-content"
               dangerouslySetInnerHTML={{
                 __html:
+                  localized.message ||
                   shloka.message ||
-                  "સંદેશ ઉપલબ્ધ નથી.",
+                  (isHindi ? "सन्देश उपलब्ध नहीं है।" : "સંદેશ ઉપલબ્ધ નથી."),
               }}
             />
 
@@ -1597,8 +1636,8 @@ const prepareSanskritLines = () => {
             currentShloka ===
             shlokas.length - 1
           }
-          aria-label="આગળનો શ્લોક"
-          title="આગળનો શ્લોક"
+          aria-label={isHindi ? "अगला श्लोक" : "આગળનો શ્લોક"}
+          title={isHindi ? "अगला श्लोक" : "આગળનો શ્લોક"}
         >
           <ChevronRight size={28} />
         </button>
@@ -1627,15 +1666,15 @@ const prepareSanskritLines = () => {
           <ChevronLeft size={26} style={{ marginRight: '10px' }} />
           <span className="chapter-nav-text">
             <h3>
-              પાછલો અધ્યાય
+              {isHindi ? "पिछला अध्याय" : "પાછલો અધ્યાય"}
             </h3>
 
             {currentChapterNumber >
               1 && (
               <strong>
-                અધ્યાય{" "}
-                {currentChapterNumber -
-                  1}
+                {isHindi
+                  ? `अध्याय ${currentChapterNumber - 1}`
+                  : `અધ્યાય ${currentChapterNumber - 1}`}
               </strong>
             )}
           </span>
@@ -1645,12 +1684,13 @@ const prepareSanskritLines = () => {
 
         <div className="chapter-nav-center">
           <span>
-            અધ્યાય{" "}
-            {currentChapterNumber}
+            {isHindi
+              ? `अध्याय ${currentChapterNumber}`
+              : `અધ્યાય ${currentChapterNumber}`}
           </span>
 
           <div>
-            {chapterName}
+            {currentChapterTitle}
           </div>
         </div>
 
@@ -1667,15 +1707,15 @@ const prepareSanskritLines = () => {
         >
           <span className="chapter-nav-text">
             <h3>
-              આગળનો અધ્યાય
+              {isHindi ? "अगला अध्याय" : "આગળનો અધ્યાય"}
             </h3>
 
             {currentChapterNumber <
               18 && (
               <strong>
-                અધ્યાય{" "}
-                {currentChapterNumber +
-                  1}
+                {isHindi
+                  ? `अध्याय ${currentChapterNumber + 1}`
+                  : `અધ્યાય ${currentChapterNumber + 1}`}
               </strong>
             )}
           </span>
@@ -1694,12 +1734,14 @@ const prepareSanskritLines = () => {
 
           <div>
             <span className="selector-small-title">
-              <BookOpen className="btn-icon" size={14} /> અધ્યાય{" "}
-              {currentChapterNumber}
+              <BookOpen className="btn-icon" size={14} />{" "}
+              {isHindi
+                ? `अध्याय ${currentChapterNumber}`
+                : `અધ્યાય ${currentChapterNumber}`}
             </span>
 
             <h2>
-              બધા શ્લોક
+              {isHindi ? "सभी श्लोक" : "બધા શ્લોક"}
             </h2>
           </div>
 
@@ -1709,7 +1751,7 @@ const prepareSanskritLines = () => {
             </strong>
 
             <span>
-              Shlokas
+              {isHindi ? "श्लोक" : "Shlokas"}
             </span>
           </div>
 
@@ -1742,7 +1784,11 @@ const prepareSanskritLines = () => {
                       index
                     )
                   }
-                  aria-label={`શ્લોક ${item.shlokNumber}`}
+                  aria-label={
+                    isHindi
+                      ? `श्लोक ${item.shlokNumber}`
+                      : `શ્લોક ${item.shlokNumber}`
+                  }
                   aria-current={
                     isActive
                       ? "true"
@@ -1750,7 +1796,7 @@ const prepareSanskritLines = () => {
                   }
                 >
                   <span className="shlok-btn-label">
-                    શ્લોક
+                    {isHindi ? "श्लोक" : "શ્લોક"}
                   </span>
 
                   <strong>
@@ -1780,12 +1826,12 @@ const prepareSanskritLines = () => {
           onClose={() => setShareModalOpen(false)}
           shlokaData={{
             chapterNumber: currentChapterNumber,
-            chapterName: chapterName || `અધ્યાય ${currentChapterNumber}`,
+            chapterName: currentChapterTitle,
             shlokNumber: shloka.shlokNumber,
             sanskrit: shloka.sanskrit,
-            translation: shloka.translation,
-            speaker: shloka.speaker,
-            message: shloka.message,
+            translation: localized.translation || shloka.translation,
+            speaker: localized.speaker || shloka.speaker,
+            message: localized.message || shloka.message,
           }}
         />
       )}

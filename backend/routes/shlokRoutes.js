@@ -6,6 +6,7 @@ const {
   getChapterShlokas,
   getShlokOfTheDay,
   updateShlok,
+  autoTranslateShlok,
   deleteShlok,
 } = require("../controllers/shlokController");
 
@@ -20,6 +21,18 @@ const router = express.Router();
 // =====================================================
 // SHLOK ROUTES
 // =====================================================
+
+// -----------------------------------------------------
+// AUTO-TRANSLATE SHLOK TO HINDI (ADMIN ONLY)
+// POST /api/shloks/auto-translate
+// -----------------------------------------------------
+
+router.post(
+  "/auto-translate",
+  protect,
+  adminOnly,
+  autoTranslateShlok
+);
 
 // -----------------------------------------------------
 // ADD NEW SHLOK (ADMIN ONLY)

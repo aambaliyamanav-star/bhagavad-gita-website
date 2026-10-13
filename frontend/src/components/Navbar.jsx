@@ -28,10 +28,12 @@ import {
   Info,
   Download,
   Bell,
+  Globe,
 } from "lucide-react";
 
 import { useAuth } from "../context/AuthContext.jsx";
 import { useTheme } from "../context/ThemeContext.jsx";
+import { useLanguage } from "../context/LanguageContext.jsx";
 import {
   promptInstallApp,
   isRunningInStandaloneApp,
@@ -49,6 +51,12 @@ import "./Navbar.css";
 function Navbar() {
   const navigate = useNavigate();
   const location = useLocation();
+
+  // =====================================================
+  // LANGUAGE CONTEXT
+  // =====================================================
+
+  const { language, toggleLanguage, isHindi } = useLanguage();
 
   // =====================================================
   // AUTH CONTEXT
@@ -183,27 +191,27 @@ function Navbar() {
 
     // HOME
     if (path === "/") {
-      return "હોમ";
+      return isHindi ? "होम" : "હોમ";
     }
 
     // ABOUT US
     if (path === "/about" || path === "/about-us") {
-      return "અમારા વિશે";
+      return isHindi ? "हमारे बारे में" : "અમારા વિશે";
     }
 
     // CHAPTERS
     if (path === "/chapters") {
-      return "18 અધ્યાય";
+      return isHindi ? "18 अध्याय" : "18 અધ્યાય";
     }
 
     // LIFE GUIDANCE
     if (path === "/guidance" || path === "/jivan-margdarshan") {
-      return "જીવન માર્ગદર્શન";
+      return isHindi ? "जीवन मार्गदर्शन" : "જીવન માર્ગદર્શન";
     }
 
     // READING TRACKER
     if (path === "/reading-tracker") {
-      return "વાંચન પ્રગતિ";
+      return isHindi ? "पठन प्रगति" : "વાંચન પ્રગતિ";
     }
 
     // CHAPTER READER
@@ -212,15 +220,15 @@ function Navbar() {
         path.split("/")[2];
 
       if (chapterNumber) {
-        return `અધ્યાય ${chapterNumber}`;
+        return isHindi ? `अध्याय ${chapterNumber}` : `અધ્યાય ${chapterNumber}`;
       }
 
-      return "અધ્યાય";
+      return isHindi ? "अध्याय" : "અધ્યાય";
     }
 
     // FAVORITES
     if (path === "/favorites") {
-      return "મનપસંદ શ્લોક";
+      return isHindi ? "पसंदीदा श्लोक" : "મનપસંદ શ્લોક";
     }
 
     // QUIZ CATEGORY
@@ -240,22 +248,22 @@ function Navbar() {
 
     // HISTORY
     if (path === "/history") {
-      return "History";
+      return isHindi ? "इतिहास" : "History";
     }
 
     // PROFILE
     if (path === "/profile") {
-      return "Profile";
+      return isHindi ? "प्रोफ़ाइल" : "Profile";
     }
 
     // LOGIN
     if (path === "/login") {
-      return "લોગિન";
+      return isHindi ? "लॉगिन" : "લોગિન";
     }
 
     // REGISTER
     if (path === "/register") {
-      return "રજીસ્ટર";
+      return isHindi ? "रजिस्टर" : "રજીસ્ટર";
     }
 
     // ADMIN
@@ -675,6 +683,18 @@ function Navbar() {
         ================================================= */}
 
         <div className="navbar-right">
+
+          {/* LANGUAGE TOGGLE BUTTON */}
+          <button
+            type="button"
+            className="nav-lang-toggle-btn"
+            onClick={toggleLanguage}
+            title={isHindi ? "ગુજરાતી ભાષા પસંદ કરો" : "हिन्दी भाषा चुनें"}
+            aria-label="ભાષા બદલો / भाषा बदलें"
+          >
+            <Globe size={15} className="nav-lang-icon" />
+            <span className="nav-lang-text">{isHindi ? "हिन्दी" : "ગુજરાતી"}</span>
+          </button>
 
           {/* CURRENT PAGE NAME */}
 
@@ -1234,6 +1254,34 @@ function Navbar() {
 
             </Link>
           )}
+
+
+          {/* =================================================
+              LANGUAGE SWITCH
+          ================================================= */}
+
+          <button
+            type="button"
+            className="side-menu-theme side-menu-lang"
+            onClick={toggleLanguage}
+            title="ભાષા બદલો / भाषा बदलें"
+          >
+            <span className="theme-left">
+              <span className="theme-icon">
+                <Globe size={20} strokeWidth={1.8} />
+              </span>
+
+              <span className="side-menu-text">
+                <strong>
+                  ભાષા: {isHindi ? "हिन्दी (Hindi)" : "ગુજરાતી (Gujarati)"}
+                </strong>
+              </span>
+            </span>
+
+            <span className="side-lang-pill">
+              {isHindi ? "🇬🇯 ગુજરાતી" : "🇮🇳 हिन्दी"}
+            </span>
+          </button>
 
 
           {/* =================================================

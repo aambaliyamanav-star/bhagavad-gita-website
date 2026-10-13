@@ -21,6 +21,14 @@ const wordMeaningSchema = new mongoose.Schema(
       default: "",
       trim: true,
     },
+
+    // Hindi meaning
+    // Auto-translated or entered in Hindi
+    meaningHi: {
+      type: String,
+      default: "",
+      trim: true,
+    },
   },
   {
     _id: true,
@@ -50,6 +58,12 @@ const shlokSchema = new mongoose.Schema(
       trim: true,
     },
 
+    chapterNameHi: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
     // =================================================
     // SHLOK NUMBER
     // =================================================
@@ -67,6 +81,12 @@ const shlokSchema = new mongoose.Schema(
     speaker: {
       type: String,
       required: true,
+      trim: true,
+    },
+
+    speakerHi: {
+      type: String,
+      default: "",
       trim: true,
     },
 
@@ -124,12 +144,32 @@ const shlokSchema = new mongoose.Schema(
     },
 
     // =================================================
-    // MESSAGE / EXPLANATION
+    // FULL HINDI TRANSLATION
+    // =================================================
+
+    translationHi: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    // =================================================
+    // MESSAGE / EXPLANATION (GUJARATI)
     // =================================================
 
     message: {
       type: String,
       required: true,
+      trim: true,
+    },
+
+    // =================================================
+    // MESSAGE / EXPLANATION (HINDI)
+    // =================================================
+
+    messageHi: {
+      type: String,
+      default: "",
       trim: true,
     },
   },
