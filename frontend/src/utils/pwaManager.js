@@ -62,11 +62,17 @@ export async function isAppAlreadyInstalled() {
 
 // Trigger native browser install prompt
 export async function promptInstallApp() {
+  const isHi = typeof localStorage !== "undefined" && localStorage.getItem("gita_language") === "hi";
+
+  const msgAlreadyInstalled = isHi
+    ? "यह ऐप आपके डिवाइस पर पहले से ही सफलतापूर्वक इंस्टॉल है! 📱\nअपने फोन की होम स्क्रीन या ऐप लिस्ट से 'भगवद् गीता' ऐप खोलें।"
+    : "આ એપ તમારા ડિવાઇસ પર પહેલેથી જ સફળતાપૂર્વક ઇન્સ્ટોલ કરેલી છે! 📱\nતમારા ફોનની હોમ સ્ક્રીન અથવા એપ લિસ્ટમાંથી 'ભગવદ્ ગીતા' એપ ખોલો.";
+
   if (isRunningInStandaloneApp()) {
     return {
       success: false,
       alreadyInstalled: true,
-      message: "આ એપ તમારા ડિવાઇસ પર પહેલેથી જ સફળતાપૂર્વક ઇન્સ્ટોલ કરેલી છે! 📱\nતમારા ફોનની હોમ સ્ક્રીન અથવા એપ લિસ્ટમાંથી 'ભગવદ્ ગીતા' એપ ખોલો.",
+      message: msgAlreadyInstalled,
     };
   }
 
@@ -79,7 +85,7 @@ export async function promptInstallApp() {
         return {
           success: false,
           alreadyInstalled: true,
-          message: "આ એપ તમારા ડિવાઇસ પર પહેલેથી જ સફળતાપૂર્વક ઇન્સ્ટોલ કરેલી છે! 📱\nતમારા ફોનની હોમ સ્ક્રીન અથવા એપ લિસ્ટમાંથી 'ભગવદ્ ગીતા' એપ ખોલો.",
+          message: msgAlreadyInstalled,
         };
       }
     } catch (e) {}
@@ -96,7 +102,12 @@ export async function promptInstallApp() {
         localStorage.setItem("gita_app_installed", "true");
         localStorage.setItem("gita_app_installed_attempted", "true");
         trackAppInstallOrOpen(true);
-        return { success: true, message: "એપ સફળતાપૂર્વક ઇન્સ્ટોલ થઈ ગઈ છે! 📱" };
+        return {
+          success: true,
+          message: isHi
+            ? "ऐप सफलतापूर्वक इंस्टॉल हो गया है! 📱"
+            : "એપ સફળતાપૂર્વક ઇન્સ્ટોલ થઈ ગઈ છે! 📱",
+        };
       }
       return { success: false, dismissed: true };
     } catch (err) {
@@ -110,7 +121,9 @@ export async function promptInstallApp() {
     return {
       success: false,
       alreadyInstalled: true,
-      message: "આ એપ તમારા ડિવાઇસ પર પહેલેથી જ સફળતાપૂર્વક ઇન્સ્ટોલ કરેલી છે! 📱\nતમારા ફોનની હોમ સ્ક્રીન અથવા એપ લિસ્ટમાંથી 'ભગવદ્ ગીતા' એપ ખોલો.\n(જો તમે એપ અનઇન્સ્ટોલ કરી હોય, તો બ્રાઉઝર મેનૂમાંથી 'Add to Home screen' અથવા 'Install' પસંદ કરો.)",
+      message: isHi
+        ? "यह ऐप आपके डिवाइस पर पहले से ही सफलतापूर्वक इंस्टॉल है! 📱\nअपने फोन की होम स्क्रीन या ऐप लिस्ट से 'भगवद् गीता' ऐप खोलें。\n(यदि आपने ऐप अनइंस्टॉल किया है, तो ब्राउज़र मेनू से 'Add to Home screen' या 'Install' चुनें।)"
+        : "આ એપ તમારા ડિવાઇસ પર પહેલેથી જ સફળતાપૂર્વક ઇન્સ્ટોલ કરેલી છે! 📱\nતમારા ફોનની હોમ સ્ક્રીન અથવા એપ લિસ્ટમાંથી 'ભગવદ્ ગીતા' એપ ખોલો.\n(જો તમે એપ અનઇન્સ્ટોલ કરી હોય, તો બ્રાઉઝર મેનૂમાંથી 'Add to Home screen' અથવા 'Install' પસંદ કરો.)",
     };
   }
 
@@ -121,14 +134,18 @@ export async function promptInstallApp() {
     return {
       success: false,
       isIos: true,
-      message: "iOS પર Safari માં નીચે 'Share' (શેર) બટન દબાવો અને 'Add to Home Screen' પસંદ કરો.",
+      message: isHi
+        ? "iOS पर Safari में नीचे 'Share' बटन दबाएं और 'Add to Home Screen' चुनें।"
+        : "iOS પર Safari માં નીચે 'Share' (શેર) બટન દબાવો અને 'Add to Home Screen' પસંદ કરો.",
     };
   }
 
   // 5. Fallback for browsers that don't support beforeinstallprompt or prompt isn't fired yet
   return {
     success: false,
-    message: "એપ ઇન્સ્ટોલ કરવા માટે બ્રાઉઝરના ઉપર/નીચે આપેલા 3-ડોટ (⋮) મેનૂમાંથી 'Install app' અથવા 'Add to Home screen' પસંદ કરો.",
+    message: isHi
+      ? "ऐप इंस्टॉल करने के लिए ब्राउज़र के 3-डॉट (⋮) मेनू से 'Install app' या 'Add to Home screen' चुनें।"
+      : "એપ ઇન્સ્ટોલ કરવા માટે બ્રાઉઝરના ઉપર/નીચે આપેલા 3-ડોટ (⋮) મેનૂમાંથી 'Install app' અથવા 'Add to Home screen' પસંદ કરો.",
   };
 }
 

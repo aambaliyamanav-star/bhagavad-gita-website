@@ -326,7 +326,7 @@ export default function GitaAIAssistant() {
       const firstUserMsg = realMessages.find((m) => m.sender === "user");
       const title = firstUserMsg
         ? firstUserMsg.text.slice(0, 45) + (firstUserMsg.text.length > 45 ? "..." : "")
-        : "આધ્યાત્મિક સંવાદ";
+        : (isHindi ? "आध्यात्मिक संवाद" : "આધ્યાત્મિક સંવાદ");
 
       conv = {
         id: convId,
@@ -347,7 +347,7 @@ export default function GitaAIAssistant() {
     if (headerRenameTitle.trim() && activeConv?.id) {
       renameConversation(activeConv.id, headerRenameTitle.trim());
       setHistoryList(getAllConversations());
-      showToast("નામ અપડેટ થઈ ગયું.");
+      showToast(isHindi ? "नाम अपडेट हो गया।" : "નામ અપડેટ થઈ ગયું.");
     }
     setIsHeaderRenameOpen(false);
   };
@@ -419,7 +419,7 @@ export default function GitaAIAssistant() {
 
     if (!SpeechRecognition) {
       alert(
-        "તમારા બ્રાઉઝરમાં વોઇસ ઇનપુટ સપોર્ટ નથી. કૃપા કરીને Google Chrome અથવા Microsoft Edge નો ઉપયોગ કરો."
+        isHindi ? "आपके ब्राउज़र में वॉइस इनपुट सपोर्ट नहीं है। कृपया Google Chrome या Microsoft Edge का उपयोग करें।" : "તમારા બ્રાઉઝરમાં વોઇસ ઇનપુટ સપોર્ટ નથી. કૃપા કરીને Google Chrome અથવા Microsoft Edge નો ઉપયોગ કરો."
       );
       return;
     }
@@ -557,7 +557,7 @@ export default function GitaAIAssistant() {
       const firstUserMsg = realMessages.find((m) => m.sender === "user");
       const title = firstUserMsg
         ? firstUserMsg.text.slice(0, 45) + (firstUserMsg.text.length > 45 ? "..." : "")
-        : "આધ્યાત્મિક સંવાદ";
+        : (isHindi ? "आध्यात्मिक संवाद" : "આધ્યાત્મિક સંવાદ");
 
       const convId = activeConvId || `gita_chat_${Date.now()}`;
       if (!activeConvId) {
@@ -589,7 +589,7 @@ export default function GitaAIAssistant() {
     if (!user) {
       setIsOpen(false);
       const targetPath = location.pathname + location.search;
-      const redirectMsg = "ગીતા AI માર્ગદર્શકનો ઉપયોગ કરવા માટે Login કરવું જરૂરી છે.";
+      const redirectMsg = isHindi ? "गीता AI मार्गदर्शक का उपयोग करने के लिए Login करना आवश्यक है।" : "ગીતા AI માર્ગદર્શકનો ઉપયોગ કરવા માટે Login કરવું જરૂરી છે.";
 
       sessionStorage.setItem(
         "authRedirect",
@@ -665,14 +665,14 @@ export default function GitaAIAssistant() {
         if (response.status === 401 || (data.message && data.message.toLowerCase().includes("token"))) {
           clearAuthSession();
         }
-        throw new Error(data.message || "ઉત્તર મેળવવામાં સમસ્યા આવી.");
+        throw new Error(data.message || (isHindi ? "उत्तर प्राप्त करने में समस्या आई।" : "ઉત્તર મેળવવામાં સમસ્યા આવી."));
       }
     } catch (error) {
       console.error("Gita AI Request Error:", error);
       const errorMessage = {
         id: `err_${Date.now()}`,
         sender: "ai",
-        text: "ક્ષમા કરશો, પ્રશ્નનો ઉત્તર મેળવવામાં ટેક્નિકલ સમસ્યા આવી છે. કૃપા કરીને થોડી ક્ષણો પછી ફરી પૂછો.",
+        text: isHindi ? "क्षमा करें, प्रश्न का उत्तर प्राप्त करने में तकनीकी समस्या आई है। कृपया कुछ क्षणों बाद पुनः पूछें।" : "ક્ષમા કરશો, પ્રશ્નનો ઉત્તર મેળવવામાં ટેક્નિકલ સમસ્યા આવી છે. કૃપા કરીને થોડી ક્ષણો પછી ફરી પૂછો.",
         timestamp: new Date().toISOString()
       };
       setMessages((prev) => [...prev, errorMessage]);
@@ -815,7 +815,7 @@ export default function GitaAIAssistant() {
               .filter((m) => !m.isGreetingPrompt && !m.id?.startsWith("greeting_"))
               .map(
                 (m) =>
-                  `${m.sender === "user" ? "પ્રશ્ન:" : "ગીતા AI:"} ${m.text}`
+                  `${m.sender === "user" ? (isHindi ? "प्रश्न:" : "પ્રશ્ન:") : (isHindi ? "गीता AI:" : "ગીતા AI:")} ${m.text}`
               )
               .join("\n\n")
           : "";
@@ -827,7 +827,7 @@ export default function GitaAIAssistant() {
       if (navigator.share) {
         try {
           await navigator.share({
-            title: conv.title || "ગીતા AI સંવાદ",
+            title: conv.title || (isHindi ? "गीता AI संवाद" : "ગીતા AI સંવાદ"),
             text: shareText,
             url: window.location.origin,
           });
@@ -836,10 +836,10 @@ export default function GitaAIAssistant() {
       }
 
       await navigator.clipboard.writeText(shareText);
-      showToast("સંવાદ ક્લિપબોર્ડ પર કોપી થયો!");
+      showToast(isHindi ? "संवाद क्लिपबोर्ड पर कॉपी हुआ!" : "સંવાદ ક્લિપબોર્ડ પર કોપી થયો!");
     } catch (err) {
       console.error("Share error:", err);
-      showToast("શેર કરવામાં સમસ્યા આવી.");
+      showToast(isHindi ? "शेयर करने में समस्या आई।" : "શેર કરવામાં સમસ્યા આવી.");
     }
   };
 
@@ -855,7 +855,7 @@ export default function GitaAIAssistant() {
     if (e) e.stopPropagation();
     if (editingTitle && editingTitle.trim()) {
       renameConversation(convId, editingTitle.trim());
-      showToast("નામ અપડેટ થઈ ગયું.");
+      showToast(isHindi ? "नाम अपडेट हो गया।" : "નામ અપડેટ થઈ ગયું.");
     }
     setEditingConvId(null);
     setEditingTitle("");
@@ -872,7 +872,7 @@ export default function GitaAIAssistant() {
     e.stopPropagation();
     setMenuOpenConvId(null);
     const newPinned = togglePinConversation(convId);
-    showToast(newPinned ? "સંવાદ પિન કર્યો." : "સંવાદ અનપિન કર્યો.");
+    showToast(newPinned ? (isHindi ? "संवाद पिन किया।" : "સંવાદ પિન કર્યો.") : (isHindi ? "संवाद अनपिन किया।" : "સંવાદ અનપિન કર્યો."));
   };
 
   // Archive / Unarchive toggle
@@ -880,7 +880,7 @@ export default function GitaAIAssistant() {
     e.stopPropagation();
     setMenuOpenConvId(null);
     const newArchived = toggleArchiveConversation(convId);
-    showToast(newArchived ? "સંવાદ આર્કાઇવ કર્યો." : "સંવાદ અન-આર્કાઇવ કર્યો.");
+    showToast(newArchived ? (isHindi ? "संवाद आर्काइव किया।" : "સંવાદ આર્કાઇવ કર્યો.") : (isHindi ? "संवाद अन-आर्काइव किया।" : "સંવાદ અન-આર્કાઇવ કર્યો."));
   };
 
   // Delete single conversation
@@ -892,16 +892,16 @@ export default function GitaAIAssistant() {
     if (activeConvId === convId) {
       handleNewConversation();
     }
-    showToast("સંવાદ ડીલીટ કર્યો.");
+    showToast(isHindi ? "संवाद डिलीट किया।" : "સંવાદ ડીલીટ કર્યો.");
   };
 
   // Clear all conversations
   const handleClearAllHistory = () => {
-    if (window.confirm("શું તમે તમામ AI સંવાદો હંમેશ માટે ડીલીટ કરવા માંગો છો?")) {
+    if (window.confirm(isHindi ? "क्या आप सभी AI संवाद हमेशा के लिए डिलीट करना चाहते हैं?" : "શું તમે તમામ AI સંવાદો હંમેશ માટે ડીલીટ કરવા માંગો છો?")) {
       clearAllConversations();
       setHistoryList([]);
       handleNewConversation();
-      showToast("તમામ ઇતિહાસ સાફ કર્યો.");
+      showToast(isHindi ? "समस्त इतिहास साफ किया गया।" : "તમામ ઇતિહાસ સાફ કર્યો.");
     }
   };
 
@@ -915,7 +915,7 @@ export default function GitaAIAssistant() {
     setIsOpen(false);
     setIsHistoryOpen(false);
     const targetPath = location.pathname + location.search;
-    const redirectMsg = "તમારી AI History સાચવવા માટે Login કરવું જરૂરી છે.";
+    const redirectMsg = isHindi ? "अपनी AI History सहेजने के लिए Login करना आवश्यक है।" : "તમારી AI History સાચવવા માટે Login કરવું જરૂરી છે.";
 
     sessionStorage.setItem(
       "authRedirect",
@@ -979,7 +979,7 @@ export default function GitaAIAssistant() {
                 type="button"
                 className="rename-action-btn save"
                 onClick={(e) => handleSaveRename(e, conv.id)}
-                title="સાચવો"
+                title={isHindi ? "सहेजें" : "સાચવો"}
               >
                 <Check size={13} />
               </button>
@@ -987,7 +987,7 @@ export default function GitaAIAssistant() {
                 type="button"
                 className="rename-action-btn cancel"
                 onClick={handleCancelRename}
-                title="રદ કરો"
+                title={isHindi ? "रद्द करें" : "રદ કરો"}
               >
                 <X size={13} />
               </button>
@@ -995,14 +995,14 @@ export default function GitaAIAssistant() {
           ) : (
             <>
               <h5 className="gita-sidebar-item-title" title={conv.title}>
-                {conv.title || "આધ્યાત્મિક સંવાદ"}
+                {conv.title || (isHindi ? "आध्यात्मिक संवाद" : "આધ્યાત્મિક સંવાદ")}
               </h5>
               <div className="gita-sidebar-item-meta">
                 <Clock size={11} />
                 <span>{formatHistoryDate(conv.updatedAt)}</span>
                 {conv.messages?.length > 0 && (
                   <span className="gita-sidebar-item-count">
-                    • {conv.messages.length} મેસેજ
+                    • {conv.messages.length} {isHindi ? "संदेश" : "મેસેજ"}
                   </span>
                 )}
               </div>
@@ -1019,8 +1019,8 @@ export default function GitaAIAssistant() {
                 isMenuOpen ? "active" : ""
               }`}
               onClick={(e) => handleToggleMenu(e, conv.id)}
-              title="વિકલ્પો"
-              aria-label="વધુ વિકલ્પો"
+              title={isHindi ? "विकल्प" : "વિકલ્પો"}
+              aria-label={isHindi ? "अधिक विकल्प" : "વધુ વિકલ્પો"}
             >
               <MoreHorizontal size={15} />
             </button>
@@ -1037,7 +1037,7 @@ export default function GitaAIAssistant() {
                   onClick={(e) => handleShareConversation(e, conv)}
                 >
                   <Share2 size={13} />
-                  <span>શેર કરો</span>
+                  <span>{isHindi ? "शेयर करें" : "શેર કરો"}</span>
                 </button>
 
                 {/* 2. Rename */}
@@ -1047,7 +1047,7 @@ export default function GitaAIAssistant() {
                   onClick={(e) => handleStartRename(e, conv)}
                 >
                   <Pencil size={13} />
-                  <span>નામ બદલો</span>
+                  <span>{isHindi ? "नाम बदलें" : "નામ બદલો"}</span>
                 </button>
 
                 {/* 3. Pin / Unpin */}
@@ -1057,7 +1057,7 @@ export default function GitaAIAssistant() {
                   onClick={(e) => handleTogglePin(e, conv.id)}
                 >
                   {conv.isPinned ? <PinOff size={13} /> : <Pin size={13} />}
-                  <span>{conv.isPinned ? "અનપિન કરો" : "પિન કરો"}</span>
+                  <span>{conv.isPinned ? (isHindi ? "अनपिन करें" : "અનપિન કરો") : (isHindi ? "पिन करें" : "પિન કરો")}</span>
                 </button>
 
                 <div className="gita-sidebar-menu-divider" />
@@ -1069,7 +1069,7 @@ export default function GitaAIAssistant() {
                   onClick={(e) => handleDeleteHistoryItem(e, conv.id)}
                 >
                   <Trash2 size={13} />
-                  <span>ડીલીટ કરો</span>
+                  <span>{isHindi ? "डिलीट करें" : "ડીલીટ કરો"}</span>
                 </button>
               </div>
             )}
@@ -1082,7 +1082,7 @@ export default function GitaAIAssistant() {
   const handleFabClick = () => {
     if (!user) {
       const targetPath = location.pathname + location.search;
-      const redirectMsg = "ગીતા AI માર્ગદર્શકનો ઉપયોગ કરવા માટે Login કરવું જરૂરી છે.";
+      const redirectMsg = isHindi ? "गीता AI मार्गदर्शक का उपयोग करने के लिए Login करना आवश्यक है।" : "ગીતા AI માર્ગદર્શકનો ઉપયોગ કરવા માટે Login કરવું જરૂરી છે.";
 
       sessionStorage.setItem(
         "authRedirect",
@@ -1128,8 +1128,8 @@ export default function GitaAIAssistant() {
           type="button"
           className="gita-ai-fab"
           onClick={handleFabClick}
-          title="ગીતા AI માર્ગદર્શક સાથે વાત કરો"
-          aria-label="ગીતા AI ખોલો"
+          title={isHindi ? "गीता AI मार्गदर्शक से बात करें" : "ગીતા AI માર્ગદર્શક સાથે વાત કરો"}
+          aria-label={isHindi ? "गीता AI खोलें" : "ગીતા AI ખોલો"}
         >
           <div className="gita-ai-fab-glow" />
           <div className="gita-ai-fab-icon-box">
@@ -1157,23 +1157,23 @@ export default function GitaAIAssistant() {
               <div
                 className="gita-sidebar-backdrop"
                 onClick={() => setIsHistoryOpen(false)}
-                title="ચેટ પર પાછા જાઓ"
+                title={isHindi ? "चैट पर वापस जाएं" : "ચેટ પર પાછા જાઓ"}
               />
 
               {/* Sliding Sidebar Panel */}
-              <aside className="gita-sidebar-panel" aria-label="સંવાદ ઇતિહાસ">
+              <aside className="gita-sidebar-panel" aria-label={isHindi ? "संवाद इतिहास" : "સંવાદ ઇતિહાસ"}>
                 {/* Panel Header */}
                 <div className="gita-sidebar-header">
                   <div className="gita-sidebar-header-left">
                     <History size={18} className="gita-sidebar-header-icon" />
-                    <span>સંવાદ ઇતિહાસ</span>
+                    <span>{isHindi ? "संवाद इतिहास" : "સંવાદ ઇતિહાસ"}</span>
                   </div>
                   <button
                     type="button"
                     className="gita-sidebar-close-btn"
                     onClick={() => setIsHistoryOpen(false)}
-                    title="ઇતિહાસ બંધ કરો"
-                    aria-label="બંધ કરો"
+                    title={isHindi ? "इतिहास बंद करें" : "ઇતિહાસ બંધ કરો"}
+                    aria-label={isHindi ? "बंद करें" : "બંધ કરો"}
                   >
                     <X size={17} />
                   </button>
@@ -1187,7 +1187,7 @@ export default function GitaAIAssistant() {
                     onClick={handleStartNewFromHistory}
                   >
                     <Plus size={16} />
-                    <span>+ નવી વાતચીત</span>
+                    <span>{isHindi ? "+ नई बातचीत" : "+ નવી વાતચીત"}</span>
                   </button>
                 </div>
 
@@ -1202,7 +1202,7 @@ export default function GitaAIAssistant() {
                       <div className="gita-sidebar-archived-toggle-left">
                         <Archive size={14} />
                         <span>
-                          આર્કાઇવ કરેલ સંવાદો ({historyList.filter((c) => c.isArchived).length})
+                          {isHindi ? "आर्काइव किए गए संवाद" : "આર્કાઇવ કરેલ સંવાદો"} ({historyList.filter((c) => c.isArchived).length})
                         </span>
                       </div>
                       {showArchived ? (
@@ -1227,7 +1227,7 @@ export default function GitaAIAssistant() {
                     <Search size={14} className="gita-sidebar-search-icon" />
                     <input
                       type="text"
-                      placeholder="ઇતિહાસમાં શોધો..."
+                      placeholder={isHindi ? "इतिहास में खोजें..." : "ઇતિહાસમાં શોધો..."}
                       value={historySearch}
                       onChange={(e) => setHistorySearch(e.target.value)}
                     />
@@ -1236,7 +1236,7 @@ export default function GitaAIAssistant() {
                         type="button"
                         className="gita-sidebar-search-clear"
                         onClick={() => setHistorySearch("")}
-                        title="સાફ કરો"
+                        title={isHindi ? "साफ करें" : "સાફ કરો"}
                       >
                         <X size={12} />
                       </button>
@@ -1260,13 +1260,13 @@ export default function GitaAIAssistant() {
                       </div>
                       <p>
                         {historySearch
-                          ? "કોઈ મેળ ખાતો સંવાદ નથી મળ્યો"
-                          : "કોઈ જૂનો સંવાદ નથી"}
+                          ? (isHindi ? "कोई मिलता-जुलता संवाद नहीं मिला" : "કોઈ મેળ ખાતો સંવાદ નથી મળ્યો")
+                          : (isHindi ? "कोई पुराना संवाद नहीं है" : "કોઈ જૂનો સંવાદ નથી")}
                       </p>
                       <span>
                         {historySearch
-                          ? "અન્ય શબ્દોથી શોધો."
-                          : "તમારો પ્રશ્ન પૂછો, તે આપમેળે અહીં સંગ્રહિત થશે."}
+                          ? (isHindi ? "अन्य शब्दों से खोजें।" : "અન્ય શબ્દોથી શોધો.")
+                          : (isHindi ? "अपना प्रश्न पूछें, वह अपने आप यहाँ संग्रहीत होगा।" : "તમારો પ્રશ્ન પૂછો, તે આપમેળે અહીં સંગ્રહિત થશે.")}
                       </span>
                     </div>
                   ) : historySearch.trim() ? (
@@ -1278,7 +1278,7 @@ export default function GitaAIAssistant() {
                         <div className="gita-sidebar-group">
                           <div className="gita-sidebar-group-title">
                             <Pin size={12} />
-                            <span>પિન કરેલા સંવાદો</span>
+                            <span>{isHindi ? "पिन किए गए संवाद" : "પિન કરેલા સંવાદો"}</span>
                           </div>
                           {historyList
                             .filter((c) => c.isPinned && !c.isArchived)
@@ -1291,7 +1291,7 @@ export default function GitaAIAssistant() {
                         <div className="gita-sidebar-group">
                           {historyList.filter((c) => c.isPinned && !c.isArchived).length > 0 && (
                             <div className="gita-sidebar-group-title">
-                              <span>તાજેતરના સંવાદો</span>
+                              <span>{isHindi ? "हाल के संवाद" : "તાજેતરના સંવાદો"}</span>
                             </div>
                           )}
                           {historyList
@@ -1312,10 +1312,10 @@ export default function GitaAIAssistant() {
                           type="button"
                           className="gita-sidebar-clear-all"
                           onClick={handleClearAllHistory}
-                          title="બધા સંવાદો કાઢી નાખો"
+                          title={isHindi ? "सभी संवाद हटाएं" : "બધા સંવાદો કાઢી નાખો"}
                         >
                           <Trash2 size={12} />
-                          <span>તમામ ઇતિહાસ સાફ કરો</span>
+                          <span>{isHindi ? "समस्त इतिहास साफ करें" : "તમામ ઇતિહાસ સાફ કરો"}</span>
                         </button>
                       )}
 
@@ -1325,7 +1325,7 @@ export default function GitaAIAssistant() {
                           setIsOpen(false);
                           navigate("/profile");
                         }}
-                        title="પ્રોફાઇલ જુઓ"
+                        title={isHindi ? "प्रोफ़ाइल देखें" : "પ્રોફાઇલ જુઓ"}
                         role="button"
                         tabIndex={0}
                       >
@@ -1334,10 +1334,10 @@ export default function GitaAIAssistant() {
                         </div>
                         <div className="gita-sidebar-user-info">
                           <span className="gita-sidebar-user-name">
-                            {user.name || "વપરાશકર્તા"}
+                            {user.name || (isHindi ? "उपयोगकर्ता" : "વપરાશકર્તા")}
                           </span>
                           <span className="gita-sidebar-user-id" title={user.email || ""}>
-                            {user.email || (user._id || user.id ? `ID: #${String(user._id || user.id).slice(-6).toUpperCase()}` : "સભ્ય પ્રોફાઇલ")}
+                            {user.email || (user._id || user.id ? `ID: #${String(user._id || user.id).slice(-6).toUpperCase()}` : (isHindi ? "सदस्य प्रोफ़ाइल" : "સભ્ય પ્રોફાઇલ"))}
                           </span>
                         </div>
                         <ChevronRight size={15} className="gita-sidebar-user-arrow" />
@@ -1347,7 +1347,7 @@ export default function GitaAIAssistant() {
                     <div
                       className="gita-sidebar-user-card guest"
                       onClick={handleGoToLogin}
-                      title="Login કરો"
+                      title={isHindi ? "Login करें" : "Login કરો"}
                       role="button"
                       tabIndex={0}
                     >
@@ -1355,8 +1355,8 @@ export default function GitaAIAssistant() {
                         <User size={16} />
                       </div>
                       <div className="gita-sidebar-user-info">
-                        <span className="gita-sidebar-user-name">અતિથિ (Guest)</span>
-                        <span className="gita-sidebar-user-id">Login કરો →</span>
+                        <span className="gita-sidebar-user-name">{isHindi ? "अतिथि (Guest)" : "અતિથિ (Guest)"}</span>
+                        <span className="gita-sidebar-user-id">{isHindi ? "Login करें →" : "Login કરો →"}</span>
                       </div>
                       <ChevronRight size={15} className="gita-sidebar-user-arrow" />
                     </div>
@@ -1373,8 +1373,8 @@ export default function GitaAIAssistant() {
                   type="button"
                   className={`gita-ai-icon-btn sidebar-toggle-btn ${isHistoryOpen ? "active" : ""}`}
                   onClick={handleToggleHistory}
-                  title={isHistoryOpen ? "ઇતિહાસ સાઇડબાર બંધ કરો" : "સંવાદ ઇતિહાસ જુઓ (Sidebar)"}
-                  aria-label="સાઇડબાર"
+                  title={isHistoryOpen ? (isHindi ? "इतिहास साइडबार बंद करें" : "ઇતિહાસ સાઇડબાર બંધ કરો") : (isHindi ? "संवाद इतिहास देखें (Sidebar)" : "સંવાદ ઇતિહાસ જુઓ (Sidebar)")}
+                  aria-label={isHindi ? "साइडबार" : "સાઇડબાર"}
                 >
                   <PanelLeft size={18} />
                 </button>
@@ -1384,7 +1384,7 @@ export default function GitaAIAssistant() {
                   <span className="gita-ai-online-dot" />
                 </div>
                 <div className="gita-ai-header-titles">
-                  <h3>ગીતા AI</h3>
+                  <h3>{isHindi ? "गीता AI" : "ગીતા AI"}</h3>
                   <span>॥ श्रीकृष्णः शरणं मम ॥</span>
                 </div>
               </div>
@@ -1400,8 +1400,8 @@ export default function GitaAIAssistant() {
                         e.stopPropagation();
                         setIsHeaderMenuOpen((prev) => !prev);
                       }}
-                      title="વધુ વિકલ્પો"
-                      aria-label="વધુ વિકલ્પો"
+                      title={isHindi ? "अधिक विकल्प" : "વધુ વિકલ્પો"}
+                      aria-label={isHindi ? "अधिक विकल्प" : "વધુ વિકલ્પો"}
                     >
                       <MoreHorizontal size={18} />
                     </button>
@@ -1421,7 +1421,7 @@ export default function GitaAIAssistant() {
                           }}
                         >
                           <Share2 size={13} />
-                          <span>શેર કરો</span>
+                          <span>{isHindi ? "शेयर करें" : "શેર કરો"}</span>
                         </button>
 
                         {/* 2. Rename */}
@@ -1436,7 +1436,7 @@ export default function GitaAIAssistant() {
                           }}
                         >
                           <Pencil size={13} />
-                          <span>નામ બદલો</span>
+                          <span>{isHindi ? "नाम बदलें" : "નામ બદલો"}</span>
                         </button>
 
                         {/* 3. Pin / Unpin */}
@@ -1450,7 +1450,7 @@ export default function GitaAIAssistant() {
                           }}
                         >
                           {activeConv.isPinned ? <PinOff size={13} /> : <Pin size={13} />}
-                          <span>{activeConv.isPinned ? "અનપિન કરો" : "પિન કરો"}</span>
+                          <span>{activeConv.isPinned ? (isHindi ? "अनपिन करें" : "અનપિન કરો") : (isHindi ? "पिन करें" : "પિન કરો")}</span>
                         </button>
 
                         <div className="gita-sidebar-menu-divider" />
@@ -1461,13 +1461,13 @@ export default function GitaAIAssistant() {
                           className="gita-sidebar-menu-item danger"
                           onClick={(e) => {
                             setIsHeaderMenuOpen(false);
-                            if (window.confirm("શું તમે આ સંવાદ ડીલીટ કરવા માંગો છો?")) {
+                            if (window.confirm(isHindi ? "क्या आप यह संवाद डिलीट करना चाहते हैं?" : "શું તમે આ સંવાદ ડીલીટ કરવા માંગો છો?")) {
                               handleDeleteHistoryItem(e, activeConv.id);
                             }
                           }}
                         >
                           <Trash2 size={13} />
-                          <span>ડીલીટ કરો</span>
+                          <span>{isHindi ? "डिलीट करें" : "ડીલીટ કરો"}</span>
                         </button>
                       </div>
                     )}
@@ -1479,8 +1479,8 @@ export default function GitaAIAssistant() {
                   type="button"
                   className="gita-ai-icon-btn"
                   onClick={handleNewConversation}
-                  title="નવી વાતચીત શરૂ કરો"
-                  aria-label="નવી વાતચીત"
+                  title={isHindi ? "नई बातचीत शुरू करें" : "નવી વાતચીત શરૂ કરો"}
+                  aria-label={isHindi ? "नई बातचीत" : "નવી વાતચીત"}
                 >
                   <RotateCcw size={17} />
                 </button>
@@ -1490,8 +1490,8 @@ export default function GitaAIAssistant() {
                   type="button"
                   className="gita-ai-icon-btn close-btn"
                   onClick={() => setIsOpen(false)}
-                  title="ચેટ બંધ કરો"
-                  aria-label="ચેટ બંધ કરો"
+                  title={isHindi ? "चैट बंद करें" : "ચેટ બંધ કરો"}
+                  aria-label={isHindi ? "चैट बंद करें" : "ચેટ બંધ કરો"}
                 >
                   <X size={19} />
                 </button>
@@ -1502,9 +1502,9 @@ export default function GitaAIAssistant() {
           <div className={`gita-ai-body ${!hasUserMessages ? "has-suggestions" : ""}`}>
             {!hasUserMessages && !isLoading && (
               <div className="gita-new-chat-hero">
-                <span className="gita-hero-greeting">જય શ્રી કૃષ્ણ</span>
+                <span className="gita-hero-greeting">{isHindi ? "जय श्री कृष्ण" : "જય શ્રી કૃષ્ણ"}</span>
                 <h2 className="gita-hero-title">
-                  હું તમને કેવી રીતે મદદ કરી શકું{userFirstName ? `, ${userFirstName}` : ""}?
+                  {isHindi ? "मैं आपकी क्या सहायता कर सकता हूँ" : "હું તમને કેવી રીતે મદદ કરી શકું"}{userFirstName ? `, ${userFirstName}` : ""}?
                 </h2>
               </div>
             )}
@@ -1535,17 +1535,17 @@ export default function GitaAIAssistant() {
                         type="button"
                         className="gita-copy-btn"
                         onClick={() => handleCopyText(msg.id, msg.text)}
-                        title="ઉત્તર કોપી કરો"
+                        title={isHindi ? "उत्तर कॉपी करें" : "ઉત્તર કોપી કરો"}
                       >
                         {copiedId === msg.id ? (
                           <>
                             <Check size={12} />
-                            <span>કોપી થયું</span>
+                            <span>{isHindi ? "कॉपी हुआ" : "કોપી થયું"}</span>
                           </>
                         ) : (
                           <>
                             <Copy size={12} />
-                            <span>કોપી</span>
+                            <span>{isHindi ? "कॉपी" : "કોપી"}</span>
                           </>
                         )}
                       </button>
@@ -1558,8 +1558,8 @@ export default function GitaAIAssistant() {
                         type="button"
                         className="gita-user-icon-btn"
                         onClick={() => handleCopyText(msg.id, msg.text)}
-                        title={copiedId === msg.id ? "કોપી થયું!" : "પ્રશ્ન કોપી કરો"}
-                        aria-label="પ્રશ્ન કોપી કરો"
+                        title={copiedId === msg.id ? (isHindi ? "कॉपी हुआ!" : "કોપી થયું!") : (isHindi ? "प्रश्न कॉपी करें" : "પ્રશ્ન કોપી કરો")}
+                        aria-label={isHindi ? "प्रश्न कॉपी करें" : "પ્રશ્ન કોપી કરો"}
                       >
                         {copiedId === msg.id ? (
                           <Check size={13} strokeWidth={2.5} />
@@ -1572,8 +1572,8 @@ export default function GitaAIAssistant() {
                         type="button"
                         className="gita-user-icon-btn"
                         onClick={() => handleUndoMessage(index, msg.text)}
-                        title="આ પ્રશ્ન સુધી Undo કરો અને સુધારો"
-                        aria-label="આ પ્રશ્ન સુધી Undo કરો અને સુધારો"
+                        title={isHindi ? "इस प्रश्न तक Undo करें और सुधारें" : "આ પ્રશ્ન સુધી Undo કરો અને સુધારો"}
+                        aria-label={isHindi ? "इस प्रश्न तक Undo करें और सुधारें" : "આ પ્રશ્ન સુધી Undo કરો અને સુધારો"}
                       >
                         <Undo2 size={13} strokeWidth={2.2} />
                       </button>
@@ -1605,7 +1605,7 @@ export default function GitaAIAssistant() {
                 <span>
                   {isHindi
                     ? "गीता AI गलती कर सकता है। महत्वपूर्ण जानकारी की पुष्टि कर लें।"
-                    : "ગીતા AI ભૂલ કરી શકે છે. મહત્વપૂર્ણ માહિતીની ચકાસણી કરી લેવી."}
+                    : (isHindi ? "गीता AI भूल कर सकता है। महत्वपूर्ण जानकारी की पुष्टि कर लें।" : "ગીતા AI ભૂલ કરી શકે છે. મહત્વપૂર્ણ માહિતીની ચકાસણી કરી લેવી.")}
                 </span>
               </div>
             )}
@@ -1637,7 +1637,7 @@ export default function GitaAIAssistant() {
             {isListening && (
               <div className="gita-listening-bar">
                 <span className="gita-listening-wave" />
-                <span>માઇક ચાલુ છે... બોલો (તમારો અવાજ લખાશે)</span>
+                <span>{isHindi ? "माइक चालू है... बोलिए (आपकी आवाज़ लिखी जाएगी)" : "માઇક ચાલુ છે... બોલો (તમારો અવાજ લખાશે)"}</span>
               </div>
             )}
 
@@ -1671,10 +1671,10 @@ export default function GitaAIAssistant() {
                 disabled={isLoading}
                 title={
                   isListening
-                    ? "સાંભળવાનું બંધ કરવા ક્લિક કરો"
-                    : "વોઇસ દ્વારા બોલીને પૂછો (માઇક)"
+                    ? (isHindi ? "सुनना बंद करने के लिए क्लिक करें" : "સાંભળવાનું બંધ કરવા ક્લિક કરો")
+                    : (isHindi ? "वॉइस द्वारा बोलकर पूछें (माइक)" : "વોઇસ દ્વારા બોલીને પૂછો (માઇક)")
                 }
-                aria-label="વોઇસ ઇનપુટ"
+                aria-label={isHindi ? "वॉइस इनपुट" : "વોઇસ ઇનપુટ"}
               >
                 {isListening ? <MicOff size={18} /> : <Mic size={18} />}
               </button>
@@ -1684,8 +1684,8 @@ export default function GitaAIAssistant() {
                 className="gita-ai-send-btn"
                 onClick={() => handleSendMessage()}
                 disabled={!inputText.trim() || isLoading}
-                title="સવાલ મોકલો"
-                aria-label="સવાલ મોકલો"
+                title={isHindi ? "सवाल भेजें" : "સવાલ મોકલો"}
+                aria-label={isHindi ? "सवाल भेजें" : "સવાલ મોકલો"}
               >
                 <Send size={16} />
               </button>
@@ -1704,7 +1704,7 @@ export default function GitaAIAssistant() {
               >
                 <div className="gita-rename-modal-header">
                   <Pencil size={17} className="gita-rename-modal-icon" />
-                  <h4>સંવાદનું નામ બદલો</h4>
+                  <h4>{isHindi ? "संवाद का नाम बदलें" : "સંવાદનું નામ બદલો"}</h4>
                 </div>
                 <form onSubmit={handleHeaderRenameSubmit}>
                   <input
@@ -1712,7 +1712,7 @@ export default function GitaAIAssistant() {
                     className="gita-rename-modal-input"
                     value={headerRenameTitle}
                     onChange={(e) => setHeaderRenameTitle(e.target.value)}
-                    placeholder="સંવાદનું નામ લખો..."
+                    placeholder={isHindi ? "संवाद का नाम लिखें..." : "સંવાદનું નામ લખો..."}
                     autoFocus
                     maxLength={60}
                   />
@@ -1722,14 +1722,14 @@ export default function GitaAIAssistant() {
                       className="gita-rename-btn cancel"
                       onClick={() => setIsHeaderRenameOpen(false)}
                     >
-                      રદ કરો
+                      {isHindi ? "रद्द करें" : "રદ કરો"}
                     </button>
                     <button
                       type="submit"
                       className="gita-rename-btn save"
                       disabled={!headerRenameTitle.trim()}
                     >
-                      સાચવો
+                      {isHindi ? "सहेजें" : "સાચવો"}
                     </button>
                   </div>
                 </form>

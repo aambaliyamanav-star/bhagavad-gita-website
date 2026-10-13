@@ -136,7 +136,8 @@ function QuizResult() {
 
         if (!response.ok) {
           if (response.status === 401 || (data.message && data.message.toLowerCase().includes("token"))) {
-            clearAuthSession();
+            handleAuth401(navigate, "/quiz-results");
+            return;
           }
           throw new Error(
             data.message ||
@@ -179,7 +180,7 @@ function QuizResult() {
 
         setError(
           err.message ||
-            "Quiz result load કરવામાં error આવ્યો."
+            (isHindi ? "Quiz परिणाम लोड करने में त्रुटि आई।" : "Quiz result load કરવામાં error આવ્યો.")
         );
       } finally {
         setLoading(false);
@@ -376,7 +377,7 @@ function QuizResult() {
 
   if (error) {
     const isTokenIssue = error.toLowerCase().includes("token") || error.includes("401");
-    const displayError = isHindi ? error.replace(/અથવા/g, "अथवा") : error;
+    const displayError = isHindi ? (error.toLowerCase().includes("token") ? "अमान्य या समाप्त टोकन (Invalid / Expired Token)। कृपया पुनः लॉगिन करें।" : error.replace(/અથવા/g, "अथવા")) : error;
     return (
       <main className="quiz-result-page">
         <section className="quiz-result-error">
@@ -704,8 +705,8 @@ function QuizResult() {
                 aria-expanded={isExpanded}
                 aria-label={`${categoryName} result ${
                   isExpanded
-                    ? "બંધ કરો"
-                    : "જુઓ"
+                    ? (isHindi ? "बंद करें" : "બંધ કરો")
+                    : (isHindi ? "देखें" : "જુઓ")
                 }`}
               >
 

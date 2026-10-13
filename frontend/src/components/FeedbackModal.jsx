@@ -179,12 +179,12 @@ export default function FeedbackModal() {
     setError("");
 
     if (!isLocked && (!rating || rating < 1 || rating > 5)) {
-      setError("કૃપા કરીને ૧ થી ૫ વચ્ચે સ્ટાર રેટિંગ પસંદ કરો.");
+      setError(isHindi ? "कृपया 1 से 5 के बीच स्टार रेटिंग चुनें।" : "કૃપા કરીને ૧ થી ૫ વચ્ચે સ્ટાર રેટિંગ પસંદ કરો.");
       return;
     }
 
     if (!message.trim()) {
-      setError("કૃપા કરીને આપનો પ્રતિસાદ અથવા સૂચન લખો.");
+      setError(isHindi ? "कृपया अपनी प्रतिक्रिया या सुझाव लिखें।" : "કૃપા કરીને આપનો પ્રતિસાદ અથવા સૂચન લખો.");
       return;
     }
 
@@ -210,13 +210,13 @@ export default function FeedbackModal() {
     const payload = {
       rating: isLocked ? 5 : rating,
       category,
-      name: name.trim() || (user?.name || "અનામી સાધક"),
+      name: name.trim() || (user?.name || (isHindi ? "अनाम साधक" : "અનામી સાધક")),
       email: email.trim() || (user?.email || ""),
       message: message.trim(),
     };
 
     let success = false;
-    let errorMsg = "સર્વર સાથે જોડાણ થઈ શક્યું નથી. કૃપા કરીને ફરી પ્રયાસ કરો.";
+    let errorMsg = isHindi ? "सर्वर से संपर्क नहीं हो सका। कृपया पुनः प्रयास करें।" : "સર્વર સાથે જોડાણ થઈ શક્યું નથી. કૃપા કરીને ફરી પ્રયાસ કરો.";
 
     for (const url of targets) {
       try {

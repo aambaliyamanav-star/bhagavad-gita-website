@@ -52,13 +52,17 @@ export function getValidToken() {
 
 export function handleAuth401(navigate = null, fromPath = "/") {
   clearAuthSession();
+  const isHi = typeof localStorage !== "undefined" && localStorage.getItem("gita_language") === "hi";
   if (typeof navigate === "function") {
     navigate("/login", {
       replace: true,
       state: {
         from: fromPath,
-        message: "તમારું સત્ર (Session) સમાપ્ત થઈ ગયું છે. કૃપા કરીને ફરી Login કરો.",
+        message: isHi
+          ? "आपका सत्र (Session) समाप्त हो गया है। कृपया पुनः लॉगिन करें।"
+          : "તમારું સત્ર (Session) સમાપ્ત થઈ ગયું છે. કૃપા કરીને ફરી Login કરો.",
       },
     });
   }
 }
+

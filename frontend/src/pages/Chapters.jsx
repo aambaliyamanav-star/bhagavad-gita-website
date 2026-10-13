@@ -66,7 +66,7 @@ function Chapters() {
 
         if (!response.ok) {
           throw new Error(
-            data.message || "Shlok data load થઈ શક્યો નથી."
+            data.message || (isHindi ? "श्लोक डेटा लोड नहीं हो सका।" : "Shlok data load થઈ શક્યો નથી.")
           );
         }
 

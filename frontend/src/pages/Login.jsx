@@ -73,7 +73,7 @@ function Login() {
       const chapter = localStorage.getItem("pendingChapter");
       const shlok = localStorage.getItem("pendingShloka");
       if (chapter && shlok) {
-        return `અધ્યાય ${chapter} ના શ્લોક ${shlok} વાંચવા માટે Login કરવું જરૂરી છે.`;
+        return isHindi ? `अध्याय ${chapter} के श्लोक ${shlok} पढ़ने के लिए Login करना आवश्यक है।` : `અધ્યાય ${chapter} ના શ્લોક ${shlok} વાંચવા માટે Login કરવું જરૂરી છે.`;
       }
     }
 
@@ -123,7 +123,7 @@ function Login() {
 
     if (!formData.email.trim()) {
       setMessage(
-        "કૃપા કરીને Email ID નાખો."
+        isHindi ? "कृपया Email ID दर्ज करें।" : "કૃપા કરીને Email ID નાખો."
       );
 
       setMessageType("error");
@@ -137,7 +137,7 @@ function Login() {
       )
     ) {
       setMessage(
-        "કૃપા કરીને યોગ્ય Email ID નાખો."
+        isHindi ? "कृपया मान्य Email ID दर्ज करें।" : "કૃપા કરીને યોગ્ય Email ID નાખો."
       );
 
       setMessageType("error");
@@ -151,7 +151,7 @@ function Login() {
 
     if (!formData.password) {
       setMessage(
-        "કૃપા કરીને Password નાખો."
+        isHindi ? "कृपया Password दर्ज करें।" : "કૃપા કરીને Password નાખો."
       );
 
       setMessageType("error");
@@ -206,7 +206,7 @@ function Login() {
         );
 
         setMessage(
-          "Login સફળ થયું"
+          isHindi ? "Login सफल हुआ" : "Login સફળ થયું"
         );
 
         setMessageType("success");
@@ -269,7 +269,7 @@ setTimeout(() => {
   else {
         setMessage(
           data.message ||
-            "Email અથવા Password ખોટો છે."
+            isHindi ? "Email या Password गलत है।" : "Email અથવા Password ખોટો છે."
         );
 
         setMessageType("error");
@@ -281,7 +281,7 @@ setTimeout(() => {
       );
 
       setMessage(
-        "Server સાથે connection થઈ શક્યું નથી."
+        isHindi ? "Server से connection नहीं हो सका।" : "Server સાથે connection થઈ શક્યું નથી."
       );
 
       setMessageType("error");

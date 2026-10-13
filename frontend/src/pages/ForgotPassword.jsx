@@ -45,7 +45,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
     setError("");
 
     if (!email.trim()) {
-      setError("કૃપા કરીને Email ID નાખો.");
+      setError(isHindi ? "कृपया Email ID दर्ज करें।" : "કૃપા કરીને Email ID નાખો.");
       return;
     }
 
@@ -72,13 +72,13 @@ const [showConfirmPassword, setShowConfirmPassword] =
       if (!response.ok) {
         throw new Error(
           data.message ||
-            "OTP મોકલવામાં સમસ્યા આવી."
+            isHindi ? "OTP भेजने में समस्या आई।" : isHindi ? "OTP भेजने में समस्या आई।" : "OTP મોકલવામાં સમસ્યા આવી."
         );
       }
 
       setMessage(
         data.message ||
-          "તમારા Email પર OTP મોકલવામાં આવ્યો છે."
+          isHindi ? "आपके Email पर OTP भेजा गया है।" : "તમારા Email પર OTP મોકલવામાં આવ્યો છે."
       );
 
       setStep(2);
@@ -89,8 +89,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
       );
 
       setError(
-        err.message ||
-          "OTP મોકલવામાં સમસ્યા આવી."
+        err.message || (isHindi ? "OTP भेजने में समस्या आई।" : "OTP મોકલવામાં સમસ્યા આવી.")
       );
     } finally {
       setLoading(false);
@@ -109,14 +108,14 @@ const [showConfirmPassword, setShowConfirmPassword] =
 
     if (!otp.trim()) {
       setError(
-        "કૃપા કરીને 6 અંકનો OTP નાખો."
+        isHindi ? "कृपया 6 अंकों का OTP दर्ज करें।" : "કૃપા કરીને 6 અંકનો OTP નાખો."
       );
       return;
     }
 
     if (!/^[0-9]{6}$/.test(otp.trim())) {
       setError(
-        "યોગ્ય 6 અંકનો OTP નાખો."
+        isHindi ? "मान्य 6 अंकों का OTP दर्ज करें।" : "યોગ્ય 6 અંકનો OTP નાખો."
       );
       return;
     }
@@ -153,7 +152,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
 
       setMessage(
         data.message ||
-          "OTP successfully verify થઈ ગયો છે."
+          isHindi ? "OTP सफलतापूर्वक verify हो गया है।" : "OTP successfully verify થઈ ગયો છે."
       );
 
       setStep(3);
@@ -165,7 +164,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
 
       setError(
         err.message ||
-          "OTP verificationમાં સમસ્યા આવી."
+          isHindi ? "OTP verification में समस्या आई।" : "OTP verificationમાં સમસ્યા આવી."
       );
     } finally {
       setLoading(false);
@@ -184,14 +183,14 @@ const [showConfirmPassword, setShowConfirmPassword] =
 
     if (!newPassword) {
       setError(
-        "કૃપા કરીને New Password નાખો."
+        isHindi ? "कृपया New Password दर्ज करें।" : "કૃપા કરીને New Password નાખો."
       );
       return;
     }
 
     if (newPassword.length < 6) {
       setError(
-        "New Password ઓછામાં ઓછો 6 charactersનો હોવો જોઈએ."
+        isHindi ? "New Password कम से कम 6 अक्षरों का होना चाहिए।" : "New Password ઓછામાં ઓછો 6 charactersનો હોવો જોઈએ."
       );
       return;
     }
@@ -201,7 +200,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
       confirmPassword
     ) {
       setError(
-        "New Password અને Confirm Password સરખા નથી."
+        isHindi ? "New Password और Confirm Password समान नहीं हैं।" : "New Password અને Confirm Password સરખા નથી."
       );
       return;
     }
@@ -234,13 +233,13 @@ const [showConfirmPassword, setShowConfirmPassword] =
       if (!response.ok) {
         throw new Error(
           data.message ||
-            "Password reset કરવામાં સમસ્યા આવી."
+            isHindi ? "Password reset करने में समस्या आई।" : isHindi ? "Password reset करने में समस्या आई।" : "Password reset કરવામાં સમસ્યા આવી."
         );
       }
 
       setMessage(
         data.message ||
-          "Password successfully reset થઈ ગયો છે."
+          isHindi ? "Password सफलतापूर्वक reset हो गया है।" : "Password successfully reset થઈ ગયો છે."
       );
 
       // =================================================
@@ -264,8 +263,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
       );
 
       setError(
-        err.message ||
-          "Password reset કરવામાં સમસ્યા આવી."
+        err.message || (isHindi ? "Password reset करने में समस्या आई।" : "Password reset કરવામાં સમસ્યા આવી.")
       );
     } finally {
       setLoading(false);
@@ -304,7 +302,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
           </h1>
 
           <p>
-            તમારો Password ફરીથી set કરો
+            {isHindi ? "अपना Password पुनः set करें" : "તમારો Password ફરીથી set કરો"}
           </p>
 
         </div>
@@ -394,8 +392,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
             </h2>
 
             <p>
-              તમારા registered Email ID પર
-              OTP મોકલવામાં આવશે.
+              {isHindi ? "आपके registered Email ID पर OTP भेजा जाएगा।" : "તમારા registered Email ID પર OTP મોકલવામાં આવશે."}
             </p>
 
 
@@ -405,7 +402,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
 
             <input
               type="email"
-              placeholder="તમારું Email નાખો"
+              placeholder={isHindi ? "अपना Email दर्ज करें" : "તમારું Email નાખો"}
               value={email}
               onChange={(e) =>
                 setEmail(e.target.value)
@@ -456,8 +453,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
 
               <br />
 
-              પર મોકલવામાં આવેલ 6 અંકનો OTP
-              નાખો.
+              {isHindi ? "पर भेजा गया 6 अंकों का OTP दर्ज करें।" : "પર મોકલવામાં આવેલ 6 અંકનો OTP નાખો."}
             </p>
 
 
@@ -469,7 +465,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
               type="text"
               inputMode="numeric"
               maxLength={6}
-              placeholder="6 અંકનો OTP"
+              placeholder={isHindi ? "6 अंकों का OTP" : "6 અંકનો OTP"}
               value={otp}
               onChange={(e) =>
                 setOtp(
@@ -506,7 +502,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
               }}
               disabled={loading}
             >
-              <ArrowLeft size={15} className="btn-icon" /> Email ફરી નાખો
+              <ArrowLeft size={15} className="btn-icon" /> {isHindi ? "Email पुनः दर्ज करें" : "Email ફરી નાખો"}
             </button>
 
           </form>
@@ -534,8 +530,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
             </h2>
 
             <p>
-              હવે તમારા account માટે
-              નવો Password બનાવો.
+              {isHindi ? "अब अपने account के लिए नया Password बनाएं।" : "હવે તમારા account માટે નવો Password બનાવો."}
             </p>
 
 
@@ -551,7 +546,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
         ? "text"
         : "password"
     }
-    placeholder="નવો Password"
+    placeholder={isHindi ? "नया Password" : "નવો Password"}
     value={newPassword}
     onChange={(e) =>
       setNewPassword(
@@ -572,13 +567,13 @@ const [showConfirmPassword, setShowConfirmPassword] =
     }
     aria-label={
       showNewPassword
-        ? "Password hide કરો"
-        : "Password show કરો"
+        ? (isHindi ? "Password छिपाएं" : "Password hide કરો")
+        : (isHindi ? "Password दिखाएं" : "Password show કરો")
     }
     title={
       showNewPassword
-        ? "Password hide કરો"
-        : "Password show કરો"
+        ? (isHindi ? "Password छिपाएं" : "Password hide કરો")
+        : (isHindi ? "Password दिखाएं" : "Password show કરો")
     }
   >
     {showNewPassword ? (
@@ -609,7 +604,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
         ? "text"
         : "password"
     }
-    placeholder="Password ફરી નાખો"
+    placeholder={isHindi ? "Password पुनः दर्ज करें" : "Password ફરી નાખો"}
     value={confirmPassword}
     onChange={(e) =>
       setConfirmPassword(
@@ -630,13 +625,13 @@ const [showConfirmPassword, setShowConfirmPassword] =
     }
     aria-label={
       showConfirmPassword
-        ? "Confirm Password hide કરો"
-        : "Confirm Password show કરો"
+        ? (isHindi ? "Confirm Password छिपाएं" : "Confirm Password hide કરો")
+        : (isHindi ? "Confirm Password दिखाएं" : "Confirm Password show કરો")
     }
     title={
       showConfirmPassword
-        ? "Password hide કરો"
-        : "Password show કરો"
+        ? (isHindi ? "Password छिपाएं" : "Password hide કરો")
+        : (isHindi ? "Password दिखाएं" : "Password show કરો")
     }
   >
     {showConfirmPassword ? (
@@ -680,7 +675,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
             onClick={handleBackToLogin}
             disabled={loading}
           >
-            <ArrowLeft size={15} className="btn-icon" /> Login Page પર પાછા જાઓ
+            <ArrowLeft size={15} className="btn-icon" /> {isHindi ? "Login Page पर वापस जाएं" : "Login Page પર પાછા જાઓ"}
           </button>
 
         </div>
