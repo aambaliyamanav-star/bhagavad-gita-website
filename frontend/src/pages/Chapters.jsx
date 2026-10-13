@@ -1,7 +1,29 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BookOpen } from "lucide-react";
+import { useLanguage } from "../context/LanguageContext.jsx";
 import "./Chapters.css";
+
+const chapterNamesHi = {
+  1: "अर्जुनविषाद योग",
+  2: "सांख्य योग",
+  3: "कर्म योग",
+  4: "ज्ञानकर्मसंन्यास योग",
+  5: "कर्मसंन्यास योग",
+  6: "आत्मसंयम योग",
+  7: "ज्ञानविज्ञान योग",
+  8: "अक्षरब्रह्म योग",
+  9: "राजविद्या राजगुह्य योग",
+  10: "विभूति योग",
+  11: "विश्वरूपदर्शन योग",
+  12: "भक्ति योग",
+  13: "क्षेत्र-क्षेत्रज्ञ विभाग योग",
+  14: "गुणत्रय विभाग योग",
+  15: "पुरुषोत्तम योग",
+  16: "दैवासुरसम्पद्विभाग योग",
+  17: "श्रद्धात्रयविभाग योग",
+  18: "मोक्षसंन्यास योग",
+};
 
 const chapters = [
   { number: 1, name: "અર્જુનવિષાદ યોગ", verses: 47 },
@@ -26,6 +48,7 @@ const chapters = [
 
 function Chapters() {
   const navigate = useNavigate();
+  const { isHindi } = useLanguage();
 
   const [shlokCounts, setShlokCounts] = useState({});
   const [loading, setLoading] = useState(true);
@@ -91,7 +114,7 @@ function Chapters() {
         </p>
 
         <h1>
-          ભગવદ્ ગીતાના 18 અધ્યાય
+          {isHindi ? "भगवद् गीता के 18 अध्याय" : "ભગવદ્ ગીતાના 18 અધ્યાય"}
         </h1>
       </section>
 
@@ -110,15 +133,15 @@ function Chapters() {
             >
 
               <div className="chapter-number">
-                અધ્યાય {chapter.number}
+                {isHindi ? `अध्याय ${chapter.number}` : `અધ્યાય ${chapter.number}`}
               </div>
 
               <h2>
-                {chapter.name}
+                {isHindi ? (chapterNamesHi[chapter.number] || chapter.name) : chapter.name}
               </h2>
 
               <p>
-                {databaseCount > 0 ? databaseCount : chapter.verses} શ્લોક
+                {databaseCount > 0 ? databaseCount : chapter.verses} {isHindi ? "श्लोक" : "શ્લોક"}
               </p>
 
               <button
@@ -128,7 +151,7 @@ function Chapters() {
                   )
                 }
               >
-                <BookOpen className="btn-icon" size={14} /> અધ્યાય વાંચો
+                <BookOpen className="btn-icon" size={14} /> {isHindi ? "अध्याय पढ़ें" : "અધ્યાય વાંચો"}
               </button>
 
             </div>

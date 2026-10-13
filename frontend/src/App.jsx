@@ -4,6 +4,7 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from "react-route
 
 import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
 import { ThemeProvider } from "./context/ThemeContext.jsx";
+import { LanguageProvider } from "./context/LanguageContext.jsx";
 import "./App.css";
 
 import Navbar from "./components/Navbar.jsx";
@@ -396,28 +397,30 @@ function AnimatedRoutes() {
 function App() {
   return (
     <ThemeProvider>
-      <AuthProvider>
-        <BrowserRouter>
-          <Navbar />
-          <AnimatedRoutes />
-          {/* =================================================
-              FEEDBACK & STAR RATING (FLOATING BOTTOM-LEFT WIDGET)
-          ================================================= */}
-          <FeedbackModal />
-          {/* =================================================
-              GITA AI ASSISTANT (FLOATING BOTTOM-RIGHT WIDGET)
-          ================================================= */}
-          <GitaAIAssistant />
-          {/* =================================================
-              PWA INSTALL BANNER / PROMPT
-          ================================================= */}
-          <InstallPwaBanner />
-          {/* =================================================
-              APP ONLY: 5x DAILY NOTIFICATIONS PROMPT
-          ================================================= */}
-          <AppNotificationPrompt />
-        </BrowserRouter>
-      </AuthProvider>
+      <LanguageProvider>
+        <AuthProvider>
+          <BrowserRouter>
+            <Navbar />
+            <AnimatedRoutes />
+            {/* =================================================
+                FEEDBACK & STAR RATING (FLOATING BOTTOM-LEFT WIDGET)
+            ================================================= */}
+            <FeedbackModal />
+            {/* =================================================
+                GITA AI ASSISTANT (FLOATING BOTTOM-RIGHT WIDGET)
+            ================================================= */}
+            <GitaAIAssistant />
+            {/* =================================================
+                PWA INSTALL BANNER / PROMPT
+            ================================================= */}
+            <InstallPwaBanner />
+            {/* =================================================
+                APP ONLY: 5x DAILY NOTIFICATIONS PROMPT
+            ================================================= */}
+            <AppNotificationPrompt />
+          </BrowserRouter>
+        </AuthProvider>
+      </LanguageProvider>
     </ThemeProvider>
   );
 }

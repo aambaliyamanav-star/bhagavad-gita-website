@@ -418,6 +418,79 @@ body {
 
 
 /* =========================================================
+   LANGUAGE TOGGLE BUTTON — GLASS PILL
+   ========================================================= */
+
+.nav-lang-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 5px 12px;
+  height: 34px;
+
+  background: rgba(255, 255, 255, 0.16);
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 999px;
+
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all 0.22s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.nav-lang-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.28);
+  border-color: rgba(255, 255, 255, 0.50);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.nav-lang-toggle-btn:active {
+  transform: translateY(0);
+}
+
+.nav-lang-icon {
+  color: #fde047;
+}
+
+.nav-lang-text {
+  font-size: 12.5px;
+  letter-spacing: 0.2px;
+}
+
+.side-menu-lang {
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+
+.side-lang-pill {
+  padding: 4px 10px;
+  font-size: 11.5px;
+  font-weight: 700;
+  border-radius: 999px;
+  background: #f59e0b;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .nav-lang-toggle-btn {
+  background: rgba(255, 255, 255, 0.10);
+  border-color: rgba(255, 255, 255, 0.20);
+}
+
+[data-theme="dark"] .nav-lang-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+  border-color: rgba(255, 255, 255, 0.35);
+}
+
+
+/* =========================================================
    HAMBURGER BUTTON â€” GLASS
    ========================================================= */
 
