@@ -47,10 +47,11 @@ const protect = async (req, res, next) => {
   } catch (error) {
     console.error("Protect Error:", error);
 
+    const isHi = req.headers && req.headers["accept-language"] && req.headers["accept-language"].includes("hi");
     return res.status(401).json({
       success: false,
       code: "TOKEN_EXPIRED",
-      message: "Invalid અથવા / अथवा expired token."
+      message: isHi ? "Invalid अथवा expired token." : "Invalid અથવા / अथवा expired token."
     });
   }
 };

@@ -240,7 +240,7 @@ useEffect(() => {
         if (!response.ok) {
           throw new Error(
             data.message ||
-              "Shlok data load થઈ શક્યો નથી."
+              (isHindi ? "श्लोक डेटा लोड नहीं हो सका।" : "Shlok data load થઈ શક્યો નથી.")
           );
         }
 
@@ -273,7 +273,7 @@ useEffect(() => {
         );
 
         setMessage(
-          "Server સાથે connection થઈ શક્યું નથી."
+          isHindi ? "सर्वर के साथ कनेक्शन नहीं हो सका।" : "Server સાથે connection થઈ શક્યું નથી."
         );
       } finally {
         setLoading(false);
@@ -325,7 +325,7 @@ useEffect(() => {
         if (!response.ok) {
           throw new Error(
             data.message ||
-              "Continue Reading load થઈ શક્યું નથી."
+              (isHindi ? "पठन जारी रखें लोड नहीं हो सका।" : "Continue Reading load થઈ શક્યું નથી.")
           );
         }
 
@@ -366,18 +366,22 @@ useEffect(() => {
           ? `/chapter/${continueReading.chapterNumber}?shloka=${continueReading.shlokNumber}`
           : "/chapters";
 
+      const loginMsg = isHindi
+        ? "पठन जारी रखने के लिए Login आवश्यक है।"
+        : "વાંચન ચાલુ રાખવા માટે Login કરવું જરૂરી છે.";
+
       sessionStorage.setItem(
         "authRedirect",
         JSON.stringify({
           from: target,
-          message: "વાંચન ચાલુ રાખવા માટે Login કરવું જરૂરી છે.",
+          message: loginMsg,
         })
       );
 
       navigate("/login", {
         state: {
           from: target,
-          message: "વાંચન ચાલુ રાખવા માટે Login કરવું જરૂરી છે.",
+          message: loginMsg,
         },
       });
       return;
@@ -412,18 +416,22 @@ useEffect(() => {
   const handleQuiz = () => {
     // Login ન હોય તો Login page પર message અને target path સાથે મોકલો
     if (!user) {
+      const loginMsg = isHindi
+        ? "क्विज़ खेलने के लिए Login आवश्यक है।"
+        : "Quiz રમવા માટે Login કરવું જરૂરી છે.";
+
       sessionStorage.setItem(
         "authRedirect",
         JSON.stringify({
           from: "/quiz-category",
-          message: "Quiz રમવા માટે Login કરવું જરૂરી છે.",
+          message: loginMsg,
         })
       );
 
       navigate("/login", {
         state: {
           from: "/quiz-category",
-          message: "Quiz રમવા માટે Login કરવું જરૂરી છે.",
+          message: loginMsg,
         },
       });
       return;
@@ -439,18 +447,22 @@ useEffect(() => {
 
   const handleReadingTracker = () => {
     if (!user) {
+      const loginMsg = isHindi
+        ? "पठन प्रगति देखने के लिए Login आवश्यक है।"
+        : "વાંચન પ્રગતિ જોવા માટે Login કરવું જરૂરી છે.";
+
       sessionStorage.setItem(
         "authRedirect",
         JSON.stringify({
           from: "/reading-tracker",
-          message: "વાંચન પ્રગતિ જોવા માટે Login કરવું જરૂરી છે.",
+          message: loginMsg,
         })
       );
 
       navigate("/login", {
         state: {
           from: "/reading-tracker",
-          message: "વાંચન પ્રગતિ જોવા માટે Login કરવું જરૂરી છે.",
+          message: loginMsg,
         },
       });
       return;

@@ -16,6 +16,7 @@ const THEMES = [
   {
     id: "royal-blue",
     name: "રોયલ બ્લુ",
+    nameHi: "रॉयल ब्लू",
     englishName: "Royal Blue",
     primaryGrad: ["#0f2b5c", "#18458b", "#0a1d40"],
     borderGold: "#f5c542",
@@ -33,6 +34,7 @@ const THEMES = [
   {
     id: "saffron-gold",
     name: "દિવ્ય ભગવો",
+    nameHi: "दिव्य भगवा",
     englishName: "Divine Saffron",
     primaryGrad: ["#8f2c00", "#b83d02", "#661f00"],
     borderGold: "#ffd54f",
@@ -50,6 +52,7 @@ const THEMES = [
   {
     id: "vedic-maroon",
     name: "વેદિક મરૂન",
+    nameHi: "वैदिक महरून",
     englishName: "Vedic Maroon",
     primaryGrad: ["#5e0d1b", "#801627", "#420610"],
     borderGold: "#f7d070",
@@ -67,6 +70,7 @@ const THEMES = [
   {
     id: "surya-gold",
     name: "સૂર્ય પીતાંબર",
+    nameHi: "सूर्य पीतांबर",
     englishName: "Surya Pitambar",
     primaryGrad: ["#5e3a00", "#8a5700", "#422800"],
     borderGold: "#ffe57f",
@@ -84,6 +88,7 @@ const THEMES = [
   {
     id: "royal-purple",
     name: "રાજવી પર્પલ",
+    nameHi: "शाही पर्पल",
     englishName: "Royal Purple",
     primaryGrad: ["#381150", "#541b77", "#240835"],
     borderGold: "#fde047",
@@ -101,6 +106,7 @@ const THEMES = [
   {
     id: "lotus-rose",
     name: "દિવ્ય પદ્મ",
+    nameHi: "दिव्य पद्म",
     englishName: "Divine Lotus",
     primaryGrad: ["#570b28", "#7d133c", "#3b0519"],
     borderGold: "#f9d276",
@@ -118,6 +124,7 @@ const THEMES = [
   {
     id: "mystic-copper",
     name: "દિવ્ય તાંબ્ર",
+    nameHi: "दिव्य ताम्र",
     englishName: "Mystic Copper",
     primaryGrad: ["#4e2810", "#6f3a18", "#381c09"],
     borderGold: "#ffd54f",
@@ -592,7 +599,7 @@ export default function ShareShlokaModal({
     // Sacred Heading (Comfortably below top inner border)
     ctx.font = 'bold 62px "Noto Sans Devanagari", "Noto Sans Gujarati", serif';
     ctx.fillStyle = currentTheme.headerColor;
-    ctx.fillText("॥ શ્રીમદ્ભગવદ્ગીતા ॥", width / 2, headingCenterY);
+    ctx.fillText(isHindi ? "॥ श्रीमद्भगवद्गीता ॥" : "॥ શ્રીમદ્ભગવદ્ગીતા ॥", width / 2, headingCenterY);
 
     // Chapter & Shlok Badge Pill (Spaced cleanly below heading)
     const badgeText = chName
@@ -660,7 +667,7 @@ export default function ShareShlokaModal({
     // 6. Gujarati Translation / Meaning Section (Right below Sanskrit)
     ctx.font = 'bold 40px "Noto Sans Gujarati", sans-serif';
     ctx.fillStyle = currentTheme.headerColor;
-    ctx.fillText("• ગુજરાતી ભાવાર્થ •", width / 2, currY + 12);
+    ctx.fillText(isHindi ? "• हिन्दी भावार्थ •" : "• ગુજરાતી ભાવાર્થ •", width / 2, currY + 12);
     currY += transTitleH;
 
     ctx.font = `bold ${transFontSize}px "Noto Sans Gujarati", sans-serif`;
@@ -679,7 +686,7 @@ export default function ShareShlokaModal({
 
       ctx.font = 'bold 38px "Noto Sans Gujarati", sans-serif';
       ctx.fillStyle = currentTheme.sanskritAccent;
-      ctx.fillText("✨ દિવ્ય સંદેશ / જીવન બોધ ✨", width / 2, currY + 12);
+      ctx.fillText(isHindi ? "✨ दिव्य संदेश / जीवन बोध ✨" : "✨ દિવ્ય સંદેશ / જીવન બોધ ✨", width / 2, currY + 12);
       currY += msgTitleH;
 
       ctx.font = `bold ${msgFontSize}px "Noto Sans Gujarati", sans-serif`;
@@ -746,7 +753,7 @@ export default function ShareShlokaModal({
   const handleShareWhatsApp = async () => {
     const canvas = canvasRef.current;
     const websiteUrl = "https://bhagavad-gita-website-rk1v.vercel.app";
-    const shareTitle = "શ્રીમદ્ભગવદ્ગીતા";
+    const shareTitle = isHindi ? "श्रीमद्भगवद्गीता" : "શ્રીમદ્ભગવદ્ગીતા";
     const shareText = websiteUrl;
 
     if (canvas && navigator.canShare) {
@@ -795,18 +802,18 @@ export default function ShareShlokaModal({
     );
     const messagePoints = extractMessagePoints(shlokaData.message);
 
-    let copyText = `॥ શ્રીમદ્ભગવદ્ગીતા ॥\n📌 અધ્યાય ${ch}${chName} • શ્લોક ${shl}\n\n`;
+    let copyText = (isHindi ? `॥ श्रीमद्भगवद्गीता ॥\n📌 अध्याय ${ch}${chName} • श्लोक ${shl}\n\n` : `॥ શ્રીમદ્ભગવદ્ગીતા ॥\n📌 અધ્યાય ${ch}${chName} • શ્લોક ${shl}\n\n`);
     if (cleanSpeaker) {
       copyText += `🎙️ ~ ${cleanSpeaker} ~\n\n`;
     }
     if (cleanSanskrit) {
-      copyText += `🕉️ સંસ્કૃત શ્લોક:\n${cleanSanskrit}\n\n`;
+      copyText += (isHindi ? `🕉️ संस्कृत श्लोक:\n${cleanSanskrit}\n\n` : `🕉️ સંસ્કૃત શ્લોક:\n${cleanSanskrit}\n\n`);
     }
     if (cleanTranslation) {
-      copyText += `📖 ગુજરાતી ભાવાર્થ:\n${cleanTranslation}\n\n`;
+      copyText += (isHindi ? `📖 हिन्दी भावार्थ:\n${cleanTranslation}\n\n` : `📖 ગુજરાતી ભાવાર્થ:\n${cleanTranslation}\n\n`);
     }
     if (messagePoints && messagePoints.length > 0) {
-      copyText += `✨ દિવ્ય સંદેશ / જીવન બોધ:\n`;
+      copyText += (isHindi ? `✨ दिव्य संदेश / जीवन बोध:\n` : `✨ દિવ્ય સંદેશ / જીવન બોધ:\n`);
       messagePoints.forEach((point) => {
         let prefix = "• ";
         if (/^\d+[.)]/.test(point) || /^•/.test(point) || /^✦/.test(point)) {
@@ -845,7 +852,7 @@ export default function ShareShlokaModal({
         <div className="share-modal-header">
           <div className="modal-header-title">
             <Sparkles className="header-sparkle-icon" size={20} />
-            <h2>શ્લોક કાર્ડ શેર કરો</h2>
+            <h2>{isHindi ? "श्लोक कार्ड शेयर करें" : "શ્લોક કાર્ડ શેર કરો"}</h2>
           </div>
           <button
             type="button"
@@ -867,7 +874,7 @@ export default function ShareShlokaModal({
           <div className="theme-picker-section">
             <label className="picker-label">
               <Palette size={16} />
-              <span>કાર્ડની થીમ પસંદ કરો:</span>
+              <span>{isHindi ? "कार्ड की थीम चुनें:" : "કાર્ડની થીમ પસંદ કરો:"}</span>
             </label>
             <div className="theme-options-grid">
               {THEMES.map((theme) => {
@@ -903,7 +910,7 @@ export default function ShareShlokaModal({
                 target="_blank"
                 rel="noopener noreferrer"
                 className="share-card-preview-link"
-                title="વેબસાઇટ ખોલવા ક્લિક કરો"
+                title={isHindi ? "वेबसाइट खोलने के लिए क्लिक करें" : "વેબસાઇટ ખોલવા ક્લિક કરો"}
               >
                 <img
                   src={previewUrl}

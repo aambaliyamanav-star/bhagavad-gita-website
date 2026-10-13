@@ -360,7 +360,7 @@ export default function QuizAchievements() {
                       <div className="qa-milestone-footer">
                         <div className="qa-progress-info">
                           <span className="qa-criteria-text">
-                            {badge.conditionText}
+                            {(isHindi && badge.conditionTextHi) ? badge.conditionTextHi : badge.conditionText}
                           </span>
                           <span className="qa-progress-numbers">
                             {badge.currentProgress} / {badge.target}{" "}{(isHindi && badge.targetUnitHi) ? badge.targetUnitHi : badge.targetUnit}

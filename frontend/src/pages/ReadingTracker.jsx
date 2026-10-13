@@ -121,12 +121,12 @@ function ReadingTracker() {
       if (res.success) {
         await loadProgress();
         setSyncSuccess(true);
-        setSyncMessage("ડેટા સફળતાપૂર્વક Cloud સાથે Sync થઈ ગયો.");
+        setSyncMessage(isHindi ? "डेटा सफलतापूर्वक Cloud के साथ Sync हो गया।" : "ડેટા સફળતાપૂર્વક Cloud સાથે Sync થઈ ગયો.");
       } else {
-        setSyncMessage("Sync failed. ફરી પ્રયત્ન કરો.");
+        setSyncMessage(isHindi ? "Sync असफल रहा। पुनः प्रयास करें।" : "Sync failed. ફરી પ્રયત્ન કરો.");
       }
     } catch (err) {
-      setSyncMessage("Sync error: " + (err.message || "Unknown error"));
+      setSyncMessage(isHindi ? ("Sync त्रुटि: " + (err.message || "Unknown error")) : ("Sync error: " + (err.message || "Unknown error")));
     } finally {
       setSyncing(false);
       setTimeout(() => setSyncMessage(""), 5000);
@@ -400,10 +400,10 @@ function ReadingTracker() {
                     }
                   </div>
                   <div className="rt-badge-info">
-                    <h4 className="rt-badge-name">{badge.title}</h4>
+                    <h4 className="rt-badge-name">{(isHindi && badge.titleHi) ? badge.titleHi : badge.title}</h4>
                     {isUnlocked
                       ? <span className="rt-badge-tag rt-tag-unlocked"><CheckCircle2 size={12} /> {isHindi ? "सिद्ध" : "સિદ્ધ"}</span>
-                      : <span className="rt-badge-tag rt-tag-locked"><Lock size={12} /> {badge.criteriaText}</span>
+                      : <span className="rt-badge-tag rt-tag-locked"><Lock size={12} /> {(isHindi && badge.criteriaTextHi) ? badge.criteriaTextHi : badge.criteriaText}</span>
                     }
                   </div>
                   {isUnlocked && <div className="rt-badge-shimmer" />}
@@ -545,11 +545,11 @@ function ReadingTracker() {
                 : <Lock size={40} className="rt-modal-lock-svg" />
               }
             </div>
-            <h3 className="rt-modal-title">{selectedBadge.title}</h3>
-            <div className="rt-modal-desc">{selectedBadge.description}</div>
+            <h3 className="rt-modal-title">{(isHindi && selectedBadge.titleHi) ? selectedBadge.titleHi : selectedBadge.title}</h3>
+            <div className="rt-modal-desc">{(isHindi && selectedBadge.descriptionHi) ? selectedBadge.descriptionHi : selectedBadge.description}</div>
             <div className="rt-modal-criteria">
               <span className="rt-criteria-label">{isHindi ? "प्राप्ति शर्त" : "પ્રાપ્તિ શરત"}</span>
-              <span className="rt-criteria-val">{selectedBadge.criteriaText}</span>
+              <span className="rt-criteria-val">{(isHindi && selectedBadge.criteriaTextHi) ? selectedBadge.criteriaTextHi : selectedBadge.criteriaText}</span>
             </div>
             <div className={`rt-modal-status ${selectedBadge.isUnlocked ? "rt-modal-status-done" : "rt-modal-status-locked"}`}>
               {selectedBadge.isUnlocked

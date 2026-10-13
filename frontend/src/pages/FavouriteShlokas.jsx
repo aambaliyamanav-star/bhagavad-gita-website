@@ -117,7 +117,7 @@ function FavouriteShlokas() {
 
         setError(
           err.message ||
-            "Favourite શ્લોક load કરવામાં error આવ્યો."
+            (isHindi ? "पसंदीदा श्लोक लोड करने में त्रुटि आई।" : "Favourite શ્લોક load કરવામાં error આવ્યો.")
         );
       } finally {
         setLoading(false);
@@ -184,7 +184,7 @@ function FavouriteShlokas() {
 
       if (!shlokId) {
         setError(
-          "Shlok ID મળ્યો નથી."
+          isHindi ? "श्लोक ID नहीं मिला।" : "Shlok ID મળ્યો નથી."
         );
         return;
       }
@@ -211,7 +211,7 @@ function FavouriteShlokas() {
       if (!response.ok) {
         throw new Error(
           data.message ||
-            "Favourite દૂર થઈ શક્યું નથી."
+            (isHindi ? "पसंदीदा से नहीं हटाया जा सका।" : "Favourite દૂર થઈ શક્યું નથી.")
         );
       }
 
@@ -245,7 +245,7 @@ function FavouriteShlokas() {
 
       setError(
         err.message ||
-          "Favourite દૂર કરવામાં error આવ્યો."
+          (isHindi ? "पसंदीदा हटाने में त्रुटि आई।" : "Favourite દૂર કરવામાં error આવ્યો.")
       );
     }
   };
@@ -257,7 +257,9 @@ function FavouriteShlokas() {
   const clearAllFavourites = async () => {
     const confirmed =
       window.confirm(
-        "શું તમે બધા Favourite શ્લોક દૂર કરવા માંગો છો?"
+        isHindi
+          ? "क्या आप सभी पसंदीदा श्लोक हटाना चाहते हैं?"
+          : "શું તમે બધા Favourite શ્લોક દૂર કરવા માંગો છો?"
       );
 
     if (!confirmed) {
@@ -295,7 +297,7 @@ function FavouriteShlokas() {
       if (!response.ok) {
         throw new Error(
           data.message ||
-            "Favourite શ્લોક દૂર થઈ શક્યા નથી."
+            (isHindi ? "पसंदीदा श्लोक नहीं हटाए जा सके।" : "Favourite શ્લોક દૂર થઈ શક્યા નથી.")
         );
       }
 
@@ -312,7 +314,7 @@ function FavouriteShlokas() {
 
       setError(
         err.message ||
-          "બધા Favourite દૂર કરવામાં error આવ્યો."
+          (isHindi ? "सभी पसंदीदा हटाने में त्रुटि आई।" : "બધા Favourite દૂર કરવામાં error આવ્યો.")
       );
     }
   };
@@ -336,7 +338,7 @@ function FavouriteShlokas() {
           </p>
 
           <h1>
-            <Heart className="btn-icon" size={28} /> Favourite શ્લોક
+            <Heart className="btn-icon" size={28} /> {isHindi ? "पसंदीदा श्लोक" : "Favourite શ્લોક"}
           </h1>
 
           <p>

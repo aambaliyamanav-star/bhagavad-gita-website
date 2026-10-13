@@ -41,6 +41,27 @@ function QuizCategory() {
     18: "મોક્ષસંન્યાસ યોગ",
   };
 
+  const chapterNamesHi = {
+    1: "अर्जुनविषाद योग",
+    2: "सांख्य योग",
+    3: "कर्म योग",
+    4: "ज्ञानकर्मसंन्यास योग",
+    5: "कर्मसंन्यास योग",
+    6: "आत्मसंयम योग",
+    7: "ज्ञानविज्ञान योग",
+    8: "अक्षरब्रह्म योग",
+    9: "राजविद्या राजगुह्य योग",
+    10: "विभूति योग",
+    11: "विश्वरूपदर्शन योग",
+    12: "भक्ति योग",
+    13: "क्षेत्र-क्षेत्रज्ञ विभाग योग",
+    14: "गुणत्रयविभाग योग",
+    15: "पुरुषोत्तम योग",
+    16: "दैवासुरसम्पद्विभाग योग",
+    17: "श्रद्धात्रयविभाग योग",
+    18: "मोक्षसंन्यास योग",
+  };
+
   // =====================================================
   // STATE
   // =====================================================
@@ -252,7 +273,7 @@ function QuizCategory() {
       !selectedChapter
     ) {
       setError(
-        "કૃપા કરીને અધ્યાય પસંદ કરો."
+        isHindi ? "कृपया अध्याय चुनें।" : "કૃપા કરીને અધ્યાય પસંદ કરો."
       );
 
       return;
@@ -267,7 +288,7 @@ function QuizCategory() {
       questionCount < 1
     ) {
       setError(
-        "કૃપા કરીને પ્રશ્નોની સંખ્યા પસંદ કરો."
+        isHindi ? "कृपया प्रश्नों की संख्या चुनें।" : "કૃપા કરીને પ્રશ્નોની સંખ્યા પસંદ કરો."
       );
 
       return;
@@ -282,7 +303,7 @@ function QuizCategory() {
       availableQuestions <= 0
     ) {
       setError(
-        "આ પસંદગી માટે હાલમાં કોઈ પ્રશ્ન ઉપલબ્ધ નથી."
+        isHindi ? "इस चयन के लिए वर्तमान में कोई प्रश्न उपलब्ध नहीं है।" : "આ પસંદગી માટે હાલમાં કોઈ પ્રશ્ન ઉપલબ્ધ નથી."
       );
 
       return;
@@ -293,7 +314,7 @@ function QuizCategory() {
       questionCount > availableQuestions
     ) {
       setError(
-        `મહત્તમ ${availableQuestions} પ્રશ્નો ઉપલબ્ધ છે.`
+        isHindi ? `अधिकतम ${availableQuestions} प्रश्न उपलब्ध हैं।` : `મહત્તમ ${availableQuestions} પ્રશ્નો ઉપલબ્ધ છે.`
       );
 
       return;
@@ -417,7 +438,7 @@ function QuizCategory() {
             </p>
 
             <h1>
-              ગીતા ક્વિઝ
+              {isHindi ? "गीता क्विज़" : "ગીતા ક્વિઝ"}
             </h1>
 
           </div>
@@ -429,7 +450,7 @@ function QuizCategory() {
           className="quiz-category-back-btn"
           onClick={() => navigate("/quiz-results")}
         >
-          <History size={16} className="btn-icon" /> Quiz History
+          <History size={16} className="btn-icon" /> {isHindi ? "क्विज़ इतिहास" : "Quiz History"}
         </button>
 
       </section>
@@ -449,7 +470,7 @@ function QuizCategory() {
           <div>
 
             <h2>
-              તમારી ક્વિઝ પસંદ કરો
+              {isHindi ? "अपनी क्विज़ चुनें" : "તમારી ક્વિઝ પસંદ કરો"}
             </h2>
 
           </div>
@@ -463,7 +484,7 @@ function QuizCategory() {
         <div className="quiz-setup-group">
 
           <label>
-            <BookOpen size={14} className="btn-icon" /> Quiz પ્રકાર
+            <BookOpen size={14} className="btn-icon" /> {isHindi ? "क्विज़ प्रकार" : "Quiz પ્રકાર"}
           </label>
 
           <div className="quiz-type-options">
@@ -489,7 +510,7 @@ function QuizCategory() {
               <span className="quiz-type-text">
 
                 <strong>
-                  બધા અધ્યાય
+                  {isHindi ? "सभी अध्याय" : "બધા અધ્યાય"}
                 </strong>
 
               </span>
@@ -519,7 +540,7 @@ function QuizCategory() {
               <span className="quiz-type-text">
 
                 <strong>
-                  અધ્યાય પ્રમાણે
+                  {isHindi ? "अध्याय अनुसार" : "અધ્યાય પ્રમાણે"}
                 </strong>
 
               </span>
@@ -549,7 +570,7 @@ function QuizCategory() {
               <span className="quiz-type-text">
 
                 <strong>
-                  મહાભારત
+                  {isHindi ? "महाभारत" : "મહાભારત"}
                 </strong>
 
               </span>
@@ -568,7 +589,7 @@ function QuizCategory() {
           <div className="quiz-setup-group">
 
             <label htmlFor="quiz-chapter-select">
-              <BookMarked size={14} className="btn-icon" /> અધ્યાય પસંદ કરો
+              <BookMarked size={14} className="btn-icon" /> {isHindi ? "अध्याय चुनें" : "અધ્યાય પસંદ કરો"}
             </label>
 
             <select
@@ -581,7 +602,7 @@ function QuizCategory() {
             >
 
               <option value="">
-                -- અધ્યાય પસંદ કરો --
+                {isHindi ? "-- अध्याय चुनें --" : "-- અધ્યાય પસંદ કરો --"}
               </option>
 
               {Object.entries(
@@ -595,8 +616,10 @@ function QuizCategory() {
                     key={chapterNumber}
                     value={chapterNumber}
                   >
-                    અધ્યાય {chapterNumber} -{" "}
-                    {chapterName}
+                    {isHindi
+                      ? `अध्याय ${chapterNumber} - ${chapterNamesHi[chapterNumber] || chapterName}`
+                      : `અધ્યાય ${chapterNumber} - ${chapterName}`
+                    }
                   </option>
                 )
               )}
@@ -613,7 +636,7 @@ function QuizCategory() {
         <div className="quiz-setup-group">
 
           <label htmlFor="quiz-question-count">
-            <Hash size={14} className="btn-icon" /> કેટલા પ્રશ્નોની ક્વિઝ?
+            <Hash size={14} className="btn-icon" /> {isHindi ? "कितने प्रश्नों की क्विज़?" : "કેટલા પ્રશ્નોની ક્વિઝ?"}
           </label>
 
           <div className="quiz-count-wrapper">
@@ -634,7 +657,7 @@ function QuizCategory() {
             >
 
               <option value="">
-                -- પ્રશ્નોની સંખ્યા પસંદ કરો --
+                {isHindi ? "-- प्रश्नों की संख्या चुनें --" : "-- પ્રશ્નોની સંખ્યા પસંદ કરો --"}
               </option>
 
               {getQuestionCountOptions().map(
@@ -643,7 +666,7 @@ function QuizCategory() {
                     key={count}
                     value={count}
                   >
-                    {count} Questions
+                    {count} {isHindi ? "प्रश्न" : "Questions"}
                   </option>
                 )
               )}

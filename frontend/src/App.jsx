@@ -49,7 +49,7 @@ import { useLanguage } from "./context/LanguageContext.jsx";
 // PROTECTED ROUTE COMPONENT
 // =====================================================
 
-function ProtectedRoute({ children, message }) {
+function ProtectedRoute({ children, message, messageHi }) {
   const { user, token, logout } = useAuth();
   const { isHindi } = useLanguage();
   const location = useLocation();
@@ -60,11 +60,26 @@ function ProtectedRoute({ children, message }) {
       logout();
     }
     const targetPath = location.pathname + location.search;
-    const redirectMessage =
-      message ||
-      (isHindi
-        ? "इस पृष्ठ का उपयोग करने के लिए लॉगिन आवश्यक है।"
-        : "આ પેજનો ઉપયોગ કરવા માટે Login કરવું જરૂરી છે.");
+    let redirectMessage = message;
+    if (isHindi) {
+      if (messageHi) {
+        redirectMessage = messageHi;
+      } else if (message) {
+        if (message.includes("જીવન માર્ગદર્શન")) redirectMessage = "जीवन मार्गदर्शन पाने के लिए Login करना आवश्यक है।";
+        else if (message.includes("વાંચન પ્રગતિ")) redirectMessage = "पठन प्रगति देखने के लिए Login करना आवश्यक है।";
+        else if (message.includes("Profile")) redirectMessage = "अपनी Profile देखने के लिए Login करना आवश्यक है।";
+        else if (message.includes("મનપસંદ શ્લોક")) redirectMessage = "पसंदीदा श्लोक देखने के लिए Login करना आवश्यक है।";
+        else if (message.includes("Quiz રમવા")) redirectMessage = "Quiz खेलने के लिए Login करना आवश्यक है।";
+        else if (message.includes("History")) redirectMessage = "अपनी History देखने के लिए Login करना आवश्यक है।";
+        else if (message.includes("Quiz Results")) redirectMessage = "Quiz Results देखने के लिए Login करना आवश्यक है।";
+        else if (message.includes("ક્વિઝ સિદ્ધિઓ")) redirectMessage = "क्विज़ उपलब्धियां देखने के लिए Login करना आवश्यक है।";
+        else redirectMessage = "इस पृष्ठ का उपयोग करने के लिए Login करना आवश्यक है।";
+      } else {
+        redirectMessage = "इस पृष्ठ का उपयोग करने के लिए Login करना आवश्यक है।";
+      }
+    } else if (!redirectMessage) {
+      redirectMessage = "આ પેજનો ઉપયોગ કરવા માટે Login કરવું જરૂરી છે.";
+    }
 
     try {
       sessionStorage.setItem(

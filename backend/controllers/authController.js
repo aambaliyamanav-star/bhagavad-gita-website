@@ -628,7 +628,7 @@ const verifyOTP = async (
 
       return res.status(400).json({
         message:
-          "OTP expire થઈ ગયો છે. ફરીથી OTP મોકલો.",
+          "OTP expire થઈ ગયો છે. ફરીથી OTP મોકલો / OTP समाप्त (expire) हो गया है। पुनः OTP भेजें।",
       });
     }
 
@@ -754,7 +754,7 @@ const registerUser = async (
 
       return res.status(400).json({
         message:
-          "OTP expire થઈ ગયો છે. ફરીથી OTP મોકલો.",
+          "OTP expire થઈ ગયો છે. ફરીથી OTP મોકલો / OTP समाप्त (expire) हो गया है। पुनः OTP भेजें।",
       });
     }
 
@@ -1311,7 +1311,7 @@ const verifyProfileOTP = async (
 
       return res.status(400).json({
         message:
-          "OTP expire થઈ ગયો છે. ફરીથી OTP મોકલો.",
+          "OTP expire થઈ ગયો છે. ફરીથી OTP મોકલો / OTP समाप्त (expire) हो गया है। पुनः OTP भेजें।",
       });
     }
 
@@ -1553,7 +1553,7 @@ const updateProfile = async (
 
         return res.status(400).json({
           message:
-            "Email OTP expire થઈ ગયો છે. ફરીથી OTP મોકલો.",
+            "Email OTP expire થઈ ગયો છે. ફરીથી OTP મોકલો / Email OTP समाप्त (expire) हो गया है। पुनः OTP भेजें।",
         });
       }
 
@@ -1664,7 +1664,7 @@ const updateProfile = async (
 
         return res.status(400).json({
           message:
-            "Mobile OTP expire થઈ ગયો છે. ફરીથી OTP મોકલો.",
+            "Mobile OTP expire થઈ ગયો છે. ફરીથી OTP મોકલો / Mobile OTP समाप्त (expire) हो गया है। पुनः OTP भेजें।",
         });
       }
 
@@ -2275,7 +2275,7 @@ const verifyForgotPasswordOTP = async (
 
       return res.status(400).json({
         message:
-          "OTP expire થઈ ગયો છે. ફરીથી OTP મોકલો.",
+          "OTP expire થઈ ગયો છે. ફરીથી OTP મોકલો / OTP समाप्त (expire) हो गया है। पुनः OTP भेजें।",
       });
     }
 
@@ -2452,7 +2452,7 @@ const resetPassword = async (
 
       return res.status(400).json({
         message:
-          "OTP expire થઈ ગયો છે. ફરીથી OTP મોકલો.",
+          "OTP expire થઈ ગયો છે. ફરીથી OTP મોકલો / OTP समाप्त (expire) हो गया है। पुनः OTP भेजें।",
       });
     }
 

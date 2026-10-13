@@ -304,7 +304,7 @@ const response = await fetch(
         if (!response.ok) {
           throw new Error(
             data.message ||
-              "Shlokas load થઈ શક્યા નથી."
+              (isHindi ? "श्लोक लोड नहीं हो सके।" : "Shlokas load થઈ શક્યા નથી.")
           );
         }
 
@@ -336,7 +336,7 @@ const response = await fetch(
               chapterNames[
                 currentChapterNumber
               ] ||
-              `અધ્યાય ${currentChapterNumber}`
+              isHindi ? `अध्याय ${currentChapterNumber}` : `અધ્યાય ${currentChapterNumber}`
           );
         } else {
           setChapterName(
@@ -357,7 +357,7 @@ const response = await fetch(
             requestedShloka > 5
           ) {
             const redirectPath = `/chapter/${currentChapterNumber}?shloka=${requestedShloka}`;
-            const redirectMsg = `અધ્યાય ${currentChapterNumber} ના શ્લોક ${requestedShloka} વાંચવા માટે Login કરવું જરૂરી છે.`;
+            const redirectMsg = isHindi ? `अध्याय ${currentChapterNumber} के श्लोक ${requestedShloka} पढ़ने के लिए Login करना आवश्यक है।` : `અધ્યાય ${currentChapterNumber} ના શ્લોક ${requestedShloka} વાંચવા માટે Login કરવું જરૂરી છે.`;
 
             localStorage.setItem(
               "pendingChapter",
@@ -419,7 +419,7 @@ const response = await fetch(
 
         setError(
           err.message ||
-            "Shlokas load કરવામાં error આવ્યો."
+            (isHindi ? "श्लोक लोड करने में त्रुटि आई।" : "Shlokas load કરવામાં error આવ્યો.")
         );
 
         setShlokas([]);
@@ -485,7 +485,7 @@ const response = await fetch(
         if (!response.ok) {
           throw new Error(
             data.message ||
-              "Favourite શ્લોક load થઈ શક્યા નથી."
+              (isHindi ? "पसंदीदा श्लोक लोड नहीं हो सके।" : "Favourite શ્લોક load થઈ શક્યા નથી.")
           );
         }
 
@@ -561,7 +561,7 @@ const response = await fetch(
       if (!response.ok) {
         throw new Error(
           data.message ||
-            "Continue Reading save થઈ શક્યું નથી."
+            (isHindi ? "पठन जारी रखें सहेजा नहीं जा सका।" : "Continue Reading save થઈ શક્યું નથી.")
         );
       }
 
@@ -743,7 +743,7 @@ const response = await fetch(
         if (!response.ok) {
           throw new Error(
             data.message ||
-              "Favourite દૂર થઈ શક્યું નથી."
+              (isHindi ? "पसंदीदा से नहीं हटाया जा सका।" : "Favourite દૂર થઈ શક્યું નથી.")
           );
         }
 
@@ -777,7 +777,7 @@ const response = await fetch(
       if (!response.ok) {
         throw new Error(
           data.message ||
-            "Favouriteમાં add થઈ શક્યું નથી."
+            (isHindi ? "पसंदीदा में जोड़ा नहीं जा सका।" : "Favouriteમાં add થઈ શક્યું નથી.")
         );
       }
 
@@ -792,7 +792,7 @@ const response = await fetch(
 
       alert(
         error.message ||
-          "Favouriteમાં ફેરફાર કરવામાં error આવ્યો."
+          (isHindi ? "पसंदीदा में बदलाव करने में त्रुटि आई।" : "Favouriteમાં ફેરફાર કરવામાં error આવ્યો.")
       );
     } finally {
       setFavoriteLoading(false);
@@ -823,7 +823,7 @@ if (
   Number(selectedShlok?.shlokNumber) > 5
 ) {
   const redirectPath = `/chapter/${currentChapterNumber}?shloka=${selectedShlok.shlokNumber}`;
-  const redirectMsg = `અધ્યાય ${currentChapterNumber} ના શ્લોક ${selectedShlok.shlokNumber} વાંચવા માટે Login કરવું જરૂરી છે.`;
+  const redirectMsg = isHindi ? `अध्याय ${currentChapterNumber} के श्लोक ${selectedShlok.shlokNumber} पढ़ने के लिए Login करना आवश्यक है।` : `અધ્યાય ${currentChapterNumber} ના શ્લોક ${selectedShlok.shlokNumber} વાંચવા માટે Login કરવું જરૂરી છે.`;
 
   localStorage.setItem(
     "pendingChapter",
@@ -886,14 +886,9 @@ if (
             <AlertCircle size={48} color="#ef4444" />
           </div>
 
-          <h1>
-            અધ્યાય મળ્યો નથી
-          </h1>
+          <h1>{isHindi ? "अध्याय नहीं मिला" : "અધ્યાય મળ્યો નથી"}</h1>
 
-          <p>
-            તમે પસંદ કરેલો અધ્યાય
-            ઉપલબ્ધ નથી.
-          </p>
+          <p>{isHindi ? "आपका चुना हुआ अध्याय उपलब्ध नहीं है।" : "તમે પસંદ કરેલો અધ્યાય ઉપલબ્ધ નથી."}</p>
 
           <button
             className="error-back-button"
@@ -901,7 +896,7 @@ if (
               navigate("/chapters")
             }
           >
-            ૧૮ અધ્યાય પર પાછા જાઓ
+            {isHindi ? "18 अध्यायों पर वापस जाएं" : "૧૮ અધ્યાય પર પાછા જાઓ"}
           </button>
         </div>
       </main>
@@ -944,9 +939,7 @@ if (
             <AlertCircle size={48} color="#ef4444" />
           </div>
 
-          <h1>
-            કંઈક સમસ્યા આવી
-          </h1>
+          <h1>{isHindi ? "कुछ समस्या आई" : "કંઈક સમસ્યા આવી"}</h1>
 
           <p>{error}</p>
 
@@ -956,7 +949,7 @@ if (
               navigate("/chapters")
             }
           >
-            ૧૮ અધ્યાય પર પાછા જાઓ
+            {isHindi ? "18 अध्यायों पर वापस जाएं" : "૧૮ અધ્યાય પર પાછા જાઓ"}
           </button>
         </div>
       </main>
@@ -994,23 +987,16 @@ if (
             <BookOpen size={48} color="#3b82f6" />
           </div>
 
-          <h2>
-            આ અધ્યાયમાં હજુ કોઈ શ્લોક નથી
-          </h2>
+          <h2>{isHindi ? "इस अध्याय में अभी कोई श्लोक नहीं है" : "આ અધ્યાયમાં હજુ કોઈ શ્લોક નથી"}</h2>
 
-          <p>
-            Admin Panelમાંથી આ અધ્યાયના
-            શ્લોક add કરો.
-          </p>
+          <p>{isHindi ? "एडमिन पैनल से इस अध्याय के श्लोक जोड़ें।" : "Admin Panelમાંથી આ અધ્યાયના શ્લોક add કરો."}</p>
 
           <button
             className="error-back-button"
             onClick={() =>
               navigate("/chapters")
             }
-          >
-            ૧૮ અધ્યાય
-          </button>
+          >{isHindi ? "18 अध्याय" : "૧૮ અધ્યાય"}</button>
         </div>
       </main>
     );
@@ -1056,7 +1042,7 @@ if (
   Number(next?.shlokNumber) > 5
 ) {
   const redirectPath = `/chapter/${currentChapterNumber}?shloka=${next.shlokNumber}`;
-  const redirectMsg = `અધ્યાય ${currentChapterNumber} ના શ્લોક ${next.shlokNumber} વાંચવા માટે Login કરવું જરૂરી છે.`;
+  const redirectMsg = isHindi ? `अध्याय ${currentChapterNumber} के श्लोक ${next.shlokNumber} पढ़ने के लिए Login करना आवश्यक है।` : `અધ્યાય ${currentChapterNumber} ના શ્લોક ${next.shlokNumber} વાંચવા માટે Login કરવું જરૂરી છે.`;
 
   localStorage.setItem(
     "pendingChapter",
@@ -1321,7 +1307,7 @@ const prepareSanskritLines = () => {
       if (lines.length === 0) {
         return (
           <div className="sanskrit-original">
-            સંસ્કૃત શ્લોક ઉપલબ્ધ નથી.
+            {isHindi ? "संस्कृत श्लोक उपलब्ध नहीं है।" : "સંસ્કૃત શ્લોક ઉપલબ્ધ નથી."}
           </div>
         );
       }
@@ -1380,7 +1366,7 @@ const prepareSanskritLines = () => {
                           }}
                           title={
                             meaning
-                              ? "ગુજરાતી અર્થ જોવા માટે click કરો"
+                              ? isHindi ? "हिन्दी अर्थ देखने के लिए क्लिक करें" : "ગુજરાતી અર્થ જોવા માટે click કરો"
                               : undefined
                           }
                         >

@@ -1168,7 +1168,7 @@ function Navbar() {
                   <strong>
                     {notifEnabled
                       ? (isHindi ? "सूचना (चालू)" : "નોટિફિકેશન (ચાલુ)")
-                      : (isHindi ? "सूचना (બંધ)" : "નોટિફિકેશન (બંધ)")}
+                      : (isHindi ? "सूचना (बंद)" : "નોટિફિકેશન (બંધ)")}
                   </strong>
                 </span>
               </span>
