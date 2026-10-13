@@ -18,11 +18,13 @@ import {
   ArrowLeft
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext.jsx";
+import { useLanguage } from "../context/LanguageContext.jsx";
 import "./Register.css";
 
 function Register() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { isHindi } = useLanguage();
 
   // If user is already logged in, redirect away from /register
   useEffect(() => {
@@ -987,12 +989,12 @@ const [showConfirmPassword, setShowConfirmPassword] =
               {loading ? (
                 <>
                   <Loader2 className="spinner btn-icon" size={18} />
-                  Email પર OTP મોકલાઈ રહ્યો છે...
+                  {isHindi ? "Email पर OTP भेजा जा रहा है..." : "Email પર OTP મોકલાઈ રહ્યો છે..."}
                 </>
               ) : (
                 <>
                   <Mail className="btn-icon" size={18} />
-                  Email પર OTP મોકલો
+                  {isHindi ? "Email पर OTP भेजें" : "Email પર OTP મોકલો"}
                 </>
               )}
             </button>
@@ -1016,7 +1018,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
             </h2>
 
             <p>
-              તમારા Email પર મોકલાયેલ OTP નાખો.
+              {isHindi ? "आपके Email पर भेजा गया OTP दर्ज करें।" : "તમારા Email પર મોકલાયેલ OTP નાખો."}
             </p>
 
             {/* OTP INPUT */}
@@ -1040,7 +1042,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
                 type="text"
                 inputMode="numeric"
                 maxLength="6"
-                placeholder="6 અંકનો OTP નાખો"
+                placeholder={isHindi ? "6 अंकों का OTP दर्ज करें" : "6 અંકનો OTP નાખો"}
                 value={otp}
                 onChange={(e) => {
                   const value =
@@ -1074,12 +1076,12 @@ const [showConfirmPassword, setShowConfirmPassword] =
               {loading ? (
                 <>
                   <Loader2 className="spinner btn-icon" size={18} />
-                  Verify થઈ રહ્યું છે...
+                  {isHindi ? "Verify हो रहा है..." : "Verify થઈ રહ્યું છે..."}
                 </>
               ) : (
                 <>
                   <CheckCircle className="btn-icon" size={18} />
-                  OTP Verify કરો
+                  {isHindi ? "OTP Verify करें" : "OTP Verify કરો"}
                 </>
               )}
             </button>
@@ -1263,12 +1265,12 @@ const [showConfirmPassword, setShowConfirmPassword] =
               {loading ? (
                 <>
                   <Loader2 className="spinner btn-icon" size={18} />
-                  Account બની રહ્યું છે...
+                  {isHindi ? "Account बन रहा है..." : "Account બની રહ્યું છે..."}
                 </>
               ) : (
                 <>
                   <UserPlus className="btn-icon" size={18} />
-                  Create Account
+                  {isHindi ? "Create Account" : "Create Account"}
                 </>
               )}
             </button>

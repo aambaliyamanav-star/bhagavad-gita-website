@@ -2,11 +2,13 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loader2, AlertCircle, RefreshCw, ArrowLeft, BookOpen, ChevronRight, ClipboardList, CheckCircle2, XCircle, SkipForward, Clock, PlayCircle, Award } from "lucide-react";
 import SudarshanShimmerLoader from "../components/SudarshanShimmerLoader.jsx";
+import { useLanguage } from "../context/LanguageContext.jsx";
 import "./QuizResult.css";
 
 const API_URL = "https://bhagavad-gita-website.onrender.com/api/quiz";
 
 function QuizResult() {
+  const { isHindi } = useLanguage();
   // =====================================================
   // STATE
   // =====================================================
@@ -325,8 +327,16 @@ function QuizResult() {
       <main className="quiz-result-page">
         <SudarshanShimmerLoader
           type="simple"
-          title="Quiz પરિણામ તૈયાર થઈ રહ્યું છે..."
-          subtitle="તમારી આધ્યાત્મિક પ્રગતિનું વિશ્લેષણ થઈ રહ્યું છે..."
+          title={
+            isHindi
+              ? "क्विज परिणाम तैयार हो रहा है..."
+              : "Quiz પરિણામ તૈયાર થઈ રહ્યું છે..."
+          }
+          subtitle={
+            isHindi
+              ? "आपकी आध्यात्मिक प्रगति का विश्लेषण हो रहा है..."
+              : "તમારી આધ્યાત્મિક પ્રગતિનું વિશ્લેષણ થઈ રહ્યું છે..."
+          }
         />
       </main>
     );

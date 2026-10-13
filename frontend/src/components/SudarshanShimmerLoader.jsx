@@ -1,4 +1,5 @@
 import { useTheme } from "../context/ThemeContext";
+import { useLanguage } from "../context/LanguageContext";
 import "./SudarshanShimmerLoader.css";
 
 // =========================================================
@@ -169,8 +170,8 @@ export function SudarshanChakraIcon({ size = 72, className = "" }) {
 // =========================================================
 export default function SudarshanShimmerLoader({
   type = "reader", // "reader" | "cards" | "quiz" | "simple"
-  title = "દિવ્ય જ્ઞાન લોડ થઈ રહ્યું છે...",
-  subtitle = "કૃપા કરીને થોડી ક્ષણ રાહ જુઓ ॥ શ્રીકૃષ્ણાર્પણમસ્તુ ॥",
+  title,
+  subtitle,
   count = 3,
   chakraSize = 72,
   className = "",
@@ -188,6 +189,48 @@ export default function SudarshanShimmerLoader({
     }
   }
 
+  let isHindi = false;
+  try {
+    const langCtx = useLanguage();
+    if (langCtx?.isHindi) {
+      isHindi = langCtx.isHindi;
+    }
+  } catch (e) {}
+
+  // Determine localized title and subtitle
+  let displayTitle = title;
+  if (!displayTitle || displayTitle === "દિવ્ય જ્ઞાન લોડ થઈ રહ્યું છે...") {
+    displayTitle = isHindi ? "दिव्य ज्ञान लोड हो रहा है..." : "દિવ્ય જ્ઞાન લોડ થઈ રહ્યું છે...";
+  } else if (isHindi) {
+    // Automatic translation mapping for common Gujarati loader titles
+    if (displayTitle === "ગીતા જ્ઞાન ક્વિઝ લોડ થઈ રહી છે...") {
+      displayTitle = "गीता ज्ञान प्रश्नोत्तरी लोड हो रही है...";
+    } else if (displayTitle === "Quiz પરિણામ તૈયાર થઈ રહ્યું છે...") {
+      displayTitle = "प्रश्नोत्तरी परिणाम तैयार हो रहा है...";
+    } else if (displayTitle === "સિદ્ધિઓ લોડ થઈ રહી છે...") {
+      displayTitle = "उपलब्धियां लोड हो रही हैं...";
+    } else if (typeof displayTitle === "string" && displayTitle.includes("ના શ્લોક લોડ થઈ રહ્યા છે...")) {
+      displayTitle = displayTitle
+        .replace(/અધ્યાય/g, "अध्याय")
+        .replace(/ના શ્લોક લોડ થઈ રહ્યા છે\.\.\./g, "के श्लोक लोड हो रहे हैं...");
+    }
+  }
+
+  let displaySubtitle = subtitle;
+  if (!displaySubtitle || displaySubtitle === "કૃપા કરીને થોડી ક્ષણ રાહ જુઓ ॥ શ્રીકૃષ્ણાર્પણમસ્તુ ॥") {
+    displaySubtitle = isHindi
+      ? "कृपया कुछ क्षण प्रतीक्षा करें ॥ श्रीकृष्णार्पणमस्तु ॥"
+      : "કૃપા કરીને થોડી ક્ષણ રાહ જુઓ ॥ શ્રીકૃષ્ણાર્પણમસ્તુ ॥";
+  } else if (isHindi) {
+    if (displaySubtitle === "પ્રશ્નો અને આધ્યાત્મિક વિકલ્પો તૈયાર થઈ રહ્યા છે...") {
+      displaySubtitle = "प्रश्न और आध्यात्मिक विकल्प तैयार हो रहे हैं...";
+    } else if (displaySubtitle === "તમારી આધ્યાત્મિક પ્રગતિનું વિશ્લેષણ થઈ રહ્યું છે...") {
+      displaySubtitle = "आपकी आध्यात्मिक प्रगति का विश्लेषण हो रहा है...";
+    } else if (displaySubtitle === "પવિત્ર ગીતા વાણીનું સંકલન થઈ રહ્યું છે...") {
+      displaySubtitle = "पवित्र गीता वाणी का संकलन हो रहा है...";
+    }
+  }
+
   return (
     <div className={`sudarshan-shimmer-container ${currentTheme} ${className}`}>
       {/* =====================================================
@@ -195,8 +238,8 @@ export default function SudarshanShimmerLoader({
       ===================================================== */}
       <div className="sudarshan-loader-header">
         <SudarshanChakraIcon size={chakraSize} />
-        {title && <h3 className="sudarshan-loader-title">{title}</h3>}
-        {subtitle && <p className="sudarshan-loader-subtitle">{subtitle}</p>}
+        {displayTitle && <h3 className="sudarshan-loader-title">{displayTitle}</h3>}
+        {displaySubtitle && <p className="sudarshan-loader-subtitle">{displaySubtitle}</p>}
       </div>
 
       {/* =====================================================

@@ -10,10 +10,12 @@ import {
 } from "../utils/appPushNotification.js";
 import { trackAppInstallOrOpen } from "../utils/appAnalytics.js";
 import { useAuth } from "../context/AuthContext.jsx";
+import { useLanguage } from "../context/LanguageContext.jsx";
 import "./AppNotificationPrompt.css";
 
 function AppNotificationPrompt() {
   const { user } = useAuth();
+  const { isHindi } = useLanguage();
   const [showPrompt, setShowPrompt] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -119,17 +121,17 @@ function AppNotificationPrompt() {
             <div className="app-notif-check-circle">
               <Check size={22} strokeWidth={3} />
             </div>
-            <h3>નોટિફિકેશન સક્રિય થઈ ગયા છે!</h3>
-            <p>હવે તમને પવિત્ર ગીતા પ્રેરણા મળશે. 🙏</p>
+            <h3>{isHindi ? "नोटिफिकेशन सक्रिय हो गए हैं!" : "નોટિફિકેશન સક્રિય થઈ ગયા છે!"}</h3>
+            <p>{isHindi ? "अब आपको पवित्र गीता प्रेरणा मिलेगी। 🙏" : "હવે તમને પવિત્ર ગીતા પ્રેરણા મળશે. 🙏"}</p>
           </div>
         ) : (
           <>
             <div className="app-notif-header">
               <h3 className="app-notif-title">
-                દૈનિક ગીતા નોટિફિકેશન
+                {isHindi ? "दैनिक गीता नोटिफिकेशन" : "દૈનિક ગીતા નોટિફિકેશન"}
               </h3>
               <p className="app-notif-sub">
-                દરરોજ પવિત્ર શ્લોક અને પ્રેરણા મેળવો.
+                {isHindi ? "प्रतिदिन पवित्र श्लोक और प्रेरणा प्राप्त करें।" : "દરરોજ પવિત્ર શ્લોક અને પ્રેરણા મેળવો."}
               </p>
             </div>
 
@@ -141,7 +143,11 @@ function AppNotificationPrompt() {
                 disabled={loading}
               >
                 <Bell size={16} />
-                <span>{loading ? "ચાલુ થઈ રહ્યું છે..." : "ચાલુ કરો"}</span>
+                <span>
+                  {loading
+                    ? (isHindi ? "चालू हो रहा है..." : "ચાલુ થઈ રહ્યું છે...")
+                    : (isHindi ? "चालू करें" : "ચાલુ કરો")}
+                </span>
               </button>
 
               <button
@@ -149,7 +155,7 @@ function AppNotificationPrompt() {
                 className="app-notif-later-btn"
                 onClick={handleDismiss}
               >
-                પછીથી
+                {isHindi ? "बाद में" : "પછીથી"}
               </button>
             </div>
           </>

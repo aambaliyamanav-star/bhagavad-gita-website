@@ -21,11 +21,13 @@ import {
   Loader2
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext.jsx";
+import { useLanguage } from "../context/LanguageContext.jsx";
 import "./Profile.css";
 
 function Profile() {
   const navigate = useNavigate();
   const { logout } = useAuth();
+  const { isHindi } = useLanguage();
 
   // =====================================================
   // USER
@@ -854,7 +856,7 @@ const [showNewPassword, setShowNewPassword] =
       <main className="profile-page">
         <div className="profile-card">
           <p>
-            {message || "Loading..."}
+            {message || (isHindi ? "लोड हो रहा है..." : "લોડ થઈ રહ્યું છે...")}
           </p>
         </div>
       </main>
@@ -1111,8 +1113,8 @@ const [showNewPassword, setShowNewPassword] =
                   }
                 >
                   {mobileOTPLoading
-                    ? <><Loader2 className="spinner btn-icon" size={16} /> Email પર OTP મોકલાઈ રહ્યો છે...</>
-                    : <><Smartphone className="btn-icon" size={16} /> Mobile Change માટે Email OTP મોકલો</>}
+                    ? <><Loader2 className="spinner btn-icon" size={16} /> {isHindi ? "Email पर OTP भेजा जा रहा है..." : "Email પર OTP મોકલાઈ રહ્યો છે..."}</>
+                    : <><Smartphone className="btn-icon" size={16} /> {isHindi ? "Mobile Change के लिए Email OTP भेजें" : "Mobile Change માટે Email OTP મોકલો"}</>}
                 </button>
               )}
 
@@ -1184,8 +1186,8 @@ const [showNewPassword, setShowNewPassword] =
                       }
                     >
                       {mobileOTPLoading
-                        ? <><Loader2 className="spinner btn-icon" size={16} /> Verify થઈ રહ્યું છે...</>
-                        : <><CheckCircle className="btn-icon" size={16} /> Mobile OTP Verify કરો</>}
+                        ? <><Loader2 className="spinner btn-icon" size={16} /> {isHindi ? "Verify हो रहा है..." : "Verify થઈ રહ્યું છે..."}</>
+                        : <><CheckCircle className="btn-icon" size={16} /> {isHindi ? "Mobile OTP Verify करें" : "Mobile OTP Verify કરો"}</>}
                     </button>
                   </div>
                 )}
@@ -1223,8 +1225,8 @@ const [showNewPassword, setShowNewPassword] =
                   }
                 >
                   {emailOTPLoading
-                    ? <><Loader2 className="spinner btn-icon" size={16} /> Registered Email પર OTP મોકલાઈ રહ્યો છે...</>
-                    : <><Mail className="btn-icon" size={16} /> Email Change માટે OTP મોકલો</>}
+                    ? <><Loader2 className="spinner btn-icon" size={16} /> {isHindi ? "Registered Email पर OTP भेजा जा रहा है..." : "Registered Email પર OTP મોકલાઈ રહ્યો છે..."}</>
+                    : <><Mail className="btn-icon" size={16} /> {isHindi ? "Email Change के लिए OTP भेजें" : "Email Change માટે OTP મોકલો"}</>}
                 </button>
               )}
 
@@ -1296,8 +1298,8 @@ const [showNewPassword, setShowNewPassword] =
                       }
                     >
                       {emailOTPLoading
-                        ? <><Loader2 className="spinner btn-icon" size={16} /> Verify થઈ રહ્યું છે...</>
-                        : <><CheckCircle className="btn-icon" size={16} /> Email OTP Verify કરો</>}
+                        ? <><Loader2 className="spinner btn-icon" size={16} /> {isHindi ? "Verify हो रहा है..." : "Verify થઈ રહ્યું છે..."}</>
+                        : <><CheckCircle className="btn-icon" size={16} /> {isHindi ? "Email OTP Verify करें" : "Email OTP Verify કરો"}</>}
                     </button>
                   </div>
                 )}
@@ -1469,8 +1471,8 @@ const [showNewPassword, setShowNewPassword] =
                 disabled={loading}
               >
                 {loading
-                  ? <><Loader2 className="spinner btn-icon" size={18} /> Saving...</>
-                  : <><Save className="btn-icon" size={18} /> Save Changes</>}
+                  ? <><Loader2 className="spinner btn-icon" size={18} /> {isHindi ? "सहेजा जा रहा है..." : "સેવ થઈ રહ્યું છે..."}</>
+                  : <><Save className="btn-icon" size={18} /> {isHindi ? "बदलाव सहेजें" : "Save Changes"}</>}
               </button>
 
               <button

@@ -4,6 +4,7 @@ import {
   useState,
 } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../context/LanguageContext.jsx";
 import { BookOpen, Activity, Type, Lightbulb, Trash2, Save, FileText, RefreshCw, Archive, Mic, Sparkles, Plus, Highlighter, Palette, AlignLeft, AlignCenter, AlignRight, CornerDownLeft, ArrowLeft, List, Undo, Redo, Bold, Italic, Underline } from "lucide-react";
 import "./ShlokManagement.css";
 
@@ -362,6 +363,7 @@ const createWordId = () => {
 
 function ShlokManagement() {
   const navigate = useNavigate();
+  const { isHindi } = useLanguage();
 
   /* =====================================================
      STATE
@@ -1666,7 +1668,9 @@ function ShlokManagement() {
                 title="ગુજરાતી અનુવાદ અને સંદેશ પરથી AI દ્વારા આપોઆપ હિન્દી અનુવાદ કરો"
               >
                 <Sparkles className={`btn-icon ${translating ? "spinning" : ""}`} size={16} />
-                {translating ? "AI હિન્દી અનુવાદ થઈ રહ્યું છે..." : "✨ AI હિન્દી ઓટો-અનુવાદ (Auto-Translate)"}
+                {translating
+                  ? (isHindi ? "AI हिन्दी अनुवाद हो रहा है..." : "AI હિન્દી અનુવાદ થઈ રહ્યું છે...")
+                  : (isHindi ? "✨ AI हिन्दी ऑटो-अनुवाद (Auto-Translate)" : "✨ AI હિન્દી ઓટો-અનુવાદ (Auto-Translate)")}
               </button>
             </div>
 
@@ -2190,7 +2194,7 @@ function ShlokManagement() {
 
           {loading ? (
             <div className="loading-box">
-              ⏳ Loading Shlokas...
+              ⏳ {isHindi ? "श्लोक लोड हो रहे हैं..." : "શ્લોક લોડ થઈ રહ્યા છે..."}
             </div>
           ) : shlokas.length ===
             0 ? (

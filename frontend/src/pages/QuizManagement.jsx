@@ -21,11 +21,12 @@ import {
   HelpCircle,
   FileQuestion
 } from "lucide-react";
+import { useLanguage } from "../context/LanguageContext.jsx";
 import "./QuizManagement.css";
 
 function QuizManagement() {
-
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const { isHindi } = useLanguage();
   // =====================================================
   // API
   // =====================================================
@@ -828,7 +829,10 @@ function QuizManagement() {
       <main className="quiz-management-page">
 
         <div className="quiz-management-loading">
-          <span><Loader2 className="btn-icon animate-spin" size={20} /> Quiz questions load થઈ રહ્યા છે...</span>
+          <span>
+            <Loader2 className="btn-icon animate-spin" size={20} />{" "}
+            {isHindi ? "Quiz प्रश्न लोड हो रहे हैं..." : "Quiz questions load થઈ રહ્યા છે..."}
+          </span>
         </div>
 
       </main>
@@ -1222,7 +1226,8 @@ function QuizManagement() {
             >
               {saving ? (
                 <span>
-                  <Loader2 className="btn-icon animate-spin" size={16} /> Saving...
+                  <Loader2 className="btn-icon animate-spin" size={16} />{" "}
+                  {isHindi ? "सहेजा जा रहा है..." : "Saving..."}
                 </span>
               ) : editingId ? (
                 <span>

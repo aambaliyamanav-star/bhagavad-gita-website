@@ -5,12 +5,14 @@ import {
 } from "react-router-dom";
 import { ArrowLeft, Star, Loader2, BookOpen, AlertCircle, RefreshCw, Trophy, Check, X, Lightbulb, ChevronLeft, ChevronRight, Award } from "lucide-react";
 import SudarshanShimmerLoader from "../components/SudarshanShimmerLoader.jsx";
+import { useLanguage } from "../context/LanguageContext.jsx";
 import "./Quiz.css";
 
 
 function Quiz() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { isHindi } = useLanguage();
 
   // =====================================================
   // STATE
@@ -1078,8 +1080,16 @@ function Quiz() {
       <main className="quiz-page">
         <SudarshanShimmerLoader
           type="quiz"
-          title="ગીતા જ્ઞાન ક્વિઝ લોડ થઈ રહી છે..."
-          subtitle="પ્રશ્નો અને આધ્યાત્મિક વિકલ્પો તૈયાર થઈ રહ્યા છે..."
+          title={
+            isHindi
+              ? "गीता ज्ञान प्रश्नोत्तरी लोड हो रही है..."
+              : "ગીતા જ્ઞાન ક્વિઝ લોડ થઈ રહી છે..."
+          }
+          subtitle={
+            isHindi
+              ? "प्रश्न और आध्यात्मिक विकल्प तैयार हो रहे हैं..."
+              : "પ્રશ્નો અને આધ્યાત્મિક વિકલ્પો તૈયાર થઈ રહ્યા છે..."
+          }
         />
       </main>
     );
@@ -1760,11 +1770,11 @@ function Quiz() {
           >
 
             {submitting
-              ? <><Loader2 size={15} className="spinner btn-icon" /> Result save થઈ રહ્યું છે...</>
+              ? <><Loader2 size={15} className="spinner btn-icon" /> {isHindi ? "Result save हो रहा है..." : "Result save થઈ રહ્યું છે..."}</>
               : currentQuestion ===
                 questions.length - 1
-              ? <><Trophy size={15} className="btn-icon" /> Quiz પૂર્ણ કરો</>
-              : <>આગળનો પ્રશ્ન <ChevronRight size={16} /></>}
+              ? <><Trophy size={15} className="btn-icon" /> {isHindi ? "Quiz पूर्ण करें" : "Quiz પૂર્ણ કરો"}</>
+              : <>{isHindi ? "अगला प्रश्न" : "આગળનો પ્રશ્ન"} <ChevronRight size={16} /></>}
 
           </button>
 

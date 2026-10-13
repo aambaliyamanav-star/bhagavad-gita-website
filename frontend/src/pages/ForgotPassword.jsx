@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Eye, EyeOff, Mail, KeyRound, Lock, ArrowLeft, CheckCircle, AlertCircle, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "../context/LanguageContext.jsx";
 import "./ForgotPassword.css";
 
 function ForgotPassword() {
   const navigate = useNavigate();
+  const { isHindi } = useLanguage();
 
   // =====================================================
   // STATE
@@ -419,7 +421,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
               disabled={loading}
             >
               {loading
-                ? <><Loader2 size={16} className="spinner btn-icon" /> OTP મોકલાઈ રહ્યો છે...</>
+                ? <><Loader2 size={16} className="spinner btn-icon" /> {isHindi ? "OTP भेजा जा रहा है..." : "OTP મોકલાઈ રહ્યો છે..."}</>
                 : <><Mail size={16} className="btn-icon" /> Send OTP</>}
             </button>
 
@@ -488,7 +490,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
               disabled={loading}
             >
               {loading
-                ? <><Loader2 size={16} className="spinner btn-icon" /> Verify થઈ રહ્યું છે...</>
+                ? <><Loader2 size={16} className="spinner btn-icon" /> {isHindi ? "Verify हो रहा है..." : "Verify થઈ રહ્યું છે..."}</>
                 : <><CheckCircle size={16} className="btn-icon" /> Verify OTP</>}
             </button>
 
@@ -659,7 +661,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
               disabled={loading}
             >
               {loading
-                ? <><Loader2 size={16} className="spinner btn-icon" /> Password reset થઈ રહ્યો છે...</>
+                ? <><Loader2 size={16} className="spinner btn-icon" /> {isHindi ? "Password reset हो रहा है..." : "Password reset થઈ રહ્યો છે..."}</>
                 : <><Lock size={16} className="btn-icon" /> Reset Password</>}
             </button>
 
