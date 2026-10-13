@@ -1,3 +1,4 @@
+import { getValidToken, clearAuthSession } from "./authHelper.js";
 // ==========================================================================
 // GITA READING TRACKER UTILITY & GAMIFICATION ENGINE
 // ==========================================================================
@@ -282,8 +283,9 @@ export async function trackShlokaRead(chapterNumber, shlokNumber, token = null) 
 // ==========================================================================
 export async function getCombinedReadingProgress(token = null) {
   const local = getLocalProgress();
+  const validToken = token ? (getValidToken() || token) : null;
 
-  if (!token) {
+  if (!validToken) {
     // Calculate chapter breakdown from local
     const chapterBreakdown = {};
     CHAPTER_METADATA.forEach((meta) => {
@@ -308,7 +310,7 @@ export async function getCombinedReadingProgress(token = null) {
   try {
     const res = await fetch(`${API_TRACKER_URL}/progress`, {
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${validToken}`,
       },
     });
 
@@ -325,6 +327,8 @@ export async function getCombinedReadingProgress(token = null) {
         });
         return data.data;
       }
+    } else if (res.status === 401) {
+      clearAuthSession();
     }
   } catch (err) {
     console.warn("Could not fetch remote progress, falling back to local:", err);
@@ -355,14 +359,15 @@ export async function getCombinedReadingProgress(token = null) {
 // SYNC LOCAL PROGRESS TO CLOUD
 // ==========================================================================
 export async function syncLocalToCloud(token) {
-  if (!token) return { success: false, message: "No token" };
+  const validToken = token ? (getValidToken() || token) : getValidToken();
+  if (!validToken) return { success: false, message: "No token" };
 
   const local = getLocalProgress();
   try {
     const res = await fetch(`${API_TRACKER_URL}/sync`, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${validToken}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
@@ -382,6 +387,10 @@ export async function syncLocalToCloud(token) {
         unlockedBadges: data.data.unlockedBadges || [],
       });
       return { success: true, data: data.data };
+    }
+    if (res.status === 401 || (data.message && data.message.toLowerCase().includes("token"))) {
+      clearAuthSession();
+      return { success: false, isAuthError: true, message: "Session expired. Please log in again." };
     }
     return { success: false, message: data.message || "Sync failed" };
   } catch (err) {

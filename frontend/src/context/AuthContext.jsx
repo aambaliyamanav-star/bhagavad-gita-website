@@ -1,5 +1,6 @@
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
+import { isTokenExpired } from "../utils/authHelper.js";
 
 // =====================================================
 // AUTH CONTEXT
@@ -12,24 +13,52 @@ const AuthContext = createContext();
 // =====================================================
 
 export function AuthProvider({ children }) {
-  // Get saved user from localStorage
+  // Get saved token from localStorage (validate against expiry)
+  const [token, setToken] = useState(() => {
+    try {
+      const savedToken = localStorage.getItem("token");
+      if (savedToken && isTokenExpired(savedToken)) {
+        console.warn("Stored JWT token has expired. Clearing session.");
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        return null;
+      }
+      return savedToken || null;
+    } catch {
+      return null;
+    }
+  });
+
+  // Get saved user from localStorage (only if token is valid)
   const [user, setUser] = useState(() => {
     try {
-      const savedUser = localStorage.getItem("user");
+      const savedToken = localStorage.getItem("token");
+      if (!savedToken || isTokenExpired(savedToken)) {
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
+        return null;
+      }
 
-      return savedUser
-        ? JSON.parse(savedUser)
-        : null;
+      const savedUser = localStorage.getItem("user");
+      return savedUser ? JSON.parse(savedUser) : null;
     } catch (error) {
       console.error("User data error:", error);
       return null;
     }
   });
 
-  // Get saved token from localStorage
-  const [token, setToken] = useState(() => {
-    return localStorage.getItem("token") || null;
-  });
+  // ===================================================
+  // LISTEN FOR GLOBAL AUTH EXPIRATION
+  // ===================================================
+
+  useEffect(() => {
+    const handleExpiredEvent = () => {
+      logout();
+    };
+
+    window.addEventListener("auth-token-expired", handleExpiredEvent);
+    return () => window.removeEventListener("auth-token-expired", handleExpiredEvent);
+  }, []);
 
   // ===================================================
   // LOGIN

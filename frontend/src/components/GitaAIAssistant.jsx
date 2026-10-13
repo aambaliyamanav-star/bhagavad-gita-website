@@ -1,3 +1,4 @@
+import { getValidToken, clearAuthSession } from "../utils/authHelper.js";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
@@ -637,7 +638,7 @@ export default function GitaAIAssistant() {
     setIsLoading(true);
 
     try {
-      const token = localStorage.getItem("token");
+      const token = getValidToken();
       const response = await fetch(`${API_BASE}/api/gita-ai/ask`, {
         method: "POST",
         headers: {
@@ -661,6 +662,9 @@ export default function GitaAIAssistant() {
         };
         setMessages((prev) => [...prev, aiMessage]);
       } else {
+        if (response.status === 401 || (data.message && data.message.toLowerCase().includes("token"))) {
+          clearAuthSession();
+        }
         throw new Error(data.message || "ઉત્તર મેળવવામાં સમસ્યા આવી.");
       }
     } catch (error) {

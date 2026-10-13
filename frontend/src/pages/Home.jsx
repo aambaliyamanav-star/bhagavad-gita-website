@@ -19,6 +19,7 @@ import "./Home.css";
 import ShareShlokaModal from "../components/ShareShlokaModal.jsx";
 import { getLocalProgress } from "../utils/readingTracker.js";
 import { useLanguage } from "../context/LanguageContext.jsx";
+import { getValidToken } from "../utils/authHelper.js";
 
 function Home() {
   const navigate = useNavigate();
@@ -229,7 +230,7 @@ useEffect(() => {
         setLoading(true);
         setMessage("");
 
-        const token = localStorage.getItem("token");
+        const token = getValidToken();
         const response = await fetch(API_URL, {
           headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
@@ -295,7 +296,7 @@ useEffect(() => {
       }
 
       const token =
-        localStorage.getItem("token");
+        getValidToken();
 
       if (!token) {
         setContinueReading(null);

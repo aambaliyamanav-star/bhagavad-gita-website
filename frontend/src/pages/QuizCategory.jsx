@@ -1,3 +1,4 @@
+import { getValidToken, handleAuth401 } from "../utils/authHelper.js";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Brain, Target, BookOpen, Sword, History, BookMarked, Hash, PlayCircle, Loader2 } from "lucide-react";
@@ -65,7 +66,7 @@ function QuizCategory() {
   // =====================================================
 
   const getToken = () => {
-    return localStorage.getItem("token");
+    return getValidToken();
   };
 
   // =====================================================
@@ -123,9 +124,13 @@ function QuizCategory() {
         const data = await response.json();
 
         if (!response.ok) {
+          if (response.status === 401) {
+            handleAuth401(navigate, "/quiz-category");
+            return;
+          }
           throw new Error(
             data.message ||
-              "Questions count load થઈ શક્યો નથી."
+              (isHindi ? "प्रश्नों की संख्या लोड नहीं हो सकी।" : "Questions count load થઈ શક્યો નથી.")
           );
         }
 

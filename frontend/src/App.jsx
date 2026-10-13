@@ -42,17 +42,29 @@ import About from "./pages/About.jsx";
 import { trackVisit } from "./utils/visitorTracker.js";
 
 // =====================================================
+import { isTokenExpired } from "./utils/authHelper.js";
+import { useLanguage } from "./context/LanguageContext.jsx";
+
+// =====================================================
 // PROTECTED ROUTE COMPONENT
 // =====================================================
 
 function ProtectedRoute({ children, message }) {
-  const { user } = useAuth();
+  const { user, token, logout } = useAuth();
+  const { isHindi } = useLanguage();
   const location = useLocation();
 
-  if (!user) {
+  const isExpired = isTokenExpired(token);
+  if (!user || !token || isExpired) {
+    if (isExpired && (token || user)) {
+      logout();
+    }
     const targetPath = location.pathname + location.search;
     const redirectMessage =
-      message || "આ પેજનો ઉપયોગ કરવા માટે Login કરવું જરૂરી છે.";
+      message ||
+      (isHindi
+        ? "इस पृष्ठ का उपयोग करने के लिए लॉगिन आवश्यक है।"
+        : "આ પેજનો ઉપયોગ કરવા માટે Login કરવું જરૂરી છે.");
 
     try {
       sessionStorage.setItem(
@@ -84,12 +96,19 @@ function ProtectedRoute({ children, message }) {
 // =====================================================
 
 function AdminRoute({ children }) {
-  const { user } = useAuth();
+  const { user, token, logout } = useAuth();
+  const { isHindi } = useLanguage();
   const location = useLocation();
 
-  if (!user) {
+  const isExpired = isTokenExpired(token);
+  if (!user || !token || isExpired) {
+    if (isExpired && (token || user)) {
+      logout();
+    }
     const targetPath = location.pathname + location.search;
-    const redirectMessage = "Admin પેનલનો ઉપયોગ કરવા માટે Login કરવું જરૂરી છે.";
+    const redirectMessage = isHindi
+      ? "एडमिन पैनल का उपयोग करने के लिए लॉगिन आवश्यक है।"
+      : "Admin પેનલનો ઉપયોગ કરવા માટે Login કરવું જરૂરી છે.";
 
     try {
       sessionStorage.setItem(

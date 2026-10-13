@@ -1,3 +1,4 @@
+import { getValidToken, clearAuthSession } from "./authHelper.js";
 /**
  * Gita AI Chat History Manager
  * Stores and manages conversations in localStorage and syncs with backend database
@@ -53,7 +54,7 @@ export function getConversationById(id) {
 }
 
 export async function syncHistoryWithServer() {
-  const token = localStorage.getItem("token");
+  const token = getValidToken();
   if (!token) return getAllConversations();
 
   try {
@@ -63,7 +64,7 @@ export async function syncHistoryWithServer() {
       },
     });
 
-    if (res.ok) {
+    if (res.status === 401) { clearAuthSession(); } if (res.ok) {
       const data = await res.json();
       if (data.success && Array.isArray(data.conversations)) {
         const localList = getAllConversations();
@@ -127,7 +128,7 @@ export function saveConversation(conv) {
     localStorage.setItem(ACTIVE_CONV_KEY, updatedConv.id);
 
     // Sync asynchronously to backend if logged in
-    const token = localStorage.getItem("token");
+    const token = getValidToken();
     if (token) {
       fetch(`${API_BASE}/api/gita-ai/history`, {
         method: "POST",
@@ -166,7 +167,7 @@ export function deleteConversation(id) {
     }
 
     // Sync delete to backend if logged in
-    const token = localStorage.getItem("token");
+    const token = getValidToken();
     if (token) {
       fetch(`${API_BASE}/api/gita-ai/history/${id}`, {
         method: "DELETE",
@@ -191,7 +192,7 @@ export function clearAllConversations() {
     localStorage.removeItem(ACTIVE_CONV_KEY);
 
     // Sync clear to backend if logged in
-    const token = localStorage.getItem("token");
+    const token = getValidToken();
     if (token) {
       fetch(`${API_BASE}/api/gita-ai/history`, {
         method: "DELETE",
@@ -260,7 +261,7 @@ export function renameConversation(id, newTitle) {
     const sortedList = sortConversations(list);
     localStorage.setItem(key, JSON.stringify(sortedList));
 
-    const token = localStorage.getItem("token");
+    const token = getValidToken();
     if (token) {
       fetch(`${API_BASE}/api/gita-ai/history`, {
         method: "POST",
@@ -299,7 +300,7 @@ export function togglePinConversation(id) {
     const sortedList = sortConversations(list);
     localStorage.setItem(key, JSON.stringify(sortedList));
 
-    const token = localStorage.getItem("token");
+    const token = getValidToken();
     if (token) {
       fetch(`${API_BASE}/api/gita-ai/history`, {
         method: "POST",
@@ -338,7 +339,7 @@ export function toggleArchiveConversation(id) {
     const sortedList = sortConversations(list);
     localStorage.setItem(key, JSON.stringify(sortedList));
 
-    const token = localStorage.getItem("token");
+    const token = getValidToken();
     if (token) {
       fetch(`${API_BASE}/api/gita-ai/history`, {
         method: "POST",

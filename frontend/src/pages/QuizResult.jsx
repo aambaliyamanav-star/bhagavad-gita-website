@@ -1,3 +1,4 @@
+import { getValidToken, handleAuth401, clearAuthSession } from "../utils/authHelper.js";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loader2, AlertCircle, RefreshCw, ArrowLeft, BookOpen, ChevronRight, ClipboardList, CheckCircle2, XCircle, SkipForward, Clock, PlayCircle, Award } from "lucide-react";
@@ -78,14 +79,14 @@ function QuizResult() {
         setLoading(true);
         setError("");
 
-        const token = localStorage.getItem("token");
+        const token = getValidToken();
 
         // -------------------------------------------------
         // LOGIN CHECK
         // -------------------------------------------------
 
         if (!token) {
-          navigate("/login");
+          handleAuth401(navigate, "/quiz-results");
           return;
         }
 
@@ -134,6 +135,9 @@ function QuizResult() {
         // -------------------------------------------------
 
         if (!response.ok) {
+          if (response.status === 401 || (data.message && data.message.toLowerCase().includes("token"))) {
+            clearAuthSession();
+          }
           throw new Error(
             data.message ||
               `Server Error: ${response.status}`

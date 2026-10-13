@@ -1,3 +1,4 @@
+import { getValidToken, handleAuth401, clearAuthSession } from "../utils/authHelper.js";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -91,7 +92,7 @@ function QuizManagement() {
   // =====================================================
 
   const getToken = () => {
-    return localStorage.getItem("token");
+    return getValidToken();
   };
 
   // =====================================================

@@ -1,3 +1,4 @@
+import { getValidToken, handleAuth401 } from "../utils/authHelper.js";
 import React, { useState, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";
@@ -77,7 +78,7 @@ function ReadingTracker() {
   const loadProgress = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem("token");
+      const token = getValidToken();
       const data = await getCombinedReadingProgress(token);
       if (data) setProgressData(data);
     } catch (err) {
@@ -102,12 +103,12 @@ function ReadingTracker() {
   }, [selectedBadge]);
 
   const handleSyncCloud = async () => {
-    const token = localStorage.getItem("token");
+    const token = getValidToken();
     if (!token) {
       navigate("/login", {
         state: {
           from: "/reading-tracker",
-          message: "Cloud Sync માટે Login કરો.",
+          message: isHindi ? "Cloud Sync के लिए Login आवश्यक है।" : "Cloud Sync માટે Login કરવું જરૂરી છે.",
         },
       });
       return;
