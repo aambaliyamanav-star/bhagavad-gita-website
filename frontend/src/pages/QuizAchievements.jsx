@@ -28,6 +28,7 @@ import {
   API_QUIZ_URL,
   calculateQuizAchievements,
 } from "../utils/quizAchievements";
+import { useLanguage } from "../context/LanguageContext.jsx";
 import "./QuizAchievements.css";
 
 // Helper: Dynamically render Lucide Icon by name
@@ -70,6 +71,7 @@ const renderBadgeIcon = (iconName, size = 20) => {
 
 export default function QuizAchievements() {
   const navigate = useNavigate();
+  const { isHindi } = useLanguage();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -241,7 +243,7 @@ export default function QuizAchievements() {
         {loading && (
           <div className="qa-loading-state">
             <Loader2 className="qa-spinner" size={36} />
-            <p>સિદ્ધિઓ લોડ થઈ રહી છે...</p>
+            <p>{isHindi ? "उपलब्धियां लोड हो रही हैं..." : "સિદ્ધિઓ લોડ થઈ રહી છે..."}</p>
           </div>
         )}
 

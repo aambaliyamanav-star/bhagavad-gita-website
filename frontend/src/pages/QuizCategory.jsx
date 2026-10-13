@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Brain, Target, BookOpen, Sword, History, BookMarked, Hash, PlayCircle, Loader2 } from "lucide-react";
+import { useLanguage } from "../context/LanguageContext.jsx";
 import "./QuizCategory.css";
 
 
 function QuizCategory() {
   const navigate = useNavigate();
+  const { isHindi } = useLanguage();
 
   // =====================================================
   // API
@@ -645,11 +647,11 @@ function QuizCategory() {
 
             {loadingQuestions ? (
               <span className="quiz-available-count">
-                <Loader2 size={13} className="spinner btn-icon" /> Questions તપાસી રહ્યા છીએ...
+                <Loader2 size={13} className="spinner btn-icon" /> {isHindi ? "Questions जांच रहे हैं..." : "Questions તપાસી રહ્યા છીએ..."}
               </span>
             ) : availableQuestions !== null ? (
               <span className="quiz-available-count">
-                {availableQuestions} પ્રશ્નો ઉપલબ્ધ
+                {availableQuestions} {isHindi ? "प्रश्न उपलब्ध" : "પ્રશ્નો ઉપલબ્ધ"}
               </span>
             ) : null}
 
@@ -687,7 +689,7 @@ function QuizCategory() {
             )
           }
         >
-          <PlayCircle size={18} className="btn-icon" /> Quiz શરૂ કરો
+          <PlayCircle size={18} className="btn-icon" /> {isHindi ? "Quiz शुरू करें" : "Quiz શરૂ કરો"}
         </button>
 
       </section>

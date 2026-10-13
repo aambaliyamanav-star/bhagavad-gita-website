@@ -33,6 +33,7 @@ import {
 
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext.jsx";
+import { useLanguage } from "../context/LanguageContext.jsx";
 import {
   getAllConversations,
   saveConversation,
@@ -248,6 +249,7 @@ export default function GitaAIAssistant() {
   const location = useLocation();
   const { theme } = useTheme();
   const { user } = useAuth();
+  const { isHindi } = useLanguage();
 
   // Extract user's registered first name for ChatGPT style greeting
   const userFirstName = (() => {
@@ -1596,7 +1598,11 @@ export default function GitaAIAssistant() {
             {/* ChatGPT style subtle disclaimer notice at the very end of the chat stream */}
             {hasAiAnswers && !isLoading && (
               <div className="gita-ai-chat-disclaimer">
-                <span>ગીતા AI ભૂલ કરી શકે છે. મહત્વપૂર્ણ માહિતીની ચકાસણી કરી લેવી.</span>
+                <span>
+                  {isHindi
+                    ? "गीता AI गलती कर सकता है। महत्वपूर्ण जानकारी की पुष्टि कर लें।"
+                    : "ગીતા AI ભૂલ કરી શકે છે. મહત્વપૂર્ણ માહિતીની ચકાસણી કરી લેવી."}
+                </span>
               </div>
             )}
 
@@ -1644,8 +1650,8 @@ export default function GitaAIAssistant() {
                 onKeyDown={handleKeyDown}
                 placeholder={
                   isListening
-                    ? "સાંભળી રહ્યું છે... બોલો..."
-                    : "તમારો આધ્યાત્મિક પ્રશ્ન કે સમસ્યા પૂછો..."
+                    ? (isHindi ? "सुन रहा है... बोलिए..." : "સાંભળી રહ્યું છે... બોલો...")
+                    : (isHindi ? "अपना आध्यात्मिक प्रश्न या समस्या पूछें..." : "તમારો આધ્યાત્મિક પ્રશ્ન કે સમસ્યા પૂછો...")
                 }
                 className="gita-ai-textarea"
                 disabled={isLoading}

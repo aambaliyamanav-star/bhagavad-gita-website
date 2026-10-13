@@ -9,6 +9,7 @@ import {
   Palette,
   MessageCircle
 } from "lucide-react";
+import { useLanguage } from "../context/LanguageContext.jsx";
 import "./ShareShlokaModal.css";
 
 const THEMES = [
@@ -275,6 +276,7 @@ export default function ShareShlokaModal({
   onClose,
   shlokaData
 }) {
+  const { isHindi } = useLanguage();
   const canvasRef = useRef(null);
   const [selectedThemeId, setSelectedThemeId] = useState("royal-blue");
   const [previewUrl, setPreviewUrl] = useState("");
@@ -911,7 +913,7 @@ export default function ShareShlokaModal({
               </a>
             ) : (
               <div className="preview-loading">
-                <span>કાર્ડ તૈયાર થઈ રહ્યું છે...</span>
+                <span>{isHindi ? "कार्ड तैयार हो रहा है..." : "કાર્ડ તૈયાર થઈ રહ્યું છે..."}</span>
               </div>
             )}
           </div>
@@ -923,7 +925,7 @@ export default function ShareShlokaModal({
               target="_blank"
               rel="noopener noreferrer"
               className="share-preview-clickable-link"
-              title="વેબસાઇટ પર સીધા જવા અહીં ક્લિક કરો"
+              title={isHindi ? "वेबसाइट खोलने के लिए क्लिक करें" : "વેબસાઇટ પર સીધા જવા અહીં ક્લિક કરો"}
             >
               <span>🔗 bhagavad-gita-website-rk1v.vercel.app</span>
             </a>
@@ -937,10 +939,10 @@ export default function ShareShlokaModal({
               className="action-btn download-btn"
               onClick={handleDownload}
               disabled={isGenerating || !previewUrl}
-              title="હાઈ-ક્વોલિટી PNG ઈમેજ ડાઉનલોડ કરો"
+              title={isHindi ? "हाई-क्वालिटी PNG इमेज डाउनलोड करें" : "હાઈ-ક્વોલિટી PNG ઈમેજ ડાઉનલોડ કરો"}
             >
               <Download size={18} />
-              <span>ઈમેજ ડાઉનલોડ</span>
+              <span>{isHindi ? "इमेज डाउनलोड" : "ઈમેજ ડાઉનલોડ"}</span>
             </button>
 
             {/* WHATSAPP SHARE */}
@@ -949,10 +951,10 @@ export default function ShareShlokaModal({
               className="action-btn whatsapp-btn"
               onClick={handleShareWhatsApp}
               disabled={isGenerating || !previewUrl}
-              title="WhatsApp પર શેર કરો"
+              title={isHindi ? "WhatsApp पर शेयर करें" : "WhatsApp પર શેર કરો"}
             >
               <MessageCircle size={18} />
-              <span>WhatsApp શેર</span>
+              <span>{isHindi ? "WhatsApp शेयर" : "WhatsApp શેર"}</span>
             </button>
 
             {/* COPY TEXT */}
@@ -960,10 +962,10 @@ export default function ShareShlokaModal({
               type="button"
               className="action-btn copy-btn"
               onClick={handleCopyText}
-              title="શ્લોક અને ભાવાર્થ કોપી કરો"
+              title={isHindi ? "श्लोक और अर्थ कॉपी करें" : "શ્લોક અને ભાવાર્થ કોપી કરો"}
             >
               {copied ? <Check size={18} /> : <Copy size={18} />}
-              <span>{copied ? "કોપી થઈ ગયું!" : "ટેક્સ્ટ કોપી"}</span>
+              <span>{copied ? (isHindi ? "कॉपी हो गया!" : "કોપી થઈ ગયું!") : (isHindi ? "टेक्स्ट कॉपी" : "ટેક્સ્ટ કોપી")}</span>
             </button>
           </div>
         </div>

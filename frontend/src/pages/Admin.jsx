@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext.jsx";
+import { useLanguage } from "../context/LanguageContext.jsx";
 import {
   Shield,
   LogOut,
@@ -51,6 +52,7 @@ function formatTimeAgo(dateStr) {
 }
 
 function Admin() {
+  const { isHindi } = useLanguage();
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [message, setMessage] = useState("");
@@ -783,7 +785,7 @@ function Admin() {
 
           {loadingVisitors ? (
             <div className="visitor-loading-state">
-              <p>મુલાકાતીઓની માહિતી લોડ થઈ રહી છે...</p>
+              <p>{isHindi ? "आगंतुकों की जानकारी लोड हो रही है..." : "મુલાકાતીઓની માહિતી લોડ થઈ રહી છે..."}</p>
             </div>
           ) : (
             <>
@@ -1151,7 +1153,7 @@ function Admin() {
           {loadingAppStats && !appStats ? (
             <div className="v-loading-box">
               <RefreshCw size={24} className="spinning-icon" />
-              <p>એપ ઇન્સ્ટોલેશન ડેટા લોડ થઈ રહ્યો છે...</p>
+              <p>{isHindi ? "ऐप इंस्टॉलेशन डेटा लोड हो रहा है..." : "એપ ઇન્સ્ટોલેશન ડેટા લોડ થઈ રહ્યો છે..."}</p>
             </div>
           ) : (
             <>
@@ -1514,7 +1516,7 @@ function Admin() {
           {loadingFeedbacks ? (
             <div className="v-loading-state">
               <RefreshCw size={28} className="spinning-icon" />
-              <p>ફીડબેક અને રેટિંગ્સ લોડ થઈ રહ્યા છે...</p>
+              <p>{isHindi ? "प्रतिक्रिया और रेटिंग लोड हो रही हैं..." : "ફીડબેક અને રેટિંગ્સ લોડ થઈ રહ્યા છે..."}</p>
             </div>
           ) : (
             <>
@@ -1881,7 +1883,11 @@ function Admin() {
                   disabled={deletingFeedbackId === activeFeedbackModal._id}
                 >
                   <Trash2 size={16} />
-                  <span>{deletingFeedbackId === activeFeedbackModal._id ? "ડિલીટ થઈ રહ્યું છે..." : "પ્રતિસાદ ડિલીટ કરો"}</span>
+                  <span>
+                    {deletingFeedbackId === activeFeedbackModal._id
+                      ? (isHindi ? "डिलीट हो रहा है..." : "ડિલીટ થઈ રહ્યું છે...")
+                      : (isHindi ? "प्रतिक्रिया डिलीट करें" : "પ્રતિસાદ ડિલીટ કરો")}
+                  </span>
                 </button>
 
                 <button

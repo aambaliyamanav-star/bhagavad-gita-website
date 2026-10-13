@@ -916,8 +916,16 @@ if (
       <main className="chapter-reader">
         <SudarshanShimmerLoader
           type="reader"
-          title={`અધ્યાય ${chapterNumber || ""} ના શ્લોક લોડ થઈ રહ્યા છે...`}
-          subtitle="કૃપા કરીને થોડી ક્ષણ રાહ જુઓ ॥ શ્રીકૃષ્ણાર્પણમસ્તુ ॥"
+          title={
+            isHindi
+              ? `अध्याय ${chapterNumber || ""} के श्लोक लोड हो रहे हैं...`
+              : `અધ્યાય ${chapterNumber || ""} ના શ્લોક લોડ થઈ રહ્યા છે...`
+          }
+          subtitle={
+            isHindi
+              ? "कृपया कुछ क्षण प्रतीक्षा करें ॥ श्रीकृष्णार्पणमस्तु ॥"
+              : "કૃપા કરીને થોડી ક્ષણ રાહ જુઓ ॥ શ્રીકૃષ્ણાર્પણમસ્તુ ॥"
+          }
         />
       </main>
     );
