@@ -965,6 +965,7 @@ const autoTranslateShlok = async (req, res) => {
 
     res.status(200).json({
       success: true,
+      data: translated,
       translated,
     });
   } catch (error) {
