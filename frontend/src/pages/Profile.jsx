@@ -1,3 +1,4 @@
+import { getValidToken, handleAuth401, clearAuthSession } from "../utils/authHelper.js";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -106,10 +107,10 @@ const [showNewPassword, setShowNewPassword] =
   // =====================================================
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = getValidToken();
 
     if (!token) {
-      navigate("/login");
+      handleAuth401(navigate, "/profile");
       return;
     }
 
@@ -125,8 +126,12 @@ const [showNewPassword, setShowNewPassword] =
         const data = await response.json();
 
         if (!response.ok) {
+          if (response.status === 401 || (data.message && data.message.toLowerCase().includes("token"))) {
+            handleAuth401(navigate, "/profile");
+            return;
+          }
           throw new Error(
-            data.message || "Profile મળ્યું નથી."
+            data.message || (isHindi ? "प्रोफ़ाइल नहीं मिली।" : "Profile મળ્યું નથી.")
           );
         }
 

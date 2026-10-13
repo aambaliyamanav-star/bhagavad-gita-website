@@ -48,6 +48,8 @@ const protect = async (req, res, next) => {
     console.error("Protect Error:", error);
 
     return res.status(401).json({
+      success: false,
+      code: "TOKEN_EXPIRED",
       message: "Invalid અથવા / अथवा expired token."
     });
   }

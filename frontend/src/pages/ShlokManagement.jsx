@@ -1,3 +1,4 @@
+import { getValidToken, handleAuth401, clearAuthSession } from "../utils/authHelper.js";
 import {
   useEffect,
   useRef,
@@ -499,7 +500,7 @@ function ShlokManagement() {
 
   useEffect(() => {
     const token =
-      localStorage.getItem("token");
+      getValidToken();
 
     const savedUser =
       localStorage.getItem("user");
@@ -980,7 +981,7 @@ function ShlokManagement() {
         );
       }
 
-      const token = localStorage.getItem("token");
+      const token = getValidToken();
 
       const cleanedWords = wordMeanings
         .map((item) => ({

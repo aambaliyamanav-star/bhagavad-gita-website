@@ -1,3 +1,4 @@
+import { getValidToken, clearAuthSession } from "../utils/authHelper.js";
 import { useEffect, useRef, useState } from "react";
 import { BookOpen, Heart, Mic, Loader2, Sparkles, AlertCircle, ChevronLeft, ChevronRight, Share2 } from "lucide-react";
 import "./ChapterReader.css";
@@ -283,7 +284,7 @@ useEffect(() => {
         setActiveWordIndex(null);
 
 const token =
-  localStorage.getItem("token");
+  getValidToken();
 
 const response = await fetch(
   `${API_URL}/chapter/${currentChapterNumber}`,
@@ -460,7 +461,7 @@ const response = await fetch(
 
       try {
         const token =
-          localStorage.getItem("token");
+          getValidToken();
 
         if (!token) {
           setFavoriteShlokas([]);
@@ -519,7 +520,7 @@ const response = await fetch(
     }
 
     const token =
-      localStorage.getItem("token");
+      getValidToken();
 
     if (!token) {
       return;
@@ -636,7 +637,7 @@ const response = await fetch(
 
     const markAsRead = () => {
       if (document.visibilityState === "visible") {
-        const token = localStorage.getItem("token");
+        const token = getValidToken();
         trackShlokaRead(currentChapterNumber, current.shlokNumber, token);
         trackedInSessionRef.current.add(sessionKey);
       }
@@ -707,7 +708,7 @@ const response = await fetch(
     }
 
     const token =
-      localStorage.getItem("token");
+      getValidToken();
 
     if (!token) {
       navigate("/login");

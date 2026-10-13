@@ -1,3 +1,4 @@
+import { getValidToken, handleAuth401, clearAuthSession } from "../utils/authHelper.js";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Heart, Lock, Loader2, AlertCircle, RefreshCw, BookOpen, Trash2 } from "lucide-react";
@@ -52,12 +53,13 @@ function FavouriteShlokas() {
         // GET TOKEN
         // =================================================
 
-        const token =
-          localStorage.getItem("token");
+        const token = getValidToken();
 
         if (!token) {
           setError(
-            "કૃપા કરીને પહેલા Login કરો."
+            isHindi
+              ? "पसंदीदा श्लोक देखने के लिए कृपया पहले Login करें।"
+              : "કૃપા કરીને પહેલા Login કરો."
           );
           setLoading(false);
           return;
@@ -82,9 +84,19 @@ function FavouriteShlokas() {
           await response.json();
 
         if (!response.ok) {
+          if (response.status === 401) {
+            clearAuthSession();
+            setError(
+              isHindi
+                ? "आपका सत्र समाप्त हो गया है। कृपया पुनः Login करें।"
+                : "તમારું સત્ર સમાપ્ત થઈ ગયું છે. કૃપા કરીને ફરી Login કરો."
+            );
+            setLoading(false);
+            return;
+          }
           throw new Error(
             data.message ||
-              "Favourite શ્લોક load થઈ શક્યા નથી."
+              (isHindi ? "पसंदीदा श्लोक लोड नहीं हो सके।" : "Favourite શ્લોક load થઈ શક્યા નથી.")
           );
         }
 

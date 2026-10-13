@@ -1,3 +1,4 @@
+import { getValidToken, handleAuth401, clearAuthSession } from "../utils/authHelper.js";
 import { useEffect, useState } from "react";
 import {
   useNavigate,
@@ -79,7 +80,7 @@ function Quiz() {
   // =====================================================
 
   const getToken = () => {
-    return localStorage.getItem("token");
+    return getValidToken();
   };
 
   // =====================================================
@@ -297,9 +298,13 @@ function Quiz() {
         );
 
         if (!response.ok) {
+          if (response.status === 401) {
+            handleAuth401(navigate, "/quiz/play");
+            return;
+          }
           throw new Error(
             data.message ||
-              isHindi ? "Quiz प्रश्न लोड नहीं हो सके।" : "Quiz questions load થઈ શક્યા નથી."
+              (isHindi ? "Quiz प्रश्न लोड नहीं हो सके।" : "Quiz questions load થઈ શક્યા નથી.")
           );
         }
 
@@ -946,9 +951,12 @@ function Quiz() {
       );
 
       if (!response.ok) {
+        if (response.status === 401) {
+          clearAuthSession();
+        }
         throw new Error(
           data.message ||
-            isHindi ? "Quiz परिणाम सहेजा नहीं जा सका।" : "Quiz result save થઈ શક્યું નથી."
+            (isHindi ? "Quiz परिणाम सहेजा नहीं जा सका।" : "Quiz result save થઈ શક્યું નથી.")
         );
       }
 

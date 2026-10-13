@@ -1,3 +1,4 @@
+import { getValidToken, handleAuth401, clearAuthSession } from "../utils/authHelper.js";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate, Link } from "react-router-dom";
@@ -108,7 +109,7 @@ function Admin() {
   const { logout } = useAuth();
 
   const fetchAppStats = async (isManual = false) => {
-    const token = localStorage.getItem("token");
+    const token = getValidToken();
     if (!token) return;
 
     if (isManual) setRefreshingAppStats(true);
@@ -159,7 +160,7 @@ function Admin() {
   };
 
   const fetchVisitorStats = async (isManual = false) => {
-    const token = localStorage.getItem("token");
+    const token = getValidToken();
     if (!token) return;
 
     if (isManual) setRefreshingVisitors(true);
@@ -210,7 +211,7 @@ function Admin() {
   };
 
   const fetchUsers = async () => {
-    const token = localStorage.getItem("token");
+    const token = getValidToken();
 
     if (!token) {
       navigate("/login");
@@ -248,7 +249,7 @@ function Admin() {
   };
 
   const fetchFeedbacks = async (isRefresh = false) => {
-    const token = localStorage.getItem("token");
+    const token = getValidToken();
     if (!token) return;
 
     if (isRefresh) setRefreshingFeedbacks(true);
@@ -304,7 +305,7 @@ function Admin() {
     if (!confirmed) return;
 
     setDeletingFeedbackId(id);
-    const token = localStorage.getItem("token");
+    const token = getValidToken();
 
     try {
       const isLocal =
@@ -393,7 +394,7 @@ function Admin() {
       return;
     }
 
-    const token = localStorage.getItem("token");
+    const token = getValidToken();
 
     try {
       setDeletingId(userId);

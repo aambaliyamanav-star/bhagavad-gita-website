@@ -1,3 +1,4 @@
+import { getValidToken, handleAuth401 } from "../utils/authHelper.js";
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -94,9 +95,9 @@ export default function QuizAchievements() {
       setLoading(true);
       setError("");
 
-      const token = localStorage.getItem("token");
+      const token = getValidToken();
       if (!token) {
-        navigate("/login");
+        handleAuth401(navigate, "/quiz-achievements");
         return;
       }
 
@@ -108,7 +109,11 @@ export default function QuizAchievements() {
       });
 
       if (!response.ok) {
-        throw new Error("ક્વિઝ હિસ્ટ્રી લોડ કરવામાં સમસ્યા આવી.");
+        if (response.status === 401) {
+          handleAuth401(navigate, "/quiz-achievements");
+          return;
+        }
+        throw new Error(isHindi ? "क्विज़ हिस्ट्री लोड करने में समस्या आई।" : "ક્વિઝ હિસ્ટ્રી લોડ કરવામાં સમસ્યા આવી.");
       }
 
       const data = await response.json();

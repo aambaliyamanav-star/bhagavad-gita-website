@@ -953,7 +953,7 @@ const loginUser = async (
 
         {
           expiresIn:
-            "7d",
+            "30d",
         }
       );
 

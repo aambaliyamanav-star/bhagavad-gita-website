@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useLanguage } from "../context/LanguageContext.jsx";
+import { getValidToken } from "../utils/authHelper.js";
 import "./FeedbackModal.css";
 
 const PROD_API_BASE = "https://bhagavad-gita-website.onrender.com";
@@ -80,7 +81,7 @@ export default function FeedbackModal() {
 
   // Fetch user's existing rating and lock status
   const fetchUserRating = async () => {
-    const token = localStorage.getItem("token");
+    const token = getValidToken();
     if (!token) {
       setHasRated(false);
       setExistingRating(0);
@@ -198,7 +199,7 @@ export default function FeedbackModal() {
       ? [`${LOCAL_API_BASE}/api/feedback`, `${PROD_API_BASE}/api/feedback`]
       : [`${PROD_API_BASE}/api/feedback`];
 
-    const token = localStorage.getItem("token");
+    const token = getValidToken();
     const headers = {
       "Content-Type": "application/json",
     };
