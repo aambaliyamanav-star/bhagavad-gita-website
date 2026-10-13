@@ -1016,7 +1016,13 @@ function ShlokManagement() {
         );
       }
 
-      const translated = data.data;
+      const translated = data?.data || data?.translated;
+
+      if (!translated) {
+        throw new Error(
+          data?.message || "ઓટો-અનુવાદ માહિતી મળી શકી નથી."
+        );
+      }
 
       setFormData((prev) => ({
         ...prev,

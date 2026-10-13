@@ -120,10 +120,11 @@ Word Meanings: ${JSON.stringify(
   )}`;
 
   const modelsToTry = [
+    "gemini-2.5-flash",
+    "gemini-2.0-flash",
+    "gemini-1.5-flash",
     "gemini-flash-lite-latest",
     "gemini-flash-latest",
-    "gemini-3-flash-preview",
-    "gemini-3.1-flash-lite",
   ];
 
   const cleanKey = String(apiKey).trim();
