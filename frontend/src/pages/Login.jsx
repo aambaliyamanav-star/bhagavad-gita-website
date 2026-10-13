@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 
 import { useAuth } from "../context/AuthContext.jsx";
+import { useLanguage } from "../context/LanguageContext.jsx";
 
 import "./Login.css";
 
@@ -16,6 +17,7 @@ function Login() {
   const location = useLocation();
 
   const { user, login } = useAuth();
+  const { isHindi } = useLanguage();
 
   // If user is already logged in, redirect away from /login
   useEffect(() => {
@@ -312,12 +314,11 @@ setTimeout(() => {
           </div>
 
           <h1>
-            લોગિન કરો
+            {isHindi ? "लॉगिन करें" : "લોગિન કરો"}
           </h1>
 
           <p>
-            તમારા Bhagavad Gita
-            accountમાં પ્રવેશ કરો
+            {isHindi ? "अपने Bhagavad Gita खाते में प्रवेश करें" : "તમારા Bhagavad Gita accountમાં પ્રવેશ કરો"}
           </p>
 
         </div>
@@ -383,7 +384,7 @@ setTimeout(() => {
               id="email"
               type="email"
               name="email"
-              placeholder="તમારું Email ID"
+              placeholder={isHindi ? "आपका Email ID" : "તમારું Email ID"}
               value={formData.email}
               onChange={handleChange}
               autoComplete="email"
@@ -420,7 +421,7 @@ setTimeout(() => {
         : "password"
     }
     name="password"
-    placeholder="તમારો Password"
+    placeholder={isHindi ? "आपका Password" : "તમારો Password"}
     value={formData.password}
     onChange={handleChange}
     autoComplete="current-password"
@@ -436,13 +437,13 @@ setTimeout(() => {
     }
     aria-label={
       showPassword
-        ? "Password hide કરો"
-        : "Password show કરો"
+        ? (isHindi ? "Password छिपाएं" : "Password hide કરો")
+        : (isHindi ? "Password दिखाएं" : "Password show કરો")
     }
     title={
       showPassword
-        ? "Password hide કરો"
-        : "Password show કરો"
+        ? (isHindi ? "Password छिपाएं" : "Password hide કરો")
+        : (isHindi ? "Password दिखाएं" : "Password show કરો")
     }
   >
     {showPassword ? (
@@ -470,7 +471,7 @@ setTimeout(() => {
           <div className="forgot-password-link">
 
             <Link to="/forgot-password">
-              Password ભૂલી ગયા?
+              {isHindi ? "Password भूल गए?" : "Password ભૂલી ગયા?"}
             </Link>
 
           </div>
@@ -488,12 +489,12 @@ setTimeout(() => {
             {loading ? (
               <>
                 <Loader2 className="spinner btn-icon" size={18} />
-                Login થઈ રહ્યું છે...
+                {isHindi ? "Login हो रहा है..." : "Login થઈ રહ્યું છે..."}
               </>
             ) : (
               <>
                 <LogIn className="btn-icon" size={18} />
-                Login કરો
+                {isHindi ? "Login करें" : "Login કરો"}
               </>
             )}
           </button>
@@ -508,12 +509,11 @@ setTimeout(() => {
         <div className="auth-register">
 
           <span>
-            હજુ સુધી account
-            બનાવ્યું નથી?
+            {isHindi ? "अभी तक account नहीं बनाया?" : "હજુ સુધી account બનાવ્યું નથી?"}
           </span>
 
           <Link to="/register">
-            Register કરો
+            {isHindi ? "Register करें" : "Register કરો"}
           </Link>
 
         </div>
