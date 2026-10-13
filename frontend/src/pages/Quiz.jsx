@@ -150,7 +150,7 @@ function Quiz() {
           questionCount < 1
         ) {
           setError(
-            "Quiz question count યોગ્ય નથી."
+            isHindi ? "Quiz प्रश्न संख्या उचित नहीं है।" : "Quiz question count યોગ્ય નથી."
           );
 
           return;
@@ -185,7 +185,7 @@ function Quiz() {
           !isMahabharataQuiz
         ) {
           setError(
-            "Quiz category યોગ્ય રીતે પસંદ કરવામાં આવી નથી."
+            isHindi ? "Quiz श्रेणी उचित रूप से नहीं चुनी गई है।" : "Quiz category યોગ્ય રીતે પસંદ કરવામાં આવી નથી."
           );
 
           return;
@@ -299,7 +299,7 @@ function Quiz() {
         if (!response.ok) {
           throw new Error(
             data.message ||
-              "Quiz questions load થઈ શક્યા નથી."
+              isHindi ? "Quiz प्रश्न लोड नहीं हो सके।" : "Quiz questions load થઈ શક્યા નથી."
           );
         }
 
@@ -400,8 +400,8 @@ function Quiz() {
         ) {
           setError(
             isChapterQuiz
-              ? `અધ્યાય ${selectedChapter} માટે હાલમાં કોઈ quiz question ઉપલબ્ધ નથી.`
-              : "આ category માટે હાલમાં કોઈ quiz question ઉપલબ્ધ નથી."
+              ? (isHindi ? `अध्याय ${selectedChapter} के लिए वर्तमान में कोई quiz question उपलब्ध नहीं है।` : `અધ્યાય ${selectedChapter} માટે હાલમાં કોઈ quiz question ઉપલબ્ધ નથી.`)
+            : (isHindi ? "इस category के लिए वर्तमान में कोई quiz question उपलब्ध नहीं है।" : "આ category માટે હાલમાં કોઈ quiz question ઉપલબ્ધ નથી.")
           );
 
           return;
@@ -457,7 +457,7 @@ function Quiz() {
 
         setError(
           err.message ||
-            "Quiz load કરવામાં error આવ્યો."
+            isHindi ? "Quiz लोड करने में त्रुटि आई।" : "Quiz load કરવામાં error આવ્યો."
         );
 
       } finally {
@@ -948,7 +948,7 @@ function Quiz() {
       if (!response.ok) {
         throw new Error(
           data.message ||
-            "Quiz result save થઈ શક્યું નથી."
+            isHindi ? "Quiz परिणाम सहेजा नहीं जा सका।" : "Quiz result save થઈ શક્યું નથી."
         );
       }
 
@@ -992,30 +992,30 @@ function Quiz() {
 
       if (finalPercentage === 100) {
         triggered.push({
-          name: "અર્જુન દ્રષ્ટિ",
-          desc: "૧૦૦% પરફેક્ટ સ્કોર મેળવવા બદલ કાઉન્ટ વધ્યો!",
+          name: isHindi ? "अर्जुन दृष्टि" : "અર્જુન દ્રષ્ટિ",
+            desc: isHindi ? "100% परफेक्ट स्कोर प्राप्त करने पर काउंट बढ़ा!" : "૧૦૦% પરફેક્ટ સ્કોર મેળવવા બદલ કાઉન્ટ વધ્યો!",
         });
       }
 
       const allowedHalfTime = Math.max(15, questions.length * 15);
       if (finalPercentage >= 80 && durationSeconds <= allowedHalfTime) {
         triggered.push({
-          name: "ચપળ મતિ",
-          desc: "અડધા સમયમાં ૮૦%+ સ્કોર સાથે ઝડપી વિજય!",
+          name: isHindi ? "तीक्ष्ण मति" : "ચપળ મતિ",
+            desc: isHindi ? "आधे समय में 80%+ स्कोर के साथ त्वरित विजय!" : "અડધા સમયમાં ૮૦%+ સ્કોર સાથે ઝડપી વિજય!",
         });
       }
 
       if (categoryParam === "chapter" && finalPercentage >= 90) {
         triggered.push({
-          name: "વિજયી પંથ",
-          desc: `અધ્યાય ${chapterParam || ""} ની ક્વિઝમાં ૯૦%+ ગુણ પ્રાપ્ત કર્યા!`,
+          name: isHindi ? "विजयी पथ" : "વિજયી પંથ",
+            desc: isHindi ? `अध्याय ${chapterParam || ""} की क्विज़ में 90%+ अंक प्राप्त किए!` : `અધ્યાય ${chapterParam || ""} ની ક્વિઝમાં ૯૦%+ ગુણ પ્રાપ્ત કર્યા!`,
         });
       }
 
       if (categoryParam === "mahabharata" && finalPercentage >= 85) {
         triggered.push({
-          name: "મહાભારત મહારથી",
-          desc: "મહાભારત ક્વિઝમાં ૮૫%+ સ્કોર સાથે વિજય!",
+          name: isHindi ? "महाभारत महारथी" : "મહાભારત મહારથી",
+            desc: isHindi ? "महाभारत क्विज़ में 85%+ स्कोर के साथ विजय!" : "મહાભારત ક્વિઝમાં ૮૫%+ સ્કોર સાથે વિજય!",
         });
       }
 
@@ -1024,8 +1024,8 @@ function Quiz() {
       const timeInMins = currentHour * 60 + currentMin;
       if (finalPercentage >= 80 && timeInMins >= 300 && timeInMins <= 510) {
         triggered.push({
-          name: "બ્રહ્મ મુહૂર્ત સાધક",
-          desc: "સવારના પાવન સમયે ૮૦%+ સ્કોર પ્રાપ્ત!",
+          name: isHindi ? "ब्रह्म मुहूर्त साधक" : "બ્રહ્મ મુહૂર્ત સાધક",
+            desc: isHindi ? "सुबह के पावन समय में 80%+ स्कोर प्राप्त!" : "સવારના પાવન સમયે ૮૦%+ સ્કોર પ્રાપ્ત!",
         });
       }
 
@@ -1047,7 +1047,7 @@ function Quiz() {
 
       setError(
         err.message ||
-          "Quiz result save કરવામાં error આવ્યો."
+          isHindi ? "Quiz परिणाम सहेजने में त्रुटि आई।" : "Quiz result save કરવામાં error આવ્યો."
       );
 
     } finally {
@@ -1109,9 +1109,7 @@ function Quiz() {
             <AlertCircle size={40} color="#ef4444" />
           </div>
 
-          <h2>
-            કંઈક સમસ્યા આવી
-          </h2>
+          <h2>{isHindi ? "कुछ समस्या आई" : "કંઈક સમસ્યા આવી"}</h2>
 
           <p>
             {error}
@@ -1123,7 +1121,7 @@ function Quiz() {
               type="button"
               onClick={retryQuiz}
             >
-              <RefreshCw size={15} className="btn-icon" /> ફરી પ્રયાસ કરો
+              <RefreshCw size={15} className="btn-icon" /> {isHindi ? "पुनः प्रयास करें" : "ફરી પ્રયાસ કરો"}
             </button>
 
             <button
@@ -1157,14 +1155,9 @@ function Quiz() {
             <BookOpen size={40} color="#2563eb" />
           </div>
 
-          <h2>
-            Quiz ઉપલબ્ધ નથી
-          </h2>
+          <h2>{isHindi ? "Quiz उपलब्ध नहीं है" : "Quiz ઉપલબ્ધ નથી"}</h2>
 
-          <p>
-            આ category માટે હાલમાં
-            કોઈ question ઉપલબ્ધ નથી.
-          </p>
+          <p>{isHindi ? "इस category के लिए वर्तमान में कोई question उपलब्ध नहीं है।" : "આ category માટે હાલમાં કોઈ question ઉપલબ્ધ નથી."}</p>
 
           <button
             type="button"
@@ -1221,52 +1214,41 @@ function Quiz() {
     let resultMessage = "";
     let resultSuggestion = "";
 
-    if (
-      percentage === 100
-    ) {
-      resultMessage =
-        "અદ્ભુત! 🎉 તમે બધા પ્રશ્નોના સાચા જવાબ આપ્યા.";
-
-      resultSuggestion =
-        "તમારી તૈયારી ખૂબ જ સરસ છે! આ જ રીતે આગળ વધતા રહો. 🌟";
-    }
-
-    else if (
-      percentage >= 80
-    ) {
-      resultMessage =
-        "ખૂબ સરસ! 👏 તમે ખૂબ સારું પ્રદર્શન કર્યું.";
-
-      resultSuggestion =
-        "થોડી વધુ પ્રેક્ટિસથી તમે 100% મેળવી શકો છો. 💪";
-    }
-
-    else if (
-      percentage >= 60
-    ) {
-      resultMessage =
-        "સારું પ્રદર્શન! 👍";
-
-      resultSuggestion =
-        "થોડી વધુ પ્રેક્ટિસ કરો અને તમારા સ્કોરને વધુ સારો બનાવો. 📖";
-    }
-
-    else if (
-      percentage >= 40
-    ) {
-      resultMessage =
-        "સારો પ્રયાસ! 😊";
-
-      resultSuggestion =
-        "જે પ્રશ્નોમાં ભૂલ થઈ છે તેનો ફરી અભ્યાસ કરો અને ફરી Quiz આપો. 📚";
-    }
-
-    else {
-      resultMessage =
-        "ચિંતા ન કરો! 😊 તમે Quiz પૂર્ણ કરી છે.";
-
-      resultSuggestion =
-        "વધુ ખોટા જવાબ આવ્યા છે. ફરીથી અભ્યાસ કરો અને ફરી Quiz આપો. 💪📖";
+    if (percentage === 100) {
+      resultMessage = isHindi
+        ? "अद्भुत! 🎉 आपने सभी प्रश्नों के सही उत्तर दिए।"
+        : "અદ્ભુત! 🎉 તમે બધા પ્રશ્નોના સાચા જવાબ આપ્યા.";
+      resultSuggestion = isHindi
+        ? "आपकी तैयारी अत्यंत उत्तम है! इसी तरह आगे बढ़ते रहें। 🌟"
+        : "તમારી તૈયારી ખૂબ જ સરસ છે! આ જ રીતે આગળ વધતા રહો. 🌟";
+    } else if (percentage >= 80) {
+      resultMessage = isHindi
+        ? "बहुत बढ़िया! 👏 आपने बहुत अच्छा प्रदर्शन किया।"
+        : "ખૂબ સરસ! 👏 તમે ખૂબ સારું પ્રદર્શન કર્યું.";
+      resultSuggestion = isHindi
+        ? "थोड़े और अभ्यास से आप 100% प्राप्त कर सकते हैं। 💪"
+        : "થોડી વધુ પ્રેક્ટિસથી તમે 100% મેળવી શકો છો. 💪";
+    } else if (percentage >= 60) {
+      resultMessage = isHindi
+        ? "अच्छा प्रदर्शन! 👍"
+        : "સારું પ્રદર્શન! 👍";
+      resultSuggestion = isHindi
+        ? "थोड़ा और अभ्यास करें और अपने स्कोर को और बेहतर बनाएं। 📖"
+        : "થોડી વધુ પ્રેક્ટિસ કરો અને તમારા સ્કોરને વધુ સારો બનાવો. 📖";
+    } else if (percentage >= 40) {
+      resultMessage = isHindi
+        ? "अच्छा प्रयास! 😊"
+        : "સારો પ્રયાસ! 😊";
+      resultSuggestion = isHindi
+        ? "जिन प्रश्नों में भूल हुई है उनका पुनः अध्ययन करें और फिर से Quiz दें। 📚"
+        : "જે પ્રશ્નોમાં ભૂલ થઈ છે તેનો ફરી અભ્યાસ કરો અને ફરી Quiz આપો. 📚";
+    } else {
+      resultMessage = isHindi
+        ? "चिंता न करें! 😊 आपने Quiz पूर्ण कर ली है।"
+        : "ચિંતા ન કરો! 😊 તમે Quiz પૂર્ણ કરી છે.";
+      resultSuggestion = isHindi
+        ? "अधिक गलत उत्तर हुए हैं। पुनः अध्ययन करें और फिर से Quiz दें। 💪📖"
+        : "વધુ ખોટા જવાબ આવ્યા છે. ફરીથી અભ્યાસ કરો અને ફરી Quiz આપો. 💪📖";
     }
 
     return (
@@ -1278,9 +1260,7 @@ function Quiz() {
             <Trophy size={48} color="#2563eb" />
           </div>
 
-          <h1 className="quiz-result-title">
-            Quiz પૂર્ણ થયું!
-          </h1>
+          <h1 className="quiz-result-title">{isHindi ? "Quiz पूर्ण हुआ!" : "Quiz પૂર્ણ થયું!"}</h1>
 
           <p className="quiz-result-message">
             {resultMessage}
@@ -1314,9 +1294,7 @@ function Quiz() {
                 {correctCount}
               </strong>
 
-              <span>
-                સાચા
-              </span>
+              <span>{isHindi ? "सही" : "સાચા"}</span>
 
             </div>
 
@@ -1326,9 +1304,7 @@ function Quiz() {
                 {wrongCount}
               </strong>
 
-              <span>
-                ખોટા
-              </span>
+              <span>{isHindi ? "गलत" : "ખોટા"}</span>
 
             </div>
 
@@ -1338,9 +1314,7 @@ function Quiz() {
                 {unansweredCount}
               </strong>
 
-              <span>
-                છોડેલા
-              </span>
+              <span>{isHindi ? "छोड़े गए" : "છોડેલા"}</span>
 
             </div>
 
@@ -1354,7 +1328,7 @@ function Quiz() {
             <div className="quiz-earned-badges-banner">
               <div className="quiz-earned-badges-header">
                 <Award size={18} />
-                <span>નવી સિદ્ધિ / બેજ અપડેટ!</span>
+                <span>{isHindi ? "नई उपलब्धि / बैज अपडेट!" : "નવી સિદ્ધિ / બેજ અપડેટ!"}</span>
               </div>
               <div className="quiz-earned-badges-list">
                 {earnedBadges.map((b, idx) => (
@@ -1372,7 +1346,7 @@ function Quiz() {
               type="button"
               onClick={retryQuiz}
             >
-              <RefreshCw size={15} className="btn-icon" /> ફરી Quiz આપો
+              <RefreshCw size={15} className="btn-icon" /> {isHindi ? "पुनः Quiz दें" : "ફરી Quiz આપો"}
             </button>
 
             <button
@@ -1380,7 +1354,7 @@ function Quiz() {
               className="quiz-achievements-btn"
               onClick={() => navigate("/quiz-achievements")}
             >
-              <Award size={15} className="btn-icon" /> ક્વિઝ સિદ્ધિઓ જુઓ
+              <Award size={15} className="btn-icon" /> {isHindi ? "क्विज़ उपलब्धियां देखें" : "ક્વિઝ સિદ્ધિઓ જુઓ"}
             </button>
 
             <button
@@ -1432,8 +1406,7 @@ function Quiz() {
       "chapter" &&
     chapterParam
   ) {
-    quizTitle =
-      `અધ્યાય ${chapterParam}`;
+    quizTitle = isHindi ? `अध्याय ${chapterParam}` : `અધ્યાય ${chapterParam}`;
   }
 
   if (
@@ -1469,9 +1442,7 @@ function Quiz() {
 
           <div>
 
-            <span>
-              ભગવદ્ ગીતા Quiz
-            </span>
+            <span>{isHindi ? "भगवद् गीता Quiz" : "ભગવદ્ ગીતા Quiz"}</span>
 
             <h1>
               {quizTitle}
@@ -1495,8 +1466,7 @@ function Quiz() {
 
         <div className="quiz-progress-info">
 
-          <span>
-            પ્રશ્ન{" "}
+          <span>{isHindi ? "प्रश्न" : "પ્રશ્ન"}{" "}
             {currentQuestion + 1}
             {" / "}
             {questions.length}
@@ -1531,16 +1501,11 @@ function Quiz() {
 
       <section className="quiz-question-card">
 
-        <div className="quiz-question-number">
-          પ્રશ્ન{" "}
-          {currentQuestion + 1}
-        </div>
+        <div className="quiz-question-number">{isHindi ? "प्रश्न" : "પ્રશ્ન"} {currentQuestion + 1}</div>
 
         <h2 className="quiz-question-text">
 
-          {question.question ||
-            question.questionText ||
-            "Question ઉપલબ્ધ નથી."}
+          {(isHindi && (question.questionHi || question.questionTextHi)) || question.question || question.questionText || (isHindi ? "प्रश्न उपलब्ध नहीं है।" : "Question ઉપલબ્ધ નથી.")}
 
         </h2>
 
@@ -1685,23 +1650,20 @@ function Quiz() {
 
               <>
                 <strong>
-                  <Check size={15} className="btn-icon" /> સાચો જવાબ!
+                  <Check size={15} className="btn-icon" /> {isHindi ? "सही उत्तर!" : "સાચો જવાબ!"}
                 </strong>
 
-                <span>
-                  ખૂબ સરસ!
-                </span>
+                <span>{isHindi ? "बहुत बढ़िया!" : "ખૂબ સરસ!"}</span>
               </>
 
             ) : (
 
               <>
                 <strong>
-                  <X size={15} className="btn-icon" /> ખોટો જવાબ
+                  <X size={15} className="btn-icon" /> {isHindi ? "गलत उत्तर" : "ખોટો જવાબ"}
                 </strong>
 
-                <span>
-                  સાચો જવાબ:{" "}
+                <span>{isHindi ? "सही उत्तर: " : "સાચો જવાબ: "}
                   <b>
                     {
                       question.correctAnswer
@@ -1724,13 +1686,11 @@ function Quiz() {
           <div className="quiz-explanation">
 
             <div className="quiz-explanation-title">
-              <Lightbulb size={15} className="btn-icon" /> સમજણ
+              <Lightbulb size={15} className="btn-icon" /> {isHindi ? "व्याख्या" : "સમજણ"}
             </div>
 
             <div className="quiz-explanation-text">
-              {question.explanation ||
-                question.explanationText ||
-                "આ પ્રશ્ન માટે કોઈ સમજણ ઉપલબ્ધ નથી."}
+              {(isHindi && question.explanationHi) || question.explanation || question.explanationText || (isHindi ? "इस प्रश्न के लिए कोई व्याख्या उपलब्ध नहीं है।" : "આ પ્રશ્ન માટે કોઈ સમજણ ઉપલબ્ધ નથી.")}
             </div>
 
           </div>
@@ -1754,7 +1714,7 @@ function Quiz() {
               submitting
             }
           >
-            <ChevronLeft size={16} className="btn-icon" /> પાછલો પ્રશ્ન
+            <ChevronLeft size={16} className="btn-icon" /> {isHindi ? "पिछला प्रश्न" : "પાછલો પ્રશ્ન"}
           </button>
 
           <button

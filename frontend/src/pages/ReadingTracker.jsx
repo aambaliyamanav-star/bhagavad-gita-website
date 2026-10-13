@@ -476,8 +476,8 @@ function ReadingTracker() {
                 const isCompleted = read >= item.shlokas;
                 const isInProgress = read > 0 && !isCompleted;
                 const chapterTitle = isHindi
-                  ? (CHAPTER_NAMES[item.chapter]?.nameHi || item.name)
-                  : item.name;
+                  ? (CHAPTER_NAMES?.[item.chapter]?.nameHi || CHAPTER_NAMES?.[item.chapter]?.hi || item.name)
+                  : (CHAPTER_NAMES?.[item.chapter]?.name || CHAPTER_NAMES?.[item.chapter]?.gu || item.name);
 
                 return (
                   <div

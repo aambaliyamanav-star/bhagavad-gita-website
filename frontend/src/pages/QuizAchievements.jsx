@@ -158,7 +158,7 @@ export default function QuizAchievements() {
 
           <div className="qa-header-title-box">
             <span className="qa-sacred-subtitle">॥ सिद्धिर्भवति कर्मजा ॥</span>
-            <h1 className="qa-main-title">ક્વિઝ સિદ્ધિઓ અને સન્માન</h1>
+            <h1 className="qa-main-title">{isHindi ? "क्विज़ उपलब्धियां एवं सम्मान" : "ક્વિઝ સિદ્ધિઓ અને સન્માન"}</h1>
           </div>
         </header>
 
@@ -172,7 +172,7 @@ export default function QuizAchievements() {
               <span className="qa-stat-value">
                 {stats.totalBadgesUnlocked} / {stats.totalBadgesCount}
               </span>
-              <span className="qa-stat-label">કુલ અનલૉક બેજ</span>
+              <span className="qa-stat-label">{isHindi ? "कुल अनलॉक बैज" : "કુલ અનલૉક બેજ"}</span>
             </div>
           </div>
 
@@ -182,7 +182,7 @@ export default function QuizAchievements() {
             </div>
             <div className="qa-stat-details">
               <span className="qa-stat-value">×{stats.totalMultipliersEarned}</span>
-              <span className="qa-stat-label">મલ્ટિપ્લાયર કાઉન્ટ</span>
+              <span className="qa-stat-label">{isHindi ? "मल्टीप्लायर काउंट" : "મલ્ટિપ્લાયર કાઉન્ટ"}</span>
             </div>
           </div>
 
@@ -192,7 +192,7 @@ export default function QuizAchievements() {
             </div>
             <div className="qa-stat-details">
               <span className="qa-stat-value">{stats.totalQuizzes}</span>
-              <span className="qa-stat-label">કુલ આપેલ ક્વિઝ</span>
+              <span className="qa-stat-label">{isHindi ? "कुल दी गई क्विज़" : "કુલ આપેલ ક્વિઝ"}</span>
             </div>
           </div>
 
@@ -202,7 +202,7 @@ export default function QuizAchievements() {
             </div>
             <div className="qa-stat-details">
               <span className="qa-stat-value">{stats.totalCorrect}</span>
-              <span className="qa-stat-label">કુલ સાચા ઉત્તરો</span>
+              <span className="qa-stat-label">{isHindi ? "कुल सही उत्तर" : "કુલ સાચા ઉત્તરો"}</span>
             </div>
           </div>
         </section>
@@ -214,28 +214,28 @@ export default function QuizAchievements() {
             className={`qa-tab-btn ${activeTab === "all" ? "active" : ""}`}
             onClick={() => setActiveTab("all")}
           >
-            તમામ સિદ્ધિઓ ({badges.length})
+            {isHindi ? "सभी उपलब्धियां" : "તમામ સિદ્ધિઓ"} ({badges.length})
           </button>
           <button
             type="button"
             className={`qa-tab-btn ${activeTab === "multiplier" ? "active" : ""}`}
             onClick={() => setActiveTab("multiplier")}
           >
-            કાઉન્ટ વાળા બેજ ({multiplierCount})
+            {isHindi ? "काउंट वाले बैज" : "કાઉન્ટ વાળા બેજ"} ({multiplierCount})
           </button>
           <button
             type="button"
             className={`qa-tab-btn ${activeTab === "milestone" ? "active" : ""}`}
             onClick={() => setActiveTab("milestone")}
           >
-            માઈલસ્ટોન સિદ્ધિઓ ({milestoneCount})
+            {isHindi ? "माइलस्टोन उपलब्धियां" : "માઈલસ્ટોન સિદ્ધિઓ"} ({milestoneCount})
           </button>
           <button
             type="button"
             className={`qa-tab-btn ${activeTab === "unlocked" ? "active" : ""}`}
             onClick={() => setActiveTab("unlocked")}
           >
-            પ્રાપ્ત કરેલ ({stats.totalBadgesUnlocked})
+            {isHindi ? "प्राप्त की गई" : "પ્રાપ્ત કરેલ"} ({stats.totalBadgesUnlocked})
           </button>
         </nav>
 
@@ -257,7 +257,7 @@ export default function QuizAchievements() {
               className="qa-retry-btn"
               onClick={fetchAchievements}
             >
-              <RefreshCw size={16} /> ફરી પ્રયાસ કરો
+              <RefreshCw size={16} /> {isHindi ? "पुनः प्रयास करें" : "ફરી પ્રયાસ કરો"}
             </button>
           </div>
         )}
@@ -279,7 +279,7 @@ export default function QuizAchievements() {
                   {/* Top Badge Action & Tag */}
                   <div className="qa-badge-top-row">
                     <div className="qa-badge-type-tag">
-                      {isMultiplier ? "કાઉન્ટ બેજ" : "માઈલસ્ટોન"}
+                      {isMultiplier ? (isHindi ? "काउंट बैज" : "કાઉન્ટ બેજ") : (isHindi ? "माइलस्टोन" : "માઈલસ્ટોન")}
                     </div>
 
                     {isMultiplier ? (
@@ -287,11 +287,7 @@ export default function QuizAchievements() {
                         className={`qa-multiplier-pill ${
                           isUnlocked ? "active" : "inactive"
                         }`}
-                        title={
-                          isUnlocked
-                            ? `આ બેજ ${badge.count} વખત મેળવ્યો છે`
-                            : "હજી સુધી પ્રાપ્ત થયું નથી"
-                        }
+                        title={isUnlocked ? (isHindi ? `यह बैज ${badge.count} बार प्राप्त हुआ है` : `આ બેજ ${badge.count} વખત મેળવ્યો છે`) : (isHindi ? "अभी तक प्राप्त नहीं हुआ" : "હજી સુધી પ્રાપ્ત થયું નથી")}
                       >
                         {isUnlocked ? `×${badge.count}` : "×૦"}
                       </div>
@@ -304,12 +300,12 @@ export default function QuizAchievements() {
                         {isUnlocked ? (
                           <>
                             <CheckCircle2 size={13} />
-                            <span>પૂર્ણ</span>
+                            <span>{isHindi ? "पूर्ण" : "પૂર્ણ"}</span>
                           </>
                         ) : (
                           <>
                             <Lock size={12} />
-                            <span>પ્રગતિમાં</span>
+                            <span>{isHindi ? "प्रगति में" : "પ્રગતિમાં"}</span>
                           </>
                         )}
                       </div>
@@ -336,25 +332,21 @@ export default function QuizAchievements() {
 
                   {/* Badge Info - 100% Clear & Unblocked */}
                   <div className="qa-badge-info">
-                    <h3 className="qa-badge-title">{badge.title}</h3>
-                    <p className="qa-badge-description">
-                      {badge.description}
-                    </p>
+                    <h3 className="qa-badge-title">{(isHindi && badge.titleHi) ? badge.titleHi : badge.title}</h3>
+                    <p className="qa-badge-description">{(isHindi && badge.descriptionHi) ? badge.descriptionHi : badge.description}</p>
                   </div>
 
                   {/* Footer: Multiplier Count Status OR Milestone Progress Bar */}
                   <div className="qa-badge-footer">
                     {isMultiplier ? (
                       <div className="qa-multiplier-footer">
-                        <span className="qa-criteria-text">
-                          {badge.conditionText}
-                        </span>
+                        <span className="qa-criteria-text">{(isHindi && badge.conditionTextHi) ? badge.conditionTextHi : badge.conditionText}</span>
                         <span className="qa-count-summary">
                           {isUnlocked ? (
-                            <strong>કુલ {badge.count} વખત પ્રાપ્ત</strong>
+                            <strong>{isHindi ? `कुल ${badge.count} बार प्राप्त` : `કુલ ${badge.count} વખત પ્રાપ્ત`}</strong>
                           ) : (
                             <span className="qa-locked-text">
-                              <Lock size={12} /> અનલોક કરવા ક્વિઝ રમો
+                              <Lock size={12} /> {isHindi ? "अनलॉक करने के लिए क्विज़ खेलें" : "અનલોક કરવા ક્વિઝ રમો"}
                             </span>
                           )}
                         </span>
@@ -366,8 +358,7 @@ export default function QuizAchievements() {
                             {badge.conditionText}
                           </span>
                           <span className="qa-progress-numbers">
-                            {badge.currentProgress} / {badge.target}{" "}
-                            {badge.targetUnit}
+                            {badge.currentProgress} / {badge.target}{" "}{(isHindi && badge.targetUnitHi) ? badge.targetUnitHi : badge.targetUnit}
                           </span>
                         </div>
                         <div className="qa-progress-track">
