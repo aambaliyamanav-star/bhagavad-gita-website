@@ -29,6 +29,14 @@ const wordMeaningSchema = new mongoose.Schema(
       default: "",
       trim: true,
     },
+
+    // English meaning
+    // Auto-translated or entered in English
+    meaningEn: {
+      type: String,
+      default: "",
+      trim: true,
+    },
   },
   {
     _id: true,
@@ -64,6 +72,12 @@ const shlokSchema = new mongoose.Schema(
       trim: true,
     },
 
+    chapterNameEn: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
     // =================================================
     // SHLOK NUMBER
     // =================================================
@@ -85,6 +99,12 @@ const shlokSchema = new mongoose.Schema(
     },
 
     speakerHi: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    speakerEn: {
       type: String,
       default: "",
       trim: true,
@@ -154,6 +174,16 @@ const shlokSchema = new mongoose.Schema(
     },
 
     // =================================================
+    // FULL ENGLISH TRANSLATION
+    // =================================================
+
+    translationEn: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    // =================================================
     // MESSAGE / EXPLANATION (GUJARATI)
     // =================================================
 
@@ -168,6 +198,16 @@ const shlokSchema = new mongoose.Schema(
     // =================================================
 
     messageHi: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    // =================================================
+    // MESSAGE / EXPLANATION (ENGLISH)
+    // =================================================
+
+    messageEn: {
       type: String,
       default: "",
       trim: true,

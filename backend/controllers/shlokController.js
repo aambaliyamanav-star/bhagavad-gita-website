@@ -1,5 +1,8 @@
 const Shlok = require("../models/Shlok");
-const { translateShlokToHindi } = require("../services/translationService");
+const {
+  translateShlokToHindi,
+  translateShlokToEnglish,
+} = require("../services/translationService");
 
 // =====================================================
 // CLEAN WORD
@@ -130,6 +133,9 @@ const prepareWordMeanings = (
         const submittedMeaningHi =
           submittedByIndex.meaningHi ? submittedByIndex.meaningHi.trim() : "";
 
+        const submittedMeaningEn =
+          submittedByIndex.meaningEn ? submittedByIndex.meaningEn.trim() : "";
+
         if (submittedWord) {
           result.push({
             word: submittedWord,
@@ -137,6 +143,8 @@ const prepareWordMeanings = (
               submittedMeaning,
             meaningHi:
               submittedMeaningHi,
+            meaningEn:
+              submittedMeaningEn,
           });
 
           return;
@@ -165,6 +173,9 @@ const prepareWordMeanings = (
           meaningHi:
             oldByOriginalWord.meaningHi ||
             "",
+          meaningEn:
+            oldByOriginalWord.meaningEn ||
+            "",
         });
 
         return;
@@ -190,6 +201,10 @@ const prepareWordMeanings = (
           meaningHi:
             oldByIndex.meaningHi ||
             "",
+
+          meaningEn:
+            oldByIndex.meaningEn ||
+            "",
         });
 
         return;
@@ -203,6 +218,7 @@ const prepareWordMeanings = (
         word: detectedWord,
         meaning: "",
         meaningHi: "",
+        meaningEn: "",
       });
     }
   );
@@ -238,6 +254,8 @@ const prepareWordMeanings = (
             submittedItem.meaning.trim(),
           meaningHi:
             String(submittedItem.meaningHi || "").trim(),
+          meaningEn:
+            String(submittedItem.meaningEn || "").trim(),
         });
       }
     }
@@ -256,15 +274,19 @@ const addShlok = async (req, res) => {
       chapterNumber,
       chapterName,
       chapterNameHi,
+      chapterNameEn,
       shlokNumber,
       speaker,
       speakerHi,
+      speakerEn,
       sanskrit,
       wordMeanings,
       translation,
       translationHi,
+      translationEn,
       message,
       messageHi,
+      messageEn,
     } = req.body;
 
     if (
@@ -326,7 +348,30 @@ const addShlok = async (req, res) => {
         if (!messageHi) messageHi = auto.messageHi;
         preparedWordMeanings = auto.wordMeanings;
       } catch (err) {
-        console.warn("Auto-translate in addShlok failed:", err.message);
+        console.warn("Auto-translate Hindi in addShlok failed:", err.message);
+      }
+    }
+
+    // If English translation is missing, auto-translate automatically using Gemini AI
+    if (!translationEn || !messageEn) {
+      try {
+        const autoEn = await translateShlokToEnglish({
+          chapterNumber,
+          chapterName,
+          speaker,
+          sanskrit,
+          translation,
+          message,
+          wordMeanings: preparedWordMeanings,
+        });
+
+        if (!chapterNameEn) chapterNameEn = autoEn.chapterNameEn;
+        if (!speakerEn) speakerEn = autoEn.speakerEn;
+        if (!translationEn) translationEn = autoEn.translationEn;
+        if (!messageEn) messageEn = autoEn.messageEn;
+        preparedWordMeanings = autoEn.wordMeanings;
+      } catch (err) {
+        console.warn("Auto-translate English in addShlok failed:", err.message);
       }
     }
 
@@ -345,6 +390,11 @@ const addShlok = async (req, res) => {
             chapterNameHi || ""
           ).trim(),
 
+        chapterNameEn:
+          String(
+            chapterNameEn || ""
+          ).trim(),
+
         shlokNumber:
           Number(shlokNumber),
 
@@ -356,6 +406,11 @@ const addShlok = async (req, res) => {
         speakerHi:
           String(
             speakerHi || ""
+          ).trim(),
+
+        speakerEn:
+          String(
+            speakerEn || ""
           ).trim(),
 
         sanskrit:
@@ -376,6 +431,11 @@ const addShlok = async (req, res) => {
             translationHi || ""
           ).trim(),
 
+        translationEn:
+          String(
+            translationEn || ""
+          ).trim(),
+
         message:
           String(
             message
@@ -384,6 +444,11 @@ const addShlok = async (req, res) => {
         messageHi:
           String(
             messageHi || ""
+          ).trim(),
+
+        messageEn:
+          String(
+            messageEn || ""
           ).trim(),
       });
 
@@ -742,15 +807,19 @@ const updateShlok = async (
       chapterNumber,
       chapterName,
       chapterNameHi,
+      chapterNameEn,
       shlokNumber,
       speaker,
       speakerHi,
+      speakerEn,
       sanskrit,
       wordMeanings,
       translation,
       translationHi,
+      translationEn,
       message,
       messageHi,
+      messageEn,
     } = req.body;
 
     if (
@@ -831,7 +900,30 @@ const updateShlok = async (
         if (!messageHi) messageHi = auto.messageHi;
         preparedWordMeanings = auto.wordMeanings;
       } catch (err) {
-        console.warn("Auto-translate in updateShlok failed:", err.message);
+        console.warn("Auto-translate Hindi in updateShlok failed:", err.message);
+      }
+    }
+
+    // Auto-translate if English translation or message is missing
+    if (!translationEn || !messageEn) {
+      try {
+        const autoEn = await translateShlokToEnglish({
+          chapterNumber,
+          chapterName,
+          speaker,
+          sanskrit,
+          translation,
+          message,
+          wordMeanings: preparedWordMeanings,
+        });
+
+        if (!chapterNameEn) chapterNameEn = autoEn.chapterNameEn;
+        if (!speakerEn) speakerEn = autoEn.speakerEn;
+        if (!translationEn) translationEn = autoEn.translationEn;
+        if (!messageEn) messageEn = autoEn.messageEn;
+        preparedWordMeanings = autoEn.wordMeanings;
+      } catch (err) {
+        console.warn("Auto-translate English in updateShlok failed:", err.message);
       }
     }
 
@@ -856,6 +948,11 @@ const updateShlok = async (
                 chapterNameHi || ""
               ).trim(),
 
+            chapterNameEn:
+              String(
+                chapterNameEn || ""
+              ).trim(),
+
             shlokNumber:
               Number(
                 shlokNumber
@@ -869,6 +966,11 @@ const updateShlok = async (
             speakerHi:
               String(
                 speakerHi || ""
+              ).trim(),
+
+            speakerEn:
+              String(
+                speakerEn || ""
               ).trim(),
 
             sanskrit:
@@ -889,6 +991,11 @@ const updateShlok = async (
                 translationHi || ""
               ).trim(),
 
+            translationEn:
+              String(
+                translationEn || ""
+              ).trim(),
+
             message:
               String(
                 message
@@ -897,6 +1004,11 @@ const updateShlok = async (
             messageHi:
               String(
                 messageHi || ""
+              ).trim(),
+
+            messageEn:
+              String(
+                messageEn || ""
               ).trim(),
           },
         },
@@ -944,12 +1056,77 @@ const autoTranslateShlok = async (req, res) => {
       wordMeanings,
       translation,
       message,
+      targetLang,
     } = req.body;
 
     if (!translation || !sanskrit) {
       return res.status(400).json({
         success: false,
         message: "સંસ્કૃત શ્લોક અને ગુજરાતી અનુવાદ જરૂરી છે.",
+      });
+    }
+
+    if (targetLang === "en") {
+      const translated = await translateShlokToEnglish({
+        chapterNumber,
+        chapterName,
+        speaker,
+        sanskrit,
+        translation,
+        message,
+        wordMeanings: wordMeanings || [],
+      });
+
+      return res.status(200).json({
+        success: true,
+        data: translated,
+        translated,
+      });
+    }
+
+    if (targetLang === "all" || targetLang === "both") {
+      const [hiResult, enResult] = await Promise.all([
+        translateShlokToHindi({
+          chapterNumber,
+          chapterName,
+          speaker,
+          sanskrit,
+          translation,
+          message,
+          wordMeanings: wordMeanings || [],
+        }),
+        translateShlokToEnglish({
+          chapterNumber,
+          chapterName,
+          speaker,
+          sanskrit,
+          translation,
+          message,
+          wordMeanings: wordMeanings || [],
+        }),
+      ]);
+
+      const combinedWordMeanings = (wordMeanings || []).map((w, idx) => {
+        const hiItem = (hiResult.wordMeanings || [])[idx];
+        const enItem = (enResult.wordMeanings || [])[idx];
+        return {
+          word: w.word,
+          meaning: w.meaning,
+          meaningHi: hiItem?.meaningHi || w.meaningHi || "",
+          meaningEn: enItem?.meaningEn || w.meaningEn || "",
+        };
+      });
+
+      const mergedResult = {
+        ...hiResult,
+        ...enResult,
+        wordMeanings: combinedWordMeanings,
+      };
+
+      return res.status(200).json({
+        success: true,
+        data: mergedResult,
+        translated: mergedResult,
       });
     }
 

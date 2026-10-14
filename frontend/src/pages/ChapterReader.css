@@ -3475,3 +3475,119 @@ button:focus-visible {
 [data-theme="dark"] .read-timer-bar-wrap.timer-done .read-timer-label {
   color: #10b981;
 }
+
+/* =========================================================
+   SHLOKA READING LANGUAGE SELECTOR
+   Allows instant 1-click switching: Gujarati, Hindi, English
+   ========================================================= */
+
+.shloka-reading-lang-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 12px 0 16px;
+  padding: 8px 14px;
+  background: rgba(37, 99, 235, 0.05);
+  border: 1px solid rgba(37, 99, 235, 0.15);
+  border-radius: 14px;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+[data-theme="dark"] .shloka-reading-lang-bar {
+  background: rgba(30, 58, 138, 0.20);
+  border-color: rgba(96, 165, 250, 0.22);
+}
+
+.shloka-reading-lang-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #1e40af;
+  letter-spacing: 0.2px;
+}
+
+[data-theme="dark"] .shloka-reading-lang-title {
+  color: #93c5fd;
+}
+
+.shloka-reading-lang-pills {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.shloka-lang-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #334155;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.2, 0, 0, 1);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.shloka-lang-pill-btn:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  transform: translateY(-1px);
+}
+
+.shloka-lang-pill-btn.active {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  border-color: #1d4ed8;
+  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.35);
+  font-weight: 700;
+}
+
+.shloka-lang-pill-btn .pill-flag {
+  font-size: 0.95rem;
+}
+
+[data-theme="dark"] .shloka-lang-pill-btn {
+  background: #1e293b;
+  border-color: #334155;
+  color: #cbd5e1;
+}
+
+[data-theme="dark"] .shloka-lang-pill-btn:hover {
+  background: #334155;
+  border-color: #64748b;
+}
+
+[data-theme="dark"] .shloka-lang-pill-btn.active {
+  background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+  color: #ffffff;
+  border-color: #60a5fa;
+  box-shadow: 0 3px 12px rgba(59, 130, 246, 0.45);
+}
+
+@media (max-width: 600px) {
+  .shloka-reading-lang-bar {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 10px 12px;
+  }
+  .shloka-reading-lang-pills {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .shloka-lang-pill-btn {
+    flex: 1 1 auto;
+    justify-content: center;
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+}

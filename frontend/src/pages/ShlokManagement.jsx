@@ -431,14 +431,19 @@ function ShlokManagement() {
         "અર્જુનવિષાદ યોગ",
       chapterNameHi:
         "अर्जुनविषाद योग",
+      chapterNameEn:
+        "Arjuna Vishada Yoga",
       shlokNumber: "",
       speaker: "",
       speakerHi: "",
+      speakerEn: "",
       sanskrit: "",
       translation: "",
       translationHi: "",
+      translationEn: "",
       message: "",
       messageHi: "",
+      messageEn: "",
     });
 
   /* =====================================================
@@ -492,6 +497,27 @@ function ShlokManagement() {
     16: "दैवासुरसम्पद्विभाग योग",
     17: "श्रद्धात्रयविभाग योग",
     18: "मोक्षसंन्यास योग",
+  };
+
+  const chapterNamesEn = {
+    1: "Arjuna Vishada Yoga",
+    2: "Sankhya Yoga",
+    3: "Karma Yoga",
+    4: "Jnana Karma Sanyasa Yoga",
+    5: "Karma Sanyasa Yoga",
+    6: "Atma Samyama Yoga",
+    7: "Jnana Vijnana Yoga",
+    8: "Akshara Brahma Yoga",
+    9: "Raja Vidya Raja Guhya Yoga",
+    10: "Vibhuti Yoga",
+    11: "Vishwarupa Darshana Yoga",
+    12: "Bhakti Yoga",
+    13: "Kshetra Kshetrajna Vibhaga Yoga",
+    14: "Gunatraya Vibhaga Yoga",
+    15: "Purushottama Yoga",
+    16: "Daivasura Sampad Vibhaga Yoga",
+    17: "Shraddhatraya Vibhaga Yoga",
+    18: "Moksha Sanyasa Yoga",
   };
 
   /* =====================================================
@@ -636,6 +662,10 @@ function ShlokManagement() {
           chapterNamesHi[
             chapterNumber
           ] || "",
+        chapterNameEn:
+          chapterNamesEn[
+            chapterNumber
+          ] || "",
       })
     );
 
@@ -674,14 +704,21 @@ function ShlokManagement() {
         chapterNamesHi[
           chapterNumber
         ] || "",
+      chapterNameEn:
+        chapterNamesEn[
+          chapterNumber
+        ] || "",
       shlokNumber: "",
       speaker: "",
       speakerHi: "",
+      speakerEn: "",
       sanskrit: "",
       translation: "",
       translationHi: "",
+      translationEn: "",
       message: "",
       messageHi: "",
+      messageEn: "",
     });
 
     setWordMeanings([]);
@@ -757,6 +794,10 @@ function ShlokManagement() {
                   meaningHi:
                     samePosition.meaningHi ||
                     "",
+
+                  meaningEn:
+                    samePosition.meaningEn ||
+                    "",
                 };
               }
 
@@ -799,6 +840,12 @@ function ShlokManagement() {
                       oldIndex
                     ].meaningHi ||
                     "",
+
+                  meaningEn:
+                    currentWords[
+                      oldIndex
+                    ].meaningEn ||
+                    "",
                 };
               }
 
@@ -807,6 +854,7 @@ function ShlokManagement() {
                 word,
                 meaning: "",
                 meaningHi: "",
+                meaningEn: "",
               };
             }
           );
@@ -873,6 +921,7 @@ function ShlokManagement() {
           word: "",
           meaning: "",
           meaningHi: "",
+          meaningEn: "",
         },
       ]
     );
@@ -967,7 +1016,7 @@ function ShlokManagement() {
      AUTO TRANSLATE VIA AI (GEMINI)
   ===================================================== */
 
-  const handleAutoTranslate = async () => {
+  const handleAutoTranslate = async (targetLang = "all") => {
     try {
       setTranslating(true);
       setError("");
@@ -977,7 +1026,7 @@ function ShlokManagement() {
 
       if (!formData.translation?.trim() && !plainTranslation) {
         throw new Error(
-          "કૃપા કરીને પહેલાં ગુજરાતી અનુવાદ લખો જેથી AI તેનું હિન્દીમાં ઓટો-અનુવાદ કરી શકે."
+          "કૃપા કરીને પહેલાં ગુજરાતી અનુવાદ લખો જેથી AI તેનું હિન્દી અને અંગ્રેજીમાં ઓટો-અનુવાદ કરી શકે."
         );
       }
 
@@ -988,6 +1037,7 @@ function ShlokManagement() {
           word: item.word?.trim() || "",
           meaning: item.meaning?.trim() || "",
           meaningHi: item.meaningHi?.trim() || "",
+          meaningEn: item.meaningEn?.trim() || "",
         }))
         .filter((item) => item.word);
 
@@ -1005,6 +1055,7 @@ function ShlokManagement() {
           translation: formData.translation,
           message: formData.message,
           wordMeanings: cleanedWords,
+          targetLang: targetLang || "all",
         }),
       });
 
@@ -1030,12 +1081,22 @@ function ShlokManagement() {
           translated.chapterNameHi ||
           chapterNamesHi[prev.chapterNumber] ||
           prev.chapterNameHi,
+        chapterNameEn:
+          translated.chapterNameEn ||
+          chapterNamesEn[prev.chapterNumber] ||
+          prev.chapterNameEn,
         speakerHi:
           translated.speakerHi || prev.speakerHi,
+        speakerEn:
+          translated.speakerEn || prev.speakerEn,
         translationHi:
           translated.translationHi || prev.translationHi,
+        translationEn:
+          translated.translationEn || prev.translationEn,
         messageHi:
           translated.messageHi || prev.messageHi,
+        messageEn:
+          translated.messageEn || prev.messageEn,
       }));
 
       if (Array.isArray(translated.wordMeanings)) {
@@ -1053,15 +1114,23 @@ function ShlokManagement() {
                 matched?.meaningHi ||
                 item.meaningHi ||
                 "",
+              meaningEn:
+                matched?.meaningEn ||
+                item.meaningEn ||
+                "",
             };
           })
         );
       }
 
       setAutoTranslateSuccess(
-        "✨ ગુજરાતીમાંથી શુદ્ધ હિન્દીમાં સફળતાપૂર્વક ઓટો-અનુવાદ થઈ ગયું! સંસ્કૃત શ્લોક સુરક્ષિત છે."
+        "✨ ગુજરાતીમાંથી હિન્દી અને અંગ્રેજીમાં સફળતાપૂર્વક AI ઓટો-અનુવાદ થઈ ગયું! સંસ્કૃત શ્લોક સુરક્ષિત છે."
       );
-      setActiveLangTab("hi");
+      if (targetLang === "en") {
+        setActiveLangTab("en");
+      } else if (targetLang === "hi") {
+        setActiveLangTab("hi");
+      }
     } catch (err) {
       console.error("Auto translate error:", err);
       setError(
@@ -1143,6 +1212,10 @@ function ShlokManagement() {
               meaningHi:
                 item.meaningHi?.trim() ||
                 "",
+
+              meaningEn:
+                item.meaningEn?.trim() ||
+                "",
             }))
             .filter(
               (item) =>
@@ -1165,6 +1238,13 @@ function ShlokManagement() {
             ] ||
             formData.chapterName.trim(),
 
+          chapterNameEn:
+            formData.chapterNameEn?.trim() ||
+            chapterNamesEn[
+              Number(formData.chapterNumber)
+            ] ||
+            formData.chapterName.trim(),
+
           shlokNumber:
             Number(
               formData.shlokNumber
@@ -1175,6 +1255,10 @@ function ShlokManagement() {
 
           speakerHi:
             formData.speakerHi?.trim() ||
+            formData.speaker.trim(),
+
+          speakerEn:
+            formData.speakerEn?.trim() ||
             formData.speaker.trim(),
 
           sanskrit:
@@ -1190,11 +1274,19 @@ function ShlokManagement() {
             formData.translationHi ||
             "",
 
+          translationEn:
+            formData.translationEn ||
+            "",
+
           message:
             formData.message,
 
           messageHi:
             formData.messageHi ||
+            "",
+
+          messageEn:
+            formData.messageEn ||
             "",
         };
 
@@ -1265,14 +1357,24 @@ function ShlokManagement() {
               )
             ] || "",
 
+          chapterNameEn:
+            chapterNamesEn[
+              Number(
+                selectedChapter
+              )
+            ] || "",
+
           shlokNumber: "",
           speaker: "",
           speakerHi: "",
+          speakerEn: "",
           sanskrit: "",
           translation: "",
           translationHi: "",
+          translationEn: "",
           message: "",
           messageHi: "",
+          messageEn: "",
         });
 
         setWordMeanings([]);
@@ -1327,6 +1429,13 @@ function ShlokManagement() {
         ] ||
         "",
 
+      chapterNameEn:
+        shlok.chapterNameEn ||
+        chapterNamesEn[
+          shlok.chapterNumber
+        ] ||
+        "",
+
       shlokNumber:
         shlok.shlokNumber,
 
@@ -1335,6 +1444,9 @@ function ShlokManagement() {
 
       speakerHi:
         shlok.speakerHi || "",
+
+      speakerEn:
+        shlok.speakerEn || "",
 
       sanskrit:
         shlok.sanskrit || "",
@@ -1345,11 +1457,17 @@ function ShlokManagement() {
       translationHi:
         shlok.translationHi || "",
 
+      translationEn:
+        shlok.translationEn || "",
+
       message:
         shlok.message || "",
 
       messageHi:
         shlok.messageHi || "",
+
+      messageEn:
+        shlok.messageEn || "",
     });
 
     const existingWords =
@@ -1375,6 +1493,9 @@ function ShlokManagement() {
 
             meaningHi:
               item.meaningHi || "",
+
+            meaningEn:
+              item.meaningEn || "",
           })
         )
       );
@@ -1663,21 +1784,28 @@ function ShlokManagement() {
                   className={`admin-lang-tab ${activeLangTab === "hi" ? "active" : ""}`}
                   onClick={() => setActiveLangTab("hi")}
                 >
-                  🇮🇳 हिन्दी विवरण (Auto-Translated)
+                  🇮🇳 हिन्दी विवरण (Auto)
+                </button>
+                <button
+                  type="button"
+                  className={`admin-lang-tab ${activeLangTab === "en" ? "active" : ""}`}
+                  onClick={() => setActiveLangTab("en")}
+                >
+                  🇬🇧 English Details (Auto)
                 </button>
               </div>
 
               <button
                 type="button"
                 className="auto-translate-ai-btn"
-                onClick={handleAutoTranslate}
+                onClick={() => handleAutoTranslate("all")}
                 disabled={translating}
-                title="ગુજરાતી અનુવાદ અને સંદેશ પરથી AI દ્વારા આપોઆપ હિન્દી અનુવાદ કરો"
+                title="ગુજરાતી અનુવાદ અને સંદેશ પરથી AI દ્વારા આપોઆપ હિન્દી અને અંગ્રેજી અનુવાદ કરો"
               >
                 <Sparkles className={`btn-icon ${translating ? "spinning" : ""}`} size={16} />
                 {translating
-                  ? txt("AI હિન્દી અનુવાદ થઈ રહ્યું છે...", "AI हिन्दी अनुवाद हो रहा है...", "AI translating to Hindi...")
-                  : txt("✨ AI હિન્દી ઓટો-અનુવાદ (Auto-Translate)", "✨ AI हिन्दी ऑटो-अनुवाद (Auto-Translate)", "✨ AI Hindi Auto-Translate")}
+                  ? txt("AI અનુવાદ થઈ રહ્યું છે...", "AI अनुवाद हो रहा है...", "AI translating...")
+                  : txt("✨ AI બધી ભાષા ઓટો-અનુવાદ (Hindi & English)", "✨ AI सभी भाषा ऑटो-अनुवाद (Hindi & English)", "✨ AI Auto-Translate (Hindi & English)")}
               </button>
             </div>
 
@@ -2124,6 +2252,178 @@ function ShlokManagement() {
                       )
                     }
                     placeholder="श्लोक से मिलने वाला आध्यात्मिक संदेश..."
+                  />
+                </div>
+              </>
+            )}
+
+            {/* TAB CONTENT: ENGLISH */}
+            {activeLangTab === "en" && (
+              <>
+                <div className="sanskrit-shared-notice">
+                  ℹ️ <strong>સંસ્કૃત શ્લોક અને શબ્દો ત્રણેય ભાષા માટે એકસમાન (Pure Sanskrit) રહે છે.</strong><br/>
+                  તમારે ફરીથી સંસ્કૃત શ્લોક ઉમેરવાની જરૂર નથી. ઉપર આપેલા <strong>"✨ AI બધી ભાષા ઓટો-અનુવાદ"</strong> બટન પર ક્લિક કરવાથી બધા જ અર્થ, શબ્દાર્થ અને સંદેશ આપોઆપ English માં અનુવાદ થઈ જશે.
+                </div>
+
+                {/* ENGLISH SPEAKER */}
+                <div className="form-group">
+                  <label>
+                    Speaker (વક્તા - English)
+                  </label>
+
+                  <input
+                    type="text"
+                    name="speakerEn"
+                    value={
+                      formData.speakerEn
+                    }
+                    onChange={
+                      handleChange
+                    }
+                    placeholder="Example: The Blessed Lord said / Dhritarashtra said"
+                  />
+                </div>
+
+                {/* WORD-WISE ENGLISH MEANING */}
+                <div className="word-wise-section">
+                  <div className="word-wise-section-header">
+                    <div className="word-wise-title-area">
+                      <div className="word-wise-icon">
+                        <Type className="btn-icon" size={16} />
+                      </div>
+
+                      <div>
+                        <h3>
+                          Word-wise English Meaning (Sanskrit to English)
+                        </h3>
+
+                        <p>
+                          સંસ્કૃત શબ્દ સમાન રહે છે, અહીં તેનો અંગ્રેજી અર્થ AI દ્વારા આપોઆપ આવે છે અથવા તમે સુધારી શકો છો.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {wordMeanings.length === 0 ? (
+                    <div className="word-empty-box">
+                      <div className="word-empty-icon">
+                        🔤
+                      </div>
+
+                      <h3>
+                        પહેલાં સંસ્કૃત શ્લોક લખો જેથી શબ્દો દેખાય
+                      </h3>
+                    </div>
+                  ) : (
+                    <div className="word-meaning-list">
+                      {wordMeanings.map(
+                        (
+                          item,
+                          index
+                        ) => (
+                          <div
+                            className="word-meaning-row"
+                            key={
+                              item.id
+                            }
+                          >
+                            <div className="word-number">
+                              {index + 1}
+                            </div>
+
+                            <div className="word-input-group">
+                              <label>
+                                Sanskrit Word (Pure Sanskrit)
+                              </label>
+
+                              <input
+                                type="text"
+                                value={
+                                  item.word
+                                }
+                                readOnly
+                                placeholder="Sanskrit word"
+                                className="sanskrit-word-input"
+                                style={{ backgroundColor: "#fdf8ef" }}
+                              />
+                            </div>
+
+                            <div className="word-arrow">
+                              →
+                            </div>
+
+                            <div className="word-input-group">
+                              <label>
+                                English Meaning
+                              </label>
+
+                              <input
+                                type="text"
+                                value={
+                                  item.meaningEn || ""
+                                }
+                                onChange={(
+                                  event
+                                ) =>
+                                  updateWord(
+                                    item.id,
+                                    "meaningEn",
+                                    event.target.value
+                                  )
+                                }
+                                placeholder="Enter English meaning..."
+                                className="gujarati-word-input"
+                              />
+                            </div>
+                          </div>
+                        )
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                {/* ENGLISH TRANSLATION */}
+                <div className="form-group">
+                  <label>
+                    <BookOpen className="btn-icon" size={16} /> English Translation (અંગ્રેજી અનુવાદ)
+                  </label>
+
+                  <RichTextEditor
+                    value={
+                      formData.translationEn
+                    }
+                    onChange={(value) =>
+                      setFormData(
+                        (current) => ({
+                          ...current,
+                          translationEn:
+                            value,
+                        })
+                      )
+                    }
+                    placeholder="English translation of the sacred verse..."
+                  />
+                </div>
+
+                {/* ENGLISH MESSAGE */}
+                <div className="form-group">
+                  <label>
+                    <Sparkles className="btn-icon" size={16} /> English Divine Message / Commentary (અંગ્રેજી સંદેશ)
+                  </label>
+
+                  <RichTextEditor
+                    value={
+                      formData.messageEn
+                    }
+                    onChange={(value) =>
+                      setFormData(
+                        (current) => ({
+                          ...current,
+                          messageEn: value,
+                        })
+                      )
+                    }
+                    placeholder="Spiritual message and practical life commentary in English..."
                   />
                 </div>
               </>
