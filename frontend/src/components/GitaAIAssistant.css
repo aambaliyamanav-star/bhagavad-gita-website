@@ -115,6 +115,20 @@
   color: #ffd54f;
 }
 
+.gita-fab-ai-img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  border-radius: 10px;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.35));
+}
+
+.gita-ai-fab:hover .gita-fab-ai-img {
+  transform: scale(1.08);
+  filter: drop-shadow(0 4px 14px rgba(255, 215, 0, 0.6));
+}
+
 .gita-fab-gemini-icon,
 .gita-fab-bot-icon {
   color: #ffd54f;
@@ -232,21 +246,21 @@
 
 .gita-ai-avatar {
   position: relative;
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   border-radius: 10px;
-  background: rgba(255, 255, 255, 0.18);
-  border: 1px solid rgba(255, 255, 255, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ffd54f;
+  flex-shrink: 0;
 }
 
-.gita-ai-wrapper.dark .gita-ai-avatar {
-  background: rgba(80, 140, 255, 0.18);
-  border-color: rgba(80, 140, 255, 0.35);
-  color: #ffd54f;
+.gita-ai-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 10px;
+  filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
 }
 
 .gita-ai-online-dot {
@@ -459,16 +473,23 @@
 }
 
 .gita-msg-avatar {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   border-radius: 8px;
-  background: linear-gradient(135deg, #103264, #1b52a4);
-  color: #ffd54f;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
   margin-top: 2px;
+  background: transparent;
+}
+
+.gita-msg-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
 }
 
 .gita-msg-bubble {
@@ -2229,6 +2250,12 @@
     padding: 0;
     border-radius: 50%;
     aspect-ratio: 1 / 1;
+  }
+
+  .gita-fab-ai-img {
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
   }
 
   .gita-ai-overlay {
