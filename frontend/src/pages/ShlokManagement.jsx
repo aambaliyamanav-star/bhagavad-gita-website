@@ -564,15 +564,30 @@ function ShlokManagement() {
       setLoading(true);
       setError("");
 
+      const token =
+        getValidToken() ||
+        localStorage.getItem("token");
+
       const response =
         await fetch(
-          `${API_URL}/chapter/${chapterNumber}`
+          `${API_URL}/chapter/${chapterNumber}`,
+          {
+            headers: token
+              ? {
+                  Authorization: `Bearer ${token}`,
+                }
+              : {},
+          }
         );
 
       const data =
         await response.json();
 
       if (!response.ok) {
+        if (response.status === 401) {
+          handleAuth401();
+          return;
+        }
         throw new Error(
           data.message ||
             "Shlokas load થઈ શક્યા નથી."
