@@ -719,7 +719,7 @@ function Navbar() {
             >
               <Globe size={15} className="nav-lang-icon" />
               <span className="nav-lang-text">
-                {language === "en" ? "🇬🇧 English" : language === "hi" ? "🇮🇳 हिन्दी" : "🇬🇯 ગુજરાતી"}
+                {language === "en" ? "English" : language === "hi" ? "हिन्दी" : "ગુજરાતી"}
               </span>
             </button>
 
@@ -733,7 +733,6 @@ function Navbar() {
                     setLangMenuOpen(false);
                   }}
                 >
-                  <span className="lang-option-flag">🇬🇯</span>
                   <span className="lang-option-label">ગુજરાતી</span>
                   {language === "gu" && <Check size={14} className="lang-check" />}
                 </button>
@@ -745,7 +744,6 @@ function Navbar() {
                     setLangMenuOpen(false);
                   }}
                 >
-                  <span className="lang-option-flag">🇮🇳</span>
                   <span className="lang-option-label">हिन्दी</span>
                   {language === "hi" && <Check size={14} className="lang-check" />}
                 </button>
@@ -757,7 +755,6 @@ function Navbar() {
                     setLangMenuOpen(false);
                   }}
                 >
-                  <span className="lang-option-flag">🇬🇧</span>
                   <span className="lang-option-label">English</span>
                   {language === "en" && <Check size={14} className="lang-check" />}
                 </button>
@@ -1371,7 +1368,7 @@ function Navbar() {
                   setMenuOpen(false);
                 }}
               >
-                🇬🇯 ગુજરાતી
+                ગુજરાતી
               </button>
               <button
                 type="button"
@@ -1381,7 +1378,7 @@ function Navbar() {
                   setMenuOpen(false);
                 }}
               >
-                🇮🇳 हिन्दी
+                हिन्दी
               </button>
               <button
                 type="button"
@@ -1391,7 +1388,7 @@ function Navbar() {
                   setMenuOpen(false);
                 }}
               >
-                🇬🇧 English
+                English
               </button>
             </div>
           </div>

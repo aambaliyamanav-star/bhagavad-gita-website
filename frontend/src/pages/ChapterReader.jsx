@@ -1565,7 +1565,7 @@ const prepareSanskritLines = () => {
                 onClick={() => setLanguage("gu")}
                 title="ગુજરાતીમાં વાંચો"
               >
-                <span className="pill-flag">🇬🇯</span> ગુજરાતી
+                ગુજરાતી
               </button>
               <button
                 type="button"
@@ -1573,7 +1573,7 @@ const prepareSanskritLines = () => {
                 onClick={() => setLanguage("hi")}
                 title="हिन्दी में पढ़ें"
               >
-                <span className="pill-flag">🇮🇳</span> हिन्दी
+                हिन्दी
               </button>
               <button
                 type="button"
@@ -1581,7 +1581,7 @@ const prepareSanskritLines = () => {
                 onClick={() => setLanguage("en")}
                 title="Read in English"
               >
-                <span className="pill-flag">🇬🇧</span> English
+                English
               </button>
             </div>
           </div>

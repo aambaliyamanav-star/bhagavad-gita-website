@@ -1303,21 +1303,21 @@ function QuizManagement() {
                 className={`admin-lang-tab ${activeLangTab === "gu" ? "active" : ""}`}
                 onClick={() => setActiveLangTab("gu")}
               >
-                🇬🇯 ગુજરાતી પ્રશ્ન & વિકલ્પો
+                ગુજરાતી પ્રશ્ન & વિકલ્પો
               </button>
               <button
                 type="button"
                 className={`admin-lang-tab ${activeLangTab === "hi" ? "active" : ""}`}
                 onClick={() => setActiveLangTab("hi")}
               >
-                🇮🇳 हिन्दी प्रश्न एवं विकल्प (Auto)
+                हिन्दी प्रश्न एवं विकल्प (Auto)
               </button>
               <button
                 type="button"
                 className={`admin-lang-tab ${activeLangTab === "en" ? "active" : ""}`}
                 onClick={() => setActiveLangTab("en")}
               >
-                🇬🇧 English Question & Options (Auto)
+                English Question & Options (Auto)
               </button>
             </div>
 
@@ -1936,7 +1936,7 @@ function QuizManagement() {
                               alignItems: "center",
                               gap: "4px"
                             }}>
-                              🇮🇳 हिन्दी ઉપલબ્ધ
+                              हिन्दी ઉપલબ્ધ
                             </span>
                           ) : (
                             <span style={{
@@ -1948,7 +1948,7 @@ function QuizManagement() {
                               fontSize: "11px",
                               fontWeight: "600"
                             }}>
-                              🇬🇯 માત્ર ગુજરાતી
+                              માત્ર ગુજરાતી
                             </span>
                           )}
 
@@ -1963,7 +1963,7 @@ function QuizManagement() {
                             borderLeft: "3.5px solid #6366f1"
                           }}>
                             <div style={{ fontSize: "12px", color: "#4f46e5", fontWeight: "750", marginBottom: "3px" }}>
-                              🇮🇳 हिन्दी प्रश्न (Auto-Translated / Hindi):
+                              हिन्दी प्रश्न (Auto-Translated / Hindi):
                             </div>
                             <div style={{ fontSize: "14px", color: "#1e293b", fontWeight: "600" }}>
                               {item.questionHi}

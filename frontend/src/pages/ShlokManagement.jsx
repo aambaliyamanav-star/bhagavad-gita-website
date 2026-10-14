@@ -1777,21 +1777,21 @@ function ShlokManagement() {
                   className={`admin-lang-tab ${activeLangTab === "gu" ? "active" : ""}`}
                   onClick={() => setActiveLangTab("gu")}
                 >
-                  🇬🇯 ગુજરાતી વિગત
+                  ગુજરાતી વિગત
                 </button>
                 <button
                   type="button"
                   className={`admin-lang-tab ${activeLangTab === "hi" ? "active" : ""}`}
                   onClick={() => setActiveLangTab("hi")}
                 >
-                  🇮🇳 हिन्दी विवरण (Auto)
+                  हिन्दी विवरण (Auto)
                 </button>
                 <button
                   type="button"
                   className={`admin-lang-tab ${activeLangTab === "en" ? "active" : ""}`}
                   onClick={() => setActiveLangTab("en")}
                 >
-                  🇬🇧 English Details (Auto)
+                  English Details (Auto)
                 </button>
               </div>
 

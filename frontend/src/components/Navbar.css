@@ -776,14 +776,15 @@ body {
 .navbar-side-menu {
   position: fixed;
 
-  top: 76px;
+  top: 50%;
   right: 18px;
+  bottom: auto;
 
   width: 325px;
   max-width: calc(100vw - 28px);
 
   height: auto;
-  max-height: calc(100dvh - 92px);
+  max-height: min(92vh, 92dvh);
 
   display: flex;
   flex-direction: column;
@@ -821,9 +822,9 @@ body {
     inset 0 1px 0
       rgba(255, 255, 255, 0.80);
 
-  /* Professional popover animation */
-  transform-origin: top right;
-  transform: scale(0.86) translateY(-14px);
+  /* Professional popover animation - vertically centered */
+  transform-origin: center right;
+  transform: translateY(calc(-50% - 14px)) scale(0.92);
   visibility: hidden;
   opacity: 0;
   pointer-events: none;
@@ -835,7 +836,7 @@ body {
 }
 
 .navbar-side-menu.open {
-  transform: scale(1) translateY(0);
+  transform: translateY(-50%) scale(1);
   visibility: visible;
   opacity: 1;
   pointer-events: auto;
@@ -2161,19 +2162,22 @@ a:focus-visible {
    NO SCROLL - AUTO EXPANDS WHEN BUTTONS ARE ADDED
 ===================================================== */
 
-/* Floating container: auto height, fits all options with NO scroll */
+/* Floating container: auto height, fits all options, vertically centered dynamically */
 .navbar-side-menu {
   position: fixed !important;
-  top: 72px !important;
+  top: 50% !important;
   right: 16px !important;
+  bottom: auto !important;
   width: 310px !important;
   max-width: calc(100vw - 24px) !important;
   height: auto !important;
-  max-height: none !important;
+  max-height: min(92vh, 92dvh) !important;
   border-radius: 22px !important;
   display: flex !important;
   flex-direction: column !important;
   overflow: hidden !important;
+  transform: translateY(calc(-50% - 14px)) scale(0.92) !important;
+  transform-origin: center right !important;
   user-select: none !important;
   -webkit-user-select: none !important;
   -moz-user-select: none !important;
@@ -2182,6 +2186,13 @@ a:focus-visible {
     0 20px 60px rgba(0, 30, 90, 0.32),
     0 4px 16px rgba(0, 0, 0, 0.10),
     inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+}
+
+.navbar-side-menu.open {
+  transform: translateY(-50%) scale(1) !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
 }
 
 /* Staggered entrance animation for menu items */
@@ -2284,25 +2295,38 @@ a:focus-visible {
   background: rgba(255, 255, 255, 0.25) !important;
 }
 
-/* NO SCROLL Content: fits all options naturally and auto-expands */
+/* Content: naturally fits all options and auto-expands while centered */
 .side-menu-content {
-  flex: 0 0 auto !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
   height: auto !important;
-  max-height: none !important;
+  max-height: calc(min(92vh, 92dvh) - 56px) !important;
   padding: 6px 8px 8px !important;
   display: flex !important;
   flex-direction: column !important;
   justify-content: flex-start !important;
   gap: 3px !important;
-  overflow: visible !important;
-  overflow-y: visible !important;
-  scrollbar-width: none !important;
+  overflow-y: auto !important;
+  overscroll-behavior: contain !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(59, 130, 246, 0.35) transparent !important;
 }
 
 .side-menu-content::-webkit-scrollbar {
-  display: none !important;
-  width: 0 !important;
-  height: 0 !important;
+  width: 4px !important;
+}
+
+.side-menu-content::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+
+.side-menu-content::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.35) !important;
+  border-radius: 4px !important;
+}
+
+[data-theme="dark"] .side-menu-content::-webkit-scrollbar-thumb {
+  background: rgba(96, 165, 250, 0.35) !important;
 }
 
 /* Sleek Menu Items - Compact & readable */
@@ -2527,27 +2551,39 @@ a:focus-visible {
   cursor: default !important;
 }
 
-/* Mobile Responsiveness - No scroll, auto expands */
+/* Mobile Responsiveness - Auto centers vertically and expands */
 @media (max-width: 600px) {
   .navbar-side-menu {
-    top: 66px !important;
+    top: 50% !important;
     right: 10px !important;
+    bottom: auto !important;
+    transform: translateY(calc(-50% - 10px)) scale(0.94) !important;
     width: min(310px, calc(100vw - 20px)) !important;
     max-width: calc(100vw - 20px) !important;
     height: auto !important;
-    max-height: none !important;
+    max-height: min(94vh, 94dvh) !important;
     border-radius: 20px !important;
+  }
+
+  .navbar-side-menu.open {
+    transform: translateY(-50%) scale(1) !important;
   }
 }
 
 @media (max-width: 400px) {
   .navbar-side-menu {
-    top: 62px !important;
+    top: 50% !important;
     right: 8px !important;
+    bottom: auto !important;
+    transform: translateY(calc(-50% - 10px)) scale(0.94) !important;
     width: calc(100vw - 16px) !important;
     max-width: calc(100vw - 16px) !important;
     height: auto !important;
-    max-height: none !important;
+    max-height: min(95vh, 95dvh) !important;
     border-radius: 18px !important;
+  }
+
+  .navbar-side-menu.open {
+    transform: translateY(-50%) scale(1) !important;
   }
 }
