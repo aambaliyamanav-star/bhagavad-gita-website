@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { BookOpen } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext.jsx";
+import LittleKrishnaArt from "../components/LittleKrishnaArt.jsx";
 import "./Chapters.css";
 
 const chapterNamesHi = {
@@ -133,6 +134,9 @@ function Chapters() {
 
   return (
     <main className="chapters-page">
+
+      {/* Little Krishna Animated Drawing & Colorful Background Art */}
+      <LittleKrishnaArt />
 
       <section className="chapters-header">
 
