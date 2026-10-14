@@ -26,7 +26,7 @@ const quizQuestionSchema = new mongoose.Schema(
     },
 
     // =====================================================
-    // QUESTION
+    // QUESTION (GUJARATI)
     // =====================================================
     question: {
       type: String,
@@ -35,7 +35,16 @@ const quizQuestionSchema = new mongoose.Schema(
     },
 
     // =====================================================
-    // FOUR OPTIONS
+    // QUESTION (HINDI)
+    // =====================================================
+    questionHi: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    // =====================================================
+    // FOUR OPTIONS (GUJARATI)
     // =====================================================
     options: {
       type: [
@@ -55,7 +64,20 @@ const quizQuestionSchema = new mongoose.Schema(
     },
 
     // =====================================================
-    // CORRECT ANSWER
+    // FOUR OPTIONS (HINDI)
+    // =====================================================
+    optionsHi: {
+      type: [
+        {
+          type: String,
+          trim: true,
+        },
+      ],
+      default: [],
+    },
+
+    // =====================================================
+    // CORRECT ANSWER (GUJARATI)
     // =====================================================
     correctAnswer: {
       type: String,
@@ -64,9 +86,27 @@ const quizQuestionSchema = new mongoose.Schema(
     },
 
     // =====================================================
-    // OPTIONAL EXPLANATION
+    // CORRECT ANSWER (HINDI)
+    // =====================================================
+    correctAnswerHi: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    // =====================================================
+    // OPTIONAL EXPLANATION (GUJARATI)
     // =====================================================
     explanation: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    // =====================================================
+    // OPTIONAL EXPLANATION (HINDI)
+    // =====================================================
+    explanationHi: {
       type: String,
       default: "",
       trim: true,

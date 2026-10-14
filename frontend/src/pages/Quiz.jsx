@@ -496,6 +496,15 @@ function Quiz() {
     }
 
     if (
+      isHindi &&
+      Array.isArray(question.optionsHi) &&
+      question.optionsHi.length === 4 &&
+      question.optionsHi.every((opt) => opt && String(opt).trim())
+    ) {
+      return question.optionsHi;
+    }
+
+    if (
       Array.isArray(
         question.options
       )
@@ -535,19 +544,51 @@ function Quiz() {
       return;
     }
 
-    const correctAnswer =
-      String(
-        question.correctAnswer ||
-          ""
-      ).trim();
+    const activeCorrectAnswer =
+      (isHindi && question.correctAnswerHi) ||
+      question.correctAnswer ||
+      "";
 
-    const isCorrect =
+    let isCorrect =
       normalizeAnswer(
         answer
       ) ===
       normalizeAnswer(
-        correctAnswer
+        activeCorrectAnswer
+      ) ||
+      normalizeAnswer(
+        answer
+      ) ===
+      normalizeAnswer(
+        question.correctAnswer
+      ) ||
+      (question.correctAnswerHi &&
+        normalizeAnswer(
+          answer
+        ) ===
+        normalizeAnswer(
+          question.correctAnswerHi
+        ));
+
+    // Index check if options are translated
+    if (
+      !isCorrect &&
+      isHindi &&
+      Array.isArray(question.optionsHi) &&
+      question.optionsHi.length === 4 &&
+      Array.isArray(question.options) &&
+      question.options.length === 4
+    ) {
+      const selectedIdx = question.optionsHi.findIndex(
+        (opt) => normalizeAnswer(opt) === normalizeAnswer(answer)
       );
+      const correctIdx = question.options.findIndex(
+        (opt) => normalizeAnswer(opt) === normalizeAnswer(question.correctAnswer)
+      );
+      if (selectedIdx !== -1 && selectedIdx === correctIdx) {
+        isCorrect = true;
+      }
+    }
 
     // =================================================
     // SELECT ANSWER
@@ -1546,13 +1587,16 @@ function Quiz() {
                   optionText
                 );
 
+              const activeCorrectAnswer =
+                (isHindi && question.correctAnswerHi) ||
+                question.correctAnswer ||
+                "";
+
               const isCorrect =
-                normalizeAnswer(
-                  optionText
-                ) ===
-                normalizeAnswer(
-                  question.correctAnswer
-                );
+                normalizeAnswer(optionText) === normalizeAnswer(activeCorrectAnswer) ||
+                normalizeAnswer(optionText) === normalizeAnswer(question.correctAnswer) ||
+                (question.correctAnswerHi &&
+                  normalizeAnswer(optionText) === normalizeAnswer(question.correctAnswerHi));
 
               let optionClass =
                 "quiz-option";
@@ -1674,6 +1718,7 @@ function Quiz() {
                 <span>{isHindi ? "सही उत्तर: " : "સાચો જવાબ: "}
                   <b>
                     {
+                      (isHindi && question.correctAnswerHi) ||
                       question.correctAnswer
                     }
                   </b>

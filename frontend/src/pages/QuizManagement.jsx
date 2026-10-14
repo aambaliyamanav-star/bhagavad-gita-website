@@ -20,7 +20,8 @@ import {
   ChevronDown,
   ChevronUp,
   HelpCircle,
-  FileQuestion
+  FileQuestion,
+  Sparkles
 } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext.jsx";
 import "./QuizManagement.css";
@@ -56,6 +57,11 @@ function QuizManagement() {
   const [editingId, setEditingId] =
     useState(null);
 
+  // Active language tab: "gu" (Gujarati) or "hi" (Hindi)
+  const [activeLangTab, setActiveLangTab] = useState("gu");
+  const [translating, setTranslating] = useState(false);
+  const [autoTranslateSuccess, setAutoTranslateSuccess] = useState("");
+
   // =====================================================
   // EXPANDED QUESTION
   // =====================================================
@@ -85,6 +91,14 @@ function QuizManagement() {
       option4: "",
       correctAnswer: "",
       explanation: "",
+      // Hindi fields
+      questionHi: "",
+      option1Hi: "",
+      option2Hi: "",
+      option3Hi: "",
+      option4Hi: "",
+      correctAnswerHi: "",
+      explanationHi: "",
     });
 
   // =====================================================
@@ -222,12 +236,20 @@ function QuizManagement() {
       option4: "",
       correctAnswer: "",
       explanation: "",
+      questionHi: "",
+      option1Hi: "",
+      option2Hi: "",
+      option3Hi: "",
+      option4Hi: "",
+      correctAnswerHi: "",
+      explanationHi: "",
     });
 
     setEditingId(null);
-
+    setActiveLangTab("gu");
     setError("");
     setSuccess("");
+    setAutoTranslateSuccess("");
   };
 
   // =====================================================
@@ -286,15 +308,140 @@ function QuizManagement() {
 
       explanation:
         question.explanation || "",
+
+      // Hindi fields
+      questionHi:
+        question.questionHi || "",
+
+      option1Hi:
+        question.optionsHi?.[0] || "",
+
+      option2Hi:
+        question.optionsHi?.[1] || "",
+
+      option3Hi:
+        question.optionsHi?.[2] || "",
+
+      option4Hi:
+        question.optionsHi?.[3] || "",
+
+      correctAnswerHi:
+        question.correctAnswerHi || "",
+
+      explanationHi:
+        question.explanationHi || "",
     });
 
+    setActiveLangTab("gu");
     setError("");
     setSuccess("");
+    setAutoTranslateSuccess("");
 
     window.scrollTo({
       top: 0,
       behavior: "smooth",
     });
+  };
+
+  // =====================================================
+  // AI AUTO-TRANSLATE (GUJARATI -> HINDI)
+  // =====================================================
+
+  const handleAutoTranslate = async () => {
+    try {
+      setTranslating(true);
+      setError("");
+      setAutoTranslateSuccess("");
+
+      if (!formData.question || !formData.question.trim()) {
+        throw new Error(
+          "કૃપા કરીને પહેલાં ગુજરાતી પ્રશ્ન (Question) લખો જેથી AI તેનું હિન્દીમાં ઓટો-અનુવાદ કરી શકે."
+        );
+      }
+
+      const rawOptions = [
+        formData.option1,
+        formData.option2,
+        formData.option3,
+        formData.option4,
+      ].map((o) => (o || "").trim());
+
+      if (rawOptions.some((o) => !o)) {
+        throw new Error(
+          "કૃપા કરીને પહેલાં ચારેય ગુજરાતી વિકલ્પો (Options 1 થી 4) ભરો જેથી AI તેનું હિન્દી અનુવાદ કરી શકે."
+        );
+      }
+
+      if (!formData.correctAnswer || !formData.correctAnswer.trim()) {
+        throw new Error(
+          "કૃપા કરીને પહેલાં સાચો જવાબ (Correct Answer) પસંદ કરો."
+        );
+      }
+
+      const token = getToken();
+
+      const response = await fetch(`${API_URL}/admin/auto-translate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          category: formData.category,
+          chapterNumber: formData.chapterNumber,
+          question: formData.question,
+          options: rawOptions,
+          correctAnswer: formData.correctAnswer,
+          explanation: formData.explanation,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.message || "ઓટો-અનુવાદ થઈ શક્યો નથી."
+        );
+      }
+
+      const translated = data?.data || data?.translated;
+
+      if (!translated) {
+        throw new Error(
+          data?.message || "ઓટો-અનુવાદ માહિતી પ્રાપ્ત થઈ શકી નથી."
+        );
+      }
+
+      setFormData((prev) => ({
+        ...prev,
+        questionHi:
+          translated.questionHi || prev.questionHi,
+        option1Hi:
+          translated.optionsHi?.[0] || prev.option1Hi,
+        option2Hi:
+          translated.optionsHi?.[1] || prev.option2Hi,
+        option3Hi:
+          translated.optionsHi?.[2] || prev.option3Hi,
+        option4Hi:
+          translated.optionsHi?.[3] || prev.option4Hi,
+        correctAnswerHi:
+          translated.correctAnswerHi || prev.correctAnswerHi,
+        explanationHi:
+          translated.explanationHi || prev.explanationHi,
+      }));
+
+      setAutoTranslateSuccess(
+        "✨ ગુજરાતી પ્રશ્ન અને વિકલ્પોનું શુદ્ધ હિન્દીમાં સફળતાપૂર્વક ઓટો-અનુવાદ થઈ ગયું!"
+      );
+      setActiveLangTab("hi");
+    } catch (err) {
+      console.error("Auto translate error:", err);
+      setError(
+        err.message || "ઓટો-અનુવાદ કરવામાં error આવ્યો."
+      );
+    } finally {
+      setTranslating(false);
+    }
   };
 
   // =====================================================
@@ -482,6 +629,27 @@ function QuizManagement() {
       }
 
       // =================================================
+      // HINDI DATA PREPARATION
+      // =================================================
+
+      const rawOptionsHi = [
+        formData.option1Hi,
+        formData.option2Hi,
+        formData.option3Hi,
+        formData.option4Hi,
+      ].map((opt) => String(opt || "").trim());
+
+      let finalCorrectAnswerHi = formData.correctAnswerHi?.trim() || "";
+      if (!finalCorrectAnswerHi && rawOptionsHi.some(Boolean)) {
+        const correctIndex = options.findIndex(
+          (opt) => opt.toLowerCase() === formData.correctAnswer.trim().toLowerCase()
+        );
+        if (correctIndex !== -1 && rawOptionsHi[correctIndex]) {
+          finalCorrectAnswerHi = rawOptionsHi[correctIndex];
+        }
+      }
+
+      // =================================================
       // PAYLOAD
       // =================================================
 
@@ -502,6 +670,19 @@ function QuizManagement() {
 
         explanation:
           formData.explanation.trim(),
+
+        // Hindi fields
+        questionHi:
+          formData.questionHi?.trim() || "",
+
+        optionsHi:
+          rawOptionsHi,
+
+        correctAnswerHi:
+          finalCorrectAnswerHi,
+
+        explanationHi:
+          formData.explanationHi?.trim() || "",
       };
 
       let response;
@@ -1011,207 +1192,277 @@ function QuizManagement() {
 
 
           {/* =================================================
-              QUESTION
+              AUTO TRANSLATE SUCCESS BANNER
           ================================================= */}
-
-          <div className="quiz-form-group">
-
-            <label>
-              Question
-            </label>
-
-            <textarea
-              name="question"
-              value={
-                formData.question
-              }
-              onChange={
-                handleChange
-              }
-              placeholder="Quiz question લખો..."
-              rows="4"
-            />
-
-          </div>
-
+          {autoTranslateSuccess && (
+            <div className="auto-translate-success-banner">
+              <CheckCircle2 size={18} />
+              <span>{autoTranslateSuccess}</span>
+            </div>
+          )}
 
           {/* =================================================
-              OPTION 1
+              LANGUAGE TABS & AI AUTO-TRANSLATE
           ================================================= */}
+          <div className="admin-lang-tabs-bar" style={{ marginBottom: "20px" }}>
+            <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+              <button
+                type="button"
+                className={`admin-lang-tab ${activeLangTab === "gu" ? "active" : ""}`}
+                onClick={() => setActiveLangTab("gu")}
+              >
+                🇬🇯 ગુજરાતી પ્રશ્ન & વિકલ્પો
+              </button>
+              <button
+                type="button"
+                className={`admin-lang-tab ${activeLangTab === "hi" ? "active" : ""}`}
+                onClick={() => setActiveLangTab("hi")}
+              >
+                🇮🇳 हिन्दी प्रश्न एवं विकल्प (Auto-Translated)
+              </button>
+            </div>
 
-          <div className="quiz-form-group">
-
-            <label>
-              Option 1
-            </label>
-
-            <input
-              type="text"
-              name="option1"
-              value={
-                formData.option1
-              }
-              onChange={
-                handleChange
-              }
-              placeholder="Option 1"
-            />
-
-          </div>
-
-
-          {/* =================================================
-              OPTION 2
-          ================================================= */}
-
-          <div className="quiz-form-group">
-
-            <label>
-              Option 2
-            </label>
-
-            <input
-              type="text"
-              name="option2"
-              value={
-                formData.option2
-              }
-              onChange={
-                handleChange
-              }
-              placeholder="Option 2"
-            />
-
-          </div>
-
-
-          {/* =================================================
-              OPTION 3
-          ================================================= */}
-
-          <div className="quiz-form-group">
-
-            <label>
-              Option 3
-            </label>
-
-            <input
-              type="text"
-              name="option3"
-              value={
-                formData.option3
-              }
-              onChange={
-                handleChange
-              }
-              placeholder="Option 3"
-            />
-
-          </div>
-
-
-          {/* =================================================
-              OPTION 4
-          ================================================= */}
-
-          <div className="quiz-form-group">
-
-            <label>
-              Option 4
-            </label>
-
-            <input
-              type="text"
-              name="option4"
-              value={
-                formData.option4
-              }
-              onChange={
-                handleChange
-              }
-              placeholder="Option 4"
-            />
-
-          </div>
-
-
-          {/* =================================================
-              CORRECT ANSWER
-          ================================================= */}
-
-          <div className="quiz-form-group">
-
-            <label>
-              Correct Answer
-            </label>
-
-            <select
-              name="correctAnswer"
-              value={
-                formData.correctAnswer
-              }
-              onChange={
-                handleChange
-              }
+            <button
+              type="button"
+              className="auto-translate-ai-btn"
+              onClick={handleAutoTranslate}
+              disabled={translating}
+              title="ગુજરાતી પ્રશ્ન અને વિકલ્પો પરથી AI દ્વારા આપોઆપ હિન્દી અનુવાદ કરો"
             >
-
-              <option value="">
-                -- Correct Answer પસંદ કરો --
-              </option>
-
-              {[
-                formData.option1,
-                formData.option2,
-                formData.option3,
-                formData.option4,
-              ]
-                .filter(
-                  (option) =>
-                    option.trim()
-                )
-                .map(
-                  (option, index) => (
-                    <option
-                      key={index}
-                      value={option}
-                    >
-                      {option}
-                    </option>
-                  )
-                )}
-
-            </select>
-
+              <Sparkles className={`btn-icon ${translating ? "spinning" : ""}`} size={16} />
+              {translating
+                ? (isHindi ? "AI हिन्दी अनुवाद हो रहा है..." : "AI હિન્દી અનુવાદ થઈ રહ્યું છે...")
+                : (isHindi ? "✨ AI हिन्दी ऑटो-अनुवाद (Auto-Translate)" : "✨ AI હિન્દી ઓટો-અનુવાદ (Auto-Translate)")}
+            </button>
           </div>
 
+          {activeLangTab === "gu" ? (
+            <>
+              {/* =================================================
+                  GUJARATI QUESTION
+              ================================================= */}
+              <div className="quiz-form-group">
+                <label>
+                  Question (ગુજરાતી પ્રશ્ન) <span style={{ color: "#e11d48" }}>*</span>
+                </label>
+                <textarea
+                  name="question"
+                  value={formData.question}
+                  onChange={handleChange}
+                  placeholder="Quiz question લખો..."
+                  rows="4"
+                  required
+                />
+              </div>
 
-          {/* =================================================
-              EXPLANATION
-          ================================================= */}
+              {/* GUJARATI OPTION 1 */}
+              <div className="quiz-form-group">
+                <label>
+                  Option 1 (ગુજરાતી) <span style={{ color: "#e11d48" }}>*</span>
+                </label>
+                <input
+                  type="text"
+                  name="option1"
+                  value={formData.option1}
+                  onChange={handleChange}
+                  placeholder="Option 1"
+                  required
+                />
+              </div>
 
-          <div className="quiz-form-group">
+              {/* GUJARATI OPTION 2 */}
+              <div className="quiz-form-group">
+                <label>
+                  Option 2 (ગુજરાતી) <span style={{ color: "#e11d48" }}>*</span>
+                </label>
+                <input
+                  type="text"
+                  name="option2"
+                  value={formData.option2}
+                  onChange={handleChange}
+                  placeholder="Option 2"
+                  required
+                />
+              </div>
 
-            <label>
-              Explanation
-              <span>
-                {" "}
-                (Optional)
-              </span>
-            </label>
+              {/* GUJARATI OPTION 3 */}
+              <div className="quiz-form-group">
+                <label>
+                  Option 3 (ગુજરાતી) <span style={{ color: "#e11d48" }}>*</span>
+                </label>
+                <input
+                  type="text"
+                  name="option3"
+                  value={formData.option3}
+                  onChange={handleChange}
+                  placeholder="Option 3"
+                  required
+                />
+              </div>
 
-            <textarea
-              name="explanation"
-              value={
-                formData.explanation
-              }
-              onChange={
-                handleChange
-              }
-              placeholder="Answer નું explanation લખો..."
-              rows="3"
-            />
+              {/* GUJARATI OPTION 4 */}
+              <div className="quiz-form-group">
+                <label>
+                  Option 4 (ગુજરાતી) <span style={{ color: "#e11d48" }}>*</span>
+                </label>
+                <input
+                  type="text"
+                  name="option4"
+                  value={formData.option4}
+                  onChange={handleChange}
+                  placeholder="Option 4"
+                  required
+                />
+              </div>
 
-          </div>
+              {/* GUJARATI CORRECT ANSWER */}
+              <div className="quiz-form-group">
+                <label>
+                  Correct Answer (સાચો જવાબ) <span style={{ color: "#e11d48" }}>*</span>
+                </label>
+                <select
+                  name="correctAnswer"
+                  value={formData.correctAnswer}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">-- Correct Answer પસંદ કરો --</option>
+                  {[
+                    formData.option1,
+                    formData.option2,
+                    formData.option3,
+                    formData.option4,
+                  ]
+                    .filter((option) => option && option.trim())
+                    .map((option, index) => (
+                      <option key={index} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                </select>
+              </div>
+
+              {/* GUJARATI EXPLANATION */}
+              <div className="quiz-form-group">
+                <label>
+                  Explanation (સમજણ) <span> (Optional)</span>
+                </label>
+                <textarea
+                  name="explanation"
+                  value={formData.explanation}
+                  onChange={handleChange}
+                  placeholder="Answer નું explanation લખો..."
+                  rows="3"
+                />
+              </div>
+            </>
+          ) : (
+            <>
+              {/* =================================================
+                  HINDI QUESTION (AUTO-TRANSLATED / EDITABLE)
+              ================================================= */}
+              <div className="quiz-form-group">
+                <label>
+                  Question (हिन्दी प्रश्न) - <i>AI દ્વારા આપોઆપ ભરાશે અથવા તમે જાતે પણ લખી શકો છો</i>
+                </label>
+                <textarea
+                  name="questionHi"
+                  value={formData.questionHi}
+                  onChange={handleChange}
+                  placeholder="हिन्दी में प्रश्न લખો અથવા ઉપર '✨ AI હિન્દી ઓટો-અનુવાદ' બટન દબાવો..."
+                  rows="4"
+                />
+              </div>
+
+              {/* HINDI OPTION 1 */}
+              <div className="quiz-form-group">
+                <label>Option 1 (हिन्दी)</label>
+                <input
+                  type="text"
+                  name="option1Hi"
+                  value={formData.option1Hi}
+                  onChange={handleChange}
+                  placeholder="हिन्दी Option 1"
+                />
+              </div>
+
+              {/* HINDI OPTION 2 */}
+              <div className="quiz-form-group">
+                <label>Option 2 (हिन्दी)</label>
+                <input
+                  type="text"
+                  name="option2Hi"
+                  value={formData.option2Hi}
+                  onChange={handleChange}
+                  placeholder="हिन्दी Option 2"
+                />
+              </div>
+
+              {/* HINDI OPTION 3 */}
+              <div className="quiz-form-group">
+                <label>Option 3 (हिन्दी)</label>
+                <input
+                  type="text"
+                  name="option3Hi"
+                  value={formData.option3Hi}
+                  onChange={handleChange}
+                  placeholder="हिन्दी Option 3"
+                />
+              </div>
+
+              {/* HINDI OPTION 4 */}
+              <div className="quiz-form-group">
+                <label>Option 4 (हिन्दी)</label>
+                <input
+                  type="text"
+                  name="option4Hi"
+                  value={formData.option4Hi}
+                  onChange={handleChange}
+                  placeholder="हिन्दी Option 4"
+                />
+              </div>
+
+              {/* HINDI CORRECT ANSWER */}
+              <div className="quiz-form-group">
+                <label>
+                  Correct Answer (हिन्दी सही उत्तर)
+                </label>
+                <select
+                  name="correctAnswerHi"
+                  value={formData.correctAnswerHi}
+                  onChange={handleChange}
+                >
+                  <option value="">-- हिन्दी Correct Answer પસંદ કરો --</option>
+                  {[
+                    formData.option1Hi,
+                    formData.option2Hi,
+                    formData.option3Hi,
+                    formData.option4Hi,
+                  ]
+                    .filter((option) => option && option.trim())
+                    .map((option, index) => (
+                      <option key={index} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                </select>
+              </div>
+
+              {/* HINDI EXPLANATION */}
+              <div className="quiz-form-group">
+                <label>
+                  Explanation (हिन्दी व्याख्या) <span> (Optional)</span>
+                </label>
+                <textarea
+                  name="explanationHi"
+                  value={formData.explanationHi}
+                  onChange={handleChange}
+                  placeholder="हिन्दी में व्याख्या લખો અથવા AI ઓટો-અનુવાદ વાપરો..."
+                  rows="3"
+                />
+              </div>
+            </>
+          )}
 
 
           {/* =================================================
@@ -1457,15 +1708,64 @@ function QuizManagement() {
                           </span>
 
                           <span className="quiz-question-category">
-
                             {getCategoryName(
                               item.category,
                               item.chapterNumber
                             )}
-
                           </span>
 
+                          {item.questionHi ? (
+                            <span style={{
+                              marginLeft: "8px",
+                              padding: "3px 8px",
+                              borderRadius: "6px",
+                              background: "#e0e7ff",
+                              color: "#4338ca",
+                              fontSize: "11.5px",
+                              fontWeight: "700",
+                              display: "inline-flex",
+                              alignItems: "center",
+                              gap: "4px"
+                            }}>
+                              🇮🇳 हिन्दी ઉપલબ્ધ
+                            </span>
+                          ) : (
+                            <span style={{
+                              marginLeft: "8px",
+                              padding: "3px 8px",
+                              borderRadius: "6px",
+                              background: "#fef3c7",
+                              color: "#92400e",
+                              fontSize: "11px",
+                              fontWeight: "600"
+                            }}>
+                              🇬🇯 માત્ર ગુજરાતી
+                            </span>
+                          )}
+
                         </div>
+
+                        {item.questionHi && (
+                          <div style={{
+                            margin: "10px 0 14px",
+                            padding: "10px 14px",
+                            background: "#f5f7ff",
+                            borderRadius: "10px",
+                            borderLeft: "3.5px solid #6366f1"
+                          }}>
+                            <div style={{ fontSize: "12px", color: "#4f46e5", fontWeight: "750", marginBottom: "3px" }}>
+                              🇮🇳 हिन्दी प्रश्न (Auto-Translated / Hindi):
+                            </div>
+                            <div style={{ fontSize: "14px", color: "#1e293b", fontWeight: "600" }}>
+                              {item.questionHi}
+                            </div>
+                            {item.explanationHi && (
+                              <div style={{ marginTop: "5px", fontSize: "12.5px", color: "#475569" }}>
+                                <b>हिन्दी व्याख्या:</b> {item.explanationHi}
+                              </div>
+                            )}
+                          </div>
+                        )}
 
 
                         {/* =================================================
