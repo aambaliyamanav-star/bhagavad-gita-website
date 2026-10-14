@@ -1473,6 +1473,65 @@ const deleteQuizQuestion =
     }
   };
 
+// =====================================================
+// ADMIN - DELETE MULTIPLE / FILTERED QUESTIONS
+// =====================================================
+
+const deleteQuizQuestionsBulk = async (req, res) => {
+  try {
+    const { ids, filter, chapterNumber, category } = req.body || {};
+
+    let query = {};
+
+    if (Array.isArray(ids) && ids.length > 0) {
+      query._id = { $in: ids };
+    } else if (filter) {
+      if (filter === "all") {
+        query = {};
+      } else if (filter === "mahabharata") {
+        query = { category: "mahabharata" };
+      } else if (filter.startsWith("chapter-")) {
+        const ch = Number(filter.replace("chapter-", ""));
+        query = {
+          $or: [
+            { chapterNumber: ch },
+            { category: `chapter-${ch}` }
+          ]
+        };
+      }
+    } else if (chapterNumber) {
+      const ch = Number(chapterNumber);
+      query = {
+        $or: [
+          { chapterNumber: ch },
+          { category: `chapter-${ch}` }
+        ]
+      };
+    } else if (category) {
+      query = { category };
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: "Delete કરવા માટે કોઈ question ids અથવા filter મળ્યા નથી."
+      });
+    }
+
+    const result = await QuizQuestion.deleteMany(query);
+
+    return res.status(200).json({
+      success: true,
+      message: `${result.deletedCount || 0} questions successfully delete થયા.`,
+      deletedCount: result.deletedCount || 0
+    });
+  } catch (error) {
+    console.error("❌ Admin Bulk Delete Quiz Questions Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Questions delete કરવામાં error આવ્યો."
+    });
+  }
+};
+
 
 // =====================================================
 // ADMIN - AUTO TRANSLATE QUIZ QUESTION
@@ -1595,6 +1654,8 @@ module.exports = {
   updateQuizQuestion,
 
   deleteQuizQuestion,
+
+  deleteQuizQuestionsBulk,
 
   autoTranslateQuizQuestion,
 };

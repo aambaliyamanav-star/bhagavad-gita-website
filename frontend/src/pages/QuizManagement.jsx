@@ -61,6 +61,7 @@ function QuizManagement() {
   const [activeLangTab, setActiveLangTab] = useState("gu");
   const [translating, setTranslating] = useState(false);
   const [autoTranslateSuccess, setAutoTranslateSuccess] = useState("");
+  const [deletingAll, setDeletingAll] = useState(false);
 
   // =====================================================
   // EXPANDED QUESTION
@@ -944,6 +945,145 @@ function QuizManagement() {
   };
 
   // =====================================================
+  // GET FILTER LABEL
+  // =====================================================
+
+  const getFilterLabel = () => {
+    if (questionFilter === "all") {
+      return txt("બધા Questions", "सभी प्रश्न", "All Questions");
+    }
+    if (questionFilter === "mahabharata") {
+      return txt("મહાભારત", "महाभारत", "Mahabharata");
+    }
+    if (questionFilter.startsWith("chapter-")) {
+      const ch = questionFilter.replace("chapter-", "");
+      return txt(`અધ્યાય ${ch}`, `अध्याय ${ch}`, `Chapter ${ch}`);
+    }
+    return questionFilter;
+  };
+
+  // =====================================================
+  // DELETE ALL FILTERED QUESTIONS
+  // =====================================================
+
+  const handleDeleteFilteredQuestions = async () => {
+    if (filteredQuestions.length === 0) {
+      alert(
+        txt(
+          "Delete કરવા માટે કોઈ પ્રશ્નો ઉપલબ્ધ નથી.",
+          "Delete करने के लिए कोई प्रश्न उपलब्ध नहीं है।",
+          "No questions available to delete."
+        )
+      );
+      return;
+    }
+
+    const label = getFilterLabel();
+    const count = filteredQuestions.length;
+
+    const confirmMsg = txt(
+      `શું તમે ખરેખર ${label} ના બધા (${count}) પ્રશ્નો Delete કરવા માંગો છો?\n\nઆ ક્રિયા પાછી નહીં ખેંચી શકાય!`,
+      `क्या आप वाकई ${label} के सभी (${count}) प्रश्न Delete करना चाहते हैं?\n\nयह क्रिया वापस नहीं ली जा सकती!`,
+      `Are you sure you want to delete all (${count}) questions of ${label}?\n\nThis action cannot be undone!`
+    );
+
+    const confirmed = window.confirm(confirmMsg);
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setDeletingAll(true);
+      setError("");
+      setSuccess("");
+
+      const token = getToken();
+      const questionIds = filteredQuestions.map((q) => q._id);
+
+      let deleted = false;
+      let deletedCount = questionIds.length;
+
+      // 1. Try bulk DELETE endpoint
+      try {
+        const response = await fetch(`${API_URL}/admin/questions/bulk`, {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            ids: questionIds,
+            filter: questionFilter
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          deleted = true;
+          deletedCount = data.deletedCount ?? questionIds.length;
+        }
+      } catch (err) {
+        console.warn("Bulk delete endpoint pending or failed, using fallback:", err);
+      }
+
+      // 2. Fallback to batch individual deletion if bulk endpoint is not yet live
+      if (!deleted) {
+        const batchSize = 10;
+        for (let i = 0; i < questionIds.length; i += batchSize) {
+          const batch = questionIds.slice(i, i + batchSize);
+          await Promise.all(
+            batch.map(async (id) => {
+              const r = await fetch(`${API_URL}/admin/question/${id}`, {
+                method: "DELETE",
+                headers: {
+                  Authorization: `Bearer ${token}`
+                }
+              });
+              if (!r.ok) {
+                const errData = await r.json().catch(() => ({}));
+                throw new Error(errData.message || "Question delete થઈ શક્યો નથી.");
+              }
+            })
+          );
+        }
+      }
+
+      // Remove deleted questions from state
+      const idSet = new Set(questionIds);
+      setQuestions((prev) => prev.filter((item) => !idSet.has(item._id)));
+
+      if (editingId && idSet.has(editingId)) {
+        resetForm();
+      }
+      setExpandedQuestionId(null);
+
+      setSuccess(
+        txt(
+          `${label} ના બધા ${deletedCount} પ્રશ્નો સફળતાપૂર્વક Delete થયા.`,
+          `${label} के सभी ${deletedCount} प्रश्न सफलतापूर्वक Delete हुए।`,
+          `All ${deletedCount} questions of ${label} were successfully deleted.`
+        )
+      );
+
+      // Reload fresh list to keep in sync with database
+      await loadQuestions();
+
+    } catch (err) {
+      console.error("Delete Filtered Questions Error:", err);
+      setError(
+        err.message ||
+          txt(
+            "પ્રશ્નો delete કરવામાં error આવ્યો.",
+            "प्रश्न delete करने में त्रुटि आई।",
+            "Error deleting questions."
+          )
+      );
+    } finally {
+      setDeletingAll(false);
+    }
+  };
+
+  // =====================================================
   // CATEGORY NAME
   // =====================================================
 
@@ -1749,64 +1889,110 @@ function QuizManagement() {
           </div>
 
 
-          {/* =================================================
-              FILTER
-          ================================================= */}
+          <div className="quiz-list-controls">
 
-          <div className="quiz-question-filter">
+            {/* =================================================
+                FILTER
+            ================================================= */}
 
-            <label htmlFor="question-filter">
-              Filter:
-            </label>
+            <div className="quiz-question-filter">
 
-            <select
-              id="question-filter"
-              value={
-                questionFilter
+              <label htmlFor="question-filter">
+                Filter:
+              </label>
+
+              <select
+                id="question-filter"
+                value={
+                  questionFilter
+                }
+                onChange={
+                  handleQuestionFilterChange
+                }
+              >
+
+                <option value="all">
+                  <Library className="btn-icon" size={16} /> બધા Questions
+                </option>
+
+                {Array.from(
+                  { length: 18 },
+                  (_, index) => (
+                    <option
+                      key={index + 1}
+                      value={`chapter-${index + 1}`}
+                    >
+                      <BookOpen className="btn-icon" size={16} /> અધ્યાય {index + 1}
+                    </option>
+                  )
+                )}
+
+                <option value="mahabharata">
+                  સમગ્ર મહાભારત
+                </option>
+
+              </select>
+
+            </div>
+
+
+            {/* =================================================
+                REFRESH
+            ================================================= */}
+
+            <button
+              type="button"
+              className="quiz-refresh-button"
+              onClick={
+                loadQuestions
               }
-              onChange={
-                handleQuestionFilterChange
+              disabled={deletingAll}
+              title={txt("Refresh Questions", "Refresh Questions", "Refresh Questions")}
+            >
+              <RefreshCw className="btn-icon" size={16} /> Refresh
+            </button>
+
+
+            {/* =================================================
+                DELETE ALL (FILTERED) QUESTIONS
+            ================================================= */}
+
+            <button
+              type="button"
+              className="quiz-delete-all-button"
+              onClick={handleDeleteFilteredQuestions}
+              disabled={filteredQuestions.length === 0 || deletingAll}
+              title={
+                filteredQuestions.length === 0
+                  ? txt("Delete કરવા માટે કોઈ પ્રશ્નો નથી", "Delete करने के लिए कोई प्रश्न नहीं हैं", "No questions to delete")
+                  : txt(
+                      `${getFilterLabel()} ના બધા (${filteredQuestions.length}) પ્રશ્નો Delete કરો`,
+                      `${getFilterLabel()} के सभी (${filteredQuestions.length}) प्रश्न Delete करें`,
+                      `Delete all (${filteredQuestions.length}) questions of ${getFilterLabel()}`
+                    )
               }
             >
-
-              <option value="all">
-                <Library className="btn-icon" size={16} /> બધા Questions
-              </option>
-
-              {Array.from(
-                { length: 18 },
-                (_, index) => (
-                  <option
-                    key={index + 1}
-                    value={`chapter-${index + 1}`}
-                  >
-                    <BookOpen className="btn-icon" size={16} /> અધ્યાય {index + 1}
-                  </option>
-                )
+              {deletingAll ? (
+                <>
+                  <Loader2 className="btn-icon animate-spin" size={16} />
+                  <span>{txt("Deleting...", "Deleting...", "Deleting...")}</span>
+                </>
+              ) : (
+                <>
+                  <Trash2 className="btn-icon" size={16} />
+                  <span>
+                    {txt(
+                      `Delete All Questions`,
+                      `Delete All Questions`,
+                      `Delete All Questions`
+                    )}
+                    {filteredQuestions.length > 0 && ` (${filteredQuestions.length})`}
+                  </span>
+                </>
               )}
-
-              <option value="mahabharata">
-                સમગ્ર મહાભારત
-              </option>
-
-            </select>
+            </button>
 
           </div>
-
-
-          {/* =================================================
-              REFRESH
-          ================================================= */}
-
-          <button
-            type="button"
-            className="quiz-refresh-button"
-            onClick={
-              loadQuestions
-            }
-          >
-            <RefreshCw className="btn-icon" size={16} /> Refresh
-          </button>
 
         </div>
 

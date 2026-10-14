@@ -12,6 +12,7 @@ const {
   addQuizQuestion,
   updateQuizQuestion,
   deleteQuizQuestion,
+  deleteQuizQuestionsBulk,
   autoTranslateQuizQuestion,
 } = require("../controllers/quizController");
 
@@ -112,6 +113,23 @@ router.delete(
   protect,
   adminOnly,
   deleteQuizQuestion
+);
+
+
+// BULK DELETE QUESTIONS (FILTERED / SELECTED)
+
+router.delete(
+  "/admin/questions/bulk",
+  protect,
+  adminOnly,
+  deleteQuizQuestionsBulk
+);
+
+router.post(
+  "/admin/questions/delete-bulk",
+  protect,
+  adminOnly,
+  deleteQuizQuestionsBulk
 );
 
 
