@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Check, ChevronRight, Sparkles, Globe } from "lucide-react";
+import { Check, ChevronRight, Sparkles } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext.jsx";
 import { isRunningInStandaloneApp } from "../utils/pwaManager.js";
 import "./MobileLanguageModal.css";
@@ -8,31 +8,25 @@ const LANGUAGE_OPTIONS = [
   {
     id: "gu",
     name: "ગુજરાતી",
-    englishLabel: "Gujarati",
-    tagline: "શ્રીમદ્ ભગવદ્ ગીતા શ્લોક, અનુવાદ અને જીવન માર્ગદર્શન",
     badge: "ગુ",
     color: "#eab308",
   },
   {
     id: "hi",
     name: "हिन्दी",
-    englishLabel: "Hindi",
-    tagline: "श्रीमद्भगवद्गीता श्लोक, हिन्दी अनुवाद और जीवन प्रेरणा",
     badge: "हिं",
     color: "#3b82f6",
   },
   {
     id: "en",
     name: "English",
-    englishLabel: "English",
-    tagline: "Srimad Bhagavad Gita Verses, English Meaning & Wisdom",
     badge: "EN",
     color: "#10b981",
   },
 ];
 
 export default function MobileLanguageModal() {
-  const { language, setLanguage, txt } = useLanguage();
+  const { language, setLanguage } = useLanguage();
   const [showModal, setShowModal] = useState(false);
   const [selectedLang, setSelectedLang] = useState(language || "gu");
   const [isClosing, setIsClosing] = useState(false);
@@ -113,7 +107,9 @@ export default function MobileLanguageModal() {
 
     try {
       window.dispatchEvent(
-        new CustomEvent("gita-language-selected", { detail: { language: selectedLang } })
+        new CustomEvent("gita-language-selected", {
+          detail: { language: selectedLang },
+        })
       );
     } catch (e) {}
 
@@ -151,17 +147,9 @@ export default function MobileLanguageModal() {
               ? "अपनी भाषा चुनें"
               : "તમારી ભાષા પસંદ કરો"}
           </h2>
-
-          <p className="mobile-lang-subtitle">
-            {selectedLang === "en"
-              ? "Select your preferred language to read the holy Bhagavad Gita"
-              : selectedLang === "hi"
-              ? "श्रीमद्भगवद्गीता का अध्ययन करने के लिए अपनी पसंदीदा भाषा चुनें"
-              : "શ્રીમદ્ ભગવદ્ ગીતા વાંચવા માટે તમારી અનુકૂળ ભાષા પસંદ કરો"}
-          </p>
         </div>
 
-        {/* 3 Language Options */}
+        {/* 3 Language Options - Only Names */}
         <div className="mobile-lang-list">
           {LANGUAGE_OPTIONS.map((opt) => {
             const isSelected = selectedLang === opt.id;
@@ -180,13 +168,7 @@ export default function MobileLanguageModal() {
                 </div>
 
                 <div className="mobile-lang-info">
-                  <div className="mobile-lang-names">
-                    <span className="mobile-lang-name">{opt.name}</span>
-                    <span className="mobile-lang-eng-label">
-                      ({opt.englishLabel})
-                    </span>
-                  </div>
-                  <span className="mobile-lang-tagline">{opt.tagline}</span>
+                  <span className="mobile-lang-name">{opt.name}</span>
                 </div>
 
                 <div
@@ -215,17 +197,6 @@ export default function MobileLanguageModal() {
             </span>
             <ChevronRight size={18} className="mobile-lang-arrow" />
           </button>
-
-          <p className="mobile-lang-footer-hint">
-            <Globe size={13} className="footer-hint-icon" />
-            <span>
-              {txt(
-                "આ ભાષા તમે પછીથી પણ ૩-ડોટ મેનૂમાંથી બદલી શકો છો.",
-                "यह भाषा आप बाद में भी 3-डॉट मेनू से बदल सकते हैं।",
-                "You can change this language anytime from the 3-dot menu."
-              )}
-            </span>
-          </p>
         </div>
       </div>
     </div>
