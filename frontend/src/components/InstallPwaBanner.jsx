@@ -32,12 +32,30 @@ function InstallPwaBanner() {
       /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     setIsIosDevice(isIos);
 
-    // Show after a gentle 1.5s delay
-    const timer = setTimeout(() => {
-      if (!isRunningInStandaloneApp()) {
-        setShowBanner(true);
-      }
-    }, 1500);
+    // If on mobile web and language prompt is pending, don't show install banner until user picks language
+    const isMobile = typeof window !== "undefined" && window.innerWidth <= 768;
+    const isLangPending =
+      isMobile &&
+      sessionStorage.getItem("gita_web_lang_selected") !== "true";
+
+    let timer = null;
+    if (!isLangPending) {
+      // Show after a gentle 1.5s delay
+      timer = setTimeout(() => {
+        if (!isRunningInStandaloneApp()) {
+          setShowBanner(true);
+        }
+      }, 1500);
+    }
+
+    const handleLangSelected = () => {
+      setTimeout(() => {
+        if (!isRunningInStandaloneApp()) {
+          setShowBanner(true);
+        }
+      }, 1200);
+    };
+    window.addEventListener("gita-language-selected", handleLangSelected);
 
     // Listen for custom trigger from Navbar/menu (always shows even if previously closed)
     const handleOpenCustom = () => {
@@ -53,7 +71,13 @@ function InstallPwaBanner() {
       if (isStandalone) {
         setShowBanner(false);
       } else if (canInstall || isIos) {
-        setShowBanner(true);
+        const stillPending =
+          typeof window !== "undefined" &&
+          window.innerWidth <= 768 &&
+          sessionStorage.getItem("gita_web_lang_selected") !== "true";
+        if (!stillPending) {
+          setShowBanner(true);
+        }
       }
     });
 
@@ -61,6 +85,7 @@ function InstallPwaBanner() {
       if (timer) clearTimeout(timer);
       unsubscribe();
       window.removeEventListener("open-pwa-install-banner", handleOpenCustom);
+      window.removeEventListener("gita-language-selected", handleLangSelected);
     };
   }, []);
 

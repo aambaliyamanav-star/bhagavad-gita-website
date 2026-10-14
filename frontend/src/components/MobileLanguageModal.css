@@ -1,0 +1,503 @@
+/* =========================================================
+   MOBILE LANGUAGE MODAL STYLES (DIVINE ROYAL BLUE & GOLD)
+   ========================================================= */
+
+.mobile-lang-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10005;
+  background: rgba(6, 16, 38, 0.76);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  animation: mobileLangFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  box-sizing: border-box;
+}
+
+.mobile-lang-overlay.fade-out {
+  animation: mobileLangFadeOut 0.28s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes mobileLangFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes mobileLangFadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+/* Card Container */
+.mobile-lang-card {
+  position: relative;
+  width: 100%;
+  max-width: 390px;
+  background: linear-gradient(160deg, #ffffff 0%, #f4f8fe 100%);
+  border: 1.5px solid rgba(59, 130, 246, 0.28);
+  border-radius: 28px;
+  padding: 26px 20px 22px;
+  box-shadow:
+    0 24px 60px rgba(8, 28, 70, 0.35),
+    0 4px 16px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  box-sizing: border-box;
+  overflow: hidden;
+  animation: mobileLangCardPopIn 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.mobile-lang-card.slide-down {
+  animation: mobileLangCardPopOut 0.28s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes mobileLangCardPopIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes mobileLangCardPopOut {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(18px) scale(0.94);
+  }
+}
+
+/* Dark Mode Card */
+[data-theme="dark"] .mobile-lang-card {
+  background: linear-gradient(160deg, #0e1c36 0%, #091326 100%);
+  border-color: rgba(96, 165, 250, 0.24);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.65),
+    0 4px 16px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Soft Glow */
+.mobile-lang-glow {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 220px;
+  height: 120px;
+  background: radial-gradient(
+    circle,
+    rgba(59, 130, 246, 0.25) 0%,
+    rgba(234, 179, 8, 0.15) 50%,
+    transparent 75%
+  );
+  filter: blur(30px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Header */
+.mobile-lang-header {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.mobile-lang-om-circle {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  border: 2px solid rgba(245, 158, 11, 0.4);
+  box-shadow:
+    0 6px 18px rgba(245, 158, 11, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+[data-theme="dark"] .mobile-lang-om-circle {
+  background: linear-gradient(135deg, #1e293b 0%, #172554 100%);
+  border-color: rgba(245, 158, 11, 0.5);
+  box-shadow:
+    0 6px 20px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.mobile-lang-om {
+  font-size: 26px;
+  font-weight: 800;
+  color: #b45309;
+  line-height: 1;
+  font-family: serif;
+}
+
+[data-theme="dark"] .mobile-lang-om {
+  color: #fbbf24;
+}
+
+.mobile-lang-sparkle {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  color: #f59e0b;
+  animation: sparkleRotate 3s infinite linear;
+}
+
+@keyframes sparkleRotate {
+  0% {
+    transform: scale(0.9) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.15) rotate(180deg);
+  }
+  100% {
+    transform: scale(0.9) rotate(360deg);
+  }
+}
+
+.mobile-lang-title {
+  margin: 0 0 6px;
+  font-size: 1.28rem;
+  font-weight: 800;
+  color: #0f274a;
+  letter-spacing: -0.2px;
+}
+
+[data-theme="dark"] .mobile-lang-title {
+  color: #f1f5f9;
+}
+
+.mobile-lang-subtitle {
+  margin: 0 auto;
+  font-size: 0.84rem;
+  color: #55708e;
+  line-height: 1.4;
+  max-width: 320px;
+  font-weight: 500;
+}
+
+[data-theme="dark"] .mobile-lang-subtitle {
+  color: #94a3b8;
+}
+
+/* List of 3 Options */
+.mobile-lang-list {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.mobile-lang-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: #ffffff;
+  border: 1.5px solid rgba(59, 130, 246, 0.16);
+  border-radius: 18px;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 8px rgba(18, 55, 110, 0.04);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+[data-theme="dark"] .mobile-lang-item {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(96, 165, 250, 0.14);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.mobile-lang-item:hover {
+  transform: translateY(-1.5px);
+  border-color: rgba(59, 130, 246, 0.45);
+  box-shadow: 0 6px 18px rgba(37, 99, 235, 0.12);
+}
+
+[data-theme="dark"] .mobile-lang-item:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(96, 165, 250, 0.35);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+.mobile-lang-item.selected {
+  background: linear-gradient(
+    135deg,
+    rgba(239, 246, 255, 0.95) 0%,
+    rgba(219, 234, 254, 0.90) 100%
+  );
+  border-color: #2563eb;
+  box-shadow:
+    0 6px 20px rgba(37, 99, 235, 0.18),
+    inset 0 0 0 1px #2563eb;
+  transform: translateY(-1px);
+}
+
+[data-theme="dark"] .mobile-lang-item.selected {
+  background: linear-gradient(
+    135deg,
+    rgba(30, 58, 138, 0.45) 0%,
+    rgba(37, 99, 235, 0.25) 100%
+  );
+  border-color: #60a5fa;
+  box-shadow:
+    0 6px 20px rgba(0, 0, 0, 0.4),
+    inset 0 0 0 1px #60a5fa;
+}
+
+/* Badge (Icon Circle) */
+.mobile-lang-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 40px;
+  border-radius: 12px;
+  background: rgba(59, 130, 246, 0.1);
+  color: var(--badge-color, #2563eb);
+  font-weight: 800;
+  font-size: 0.98rem;
+  border: 1px solid rgba(59, 130, 246, 0.18);
+  transition: transform 0.2s ease;
+}
+
+.mobile-lang-item.selected .mobile-lang-badge {
+  transform: scale(1.06);
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #1d4ed8;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+}
+
+[data-theme="dark"] .mobile-lang-item.selected .mobile-lang-badge {
+  background: #3b82f6;
+  color: #ffffff;
+  border-color: #60a5fa;
+}
+
+/* Info Text */
+.mobile-lang-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.mobile-lang-names {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.mobile-lang-name {
+  font-size: 1.05rem;
+  font-weight: 750;
+  color: #0f274a;
+  line-height: 1.2;
+}
+
+[data-theme="dark"] .mobile-lang-name {
+  color: #f8fafc;
+}
+
+.mobile-lang-eng-label {
+  font-size: 0.74rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+[data-theme="dark"] .mobile-lang-eng-label {
+  color: #94a3b8;
+}
+
+.mobile-lang-tagline {
+  font-size: 0.74rem;
+  color: #55708e;
+  line-height: 1.25;
+  margin-top: 3px;
+  white-space: normal;
+}
+
+[data-theme="dark"] .mobile-lang-tagline {
+  color: #94a3b8;
+}
+
+/* Radio Circle */
+.mobile-lang-radio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 22px;
+  border-radius: 50%;
+  border: 2px solid #cbd5e1;
+  background: transparent;
+  transition: all 0.2s ease;
+}
+
+[data-theme="dark"] .mobile-lang-radio {
+  border-color: #475569;
+}
+
+.mobile-lang-radio.radio-checked {
+  border-color: #2563eb;
+  background: #2563eb;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
+}
+
+[data-theme="dark"] .mobile-lang-radio.radio-checked {
+  border-color: #3b82f6;
+  background: #3b82f6;
+}
+
+.radio-check-icon {
+  color: #ffffff;
+  stroke-width: 3;
+}
+
+/* Action Area */
+.mobile-lang-action {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mobile-lang-submit-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 48px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: #ffffff;
+  font-size: 0.98rem;
+  font-weight: 750;
+  cursor: pointer;
+  box-shadow:
+    0 8px 24px rgba(37, 99, 235, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+}
+
+.mobile-lang-submit-btn:hover {
+  transform: translateY(-1.5px);
+  box-shadow:
+    0 12px 28px rgba(37, 99, 235, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.mobile-lang-submit-btn:active {
+  transform: translateY(0);
+}
+
+.mobile-lang-arrow {
+  transition: transform 0.2s ease;
+}
+
+.mobile-lang-submit-btn:hover .mobile-lang-arrow {
+  transform: translateX(3px);
+}
+
+/* Footer Hint */
+.mobile-lang-footer-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 0;
+  font-size: 0.72rem;
+  color: #64748b;
+  line-height: 1.3;
+  text-align: center;
+}
+
+[data-theme="dark"] .mobile-lang-footer-hint {
+  color: #94a3b8;
+}
+
+.footer-hint-icon {
+  flex-shrink: 0;
+  color: #3b82f6;
+}
+
+[data-theme="dark"] .footer-hint-icon {
+  color: #60a5fa;
+}
+
+/* Extra small devices */
+@media (max-width: 360px) {
+  .mobile-lang-card {
+    padding: 20px 14px 18px;
+    border-radius: 22px;
+  }
+
+  .mobile-lang-om-circle {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 8px;
+  }
+
+  .mobile-lang-om {
+    font-size: 22px;
+  }
+
+  .mobile-lang-title {
+    font-size: 1.15rem;
+  }
+
+  .mobile-lang-item {
+    padding: 10px 12px;
+    gap: 10px;
+  }
+
+  .mobile-lang-badge {
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+    font-size: 0.9rem;
+  }
+
+  .mobile-lang-name {
+    font-size: 0.96rem;
+  }
+
+  .mobile-lang-submit-btn {
+    height: 44px;
+    font-size: 0.92rem;
+  }
+}

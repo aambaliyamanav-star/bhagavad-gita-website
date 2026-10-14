@@ -48,7 +48,12 @@ function AppNotificationPrompt() {
       return;
     }
 
-    // 5. If dismissed in the current session, don't nag repeatedly on every page navigation
+    // 5. If running in installed app for the very first time, wait for language selection first
+    if (localStorage.getItem("gita_app_lang_selected") !== "true") {
+      return;
+    }
+
+    // 6. If dismissed in the current session, don't nag repeatedly on every page navigation
     if (sessionStorage.getItem("app_notif_dismissed_session") === "true") {
       return;
     }
