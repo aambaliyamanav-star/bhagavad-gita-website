@@ -1167,7 +1167,11 @@ export default function GitaAIAssistant() {
         >
           <div className="gita-ai-fab-glow" />
           <div className="gita-ai-fab-icon-box">
-            <GeminiIcon size={26} className="gita-fab-gemini-icon" />
+            <img
+              src="/icons/gita-ai-icon-192.png"
+              alt={txt("ગીતા AI", "गीता AI", "Gita AI")}
+              className="gita-fab-ai-img"
+            />
           </div>
         </button>
       )}
@@ -1414,7 +1418,11 @@ export default function GitaAIAssistant() {
                 </button>
 
                 <div className="gita-ai-avatar">
-                  <GeminiIcon size={20} />
+                  <img
+                    src="/icons/gita-ai-icon-192.png"
+                    alt={txt("ગીતા AI", "गीता AI", "Gita AI")}
+                    className="gita-ai-avatar-img"
+                  />
                   <span className="gita-ai-online-dot" />
                 </div>
                 <div className="gita-ai-header-titles">
@@ -1554,7 +1562,11 @@ export default function GitaAIAssistant() {
               >
                 {msg.sender === "ai" && (
                   <div className="gita-msg-avatar">
-                    <GeminiIcon size={16} />
+                    <img
+                      src="/icons/gita-ai-icon-192.png"
+                      alt={txt("ગીતા AI", "गीता AI", "Gita AI")}
+                      className="gita-msg-avatar-img"
+                    />
                   </div>
                 )}
 
@@ -1621,7 +1633,11 @@ export default function GitaAIAssistant() {
             {isLoading && (
               <div className="gita-msg-row ai-row">
                 <div className="gita-msg-avatar">
-                  <GeminiIcon size={16} />
+                  <img
+                    src="/icons/gita-ai-icon-192.png"
+                    alt={txt("ગીતા AI", "गीता AI", "Gita AI")}
+                    className="gita-msg-avatar-img"
+                  />
                 </div>
                 <div className="gita-msg-bubble typing-bubble">
                   <div className="gita-typing-dots">
