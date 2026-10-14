@@ -24,7 +24,7 @@ function ChapterReader() {
   // LANGUAGE CONTEXT
   // =====================================================
 
-  const { isHindi, t, getLocalizedShlok } = useLanguage();
+  const { isHindi, isEnglish, t, txt, getLocalizedShlok, CHAPTER_NAMES } = useLanguage();
 
   // =====================================================
   // AUTH CONTEXT
@@ -561,7 +561,7 @@ const response = await fetch(
       if (!response.ok) {
         throw new Error(
           data.message ||
-            (isHindi ? "पठन जारी रखें सहेजा नहीं जा सका।" : "Continue Reading save થઈ શક્યું નથી.")
+            txt("Continue Reading save થઈ શક્યું નથી.", "पठन जारी रखें सहेजा नहीं जा सका।", "Could not save Continue Reading.")
         );
       }
 
@@ -743,7 +743,7 @@ const response = await fetch(
         if (!response.ok) {
           throw new Error(
             data.message ||
-              (isHindi ? "पसंदीदा से नहीं हटाया जा सका।" : "Favourite દૂર થઈ શક્યું નથી.")
+              txt("Favourite દૂર થઈ શક્યું નથી.", "पसंदीदा से नहीं हटाया जा सका।", "Could not remove from favorites.")
           );
         }
 
@@ -777,7 +777,7 @@ const response = await fetch(
       if (!response.ok) {
         throw new Error(
           data.message ||
-            (isHindi ? "पसंदीदा में जोड़ा नहीं जा सका।" : "Favouriteમાં add થઈ શક્યું નથી.")
+            txt("Favouriteમાં add થઈ શક્યું નથી.", "पसंदीदा में जोड़ा नहीं जा सका।", "Could not add to favorites.")
         );
       }
 
@@ -792,7 +792,7 @@ const response = await fetch(
 
       alert(
         error.message ||
-          (isHindi ? "पसंदीदा में बदलाव करने में त्रुटि आई।" : "Favouriteમાં ફેરફાર કરવામાં error આવ્યો.")
+          txt("Favouriteમાં ફેરફાર કરવામાં error આવ્યો.", "पसंदीदा में बदलाव करने में त्रुटि आई।", "Error updating favorites.")
       );
     } finally {
       setFavoriteLoading(false);
@@ -823,7 +823,11 @@ if (
   Number(selectedShlok?.shlokNumber) > 5
 ) {
   const redirectPath = `/chapter/${currentChapterNumber}?shloka=${selectedShlok.shlokNumber}`;
-  const redirectMsg = isHindi ? `अध्याय ${currentChapterNumber} के श्लोक ${selectedShlok.shlokNumber} पढ़ने के लिए Login करना आवश्यक है।` : `અધ્યાય ${currentChapterNumber} ના શ્લોક ${selectedShlok.shlokNumber} વાંચવા માટે Login કરવું જરૂરી છે.`;
+  const redirectMsg = txt(
+    `અધ્યાય ${currentChapterNumber} ના શ્લોક ${selectedShlok.shlokNumber} વાંચવા માટે Login કરવું જરૂરી છે.`,
+    `अध्याय ${currentChapterNumber} के श्लोक ${selectedShlok.shlokNumber} पढ़ने के लिए Login करना आवश्यक है।`,
+    `Login is required to read Chapter ${currentChapterNumber}, Shloka ${selectedShlok.shlokNumber}.`
+  );
 
   localStorage.setItem(
     "pendingChapter",
@@ -886,9 +890,9 @@ if (
             <AlertCircle size={48} color="#ef4444" />
           </div>
 
-          <h1>{isHindi ? "अध्याय नहीं मिला" : "અધ્યાય મળ્યો નથી"}</h1>
+          <h1>{txt("અધ્યાય મળ્યો નથી", "अध्याय नहीं मिला", "Chapter Not Found")}</h1>
 
-          <p>{isHindi ? "आपका चुना हुआ अध्याय उपलब्ध नहीं है।" : "તમે પસંદ કરેલો અધ્યાય ઉપલબ્ધ નથી."}</p>
+          <p>{txt("તમે પસંદ કરેલો અધ્યાય ઉપલબ્ધ નથી.", "आपका चुना हुआ अध्याय उपलब्ध नहीं है।", "The selected chapter is not available.")}</p>
 
           <button
             className="error-back-button"
@@ -896,7 +900,7 @@ if (
               navigate("/chapters")
             }
           >
-            {isHindi ? "18 अध्यायों पर वापस जाएं" : "૧૮ અધ્યાય પર પાછા જાઓ"}
+            {txt("૧૮ અધ્યાય પર પાછા જાઓ", "18 अध्यायों पर वापस जाएं", "Back to 18 Chapters")}
           </button>
         </div>
       </main>
@@ -913,14 +917,18 @@ if (
         <SudarshanShimmerLoader
           type="reader"
           title={
-            isHindi
-              ? `अध्याय ${chapterNumber || ""} के श्लोक लोड हो रहे हैं...`
-              : `અધ્યાય ${chapterNumber || ""} ના શ્લોક લોડ થઈ રહ્યા છે...`
+            txt(
+              `અધ્યાય ${chapterNumber || ""} ના શ્લોક લોડ થઈ રહ્યા છે...`,
+              `अध्याय ${chapterNumber || ""} के श्लोक लोड हो रहे हैं...`,
+              `Loading shlokas for Chapter ${chapterNumber || ""}...`
+            )
           }
           subtitle={
-            isHindi
-              ? "कृपया कुछ क्षण प्रतीक्षा करें ॥ श्रीकृष्णार्पणमस्तु ॥"
-              : "કૃપા કરીને થોડી ક્ષણ રાહ જુઓ ॥ શ્રીકૃષ્ણાર્પણમસ્તુ ॥"
+            txt(
+              "કૃપા કરીને થોડી ક્ષણ રાહ જુઓ ॥ શ્રીકૃષ્ણાર્પણમસ્તુ ॥",
+              "कृपया कुछ क्षण प्रतीक्षा करें ॥ श्रीकृष्णार्पणमस्तु ॥",
+              "Please wait a moment ॥ Sri Krishnarpanamastu ॥"
+            )
           }
         />
       </main>
@@ -939,7 +947,7 @@ if (
             <AlertCircle size={48} color="#ef4444" />
           </div>
 
-          <h1>{isHindi ? "कुछ समस्या आई" : "કંઈક સમસ્યા આવી"}</h1>
+          <h1>{txt("કંઈક સમસ્યા આવી", "कुछ समस्या आई", "Something went wrong")}</h1>
 
           <p>{error}</p>
 
@@ -949,7 +957,7 @@ if (
               navigate("/chapters")
             }
           >
-            {isHindi ? "18 अध्यायों पर वापस जाएं" : "૧૮ અધ્યાય પર પાછા જાઓ"}
+            {txt("૧૮ અધ્યાય પર પાછા જાઓ", "18 अध्यायों पर वापस जाएं", "Back to 18 Chapters")}
           </button>
         </div>
       </main>
@@ -973,7 +981,7 @@ if (
           </p>
 
           <h1>
-            અધ્યાય{" "}
+            {txt("અધ્યાય", "अध्याय", "Chapter")}{" "}
             {currentChapterNumber}
           </h1>
 
@@ -987,16 +995,16 @@ if (
             <BookOpen size={48} color="#3b82f6" />
           </div>
 
-          <h2>{isHindi ? "इस अध्याय में अभी कोई श्लोक नहीं है" : "આ અધ્યાયમાં હજુ કોઈ શ્લોક નથી"}</h2>
+          <h2>{txt("આ અધ્યાયમાં હજુ કોઈ શ્લોક નથી", "इस अध्याय में अभी कोई श्लोक नहीं है", "No shlokas in this chapter yet")}</h2>
 
-          <p>{isHindi ? "एडमिन पैनल से इस अध्याय के श्लोक जोड़ें।" : "Admin Panelમાંથી આ અધ્યાયના શ્લોક add કરો."}</p>
+          <p>{txt("Admin Panelમાંથી આ અધ્યાયના શ્લોક add કરો.", "एडमिन पैनल से इस अध्याय के श्लोक जोड़ें।", "Add shlokas for this chapter from Admin Panel.")}</p>
 
           <button
             className="error-back-button"
             onClick={() =>
               navigate("/chapters")
             }
-          >{isHindi ? "18 अध्याय" : "૧૮ અધ્યાય"}</button>
+          >{txt("૧૮ અધ્યાય", "18 अध्याय", "18 Chapters")}</button>
         </div>
       </main>
     );
@@ -1012,9 +1020,11 @@ if (
   const localized =
     getLocalizedShlok(shloka);
 
-  const currentChapterTitle = isHindi
-    ? (shloka.chapterNameHi || chapterNamesHi[currentChapterNumber] || chapterName)
-    : (chapterName || chapterNames[currentChapterNumber] || `અધ્યાય ${currentChapterNumber}`);
+  const currentChapterTitle = isEnglish
+    ? (CHAPTER_NAMES[currentChapterNumber]?.en || `Chapter ${currentChapterNumber}`)
+    : (isHindi
+        ? (shloka.chapterNameHi || chapterNamesHi[currentChapterNumber] || chapterName)
+        : (chapterName || chapterNames[currentChapterNumber] || `અધ્યાય ${currentChapterNumber}`));
 
 
 
@@ -1042,7 +1052,11 @@ if (
   Number(next?.shlokNumber) > 5
 ) {
   const redirectPath = `/chapter/${currentChapterNumber}?shloka=${next.shlokNumber}`;
-  const redirectMsg = isHindi ? `अध्याय ${currentChapterNumber} के श्लोक ${next.shlokNumber} पढ़ने के लिए Login करना आवश्यक है।` : `અધ્યાય ${currentChapterNumber} ના શ્લોક ${next.shlokNumber} વાંચવા માટે Login કરવું જરૂરી છે.`;
+  const redirectMsg = txt(
+    `અધ્યાય ${currentChapterNumber} ના શ્લોક ${next.shlokNumber} વાંચવા માટે Login કરવું જરૂરી છે.`,
+    `अध्याय ${currentChapterNumber} के श्लोक ${next.shlokNumber} पढ़ने के लिए Login करना आवश्यक है।`,
+    `Login is required to read Chapter ${currentChapterNumber}, Shloka ${next.shlokNumber}.`
+  );
 
   localStorage.setItem(
     "pendingChapter",
@@ -1307,7 +1321,7 @@ const prepareSanskritLines = () => {
       if (lines.length === 0) {
         return (
           <div className="sanskrit-original">
-            {isHindi ? "संस्कृत श्लोक उपलब्ध नहीं है।" : "સંસ્કૃત શ્લોક ઉપલબ્ધ નથી."}
+            {txt("સંસ્કૃત શ્લોક ઉપલબ્ધ નથી.", "संस्कृत श्लोक उपलब्ध नहीं है।", "Sanskrit shloka not available.")}
           </div>
         );
       }
@@ -1366,7 +1380,7 @@ const prepareSanskritLines = () => {
                           }}
                           title={
                             meaning
-                              ? isHindi ? "हिन्दी अर्थ देखने के लिए क्लिक करें" : "ગુજરાતી અર્થ જોવા માટે click કરો"
+                              ? txt("ગુજરાતી અર્થ જોવા માટે click કરો", "हिन्दी अर्थ देखने के लिए क्लिक करें", "Click to view English meaning")
                               : undefined
                           }
                         >
@@ -1393,9 +1407,11 @@ const prepareSanskritLines = () => {
                             </span>
 
                             <span className="word-meaning-gujarati">
-                              {isHindi && meaning.meaningHi
-                                ? meaning.meaningHi
-                                : meaning.meaning}
+                              {isEnglish && meaning.meaningEn
+                                ? meaning.meaningEn
+                                : (isHindi && meaning.meaningHi
+                                    ? meaning.meaningHi
+                                    : meaning.meaning)}
                             </span>
                           </span>
                         )}
@@ -1427,9 +1443,7 @@ const prepareSanskritLines = () => {
         </div>
 
         <h1>
-          {isHindi
-            ? `अध्याय ${currentChapterNumber}`
-            : `અધ્યાય ${currentChapterNumber}`}
+          {txt(`અધ્યાય ${currentChapterNumber}`, `अध्याय ${currentChapterNumber}`, `Chapter ${currentChapterNumber}`)}
         </h1>
 
         <h2>
@@ -1444,7 +1458,7 @@ const prepareSanskritLines = () => {
       <section className="reader-progress">
         <div className="progress-info">
           <span>
-            {isHindi ? "श्लोक " : "શ્લોક "}
+            {txt("શ્લોક ", "श्लोक ", "Shloka ")}
             {shloka.shlokNumber}
             {" / "}
             {shlokas.length}
@@ -1480,8 +1494,8 @@ const prepareSanskritLines = () => {
           disabled={
             currentShloka === 0
           }
-          aria-label={isHindi ? "पिछला श्लोक" : "પાછલો શ્લોક"}
-          title={isHindi ? "पिछला श्लोक" : "પાછલો શ્લોક"}
+          aria-label={txt("પાછલો શ્લોક", "पिछला श्लोक", "Previous Shloka")}
+          title={txt("પાછલો શ્લોક", "पिछला श्लोक", "Previous Shloka")}
         >
           <ChevronLeft size={28} />
         </button>
@@ -1493,7 +1507,7 @@ const prepareSanskritLines = () => {
           {/* SHLOK NUMBER */}
 
           <div className="shloka-number">
-            {isHindi ? "श्लोक " : "શ્લોક "}
+            {txt("શ્લોક ", "श्लोक ", "Shloka ")}
             {shloka.shlokNumber}
           </div>
 
@@ -1504,8 +1518,8 @@ const prepareSanskritLines = () => {
               type="button"
               className="share-shloka-button"
               onClick={() => setShareModalOpen(true)}
-              aria-label={isHindi ? "श्लोक कार्ड शेयर करें" : "શ્લોક કાર્ડ શેર કરો"}
-              title={isHindi ? "श्लोक कार्ड शेयर / डाउनलोड करें" : "શ્લોક કાર્ડ શેર કરો / ડાઉનલોડ કરો"}
+              aria-label={txt("શ્લોક કાર્ડ શેર કરો", "श्लोक कार्ड शेयर करें", "Share Shloka Card")}
+              title={txt("શ્લોક કાર્ડ શેર કરો / ડાઉનલોડ કરો", "श्लोक कार्ड शेयर / डाउनलोड करें", "Share / Download Shloka Card")}
             >
               <Share2 size={20} />
             </button>
@@ -1523,13 +1537,13 @@ const prepareSanskritLines = () => {
               disabled={favoriteLoading}
               aria-label={
                 isFavorite(shloka)
-                  ? (isHindi ? "पसंदीदा से हटाएं" : "Favouriteમાંથી દૂર કરો")
-                  : (isHindi ? "पसंदीदा में जोड़ें" : "Favouriteમાં ઉમેરો")
+                  ? txt("Favouriteમાંથી દૂર કરો", "पसंदीदा से हटाएं", "Remove from Favorites")
+                  : txt("Favouriteમાં ઉમેરો", "पसंदीदा में जोड़ें", "Add to Favorites")
               }
               title={
                 isFavorite(shloka)
-                  ? (isHindi ? "पसंदीदा से हटाएं" : "Favouriteમાંથી દૂર કરો")
-                  : (isHindi ? "पसंदीदा में जोड़ें" : "Favouriteમાં ઉમેરો")
+                  ? txt("Favouriteમાંથી દૂર કરો", "पसंदीदा से हटाएं", "Remove from Favorites")
+                  : txt("Favouriteમાં ઉમેરો", "पसंदीदा में जोड़ें", "Add to Favorites")
               }
             >
               {isFavorite(shloka)
@@ -1551,7 +1565,7 @@ const prepareSanskritLines = () => {
           <div className="content-box sanskrit-box">
 
             <h3>
-              <Sparkles className="btn-icon" size={18} /> {isHindi ? "संस्कृत श्लोक" : "સંસ્કૃત શ્લોક"}
+              <Sparkles className="btn-icon" size={18} /> {txt("સંસ્કૃત શ્લોક", "संस्कृत श्लोक", "Sanskrit Shloka")}
             </h3>
 
 <div
@@ -1568,9 +1582,11 @@ const prepareSanskritLines = () => {
 
             <div className="word-meaning-info">
               <BookOpen className="btn-icon" size={14} />{" "}
-              {isHindi
-                ? "संस्कृत शब्द पर क्लिक करके उसका हिन्दी अर्थ देखें।"
-                : "સંસ્કૃત શબ્દનો અર્થ ઉપલબ્ધ છે તેના પર click કરીને ગુજરાતી અર્થ જુઓ."}
+              {txt(
+                "સંસ્કૃત શબ્દનો અર્થ ઉપલબ્ધ છે તેના પર click કરીને ગુજરાતી અર્થ જુઓ.",
+                "संस्कृत शब्द पर क्लिक करके उसका हिन्दी अर्थ देखें।",
+                "Click on any Sanskrit word to view its meaning."
+              )}
             </div>
 
           </div>
@@ -1582,7 +1598,7 @@ const prepareSanskritLines = () => {
           <div className="content-box translation-box">
 
             <h3>
-              <BookOpen className="btn-icon" size={18} /> {isHindi ? "हिन्दी अनुवाद" : "ગુજરાતી અનુવાદ"}
+              <BookOpen className="btn-icon" size={18} /> {txt("ગુજરાતી અનુવાદ", "हिन्दी अनुवाद", "English Translation")}
             </h3>
 
             <div
@@ -1591,7 +1607,7 @@ const prepareSanskritLines = () => {
                 __html:
                   localized.translation ||
                   shloka.translation ||
-                  (isHindi ? "हिन्दी अनुवाद उपलब्ध नहीं है।" : "ગુજરાતી અનુવાદ ઉપલબ્ધ નથી."),
+                  txt("ગુજરાતી અનુવાદ ઉપલબ્ધ નથી.", "हिन्दी अनुवाद उपलब्ध नहीं है।", "Translation not available."),
               }}
             />
 
@@ -1604,7 +1620,7 @@ const prepareSanskritLines = () => {
           <div className="content-box message-box">
 
             <h3>
-              <Sparkles className="btn-icon" size={18} /> {isHindi ? "सन्देश / व्याख्या" : "સંદેશ / સમજણ"}
+              <Sparkles className="btn-icon" size={18} /> {txt("સંદેશ / સમજણ", "सन्देश / व्याख्या", "Message / Meaning")}
             </h3>
 
             <div
@@ -1613,7 +1629,7 @@ const prepareSanskritLines = () => {
                 __html:
                   localized.message ||
                   shloka.message ||
-                  (isHindi ? "सन्देश उपलब्ध नहीं है।" : "સંદેશ ઉપલબ્ધ નથી."),
+                  txt("સંદેશ ઉપલબ્ધ નથી.", "सन्देश उपलब्ध नहीं है।", "Message not available."),
               }}
             />
 
@@ -1631,8 +1647,8 @@ const prepareSanskritLines = () => {
             currentShloka ===
             shlokas.length - 1
           }
-          aria-label={isHindi ? "अगला श्लोक" : "આગળનો શ્લોક"}
-          title={isHindi ? "अगला श्लोक" : "આગળનો શ્લોક"}
+          aria-label={txt("આગળનો શ્લોક", "अगला श्लोक", "Next Shloka")}
+          title={txt("આગળનો શ્લોક", "अगला श्लोक", "Next Shloka")}
         >
           <ChevronRight size={28} />
         </button>
@@ -1661,15 +1677,13 @@ const prepareSanskritLines = () => {
           <ChevronLeft size={26} style={{ marginRight: '10px' }} />
           <span className="chapter-nav-text">
             <h3>
-              {isHindi ? "पिछला अध्याय" : "પાછલો અધ્યાય"}
+              {txt("પાછલો અધ્યાય", "पिछला अध्याय", "Previous Chapter")}
             </h3>
 
             {currentChapterNumber >
               1 && (
               <strong>
-                {isHindi
-                  ? `अध्याय ${currentChapterNumber - 1}`
-                  : `અધ્યાય ${currentChapterNumber - 1}`}
+                {txt(`અધ્યાય ${currentChapterNumber - 1}`, `अध्याय ${currentChapterNumber - 1}`, `Chapter ${currentChapterNumber - 1}`)}
               </strong>
             )}
           </span>
@@ -1679,9 +1693,7 @@ const prepareSanskritLines = () => {
 
         <div className="chapter-nav-center">
           <span>
-            {isHindi
-              ? `अध्याय ${currentChapterNumber}`
-              : `અધ્યાય ${currentChapterNumber}`}
+            {txt(`અધ્યાય ${currentChapterNumber}`, `अध्याय ${currentChapterNumber}`, `Chapter ${currentChapterNumber}`)}
           </span>
 
           <div>
@@ -1702,15 +1714,13 @@ const prepareSanskritLines = () => {
         >
           <span className="chapter-nav-text">
             <h3>
-              {isHindi ? "अगला अध्याय" : "આગળનો અધ્યાય"}
+              {txt("આગળનો અધ્યાય", "अगला अध्याय", "Next Chapter")}
             </h3>
 
             {currentChapterNumber <
               18 && (
               <strong>
-                {isHindi
-                  ? `अध्याय ${currentChapterNumber + 1}`
-                  : `અધ્યાય ${currentChapterNumber + 1}`}
+                {txt(`અધ્યાય ${currentChapterNumber + 1}`, `अध्याय ${currentChapterNumber + 1}`, `Chapter ${currentChapterNumber + 1}`)}
               </strong>
             )}
           </span>
@@ -1730,13 +1740,11 @@ const prepareSanskritLines = () => {
           <div>
             <span className="selector-small-title">
               <BookOpen className="btn-icon" size={14} />{" "}
-              {isHindi
-                ? `अध्याय ${currentChapterNumber}`
-                : `અધ્યાય ${currentChapterNumber}`}
+              {txt(`અધ્યાય ${currentChapterNumber}`, `अध्याय ${currentChapterNumber}`, `Chapter ${currentChapterNumber}`)}
             </span>
 
             <h2>
-              {isHindi ? "सभी श्लोक" : "બધા શ્લોક"}
+              {txt("બધા શ્લોક", "सभी श्लोक", "All Shlokas")}
             </h2>
           </div>
 
@@ -1746,7 +1754,7 @@ const prepareSanskritLines = () => {
             </strong>
 
             <span>
-              {isHindi ? "श्लोक" : "Shlokas"}
+              {txt("શ્લોક", "श्लोक", "Shlokas")}
             </span>
           </div>
 
@@ -1780,9 +1788,7 @@ const prepareSanskritLines = () => {
                     )
                   }
                   aria-label={
-                    isHindi
-                      ? `श्लोक ${item.shlokNumber}`
-                      : `શ્લોક ${item.shlokNumber}`
+                    txt(`શ્લોક ${item.shlokNumber}`, `श्लोक ${item.shlokNumber}`, `Shloka ${item.shlokNumber}`)
                   }
                   aria-current={
                     isActive
@@ -1791,7 +1797,7 @@ const prepareSanskritLines = () => {
                   }
                 >
                   <span className="shlok-btn-label">
-                    {isHindi ? "श्लोक" : "શ્લોક"}
+                    {txt("શ્લોક", "श्लोक", "Shloka")}
                   </span>
 
                   <strong>

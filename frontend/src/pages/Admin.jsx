@@ -53,7 +53,7 @@ function formatTimeAgo(dateStr) {
 }
 
 function Admin() {
-  const { isHindi } = useLanguage();
+  const { isHindi, isEnglish, isGujarati, txt } = useLanguage();
   const [users, setUsers] = useState([]);
   const [search, setSearch] = useState("");
   const [message, setMessage] = useState("");
@@ -786,7 +786,7 @@ function Admin() {
 
           {loadingVisitors ? (
             <div className="visitor-loading-state">
-              <p>{isHindi ? "आगंतुकों की जानकारी लोड हो रही है..." : "મુલાકાતીઓની માહિતી લોડ થઈ રહી છે..."}</p>
+              <p>{txt("મુલાકાતીઓની માહિતી લોડ થઈ રહી છે...", "आगंतुकों की जानकारी लोड हो रही है...", "Loading visitor statistics...")}</p>
             </div>
           ) : (
             <>
@@ -1154,7 +1154,7 @@ function Admin() {
           {loadingAppStats && !appStats ? (
             <div className="v-loading-box">
               <RefreshCw size={24} className="spinning-icon" />
-              <p>{isHindi ? "ऐप इंस्टॉलेशन डेटा लोड हो रहा है..." : "એપ ઇન્સ્ટોલેશન ડેટા લોડ થઈ રહ્યો છે..."}</p>
+              <p>{txt("એપ ઇન્સ્ટોલેશન ડેટા લોડ થઈ રહ્યો છે...", "ऐप इंस्टॉलेशन डेटा लोड हो रहा है...", "Loading app installation data...")}</p>
             </div>
           ) : (
             <>
@@ -1517,7 +1517,7 @@ function Admin() {
           {loadingFeedbacks ? (
             <div className="v-loading-state">
               <RefreshCw size={28} className="spinning-icon" />
-              <p>{isHindi ? "प्रतिक्रिया और रेटिंग लोड हो रही हैं..." : "ફીડબેક અને રેટિંગ્સ લોડ થઈ રહ્યા છે..."}</p>
+              <p>{txt("ફીડબેક અને રેટિંગ્સ લોડ થઈ રહ્યા છે...", "प्रतिक्रिया और रेटिंग लोड हो रही हैं...", "Loading feedback and ratings...")}</p>
             </div>
           ) : (
             <>
@@ -1886,8 +1886,8 @@ function Admin() {
                   <Trash2 size={16} />
                   <span>
                     {deletingFeedbackId === activeFeedbackModal._id
-                      ? (isHindi ? "डिलीट हो रहा है..." : "ડિલીટ થઈ રહ્યું છે...")
-                      : (isHindi ? "प्रतिक्रिया डिलीट करें" : "પ્રતિસાદ ડિલીટ કરો")}
+                      ? txt("ડિલીટ થઈ રહ્યું છે...", "डिलीट हो रहा है...", "Deleting...")
+                      : txt("પ્રતિસાદ ડિલીટ કરો", "प्रतिक्रिया डिलीट करें", "Delete Feedback")}
                   </span>
                 </button>
 

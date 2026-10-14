@@ -15,7 +15,7 @@ import "./AppNotificationPrompt.css";
 
 function AppNotificationPrompt() {
   const { user } = useAuth();
-  const { isHindi } = useLanguage();
+  const { isHindi, isEnglish, isGujarati, txt } = useLanguage();
   const [showPrompt, setShowPrompt] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -121,17 +121,17 @@ function AppNotificationPrompt() {
             <div className="app-notif-check-circle">
               <Check size={22} strokeWidth={3} />
             </div>
-            <h3>{isHindi ? "नोटिफिकेशन सक्रिय हो गए हैं!" : "નોટિફિકેશન સક્રિય થઈ ગયા છે!"}</h3>
-            <p>{isHindi ? "अब आपको पवित्र गीता प्रेरणा मिलेगी। 🙏" : "હવે તમને પવિત્ર ગીતા પ્રેરણા મળશે. 🙏"}</p>
+            <h3>{txt("નોટિફિકેશન સક્રિય થઈ ગયા છે!", "नोटिफिकेशन सक्रिय हो गए हैं!", "Notifications are activated!")}</h3>
+            <p>{txt("હવે તમને પવિત્ર ગીતા પ્રેરણા મળશે. 🙏", "अब आपको पवित्र गीता प्रेरणा मिलेगी। 🙏", "You will now receive divine Gita inspiration. 🙏")}</p>
           </div>
         ) : (
           <>
             <div className="app-notif-header">
               <h3 className="app-notif-title">
-                {isHindi ? "दैनिक गीता नोटिफिकेशन" : "દૈનિક ગીતા નોટિફિકેશન"}
+                {txt("દૈનિક ગીતા નોટિફિકેશન", "दैनिक गीता नोटिफिकेशन", "Daily Gita Notifications")}
               </h3>
               <p className="app-notif-sub">
-                {isHindi ? "प्रतिदिन पवित्र श्लोक और प्रेरणा प्राप्त करें।" : "દરરોજ પવિત્ર શ્લોક અને પ્રેરણા મેળવો."}
+                {txt("દરરોજ પવિત્ર શ્લોક અને પ્રેરણા મેળવો.", "प्रतिदिन पवित्र श्लोक और प्रेरणा प्राप्त करें।", "Receive sacred shlokas and daily inspiration.")}
               </p>
             </div>
 
@@ -145,8 +145,8 @@ function AppNotificationPrompt() {
                 <Bell size={16} />
                 <span>
                   {loading
-                    ? (isHindi ? "चालू हो रहा है..." : "ચાલુ થઈ રહ્યું છે...")
-                    : (isHindi ? "चालू करें" : "ચાલુ કરો")}
+                    ? txt("ચાલુ થઈ રહ્યું છે...", "चालू हो रहा है...", "Enabling...")
+                    : txt("ચાલુ કરો", "चालू करें", "Enable")}
                 </span>
               </button>
 
@@ -155,7 +155,7 @@ function AppNotificationPrompt() {
                 className="app-notif-later-btn"
                 onClick={handleDismiss}
               >
-                {isHindi ? "बाद में" : "પછીથી"}
+                {txt("પછીથી", "बाद में", "Later")}
               </button>
             </div>
           </>

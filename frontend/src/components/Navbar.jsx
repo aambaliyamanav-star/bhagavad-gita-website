@@ -56,7 +56,7 @@ function Navbar() {
   // LANGUAGE CONTEXT
   // =====================================================
 
-  const { language, toggleLanguage, isHindi } = useLanguage();
+  const { language, toggleLanguage, isHindi, isEnglish, txt } = useLanguage();
 
   // =====================================================
   // AUTH CONTEXT
@@ -191,27 +191,27 @@ function Navbar() {
 
     // HOME
     if (path === "/") {
-      return isHindi ? "होम" : "હોમ";
+      return txt("હોમ", "होम", "Home");
     }
 
     // ABOUT US
     if (path === "/about" || path === "/about-us") {
-      return isHindi ? "हमारे बारे में" : "અમારા વિશે";
+      return txt("અમારા વિશે", "हमारे बारे में", "About Us");
     }
 
     // CHAPTERS
     if (path === "/chapters") {
-      return isHindi ? "18 अध्याय" : "18 અધ્યાય";
+      return txt("18 અધ્યાય", "18 अध्याय", "18 Chapters");
     }
 
     // LIFE GUIDANCE
     if (path === "/guidance" || path === "/jivan-margdarshan") {
-      return isHindi ? "जीवन मार्गदर्शन" : "જીવન માર્ગદર્શન";
+      return txt("જીવન માર્ગદર્શન", "जीवन मार्गदर्शन", "Life Guidance");
     }
 
     // READING TRACKER
     if (path === "/reading-tracker") {
-      return isHindi ? "पठन प्रगति" : "વાંચન પ્રગતિ";
+      return txt("વાંચન પ્રગતિ", "पठन प्रगति", "Reading Tracker");
     }
 
     // CHAPTER READER
@@ -220,65 +220,65 @@ function Navbar() {
         path.split("/")[2];
 
       if (chapterNumber) {
-        return isHindi ? `अध्याय ${chapterNumber}` : `અધ્યાય ${chapterNumber}`;
+        return txt(`અધ્યાય ${chapterNumber}`, `अध्याय ${chapterNumber}`, `Chapter ${chapterNumber}`);
       }
 
-      return isHindi ? "अध्याय" : "અધ્યાય";
+      return txt("અધ્યાય", "अध्याय", "Chapter");
     }
 
     // FAVORITES
     if (path === "/favorites") {
-      return isHindi ? "पसंदीदा श्लोक" : "મનપસંદ શ્લોક";
+      return txt("મનપસંદ શ્લોક", "पसंदीदा श्लोक", "Favorite Shlokas");
     }
 
     // QUIZ CATEGORY
     if (path === "/quiz-category") {
-      return "Quiz";
+      return txt("ક્વિઝ", "क्विज़", "Quiz");
     }
 
     // QUIZ
     if (path === "/quiz") {
-      return "Quiz";
+      return txt("ક્વિઝ", "क्विज़", "Quiz");
     }
 
     // QUIZ RESULT
     if (path.startsWith("/quiz-result")) {
-      return "Quiz Result";
+      return txt("ક્વિઝ પરિણામ", "क्विज़ परिणाम", "Quiz Result");
     }
 
     // HISTORY
     if (path === "/history") {
-      return isHindi ? "इतिहास" : "History";
+      return txt("ઇતિહાસ", "इतिहास", "History");
     }
 
     // PROFILE
     if (path === "/profile") {
-      return isHindi ? "प्रोफ़ाइल" : "Profile";
+      return txt("પ્રોફાઇલ", "प्रोफ़ाइल", "Profile");
     }
 
     // LOGIN
     if (path === "/login") {
-      return isHindi ? "लॉगिन" : "લોગિન";
+      return txt("લોગિન", "लॉगिन", "Login");
     }
 
     // REGISTER
     if (path === "/register") {
-      return isHindi ? "रजिस्टर" : "રજીસ્ટર";
+      return txt("રજીસ્ટર", "रजिस्टर", "Register");
     }
 
     // ADMIN
     if (path === "/admin") {
-      return "Admin";
+      return txt("એડમિન પેનલ", "व्यवस्थापक (Admin)", "Admin Panel");
     }
 
     // ADMIN QUIZ
     if (path === "/admin/quiz") {
-      return "Quiz Management";
+      return txt("ક્વિઝ વ્યવસ્થાપન", "क्विज़ प्रबंधन", "Quiz Management");
     }
 
     // ADMIN SHLOKS
     if (path === "/admin/shloks") {
-      return "Shlok Management";
+      return txt("શ્લોક વ્યવસ્થાપન", "श्लोक प्रबंधन", "Shlok Management");
     }
 
     // DEFAULT
@@ -512,9 +512,11 @@ function Navbar() {
   const handleLogout = () => {
     const confirmed =
       window.confirm(
-        isHindi
-          ? "क्या आप वाकई Logout करना चाहते हैं?"
-          : "શું તમે ખરેખર Logout કરવા માંગો છો?"
+        txt(
+          "શું તમે ખરેખર Logout કરવા માંગો છો?",
+          "क्या आप वाकई Logout करना चाहते हैं?",
+          "Are you sure you want to Logout?"
+        )
       );
 
     if (!confirmed) {
@@ -546,9 +548,11 @@ function Navbar() {
     setMenuOpen(false);
     handleProtectedNavigation(
       "/guidance",
-      isHindi
-        ? "जीवन मार्गदर्शन पाने के लिए Login करना आवश्यक है।"
-        : "જીવન માર્ગદર્શન મેળવવા માટે Login કરવું જરૂરી છે."
+      txt(
+        "જીવન માર્ગદર્શન મેળવવા માટે Login કરવું જરૂરી છે.",
+        "जीवन मार्गदर्शन पाने के लिए Login करना आवश्यक है।",
+        "Login is required to access Life Guidance."
+      )
     );
   };
 
@@ -633,8 +637,8 @@ function Navbar() {
             className="history-btn back-btn"
             onClick={handleBack}
             disabled={!canGoBack}
-            title={isHindi ? "पीछे जाएं" : "પાછળ જાઓ"}
-            aria-label={isHindi ? "पीछे जाएं" : "પાછળ જાઓ"}
+            title={txt("પાછળ જાઓ", "पीछे जाएं", "Go Back")}
+            aria-label={txt("પાછળ જાઓ", "पीछे जाएं", "Go Back")}
           >
             <ChevronLeft
               size={18}
@@ -649,8 +653,8 @@ function Navbar() {
             className="history-btn forward-btn"
             onClick={handleForward}
             disabled={!canGoForward}
-            title={isHindi ? "आगे जाएं" : "આગળ જાઓ"}
-            aria-label={isHindi ? "आगे जाएं" : "આગળ જાઓ"}
+            title={txt("આગળ જાઓ", "आगे जाएं", "Go Forward")}
+            aria-label={txt("આગળ જાઓ", "आगे जाएं", "Go Forward")}
           >
             <ChevronRight
               size={18}
@@ -669,15 +673,15 @@ function Navbar() {
           to="/chapters"
           className="logo"
           onClick={handleNormalNavigation}
-          title={isHindi ? "18 अध्याय" : "18 અધ્યાય"}
-          aria-label={isHindi ? "18 अध्याय" : "18 અધ્યાય"}
+          title={txt("18 અધ્યાય", "18 अध्याय", "18 Chapters")}
+          aria-label={txt("18 અધ્યાય", "18 अध्याय", "18 Chapters")}
         >
           <Flower2
             size={26}
             strokeWidth={1.8}
             className="logo-icon"
           />
-          {isHindi ? "भगवद् गीता" : "ભગવદ્ ગીતા"}
+          {txt("ભગવદ્ ગીતા", "भगवद् गीता", "Bhagavad Gita")}
         </Link>
 
 
@@ -693,11 +697,11 @@ function Navbar() {
             type="button"
             className="nav-lang-toggle-btn"
             onClick={toggleLanguage}
-            title={isHindi ? "ગુજરાતી ભાષા પસંદ કરો" : "हिन्दी भाषा चुनें"}
-            aria-label="ભાષા બદલો / भाषा बदलें"
+            title={txt("Switch to Hindi (हिन्दी)", "Switch to English", "Switch to Gujarati (ગુજરાતી)")}
+            aria-label="ભાષા બદલો / भाषा बदलें / Change Language"
           >
             <Globe size={15} className="nav-lang-icon" />
-            <span className="nav-lang-text">{isHindi ? "हिन्दी" : "ગુજરાતી"}</span>
+            <span className="nav-lang-text">{txt("ગુજરાતી", "हिन्दी", "English")}</span>
           </button>
 
           {/* CURRENT PAGE NAME */}
@@ -718,14 +722,14 @@ function Navbar() {
             onClick={toggleMenu}
             aria-label={
               menuOpen
-                ? (isHindi ? "मेनू बंद करें" : "મેનુ બંધ કરો")
-                : (isHindi ? "मेनू खोलें" : "મેનુ ખોલો")
+                ? txt("મેનુ બંધ કરો", "मेनू बंद करें", "Close Menu")
+                : txt("મેનુ ખોલો", "मेनू खोलें", "Open Menu")
             }
             aria-expanded={menuOpen}
             title={
               menuOpen
-                ? (isHindi ? "मेनू बंद करें" : "મેનુ બંધ કરો")
-                : (isHindi ? "मेनू खोलें" : "મેનુ ખોલો")
+                ? txt("મેનુ બંધ કરો", "मेनू बंद करें", "Close Menu")
+                : txt("મેનુ ખોલો", "मेनू खोलें", "Open Menu")
             }
           >
             {menuOpen
@@ -796,17 +800,17 @@ function Navbar() {
             <div>
 
               <h2>
-                {isHindi ? "भगवद् गीता" : "ભગવદ્ ગીતા"}
+                {txt("ભગવદ્ ગીતા", "भगवद् गीता", "Bhagavad Gita")}
               </h2>
 
               <span>
                 {user
                   ? `${user.name} • ${
                       user.role === "admin"
-                        ? (isHindi ? "प्रशासक (Admin)" : "Administrator")
-                        : (isHindi ? "लॉग-इन सदस्य" : "Logged in user")
+                        ? txt("એડમિનિસ્ટ્રેટર", "प्रशासक (Admin)", "Administrator")
+                        : txt("લૉગ-ઇન સભ્ય", "लॉग-इन सदस्य", "Logged in user")
                     }`
-                  : (isHindi ? "नेविगेशन मेनू" : "Navigation Menu")}
+                  : txt("નેવિગેશન મેનુ", "नेविगेशन मेनू", "Navigation Menu")}
               </span>
 
             </div>
@@ -822,8 +826,8 @@ function Navbar() {
             onClick={() =>
               setMenuOpen(false)
             }
-            aria-label={isHindi ? "मेनू बंद करें" : "મેનુ બંધ કરો"}
-            title={isHindi ? "बंद करें" : "બંધ કરો"}
+            aria-label={txt("મેનુ બંધ કરો", "मेनू बंद करें", "Close Menu")}
+            title={txt("બંધ કરો", "बंद करें", "Close")}
           >
             <X size={20} strokeWidth={2.2} />
           </button>
@@ -855,7 +859,7 @@ function Navbar() {
 
             <span className="side-menu-text">
               <strong>
-                {isHindi ? "होम" : "હોમ"}
+                {txt("હોમ", "होम", "Home")}
               </strong>
             </span>
 
@@ -884,7 +888,7 @@ function Navbar() {
 
             <span className="side-menu-text">
               <strong>
-                {isHindi ? "18 अध्याय" : "18 અધ્યાય"}
+                {txt("18 અધ્યાય", "18 अध्याय", "18 Chapters")}
               </strong>
             </span>
 
@@ -910,7 +914,7 @@ function Navbar() {
 
             <span className="side-menu-text">
               <strong>
-                {isHindi ? "जीवन मार्गदर्शन" : "જીવન માર્ગદર્શન"}
+                {txt("જીવન માર્ગદર્શન", "जीवन मार्गदर्शन", "Life Guidance")}
               </strong>
             </span>
 
@@ -931,9 +935,11 @@ function Navbar() {
             onClick={() =>
               handleProtectedNavigation(
                 "/favorites",
-                isHindi
-                  ? "पसंदीदा श्लोक देखने के लिए Login करना आवश्यक है।"
-                  : "મનપસંદ શ્લોક જોવા માટે Login કરવું જરૂરી છે."
+                txt(
+                  "મનપસંદ શ્લોક જોવા માટે Login કરવું જરૂરી છે.",
+                  "पसंदीदा श्लोक देखने के लिए Login करना आवश्यक है।",
+                  "Login is required to view favorite shlokas."
+                )
               )
             }
           >
@@ -943,7 +949,7 @@ function Navbar() {
 
             <span className="side-menu-text">
               <strong>
-                {isHindi ? "पसंदीदा श्लोक" : "મનપસંદ શ્લોક"}
+                {txt("મનપસંદ શ્લોક", "पसंदीदा श्लोक", "Favorite Shlokas")}
               </strong>
             </span>
 
@@ -963,9 +969,11 @@ function Navbar() {
             onClick={() =>
               handleProtectedNavigation(
                 "/quiz-category",
-                isHindi
-                  ? "Quiz खेलने के लिए Login करना आवश्यक है।"
-                  : "Quiz રમવા માટે Login કરવું જરૂરી છે."
+                txt(
+                  "Quiz રમવા માટે Login કરવું જરૂરી છે.",
+                  "Quiz खेलने के लिए Login करना आवश्यक है।",
+                  "Login is required to play the Quiz."
+                )
               )
             }
           >
@@ -975,7 +983,7 @@ function Navbar() {
 
             <span className="side-menu-text">
               <strong>
-                {isHindi ? "क्विज़ (Quiz)" : "Quiz"}
+                {txt("ક્વિઝ (Quiz)", "क्विज़ (Quiz)", "Gita Quiz")}
               </strong>
             </span>
 
@@ -995,9 +1003,11 @@ function Navbar() {
             onClick={() =>
               handleProtectedNavigation(
                 "/history",
-                isHindi
-                  ? "अपनी History देखने के लिए Login करना आवश्यक है।"
-                  : "તમારી History જોવા માટે Login કરવું જરૂરી છે."
+                txt(
+                  "તમારી History જોવા માટે Login કરવું જરૂરી છે.",
+                  "अपनी History देखने के लिए Login करना आवश्यक है।",
+                  "Login is required to view your reading history."
+                )
               )
             }
           >
@@ -1007,7 +1017,7 @@ function Navbar() {
 
             <span className="side-menu-text">
               <strong>
-                {isHindi ? "इतिहास (History)" : "History"}
+                {txt("ઇતિહાસ (History)", "इतिहास (History)", "Reading History")}
               </strong>
             </span>
 
@@ -1027,9 +1037,11 @@ function Navbar() {
             onClick={() =>
               handleProtectedNavigation(
                 "/profile",
-                isHindi
-                  ? "अपनी Profile देखने के लिए Login करना आवश्यक है।"
-                  : "તમારી Profile જોવા માટે Login કરવું જરૂરી છે."
+                txt(
+                  "તમારી Profile જોવા માટે Login કરવું જરૂરી છે.",
+                  "अपनी Profile देखने के लिए Login करना आवश्यक है।",
+                  "Login is required to view your profile."
+                )
               )
             }
           >
@@ -1039,7 +1051,7 @@ function Navbar() {
 
             <span className="side-menu-text">
               <strong>
-                {isHindi ? "प्रोफ़ाइल (Profile)" : "Profile"}
+                {txt("પ્રોફાઇલ (Profile)", "प्रोफ़ाइल (Profile)", "My Profile")}
               </strong>
             </span>
 
@@ -1067,7 +1079,7 @@ function Navbar() {
 
             <span className="side-menu-text">
               <strong>
-                {isHindi ? "प्रतिक्रिया और रेटिंग" : "પ્રતિસાદ અને રેટિંગ"}
+                {txt("પ્રતિસાદ અને રેટિંગ", "प्रतिक्रिया और रेटिंग", "Feedback & Rating")}
               </strong>
             </span>
 
@@ -1092,7 +1104,7 @@ function Navbar() {
 
             <span className="side-menu-text">
               <strong>
-                {isHindi ? "हमारे बारे में (About Us)" : "અમારા વિશે (About Us)"}
+                {txt("અમારા વિશે (About Us)", "हमारे बारे में (About Us)", "About Us")}
               </strong>
             </span>
 
@@ -1129,7 +1141,7 @@ function Navbar() {
 
               <span className="side-menu-text">
                 <strong>
-                  {isHindi ? "ऐप इंस्टॉल करें (Install App)" : "એપ ઇન્સ્ટોલ કરો (Install App)"}
+                  {txt("એપ ઇન્સ્ટોલ કરો (Install App)", "ऐप इंस्टॉल करें (Install App)", "Install App")}
                 </strong>
               </span>
 
@@ -1167,8 +1179,8 @@ function Navbar() {
                 <span className="side-menu-text">
                   <strong>
                     {notifEnabled
-                      ? (isHindi ? "सूचना (चालू)" : "નોટિફિકેશન (ચાલુ)")
-                      : (isHindi ? "सूचना (बंद)" : "નોટિફિકેશન (બંધ)")}
+                      ? txt("નોટિફિકેશન (ચાલુ)", "सूचना (चालू)", "Notifications (On)")
+                      : txt("નોટિફિકેશન (બંધ)", "सूचना (बंद)", "Notifications (Off)")}
                   </strong>
                 </span>
               </span>
@@ -1201,7 +1213,7 @@ function Navbar() {
 
               <span className="side-menu-text">
                 <strong>
-                  {isHindi ? "व्यवस्थापक (Admin)" : "Admin"}
+                  {txt("એડમિન પેનલ", "व्यवस्थापक (Admin)", "Admin Panel")}
                 </strong>
               </span>
 
@@ -1228,7 +1240,7 @@ function Navbar() {
 
               <span className="side-menu-text">
                 <strong>
-                  {isHindi ? "लॉगिन" : "લોગિન"}
+                  {txt("લોગિન", "लॉगिन", "Login")}
                 </strong>
               </span>
 
@@ -1258,7 +1270,7 @@ function Navbar() {
 
               <span className="side-menu-text">
                 <strong>
-                  {isHindi ? "रजिस्टर" : "રજીસ્ટર"}
+                  {txt("રજીસ્ટર", "रजिस्टर", "Register")}
                 </strong>
               </span>
 
@@ -1278,7 +1290,7 @@ function Navbar() {
             type="button"
             className="side-menu-theme side-menu-lang"
             onClick={toggleLanguage}
-            title={isHindi ? "भाषा बदलें / ભાષા બદલો" : "ભાષા બદલો / भाषा बदलें"}
+            title={txt("Switch to Hindi", "Switch to English", "Switch to Gujarati")}
           >
             <span className="theme-left">
               <span className="theme-icon">
@@ -1287,13 +1299,13 @@ function Navbar() {
 
               <span className="side-menu-text">
                 <strong>
-                  {isHindi ? "भाषा: हिन्दी (Hindi)" : "ભાષા: ગુજરાતી (Gujarati)"}
+                  {txt("ભાષા: ગુજરાતી", "भाषा: हिन्दी", "Language: English")}
                 </strong>
               </span>
             </span>
 
             <span className="side-lang-pill">
-              {isHindi ? "🇬🇯 ગુજરાતી" : "🇮🇳 हिन्दी"}
+              {txt("🇮🇳 हिन्दी", "🇬🇧 English", "🇬🇯 ગુજરાતી")}
             </span>
           </button>
 
@@ -1319,8 +1331,8 @@ function Navbar() {
               <span className="side-menu-text">
                 <strong>
                   {theme === "light"
-                    ? (isHindi ? "डार्क थीम (Dark Theme)" : "Dark Theme")
-                    : (isHindi ? "लाइट थीम (Light Theme)" : "Light Theme")}
+                    ? txt("ડાર્ક થીમ (Dark)", "डार्क थीम (Dark)", "Dark Theme")
+                    : txt("લાઇટ થીમ (Light)", "लाइट थीम (Light)", "Light Theme")}
                 </strong>
               </span>
 
@@ -1357,7 +1369,7 @@ function Navbar() {
               </span>
 
               <span>
-                {isHindi ? "लॉगआउट (Logout)" : "Logout"}
+                {txt("લોગઆઉટ (Logout)", "लॉगआउट (Logout)", "Logout")}
               </span>
 
             </button>

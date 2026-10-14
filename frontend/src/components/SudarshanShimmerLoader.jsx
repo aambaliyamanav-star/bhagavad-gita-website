@@ -190,17 +190,35 @@ export default function SudarshanShimmerLoader({
   }
 
   let isHindi = false;
+  let isEnglish = false;
   try {
     const langCtx = useLanguage();
-    if (langCtx?.isHindi) {
+    if (langCtx) {
       isHindi = langCtx.isHindi;
+      isEnglish = langCtx.isEnglish;
     }
   } catch (e) {}
 
   // Determine localized title and subtitle
   let displayTitle = title;
   if (!displayTitle || displayTitle === "દિવ્ય જ્ઞાન લોડ થઈ રહ્યું છે...") {
-    displayTitle = isHindi ? "दिव्य ज्ञान लोड हो रहा है..." : "દિવ્ય જ્ઞાન લોડ થઈ રહ્યું છે...";
+    displayTitle = isEnglish
+      ? "Loading divine wisdom..."
+      : isHindi
+      ? "दिव्य ज्ञान लोड हो रहा है..."
+      : "દિવ્ય જ્ઞાન લોડ થઈ રહ્યું છે...";
+  } else if (isEnglish) {
+    if (displayTitle === "ગીતા જ્ઞાન ક્વિઝ લોડ થઈ રહી છે..." || displayTitle === "गीता ज्ञान प्रश्नोत्तरी लोड हो रही है...") {
+      displayTitle = "Loading Gita Knowledge Quiz...";
+    } else if (displayTitle === "Quiz પરિણામ તૈયાર થઈ રહ્યું છે..." || displayTitle === "प्रश्नोत्तरी परिणाम तैयार हो रहा है...") {
+      displayTitle = "Preparing Quiz Results...";
+    } else if (displayTitle === "સિદ્ધિઓ લોડ થઈ રહી છે..." || displayTitle === "उपलब्धियां लोड हो रही हैं...") {
+      displayTitle = "Loading Achievements...";
+    } else if (typeof displayTitle === "string" && (displayTitle.includes("ના શ્લોક લોડ થઈ રહ્યા છે...") || displayTitle.includes("के श्लोक लोड हो रहे हैं..."))) {
+      displayTitle = displayTitle
+        .replace(/અધ્યાય|अध्याय/g, "Chapter ")
+        .replace(/(ના શ્લોક લોડ થઈ રહ્યા છે\.\.\.|के श्लोक लोड हो रहे हैं\.\.\.)/g, " shlokas are loading...");
+    }
   } else if (isHindi) {
     // Automatic translation mapping for common Gujarati loader titles
     if (displayTitle === "ગીતા જ્ઞાન ક્વિઝ લોડ થઈ રહી છે...") {
@@ -218,9 +236,19 @@ export default function SudarshanShimmerLoader({
 
   let displaySubtitle = subtitle;
   if (!displaySubtitle || displaySubtitle === "કૃપા કરીને થોડી ક્ષણ રાહ જુઓ ॥ શ્રીકૃષ્ણાર્પણમસ્તુ ॥") {
-    displaySubtitle = isHindi
+    displaySubtitle = isEnglish
+      ? "Please wait a moment ॥ Shree Krishnarpanamastu ॥"
+      : isHindi
       ? "कृपया कुछ क्षण प्रतीक्षा करें ॥ श्रीकृष्णार्पणमस्तु ॥"
       : "કૃપા કરીને થોડી ક્ષણ રાહ જુઓ ॥ શ્રીકૃષ્ણાર્પણમસ્તુ ॥";
+  } else if (isEnglish) {
+    if (displaySubtitle === "પ્રશ્નો અને આધ્યાત્મિક વિકલ્પો તૈયાર થઈ રહ્યા છે..." || displaySubtitle === "प्रश्न और आध्यात्मिक विकल्प तैयार हो रहे हैं...") {
+      displaySubtitle = "Questions and spiritual options are being prepared...";
+    } else if (displaySubtitle === "તમારી આધ્યાત્મિક પ્રગતિનું વિશ્લેષણ થઈ રહ્યું છે..." || displaySubtitle === "आपकी आध्यात्मिक प्रगति का विश्लेषण हो रहा है...") {
+      displaySubtitle = "Analyzing your spiritual progress...";
+    } else if (displaySubtitle === "પવિત્ર ગીતા વાણીનું સંકલન થઈ રહ્યું છે..." || displaySubtitle === "पवित्र गीता वाणी का संकलन हो रहा है...") {
+      displaySubtitle = "Compiling sacred Gita teachings...";
+    }
   } else if (isHindi) {
     if (displaySubtitle === "પ્રશ્નો અને આધ્યાત્મિક વિકલ્પો તૈયાર થઈ રહ્યા છે...") {
       displaySubtitle = "प्रश्न और आध्यात्मिक विकल्प तैयार हो रहे हैं...";

@@ -9,7 +9,7 @@ import "./QuizResult.css";
 const API_URL = "https://bhagavad-gita-website.onrender.com/api/quiz";
 
 function QuizResult() {
-  const { isHindi } = useLanguage();
+  const { isHindi, isEnglish, isGujarati, txt } = useLanguage();
   // =====================================================
   // STATE
   // =====================================================
@@ -67,6 +67,27 @@ function QuizResult() {
     16: "दैवासुरसम्पद्विभाग योग",
     17: "श्रद्धात्रयविभाग योग",
     18: "मोक्षसंन्यास योग",
+  };
+
+  const chapterNamesEn = {
+    1: "Arjuna Vishada Yoga",
+    2: "Sankhya Yoga",
+    3: "Karma Yoga",
+    4: "Jnana Karma Sanyasa Yoga",
+    5: "Karma Sanyasa Yoga",
+    6: "Dhyana Yoga",
+    7: "Jnana Vijnana Yoga",
+    8: "Aksara Brahma Yoga",
+    9: "Raja Vidya Raja Guhya Yoga",
+    10: "Vibhuti Yoga",
+    11: "Visvarupa Darsana Yoga",
+    12: "Bhakti Yoga",
+    13: "Ksetra Ksetrajna Vibhaga Yoga",
+    14: "Gunatraya Vibhaga Yoga",
+    15: "Purusottama Yoga",
+    16: "Daivasura Sampad Vibhaga Yoga",
+    17: "Sraddhatraya Vibhaga Yoga",
+    18: "Moksa Sanyasa Yoga",
   };
 
   // =====================================================
@@ -180,7 +201,7 @@ function QuizResult() {
 
         setError(
           err.message ||
-            (isHindi ? "Quiz परिणाम लोड करने में त्रुटि आई।" : "Quiz result load કરવામાં error આવ્યો.")
+            txt("Quiz result load કરવામાં error આવ્યો.", "Quiz परिणाम लोड करने में त्रुटि आई।", "Error loading quiz results.")
         );
       } finally {
         setLoading(false);
@@ -216,18 +237,18 @@ function QuizResult() {
 
   const getResultMessage = (percentage) => {
     if (percentage >= 90) {
-      return isHindi ? "अद्भुत! बहुत ही उत्तम प्रदर्शन!" : "અદ્ભુત! ખૂબ જ સરસ પ્રદર્શન!";
+      return txt("અદ્ભુત! ખૂબ જ સરસ પ્રદર્શન!", "अद्भुत! बहुत ही उत्तम प्रदर्शन!", "Spectacular! Outstanding performance!");
     }
 
     if (percentage >= 75) {
-      return isHindi ? "बहुत बढ़िया! आपका प्रदर्शन उत्तम है।" : "ખૂબ સરસ! તમારું પ્રદર્શન ઉત્તમ છે.";
+      return txt("ખૂબ સરસ! તમારું પ્રદર્શન ઉત્તમ છે.", "बहुत बढ़िया! आपका प्रदर्शन उत्तम है।", "Great job! Your performance is commendable.");
     }
 
     if (percentage >= 50) {
-      return isHindi ? "अच्छा प्रदर्शन! और अभ्यास करें।" : "સારું પ્રદર્શન! વધુ અભ્યાસ કરો.";
+      return txt("સારું પ્રદર્શન! વધુ અભ્યાસ કરો.", "अच्छा प्रदर्शन! और अभ्यास करें।", "Good performance! Keep studying and practicing.");
     }
 
-    return isHindi ? "और मेहनत करें तथा पुनः प्रयास करें।" : "વધુ મહેનત કરો અને ફરી પ્રયાસ કરો.";
+    return txt("વધુ મહેનત કરો અને ફરી પ્રયાસ કરો.", "और मेहनत करें तथा पुनः प्रयास करें।", "Review the chapters and try again.");
   };
 
   // =====================================================
@@ -269,8 +290,8 @@ function QuizResult() {
     const chapterNumber = getChapterNumber(result);
 
     if (chapterNumber) {
-      const chapterTitle = (isHindi ? chapterNamesHi[chapterNumber] : chapterNames[chapterNumber]) || "";
-      const prefix = isHindi ? "अध्याय" : "અધ્યાય";
+      const chapterTitle = (isEnglish ? chapterNamesEn[chapterNumber] : isHindi ? chapterNamesHi[chapterNumber] : chapterNames[chapterNumber]) || "";
+      const prefix = txt("અધ્યાય", "अध्याय", "Chapter");
       return {
         isChapter: true,
         chapterNumber,
@@ -278,9 +299,11 @@ function QuizResult() {
         title: `${prefix} ${chapterNumber}: ${chapterTitle}`,
         badge: `${prefix} ${chapterNumber} • ${chapterTitle}`,
         shortBadge: `${prefix} ${chapterNumber}`,
-        subtitle: isHindi
-          ? `श्रीमद्भगवद्गीता • अध्याय ${chapterNumber}`
-          : `શ્રીમદ્ ભગવદ્ ગીતા • અધ્યાય ${chapterNumber}`,
+        subtitle: txt(
+          `શ્રીમદ્ ભગવદ્ ગીતા • અધ્યાય ${chapterNumber}`,
+          `श्रीमद्भगवद्गीता • अध्याय ${chapterNumber}`,
+          `Srimad Bhagavad Gita • Chapter ${chapterNumber}`
+        ),
       };
     }
 
@@ -288,22 +311,22 @@ function QuizResult() {
       return {
         isChapter: false,
         chapterNumber: null,
-        shortTitle: isHindi ? "महाभारत Quiz" : "મહાભારત Quiz",
-        title: isHindi ? "महाभारत Quiz" : "મહાભારત Quiz",
-        badge: isHindi ? "महाभारत विशेष क्विज़" : "મહાભારત વિશેષ ક્વિઝ",
-        shortBadge: isHindi ? "महाभारत" : "મહાભારત",
-        subtitle: isHindi ? "महाभारत विशेष ज्ञान परीक्षा" : "મહાભારત વિશેષ જ્ઞાન કસોટી",
+        shortTitle: txt("મહાભારત Quiz", "महाभारत Quiz", "Mahabharata Quiz"),
+        title: txt("મહાભારત Quiz", "महाभारत Quiz", "Mahabharata Quiz"),
+        badge: txt("મહાભારત વિશેષ ક્વિઝ", "महाभारत विशेष क्विज़", "Mahabharata Special Quiz"),
+        shortBadge: txt("મહાભારત", "महाभारत", "Mahabharata"),
+        subtitle: txt("મહાભારત વિશેષ જ્ઞાન કસોટી", "महाभारत विशेष ज्ञान परीक्षा", "Mahabharata Special Knowledge Quiz"),
       };
     }
 
     return {
       isChapter: false,
       chapterNumber: null,
-      shortTitle: isHindi ? "भगवद् गीता Quiz" : "ભગવદ્ ગીતા Quiz",
-      title: isHindi ? "श्रीमद् भगवद् गीता Quiz" : "શ્રીમદ્ ભગવદ્ ગીતા Quiz",
-      badge: isHindi ? "सम्पूर्ण भगवद् गीता" : "સમગ્ર ભગવદ્ ગીતા",
-      shortBadge: isHindi ? "सम्पूर्ण गीता" : "સમગ્ર ગીતા",
-      subtitle: isHindi ? "सम्पूर्ण भगवद् गीता सामान्य ज्ञान परीक्षा" : "સંપૂર્ણ ભગવદ્ ગીતા સામાન્ય જ્ઞાન કસોટી",
+      shortTitle: txt("ભગવદ્ ગીતા Quiz", "भगवद् गीता Quiz", "Bhagavad Gita Quiz"),
+      title: txt("શ્રીમદ્ ભગવદ્ ગીતા Quiz", "श्रीमद् भगवद् गीता Quiz", "Srimad Bhagavad Gita Quiz"),
+      badge: txt("સમગ્ર ભગવદ્ ગીતા", "सम्पूर्ण भगवद् गीता", "Comprehensive Bhagavad Gita"),
+      shortBadge: txt("સમગ્ર ગીતા", "सम्पूर्ण गीता", "All Gita"),
+      subtitle: txt("સંપૂર્ણ ભગવદ્ ગીતા સામાન્ય જ્ઞાન કસોટી", "सम्पूर्ण भगवद् गीता सामान्य ज्ञान परीक्षा", "Comprehensive Bhagavad Gita General Knowledge Quiz"),
     };
   };
 
@@ -356,16 +379,16 @@ function QuizResult() {
       <main className="quiz-result-page">
         <SudarshanShimmerLoader
           type="simple"
-          title={
-            isHindi
-              ? "क्विज परिणाम तैयार हो रहा है..."
-              : "Quiz પરિણામ તૈયાર થઈ રહ્યું છે..."
-          }
-          subtitle={
-            isHindi
-              ? "आपकी आध्यात्मिक प्रगति का विश्लेषण हो रहा है..."
-              : "તમારી આધ્યાત્મિક પ્રગતિનું વિશ્લેષણ થઈ રહ્યું છે..."
-          }
+          title={txt(
+            "Quiz પરિણામ તૈયાર થઈ રહ્યું છે...",
+            "क्विज परिणाम तैयार हो रहा है...",
+            "Preparing quiz results..."
+          )}
+          subtitle={txt(
+            "તમારી આધ્યાત્મિક પ્રગતિનું વિશ્લેષણ થઈ રહ્યું છે...",
+            "आपकी आध्यात्मिक प्रगति का विश्लेषण हो रहा है...",
+            "Analyzing your spiritual progress..."
+          )}
         />
       </main>
     );
@@ -377,7 +400,13 @@ function QuizResult() {
 
   if (error) {
     const isTokenIssue = error.toLowerCase().includes("token") || error.includes("401");
-    const displayError = isHindi ? (error.toLowerCase().includes("token") ? "अमान्य या समाप्त टोकन (Invalid / Expired Token)। कृपया पुनः लॉगिन करें।" : error.replace(/અથવા/g, "अथવા")) : error;
+    const displayError = isTokenIssue
+      ? txt(
+          "અમાન્ય અથવા સમાપ્ત ટોકન (Invalid / Expired Token). કૃપા કરીને ફરીથી લોગિન કરો.",
+          "अमान्य या समाप्त टोकन (Invalid / Expired Token)। कृपया पुनः लॉगिन करें।",
+          "Invalid or expired token. Please login again."
+        )
+      : error;
     return (
       <main className="quiz-result-page">
         <section className="quiz-result-error">
@@ -386,7 +415,7 @@ function QuizResult() {
           </div>
 
           <h2>
-            {isHindi ? "कुछ समस्या आई" : "કંઈક સમસ્યા આવી"}
+            {txt("કંઈક સમસ્યા આવી", "कुछ समस्या आई", "Something went wrong")}
           </h2>
 
           <p>
@@ -398,14 +427,14 @@ function QuizResult() {
               type="button"
               onClick={() => window.location.reload()}
             >
-              <RefreshCw size={15} className="btn-icon" /> {isHindi ? "पुनः प्रयास करें" : "ફરી પ્રયાસ કરો"}
+              <RefreshCw size={15} className="btn-icon" /> {txt("ફરી પ્રયાસ કરો", "पुनः प्रयास करें", "Try Again")}
             </button>
 
             <button
               type="button"
               onClick={() => navigate("/quiz")}
             >
-              <ArrowLeft size={15} className="btn-icon" /> {isHindi ? "Quiz पर वापस जाएं" : "Quiz પર પાછા જાઓ"}
+              <ArrowLeft size={15} className="btn-icon" /> {txt("Quiz પર પાછા જાઓ", "Quiz पर वापस जाएं", "Back to Quiz")}
             </button>
 
             {isTokenIssue && (
@@ -418,7 +447,7 @@ function QuizResult() {
                   navigate("/login");
                 }}
               >
-                {isHindi ? "लॉगिन करें" : "લોગિન કરો"}
+                {txt("લોગિન કરો", "लॉगिन करें", "Login")}
               </button>
             )}
           </div>
@@ -449,7 +478,7 @@ function QuizResult() {
             Quiz Results
           </h1>
 
-          <p>{isHindi ? "आपके अब तक के Quiz Results" : "તમારા અત્યાર સુધીના Quiz Results"}</p>
+          <p>{txt("તમારા અત્યાર સુધીના Quiz Results", "आपके अब तक के Quiz Results", "Your quiz results so far")}</p>
 
         </section>
 
@@ -459,9 +488,9 @@ function QuizResult() {
             <BookOpen size={40} color="#2563eb" />
           </div>
 
-          <h2>{isHindi ? "अभी कोई Quiz Result नहीं है" : "હજુ કોઈ Quiz Result નથી"}</h2>
+          <h2>{txt("હજુ કોઈ Quiz Result નથી", "अभी कोई Quiz Result नहीं है", "No Quiz Results Yet")}</h2>
 
-          <p>{isHindi ? "आपने अभी तक कोई Quiz पूरी नहीं की है।" : "તમે હજુ સુધી કોઈ Quiz પૂર્ણ કરી નથી."}</p>
+          <p>{txt("તમે હજુ સુધી કોઈ Quiz પૂર્ણ કરી નથી.", "आपने अभी तक कोई Quiz पूरी नहीं की है।", "You have not completed any quizzes yet.")}</p>
 
           <button
             type="button"
@@ -469,7 +498,7 @@ function QuizResult() {
               navigate("/quiz")
             }
           >
-            <PlayCircle size={16} className="btn-icon" /> {isHindi ? "Quiz शुरू करें" : "Quiz શરૂ કરો"}
+            <PlayCircle size={16} className="btn-icon" /> {txt("Quiz શરૂ કરો", "Quiz शुरू करें", "Start Quiz")}
           </button>
 
         </section>
@@ -518,7 +547,7 @@ function QuizResult() {
             navigate("/quiz")
           }
         >
-          <ArrowLeft size={15} className="btn-icon" /> {isHindi ? "Quiz पर वापस जाएं" : "Quiz પર પાછા જાઓ"}
+          <ArrowLeft size={15} className="btn-icon" /> {txt("Quiz પર પાછા જાઓ", "Quiz पर वापस जाएं", "Back to Quiz")}
         </button>
 
         <button
@@ -529,7 +558,7 @@ function QuizResult() {
           }
         >
           <Award size={16} className="btn-icon" />
-          <span>{isHindi ? "क्विज़ उपलब्धियां देखें" : "ક્વિઝ સિદ્ધિઓ જુઓ"}</span>
+          <span>{txt("ક્વિઝ સિદ્ધિઓ જુઓ", "क्विज़ उपलब्धियां देखें", "View Quiz Achievements")}</span>
         </button>
 
       </div>
@@ -705,8 +734,8 @@ function QuizResult() {
                 aria-expanded={isExpanded}
                 aria-label={`${categoryName} result ${
                   isExpanded
-                    ? (isHindi ? "बंद करें" : "બંધ કરો")
-                    : (isHindi ? "देखें" : "જુઓ")
+                    ? txt("બંધ કરો", "बंद करें", "Close")
+                    : txt("જુઓ", "देखें", "View")
                 }`}
               >
 
@@ -885,7 +914,7 @@ function QuizResult() {
                           {totalQuestions}
                         </strong>
 
-                        <span>{isHindi ? "कुल प्रश्न" : "કુલ પ્રશ્નો"}</span>
+                        <span>{txt("કુલ પ્રશ્નો", "कुल प्रश्न", "Total Questions")}</span>
 
                       </div>
 
@@ -906,7 +935,7 @@ function QuizResult() {
                           {correctAnswers}
                         </strong>
 
-                        <span>{isHindi ? "सही उत्तर" : "સાચા જવાબ"}</span>
+                        <span>{txt("સાચા જવાબ", "सही उत्तर", "Correct Answers")}</span>
 
                       </div>
 
@@ -927,7 +956,7 @@ function QuizResult() {
                           {wrongAnswers}
                         </strong>
 
-                        <span>{isHindi ? "गलत उत्तर" : "ખોટા જવાબ"}</span>
+                        <span>{txt("ખોટા જવાબ", "गलत उत्तर", "Wrong Answers")}</span>
 
                       </div>
 
@@ -949,7 +978,7 @@ function QuizResult() {
                             {skippedQuestions}
                           </strong>
 
-                          <span>{isHindi ? "छोड़े गए प्रश्न" : "છોડેલા પ્રશ્નો"}</span>
+                          <span>{txt("છોડેલા પ્રશ્નો", "छोड़े गए प्रश्न", "Skipped Questions")}</span>
 
                         </div>
 
@@ -967,7 +996,7 @@ function QuizResult() {
 
                     <div className="quiz-result-progress-info">
 
-                      <span>{isHindi ? "आपका Score" : "તમારો Score"}</span>
+                      <span>{txt("તમારો Score", "आपका Score", "Your Score")}</span>
 
                       <strong>
                         {correctAnswers} /{" "}

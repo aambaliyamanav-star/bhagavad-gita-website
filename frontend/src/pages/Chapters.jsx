@@ -25,6 +25,27 @@ const chapterNamesHi = {
   18: "मोक्षसंन्यास योग",
 };
 
+const chapterNamesEn = {
+  1: "Arjuna Vishada Yoga",
+  2: "Sankhya Yoga",
+  3: "Karma Yoga",
+  4: "Jnana Karma Sanyasa Yoga",
+  5: "Karma Sanyasa Yoga",
+  6: "Atma Samyama Yoga",
+  7: "Jnana Vijnana Yoga",
+  8: "Akshara Brahma Yoga",
+  9: "Raja Vidya Raja Guhya Yoga",
+  10: "Vibhuti Yoga",
+  11: "Vishwarupa Darshana Yoga",
+  12: "Bhakti Yoga",
+  13: "Kshetra Kshetrajna Vibhaga Yoga",
+  14: "Gunatraya Vibhaga Yoga",
+  15: "Purushottama Yoga",
+  16: "Daivasura Sampad Vibhaga Yoga",
+  17: "Shraddhatraya Vibhaga Yoga",
+  18: "Moksha Sanyasa Yoga",
+};
+
 const chapters = [
   { number: 1, name: "અર્જુનવિષાદ યોગ", verses: 47 },
   { number: 2, name: "સાંખ્ય યોગ", verses: 72 },
@@ -48,7 +69,7 @@ const chapters = [
 
 function Chapters() {
   const navigate = useNavigate();
-  const { isHindi } = useLanguage();
+  const { isHindi, isEnglish, txt, CHAPTER_NAMES } = useLanguage();
 
   const [shlokCounts, setShlokCounts] = useState({});
   const [loading, setLoading] = useState(true);
@@ -66,7 +87,7 @@ function Chapters() {
 
         if (!response.ok) {
           throw new Error(
-            data.message || (isHindi ? "श्लोक डेटा लोड नहीं हो सका।" : "Shlok data load થઈ શક્યો નથી.")
+            data.message || txt("Shlok data load થઈ શક્યો નથી.", "श्लोक डेटा लोड नहीं हो सका।", "Could not load shlok data.")
           );
         }
 
@@ -104,6 +125,12 @@ function Chapters() {
     navigate(`/chapter/${chapterNumber}`);
   };
 
+  const getChapterName = (chapter) => {
+    if (isEnglish) return chapterNamesEn[chapter.number] || CHAPTER_NAMES[chapter.number]?.en || chapter.name;
+    if (isHindi) return chapterNamesHi[chapter.number] || CHAPTER_NAMES[chapter.number]?.hi || chapter.name;
+    return chapter.name;
+  };
+
   return (
     <main className="chapters-page">
 
@@ -114,7 +141,7 @@ function Chapters() {
         </p>
 
         <h1>
-          {isHindi ? "भगवद् गीता के 18 अध्याय" : "ભગવદ્ ગીતાના 18 અધ્યાય"}
+          {txt("ભગવદ્ ગીતાના 18 અધ્યાય", "भगवद् गीता के 18 अध्याय", "18 Chapters of Bhagavad Gita")}
         </h1>
       </section>
 
@@ -133,15 +160,15 @@ function Chapters() {
             >
 
               <div className="chapter-number">
-                {isHindi ? `अध्याय ${chapter.number}` : `અધ્યાય ${chapter.number}`}
+                {txt(`અધ્યાય ${chapter.number}`, `अध्याय ${chapter.number}`, `Chapter ${chapter.number}`)}
               </div>
 
               <h2>
-                {isHindi ? (chapterNamesHi[chapter.number] || chapter.name) : chapter.name}
+                {getChapterName(chapter)}
               </h2>
 
               <p>
-                {databaseCount > 0 ? databaseCount : chapter.verses} {isHindi ? "श्लोक" : "શ્લોક"}
+                {databaseCount > 0 ? databaseCount : chapter.verses} {txt("શ્લોક", "श्लोक", "Shlokas")}
               </p>
 
               <button
@@ -151,7 +178,7 @@ function Chapters() {
                   )
                 }
               >
-                <BookOpen className="btn-icon" size={14} /> {isHindi ? "अध्याय पढ़ें" : "અધ્યાય વાંચો"}
+                <BookOpen className="btn-icon" size={14} /> {txt("અધ્યાય વાંચો", "अध्याय पढ़ें", "Read Chapter")}
               </button>
 
             </div>

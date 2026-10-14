@@ -6,7 +6,7 @@ import "./History.css";
 
 function History() {
   const navigate = useNavigate();
-  const { isHindi } = useLanguage();
+  const { isHindi, isEnglish, isGujarati, txt } = useLanguage();
 
   // =====================================================
   // QUIZ HISTORY
@@ -46,7 +46,7 @@ function History() {
         </p>
 
         <h1>
-          {isHindi ? "इतिहास (History)" : "History"}
+          {txt("ઇતિહાસ", "इतिहास", "History")}
         </h1>
       </section>
 
@@ -74,7 +74,7 @@ function History() {
           <div className="history-option-content">
 
             <h2>
-              {isHindi ? "क्विज़ इतिहास (Quiz History)" : "Quiz History"}
+              {txt("ક્વિઝ ઇતિહાસ", "क्विज़ इतिहास", "Quiz History")}
             </h2>
 
           </div>
@@ -101,7 +101,7 @@ function History() {
           <div className="history-option-content">
 
             <h2>
-              {isHindi ? "क्विज़ उपलब्धियां (Achievements)" : "ક્વિઝ સિદ્ધિઓ (Achievements)"}
+              {txt("ક્વિઝ સિદ્ધિઓ", "क्विज़ उपलब्धियां", "Quiz Achievements")}
             </h2>
 
           </div>
@@ -129,7 +129,7 @@ function History() {
           <div className="history-option-content">
 
             <h2>
-              {isHindi ? "पठन प्रगति" : "વાંચન પ્રગતિ"}
+              {txt("વાંચન પ્રગતિ", "पठन प्रगति", "Reading Progress")}
             </h2>
 
           </div>

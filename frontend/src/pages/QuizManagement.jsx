@@ -28,7 +28,7 @@ import "./QuizManagement.css";
 
 function QuizManagement() {
   const navigate = useNavigate();
-  const { isHindi } = useLanguage();
+  const { isHindi, isEnglish, isGujarati, txt } = useLanguage();
   // =====================================================
   // API
   // =====================================================
@@ -1013,7 +1013,7 @@ function QuizManagement() {
         <div className="quiz-management-loading">
           <span>
             <Loader2 className="btn-icon animate-spin" size={20} />{" "}
-            {isHindi ? "Quiz प्रश्न लोड हो रहे हैं..." : "Quiz questions load થઈ રહ્યા છે..."}
+            {txt("Quiz questions load થઈ રહ્યા છે...", "Quiz प्रश्न लोड हो रहे हैं...", "Loading quiz questions...")}
           </span>
         </div>
 
@@ -1231,8 +1231,8 @@ function QuizManagement() {
             >
               <Sparkles className={`btn-icon ${translating ? "spinning" : ""}`} size={16} />
               {translating
-                ? (isHindi ? "AI हिन्दी अनुवाद हो रहा है..." : "AI હિન્દી અનુવાદ થઈ રહ્યું છે...")
-                : (isHindi ? "✨ AI हिन्दी ऑटो-अनुवाद (Auto-Translate)" : "✨ AI હિન્દી ઓટો-અનુવાદ (Auto-Translate)")}
+                ? txt("AI હિન્દી અનુવાદ થઈ રહ્યું છે...", "AI हिन्दी अनुवाद हो रहा है...", "AI translating to Hindi...")
+                : txt("✨ AI હિન્દી ઓટો-અનુવાદ (Auto-Translate)", "✨ AI हिन्दी ऑटो-अनुवाद (Auto-Translate)", "✨ AI Hindi Auto-Translate")}
             </button>
           </div>
 
@@ -1479,7 +1479,7 @@ function QuizManagement() {
               {saving ? (
                 <span>
                   <Loader2 className="btn-icon animate-spin" size={16} />{" "}
-                  {isHindi ? "सहेजा जा रहा है..." : "Saving..."}
+                  {txt("સાચવી રહ્યું છે...", "सहेजा जा रहा है...", "Saving...")}
                 </span>
               ) : editingId ? (
                 <span>

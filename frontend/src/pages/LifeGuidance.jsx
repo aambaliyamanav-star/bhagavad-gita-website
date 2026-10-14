@@ -551,9 +551,216 @@ const GUIDANCE_TOPICS = [
   }
 ];
 
+const TOPIC_DATA_EN = {
+  anger: {
+    essence: "Anger clouds human intellect and destroys reasoning power. Only a serene mind can make the right decisions.",
+    shlokas: [
+      {
+        summary: "From anger arises delusion, from delusion comes loss of memory; with memory bewildered, intellect is destroyed, and with the ruin of intellect, a person falls.",
+        lifeLesson: "Whenever anger rises, do not react immediately. Take deep breaths and give your mind time to cool down."
+      },
+      {
+        summary: "For those who are free from lust and anger, who have subdued their minds, and who know the Self, divine peace is everywhere around them.",
+        lifeLesson: "Mastering anger is the true key to mental peace and life success."
+      },
+      {
+        summary: "Lust, anger, and greed are the three gates leading to the degradation of the soul. Therefore, one must completely renounce these three.",
+        lifeLesson: "Anger and greed rob life of its beauty; cultivate contentment and forgiveness."
+      }
+    ]
+  },
+  stress: {
+    essence: "Do not worry about circumstances beyond your control. Focus solely on your best effort and leave results to the Divine.",
+    shlokas: [
+      {
+        summary: "You have a right only to perform your prescribed duty, never to its fruits. Let not the fruit of action be your motive, nor let there be attachment to inaction.",
+        lifeLesson: "Cast aside anxiety over outcomes and give 100% devotion to the task currently at hand."
+      },
+      {
+        summary: "O son of Kunti, the contacts of senses with objects produce sensations of heat and cold, pleasure and pain. They are fleeting; learn to endure them patiently.",
+        lifeLesson: "No challenging phase lasts forever; this too shall pass. Grant your mind patient endurance."
+      },
+      {
+        summary: "Abandon all varieties of dharmas and simply surrender unto Me alone. I shall liberate you from all sinful reactions; do not grieve.",
+        lifeLesson: "Surrender your deepest anxieties to God with total faith; you will experience immense inner strength and peace."
+      }
+    ]
+  },
+  focus: {
+    essence: "An untamed mind acts as an enemy, while a disciplined mind is your greatest ally. Focus is developed through steady practice and detachment.",
+    shlokas: [
+      {
+        summary: "From wherever the restless and unsteady mind wanders away, one must bring it back under the control of the Self.",
+        lifeLesson: "Whenever your attention wavers while working or studying, gently bring it back without frustration."
+      },
+      {
+        summary: "O mighty-armed Arjuna, the mind is indeed restless and hard to curb; but through continuous practice and dispassion, it can be controlled.",
+        lifeLesson: "Daily meditation and disciplined focus steadily quiet the mind's turbulence."
+      },
+      {
+        summary: "Elevate yourself by your own mind, do not degrade yourself; for the mind alone is one's friend, and the mind alone is one's enemy.",
+        lifeLesson: "Your greatest strength or biggest hurdle is your own thought pattern. Turn your inner voice into your mentor."
+      }
+    ]
+  },
+  fear: {
+    essence: "The eternal soul can never be destroyed by any worldly circumstance. Renounce fear and step forward with faith and courage.",
+    shlokas: [
+      {
+        summary: "Treating pleasure and pain, gain and loss, victory and defeat with equanimity, engage yourself in battle; thus you shall incur no sin.",
+        lifeLesson: "Focus completely on putting forth your honest effort rather than fearing failure."
+      },
+      {
+        summary: "An unlearned person without faith and full of doubts goes to destruction. For the doubting soul, there is happiness neither here nor hereafter.",
+        lifeLesson: "Self-doubt paralyzes potential. Replace fear with trust in your inner capability."
+      },
+      {
+        summary: "To those who always remember Me with focused devotion, I carry what they lack and preserve what they have.",
+        lifeLesson: "When you entrust your life to righteousness and truth, divine grace protects you at every step."
+      }
+    ]
+  },
+  decision: {
+    essence: "When caught in life's crossroads, choose duty and righteousness over personal convenience and desires.",
+    shlokas: [
+      {
+        summary: "My nature is overpowered by grief; my mind is confused regarding my duty. I ask You: tell me clearly what is best for me. I am Your disciple; guide me.",
+        lifeLesson: "When confused, put aside ego and seek guidance from wise mentors and spiritual teachings."
+      },
+      {
+        summary: "It is far better to perform one's own prescribed duty, even if imperfectly, than to attempt another's duty well. Death in one's own duty is auspicious.",
+        lifeLesson: "Do not compare yourself to others or imitate blindly. Follow your authentic path with integrity."
+      },
+      {
+        summary: "Thus, wisdom more secret than all secrets has been expounded to you by Me. Reflect deeply on this, and then act as you choose.",
+        lifeLesson: "Seek knowledge, contemplate thoroughly, and make decisions with conscious personal accountability."
+      }
+    ]
+  },
+  peace: {
+    essence: "External possessions offer only fleeting pleasure. Authentic, lasting tranquility is found within one's own inner self.",
+    shlokas: [
+      {
+        summary: "Knowing Me as the beneficiary of all sacrifices, Lord of all worlds, and friend of all living beings, one attains eternal peace.",
+        lifeLesson: "Remember that the Divine is your eternal benefactor and friend; let this bring deep comfort to your soul."
+      },
+      {
+        summary: "The person who abandons all desires and moves about free from longing, devoid of possessiveness and egoism—that person attains peace.",
+        lifeLesson: "Reduce unnecessary desires and attachment to attain lasting mental calm."
+      },
+      {
+        summary: "One by whom the world is not agitated and who is not agitated by the world, who is free from joy, envy, fear, and anxiety—he is dear to Me.",
+        lifeLesson: "Do not let other people's opinions or chaotic surroundings disturb your inner equilibrium."
+      }
+    ]
+  },
+  grief: {
+    essence: "Death or parting is merely the transition of the physical body; the soul is eternally immortal. Rest firmly in the eternity of consciousness.",
+    shlokas: [
+      {
+        summary: "You mourn for those who need not be grieved for, yet speak words of wisdom. The truly wise grieve neither for the living nor for the departed.",
+        lifeLesson: "Accept life's natural flow; sorrow lessens when we recognize eternal spiritual reality."
+      },
+      {
+        summary: "The soul is never born, nor does it ever die; having existed, it never ceases to be. It is unborn, eternal, ever-existing, and primeval.",
+        lifeLesson: "Bodies perish, but the soul and memories live on in eternity. Cultivate courage through this truth."
+      },
+      {
+        summary: "For one who is born, death is certain; and for one who dies, rebirth is certain. Therefore, you should not grieve over the unavoidable.",
+        lifeLesson: "Accept unavoidable realities with calmness; focus on constructive actions in the present."
+      }
+    ]
+  },
+  laziness: {
+    essence: "Laziness and procrastination shroud the brilliance of the soul. Awaken to proactive action and dedicated duty with enthusiasm.",
+    shlokas: [
+      {
+        summary: "Perform your prescribed duty, for action is indeed superior to inaction. Even bodily maintenance is impossible without activity.",
+        lifeLesson: "Procrastination drains vital energy. Begin with small, positive actions right now."
+      },
+      {
+        summary: "Happiness that blinds the soul from beginning to end, arising from sleep, indolence, and negligence, is said to be in the mode of ignorance.",
+        lifeLesson: "Laziness provides deceptive comfort. True fulfillment comes through purposeful effort."
+      },
+      {
+        summary: "Elevate yourself by your own mind, do not degrade yourself; for the mind alone is one's friend, and the mind alone is one's enemy.",
+        lifeLesson: "Take charge of your habits today. Dedicate your mind towards creative and positive endeavors."
+      }
+    ]
+  },
+  ego: {
+    essence: "Thinking 'I am the sole doer' is the root of pride and fall. Humility, simplicity, and selfless dedication grant genuine liberation and peace.",
+    shlokas: [
+      {
+        summary: "All actions are performed by the gunas of material nature. One whose mind is deluded by false ego thinks, 'I am the doer.'",
+        lifeLesson: "Remain humble in moments of success. Attributes and abilities are divine gifts."
+      },
+      {
+        summary: "Hypocrisy, arrogance, conceit, anger, harshness, and ignorance belong to those born of demoniac nature, O Partha.",
+        lifeLesson: "Ego breaks relationships and blocks self-improvement. Practice modesty and kindness."
+      },
+      {
+        summary: "If, having become absorbed in egoism, you do not listen to My counsel, you will perish.",
+        lifeLesson: "Arrogance deafens one to truth. Stay open to wise counsel and constructive feedback."
+      }
+    ]
+  },
+  attachment: {
+    essence: "Excessive attachment binds the human spirit. Living with selfless detachment yields true contentment and unbounded joy.",
+    shlokas: [
+      {
+        summary: "While contemplating objects of the senses, attachment develops; from attachment springs desire, and from desire arises anger.",
+        lifeLesson: "Notice where your mind dwells excessively. Guard against obsessive thoughts before they overpower reason."
+      },
+      {
+        summary: "It is lust, it is anger, born of the passion mode, insatiable and all-devouring—know this as the greatest enemy here in the world.",
+        lifeLesson: "Channel unchecked desires into noble, creative, and selfless pursuits."
+      },
+      {
+        summary: "The mode of passion is marked by intense longing and attachment to fruitive actions; it binds the embodied soul to continuous labor.",
+        lifeLesson: "Work wholeheartedly, but do not let yourself be enslaved by greed or compulsive acquisitiveness."
+      }
+    ]
+  },
+  devotion: {
+    essence: "Unshakable faith in the Divine and devotion to righteous deeds carry you across every storm in life.",
+    shlokas: [
+      {
+        summary: "The ignorant, faithless, and doubting soul perishes. For the skeptic, there is happiness neither in this world nor in the next.",
+        lifeLesson: "Doubt scatters attention; unwavering faith unifies mental power and opens doors to success."
+      },
+      {
+        summary: "To those who always remember Me with focused devotion, I carry what they lack and preserve what they have.",
+        lifeLesson: "Trust that genuine devotion and ethical work are always blessed and supported by God."
+      },
+      {
+        summary: "Abandon all varieties of dharmas and simply surrender unto Me alone. I shall liberate you from all sins; do not grieve.",
+        lifeLesson: "Release your burdens to the Lord and perform your duty with peace and devotion in your heart."
+      }
+    ]
+  },
+  relationship: {
+    essence: "Recognize the divine spark within every being; foster forgiveness and empathy. Kind and truthful speech is nectar for relationships.",
+    shlokas: [
+      {
+        summary: "He who looks upon the joys and sorrows of all beings with empathy, as if they were his own, is regarded as the highest yogi.",
+        lifeLesson: "See life from others' perspectives. Empathy transforms conflicts into mutual understanding."
+      },
+      {
+        summary: "He who harbors no hatred toward any creature, who is friendly and compassionate, free from possessiveness and ego, equal in joy and sorrow, and forgiving—he is dear to Me.",
+        lifeLesson: "Holding grudges harms you first. Forgive and let go to unburden your heart."
+      },
+      {
+        summary: "Words that cause no distress, that are truthful, pleasant, and beneficial, alongside daily self-study—this is the austerity of speech.",
+        lifeLesson: "Words can wound or heal. Always speak truthfully, gently, and with benevolent intent."
+      }
+    ]
+  }
+};
+
 function LifeGuidance() {
   const navigate = useNavigate();
-  const { isHindi, CHAPTER_NAMES } = useLanguage();
+  const { isHindi, isEnglish, isGujarati, txt, CHAPTER_NAMES } = useLanguage();
   const [selectedTopicId, setSelectedTopicId] = useState(GUIDANCE_TOPICS[0].id);
   const shlokasSectionRef = useRef(null);
 
@@ -602,7 +809,9 @@ function LifeGuidance() {
       {/* PAGE HEADER */}
       <header className="guidance-header-banner">
         <h1>
-          {isHindi ? (
+          {isEnglish ? (
+            <>Life Dilemmas & <span className="highlight-text">Gita Solutions</span></>
+          ) : isHindi ? (
             <>जीवन की उलझन और <span className="highlight-text">गीता समाधान</span></>
           ) : (
             <>જીવનની મૂંઝવણ અને <span className="highlight-text">ગીતા ઉકેલ</span></>
@@ -610,9 +819,11 @@ function LifeGuidance() {
         </h1>
 
         <p className="guidance-intro">
-          {isHindi
-            ? "अपनी वर्तमान मनःस्थिति या चुनौती चुनें और भगवान श्रीकृष्ण के अमृतमयी वचनों से प्रेरणा, सही निर्णय और आंतरिक शांति प्राप्त करें।"
-            : "તમારી વર્તમાન મનોસ્થિતિ કે પડકાર પસંદ કરો અને ભગવાન શ્રીકૃષ્ણના અમૃતમય શબ્દોમાંથી પ્રેરણા, સાચો નિર્ણય અને આંતરિક શાંતિ પ્રાપ્ત કરો."}
+          {txt(
+            "તમારી વર્તમાન મનોસ્થિતિ કે પડકાર પસંદ કરો અને ભગવાન શ્રીકૃષ્ણના અમૃતમય શબ્દોમાંથી પ્રેરણા, સાચો નિર્ણય અને આંતરિક શાંતિ પ્રાપ્ત કરો.",
+            "अपनी वर्तमान मनःस्थिति या चुनौती चुनें और भगवान श्रीकृष्ण के अमृतमयी वचनों से प्रेरणा, सही निर्णय और आंतरिक शांति प्राप्त करें।",
+            "Choose your current state of mind or challenge and discover divine inspiration, clarity, and peace through the timeless teachings of Lord Krishna."
+          )}
         </p>
 
         {/* TOPIC SELECTOR GRID (HORIZONTAL SCROLL ON MOBILE) */}
@@ -621,7 +832,11 @@ function LifeGuidance() {
             {GUIDANCE_TOPICS.map((topic) => {
               const IconComponent = topic.icon;
               const isSelected = topic.id === selectedTopicId;
-              const displayedTitle = isHindi ? (TOPIC_TITLES_HI[topic.id] || topic.title) : topic.title;
+              const displayedTitle = isEnglish
+                ? (topic.englishTitle || topic.title)
+                : isHindi
+                ? (TOPIC_TITLES_HI[topic.id] || topic.title)
+                : topic.title;
 
               return (
                 <button
@@ -664,14 +879,23 @@ function LifeGuidance() {
             <Sparkles size={22} color="#ffffff" />
           </div>
           <div className="essence-info">
-            <h3>{(isHindi && currentTopic.essenceHi) ? currentTopic.essenceHi : currentTopic.essence}</h3>
+            <h3>
+              {isEnglish
+                ? (TOPIC_DATA_EN[currentTopic.id]?.essence || currentTopic.essence)
+                : (isHindi && currentTopic.essenceHi)
+                ? currentTopic.essenceHi
+                : currentTopic.essence}
+            </h3>
           </div>
         </div>
 
         {/* SHLOKAS SECTION */}
         <div className="guidance-shlokas-grid">
           {currentTopic.shlokas.map((shlok, index) => {
-            const localizedChapterName = isHindi
+            const englishShlokData = TOPIC_DATA_EN[currentTopic.id]?.shlokas?.[index];
+            const localizedChapterName = isEnglish
+              ? (CHAPTER_NAMES?.[shlok.chapterNumber]?.nameEn || CHAPTER_NAMES?.[shlok.chapterNumber]?.en || shlok.chapterName)
+              : isHindi
               ? (CHAPTER_NAMES?.[shlok.chapterNumber]?.nameHi || CHAPTER_NAMES?.[shlok.chapterNumber]?.hi || shlok.chapterName)
               : (CHAPTER_NAMES?.[shlok.chapterNumber]?.name || CHAPTER_NAMES?.[shlok.chapterNumber]?.gu || shlok.chapterName);
 
@@ -683,7 +907,7 @@ function LifeGuidance() {
                 {/* CARD TOP META */}
                 <div className="card-header-meta">
                   <span className="card-ref-badge">
-                    {isHindi ? "अध्याय" : "અધ્યાય"} {shlok.chapterNumber} • {isHindi ? "श्लोक" : "શ્લોક"} {shlok.shlokNumber}
+                    {txt("અધ્યાય", "अध्याय", "Chapter")} {shlok.chapterNumber} • {txt("શ્લોક", "श्लोक", "Verse")} {shlok.shlokNumber}
                   </span>
                   <span className="card-chapter-title">{localizedChapterName}</span>
                 </div>
@@ -696,9 +920,15 @@ function LifeGuidance() {
                 {/* TRANSLATION */}
                 <div className="card-meaning-block">
                   <h4>
-                    <BookOpen size={16} /> {isHindi ? "सरल अर्थ" : "સરળ ગુજરાતી અર્થ"}
+                    <BookOpen size={16} /> {txt("સરળ ગુજરાતી અર્થ", "सरल अर्थ", "Simple Meaning")}
                   </h4>
-                  <p>{(isHindi && shlok.hindiSummary) ? shlok.hindiSummary : shlok.gujaratiSummary}</p>
+                  <p>
+                    {isEnglish
+                      ? (englishShlokData?.summary || shlok.gujaratiSummary)
+                      : (isHindi && shlok.hindiSummary)
+                      ? shlok.hindiSummary
+                      : shlok.gujaratiSummary}
+                  </p>
                 </div>
 
                 {/* PRACTICAL LIFE LESSON */}
@@ -713,9 +943,15 @@ function LifeGuidance() {
                     className="lesson-header-tag"
                     style={{ color: currentTopic.color }}
                   >
-                    💡 {isHindi ? "व्यावहारिक जीवन में उपयोग:" : "વ્યવહારિક જીવનમાં ઉપયોગ:"}
+                    💡 {txt("વ્યવહારિક જીવનમાં ઉપયોગ:", "व्यावहारिक जीवन में उपयोग:", "Practical Life Application:")}
                   </span>
-                  <p>{(isHindi && shlok.lifeLessonHi) ? shlok.lifeLessonHi : shlok.lifeLesson}</p>
+                  <p>
+                    {isEnglish
+                      ? (englishShlokData?.lifeLesson || shlok.lifeLesson)
+                      : (isHindi && shlok.lifeLessonHi)
+                      ? shlok.lifeLessonHi
+                      : shlok.lifeLesson}
+                  </p>
                 </div>
 
                 {/* ACTION BUTTON */}
@@ -726,7 +962,7 @@ function LifeGuidance() {
                     handleReadFullShlok(shlok.chapterNumber, shlok.shlokNumber)
                   }
                 >
-                  <span>{isHindi ? "सम्पूर्ण श्लोक पढ़ें" : "સંપૂર્ણ શ્લોક વાંચો"}</span>
+                  <span>{txt("સંપૂર્ણ શ્લોક વાંચો", "सम्पूर्ण श्लोक पढ़ें", "Read Full Verse")}</span>
                   <ChevronRight size={18} />
                 </button>
               </article>

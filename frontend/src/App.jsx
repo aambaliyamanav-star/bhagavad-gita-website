@@ -49,9 +49,9 @@ import { useLanguage } from "./context/LanguageContext.jsx";
 // PROTECTED ROUTE COMPONENT
 // =====================================================
 
-function ProtectedRoute({ children, message, messageHi }) {
+function ProtectedRoute({ children, message, messageHi, messageEn }) {
   const { user, token, logout } = useAuth();
-  const { isHindi } = useLanguage();
+  const { isHindi, isEnglish, txt } = useLanguage();
   const location = useLocation();
 
   const isExpired = isTokenExpired(token);
@@ -61,7 +61,23 @@ function ProtectedRoute({ children, message, messageHi }) {
     }
     const targetPath = location.pathname + location.search;
     let redirectMessage = message;
-    if (isHindi) {
+    if (isEnglish) {
+      if (messageEn) {
+        redirectMessage = messageEn;
+      } else if (message) {
+        if (message.includes("જીવન માર્ગદર્શન")) redirectMessage = "Login is required to access Life Guidance.";
+        else if (message.includes("વાંચન પ્રગતિ")) redirectMessage = "Login is required to view Reading Progress.";
+        else if (message.includes("Profile")) redirectMessage = "Login is required to view your Profile.";
+        else if (message.includes("મનપસંદ શ્લોક")) redirectMessage = "Login is required to view Favourite Shlokas.";
+        else if (message.includes("Quiz રમવા")) redirectMessage = "Login is required to play Quiz.";
+        else if (message.includes("History")) redirectMessage = "Login is required to view your History.";
+        else if (message.includes("Quiz Results")) redirectMessage = "Login is required to view Quiz Results.";
+        else if (message.includes("ક્વિઝ સિદ્ધિઓ")) redirectMessage = "Login is required to view Quiz Achievements.";
+        else redirectMessage = "Login is required to access this page.";
+      } else {
+        redirectMessage = "Login is required to access this page.";
+      }
+    } else if (isHindi) {
       if (messageHi) {
         redirectMessage = messageHi;
       } else if (message) {
@@ -112,7 +128,7 @@ function ProtectedRoute({ children, message, messageHi }) {
 
 function AdminRoute({ children }) {
   const { user, token, logout } = useAuth();
-  const { isHindi } = useLanguage();
+  const { isHindi, isEnglish, txt } = useLanguage();
   const location = useLocation();
 
   const isExpired = isTokenExpired(token);
@@ -121,9 +137,11 @@ function AdminRoute({ children }) {
       logout();
     }
     const targetPath = location.pathname + location.search;
-    const redirectMessage = isHindi
-      ? "एडमिन पैनल का उपयोग करने के लिए लॉगिन आवश्यक है।"
-      : "Admin પેનલનો ઉપયોગ કરવા માટે Login કરવું જરૂરી છે.";
+    const redirectMessage = txt(
+      "Admin પેનલનો ઉપયોગ કરવા માટે Login કરવું જરૂરી છે.",
+      "एडमिन पैनल का उपयोग करने के लिए लॉगिन आवश्यक है।",
+      "Login is required to access the Admin Panel."
+    );
 
     try {
       sessionStorage.setItem(

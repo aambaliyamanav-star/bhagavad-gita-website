@@ -9,7 +9,7 @@ import "./FavouriteShlokas.css";
 
 function FavouriteShlokas() {
   const navigate = useNavigate();
-  const { isHindi, CHAPTER_NAMES } = useLanguage();
+  const { isHindi, isEnglish, isGujarati, txt, CHAPTER_NAMES } = useLanguage();
 
   // =====================================================
   // AUTH CONTEXT
@@ -57,9 +57,11 @@ function FavouriteShlokas() {
 
         if (!token) {
           setError(
-            isHindi
-              ? "पसंदीदा श्लोक देखने के लिए कृपया पहले Login करें।"
-              : "કૃપા કરીને પહેલા Login કરો."
+            txt(
+              "કૃપા કરીને પહેલા Login કરો.",
+              "पसंदीदा श्लोक देखने के लिए कृपया पहले Login करें।",
+              "Please Log In to view your favorite verses."
+            )
           );
           setLoading(false);
           return;
@@ -87,16 +89,22 @@ function FavouriteShlokas() {
           if (response.status === 401) {
             clearAuthSession();
             setError(
-              isHindi
-                ? "आपका सत्र समाप्त हो गया है। कृपया पुनः Login करें।"
-                : "તમારું સત્ર સમાપ્ત થઈ ગયું છે. કૃપા કરીને ફરી Login કરો."
+              txt(
+                "તમારું સત્ર સમાપ્ત થઈ ગયું છે. કૃપા કરીને ફરી Login કરો.",
+                "आपका सत्र समाप्त हो गया है। कृपया पुनः Login करें।",
+                "Your session has expired. Please Log In again."
+              )
             );
             setLoading(false);
             return;
           }
           throw new Error(
             data.message ||
-              (isHindi ? "पसंदीदा श्लोक लोड नहीं हो सके।" : "Favourite શ્લોક load થઈ શક્યા નથી.")
+              txt(
+                "Favourite શ્લોક load થઈ શક્યા નથી.",
+                "पसंदीदा श्लोक लोड नहीं हो सके।",
+                "Failed to load favorite verses."
+              )
           );
         }
 
@@ -117,7 +125,11 @@ function FavouriteShlokas() {
 
         setError(
           err.message ||
-            (isHindi ? "पसंदीदा श्लोक लोड करने में त्रुटि आई।" : "Favourite શ્લોક load કરવામાં error આવ્યો.")
+            txt(
+              "Favourite શ્લોક load કરવામાં error આવ્યો.",
+              "पसंदीदा श्लोक लोड करने में त्रुटि आई।",
+              "An error occurred while loading favorite verses."
+            )
         );
       } finally {
         setLoading(false);
@@ -184,7 +196,7 @@ function FavouriteShlokas() {
 
       if (!shlokId) {
         setError(
-          isHindi ? "श्लोक ID नहीं मिला।" : "Shlok ID મળ્યો નથી."
+          txt("Shlok ID મળ્યો નથી.", "श्लोक ID नहीं मिला।", "Verse ID not found.")
         );
         return;
       }
@@ -211,7 +223,11 @@ function FavouriteShlokas() {
       if (!response.ok) {
         throw new Error(
           data.message ||
-            (isHindi ? "पसंदीदा से नहीं हटाया जा सका।" : "Favourite દૂર થઈ શક્યું નથી.")
+            txt(
+              "Favourite દૂર થઈ શક્યું નથી.",
+              "पसंदीदा से नहीं हटाया जा सका।",
+              "Could not remove from favorites."
+            )
         );
       }
 
@@ -245,7 +261,11 @@ function FavouriteShlokas() {
 
       setError(
         err.message ||
-          (isHindi ? "पसंदीदा हटाने में त्रुटि आई।" : "Favourite દૂર કરવામાં error આવ્યો.")
+          txt(
+            "Favourite દૂર કરવામાં error આવ્યો.",
+            "पसंदीदा हटाने में त्रुटि आई।",
+            "Error removing favorite verse."
+          )
       );
     }
   };
@@ -257,9 +277,11 @@ function FavouriteShlokas() {
   const clearAllFavourites = async () => {
     const confirmed =
       window.confirm(
-        isHindi
-          ? "क्या आप सभी पसंदीदा श्लोक हटाना चाहते हैं?"
-          : "શું તમે બધા Favourite શ્લોક દૂર કરવા માંગો છો?"
+        txt(
+          "શું તમે બધા Favourite શ્લોક દૂર કરવા માંગો છો?",
+          "क्या आप सभी पसंदीदा श्लोक हटाना चाहते हैं?",
+          "Are you sure you want to remove all favorite verses?"
+        )
       );
 
     if (!confirmed) {
@@ -297,7 +319,11 @@ function FavouriteShlokas() {
       if (!response.ok) {
         throw new Error(
           data.message ||
-            (isHindi ? "पसंदीदा श्लोक नहीं हटाए जा सके।" : "Favourite શ્લોક દૂર થઈ શક્યા નથી.")
+            txt(
+              "Favourite શ્લોક દૂર થઈ શક્યા નથી.",
+              "पसंदीदा श्लोक नहीं हटाए जा सके।",
+              "Could not clear favorite verses."
+            )
         );
       }
 
@@ -314,7 +340,11 @@ function FavouriteShlokas() {
 
       setError(
         err.message ||
-          (isHindi ? "सभी पसंदीदा हटाने में त्रुटि आई।" : "બધા Favourite દૂર કરવામાં error આવ્યો.")
+          txt(
+            "બધા Favourite દૂર કરવામાં error આવ્યો.",
+            "सभी पसंदीदा हटाने में त्रुटि आई।",
+            "Error clearing all favorite verses."
+          )
       );
     }
   };
@@ -338,11 +368,15 @@ function FavouriteShlokas() {
           </p>
 
           <h1>
-            <Heart className="btn-icon" size={28} /> {isHindi ? "पसंदीदा श्लोक" : "Favourite શ્લોક"}
+            <Heart className="btn-icon" size={28} /> {txt("Favourite શ્લોક", "पसंदीदा श्लोक", "Favorite Verses")}
           </h1>
 
           <p>
-            {isHindi ? "अपने पसंदीदा श्लोक देखने के लिए Login करें।" : "તમારા મનપસંદ શ્લોક જોવા માટે Login કરો."}
+            {txt(
+              "તમારા મનપસંદ શ્લોક જોવા માટે Login કરો.",
+              "अपने पसंदीदा श्लोक देखने के लिए Login करें।",
+              "Please Log In to view your saved favorite verses."
+            )}
           </p>
 
         </section>
@@ -354,22 +388,26 @@ function FavouriteShlokas() {
           </div>
 
           <h2>
-            {isHindi ? "Login आवश्यक है" : "Login જરૂરી છે"}
+            {txt("Login જરૂરી છે", "Login आवश्यक है", "Login Required")}
           </h2>
 
           <p>
-            {isHindi
-              ? "पसंदीदा श्लोक सुरक्षित करने और देखने के लिए कृपया Login करें।"
-              : "Favourite શ્લોક save કરવા અને જોવા માટે કૃપા કરીને Login કરો."}
+            {txt(
+              "Favourite શ્લોક save કરવા અને જોવા માટે કૃપા કરીને Login કરો.",
+              "पसंदीदा श्लोक सुरक्षित करने और देखने के लिए कृपया Login करें।",
+              "Please Log In to save and view your favorite verses."
+            )}
           </p>
 
           <button
             type="button"
             className="favourite-back-btn"
             onClick={() => {
-              const loginMsg = isHindi
-                ? "पसंदीदा श्लोक देखने के लिए Login करना आवश्यक है।"
-                : "મનપસંદ શ્લોક જોવા માટે Login કરવું જરૂરી છે.";
+              const loginMsg = txt(
+                "મનપસંદ શ્લોક જોવા માટે Login કરવું જરૂરી છે.",
+                "पसंदीदा श्लोक देखने के लिए Login करना आवश्यक है।",
+                "Log In is required to view your favorite verses."
+              );
               sessionStorage.setItem(
                 "authRedirect",
                 JSON.stringify({
@@ -385,7 +423,7 @@ function FavouriteShlokas() {
               });
             }}
           >
-            <Lock className="btn-icon" size={18} /> {isHindi ? "Login करें" : "Login કરો"}
+            <Lock className="btn-icon" size={18} /> {txt("Login કરો", "Login करें", "Log In")}
           </button>
 
         </section>
@@ -413,15 +451,23 @@ function FavouriteShlokas() {
           </p>
 
           <h1>
-            <Heart className="btn-icon" size={28} /> {isHindi ? "पसंदीदा श्लोक" : "Favourite શ્લોક"}
+            <Heart className="btn-icon" size={28} /> {txt("Favourite શ્લોક", "पसंदीदा श्लोक", "Favorite Verses")}
           </h1>
 
         </section>
 
         <SudarshanShimmerLoader
           type="cards"
-          title={isHindi ? "आपके पसंदीदा श्लोक लोड हो रहे हैं..." : "તમારા મનપસંદ શ્લોક લોડ થઈ રહ્યા છે..."}
-          subtitle={isHindi ? "पवित्र गीता वाणी का संकलन हो रहा है..." : "પવિત્ર ગીતા વાણીનું સંકલન થઈ રહ્યું છે..."}
+          title={txt(
+            "તમારા મનપસંદ શ્લોક લોડ થઈ રહ્યા છે...",
+            "आपके पसंदीदा श्लोक लोड हो रहे हैं...",
+            "Loading your favorite verses..."
+          )}
+          subtitle={txt(
+            "પવિત્ર ગીતા વાણીનું સંકલન થઈ રહ્યું છે...",
+            "पवित्र गीता वाणी का संकलन हो रहा है...",
+            "Compiling sacred verses from the Bhagavad Gita..."
+          )}
           count={3}
         />
 
@@ -448,7 +494,7 @@ function FavouriteShlokas() {
           </p>
 
           <h1>
-            <Heart className="btn-icon" size={28} /> {isHindi ? "पसंदीदा श्लोक" : "Favourite શ્લોક"}
+            <Heart className="btn-icon" size={28} /> {txt("Favourite શ્લોક", "पसंदीदा श्लोક", "Favorite Verses")}
           </h1>
 
         </section>
@@ -460,7 +506,7 @@ function FavouriteShlokas() {
           </div>
 
           <h2>
-            {isHindi ? "कोई समस्या आई" : "કંઈક સમસ્યા આવી"}
+            {txt("કંઈક સમસ્યા આવી", "कोई समस्या आई", "Something went wrong")}
           </h2>
 
           <p>
@@ -474,7 +520,7 @@ function FavouriteShlokas() {
               window.location.reload()
             }
           >
-            <RefreshCw className="btn-icon" size={18} /> {isHindi ? "पुनः प्रयास करें" : "ફરી પ્રયાસ કરો"}
+            <RefreshCw className="btn-icon" size={18} /> {txt("ફરી પ્રયાસ કરો", "पुनः प्रयास करें", "Try Again")}
           </button>
 
         </section>
@@ -502,11 +548,11 @@ function FavouriteShlokas() {
           </div>
 
           <p className="favourite-sacred-title">
-            ॥ श्रीमद्भगવद्गीता ॥
+            ॥ श्रीमद्भगवद्गीता ॥
           </p>
 
           <h1>
-            <Heart className="btn-icon" size={28} /> {isHindi ? "पसंदीदा श्लोक" : "Favourite શ્લોક"}
+            <Heart className="btn-icon" size={28} /> {txt("Favourite શ્લોક", "पसंदीदा श्लोक", "Favorite Verses")}
           </h1>
 
         </section>
@@ -522,7 +568,7 @@ function FavouriteShlokas() {
           </div>
 
           <h2>
-            {isHindi ? "अभी तक कोई पसंदीदा श्लोक नहीं" : "હજુ કોઈ Favourite શ્લોક નથી"}
+            {txt("હજુ કોઈ Favourite શ્લોક નથી", "अभी तक कोई पसंदीदा श्लोक नहीं", "No favorite verses yet")}
           </h2>
 
           <button
@@ -532,7 +578,7 @@ function FavouriteShlokas() {
               navigate("/chapters")
             }
           >
-            <BookOpen className="btn-icon" size={18} /> {isHindi ? "गीता पढ़ना शुरू करें" : "ગીતા વાંચવાનું શરૂ કરો"}
+            <BookOpen className="btn-icon" size={18} /> {txt("ગીતા વાંચવાનું શરૂ કરો", "गीता पढ़ना शुरू करें", "Start Reading Gita")}
           </button>
 
         </section>
@@ -559,15 +605,15 @@ function FavouriteShlokas() {
         </div>
 
         <p className="favourite-sacred-title">
-          ॥ श्रीमद्भगવद्गीता ॥
+          ॥ श्रीमद्भगवद्गीता ॥
         </p>
 
         <h1>
-          <Heart className="btn-icon" size={28} /> {isHindi ? "पसंदीदा श्लोक" : "Favourite શ્લોક"}
+          <Heart className="btn-icon" size={28} /> {txt("Favourite શ્લોક", "पसंदीदा श्लोक", "Favorite Verses")}
         </h1>
 
         <p>
-          {isHindi ? "आपके चुने हुए श्लोक" : "તમારા પસંદ કરેલા શ્લોક"}
+          {txt("તમારા પસંદ કરેલા શ્લોક", "आपके चुने हुए श्लोक", "Your saved favorite verses")}
         </p>
 
       </section>
@@ -585,7 +631,7 @@ function FavouriteShlokas() {
           </strong>
 
           <span>
-            {isHindi ? "पसंदीदा श्लोक" : "Favourite શ્લોક"}
+            {txt("Favourite શ્લોક", "पसंदीदा श्लोक", "Favorite Verses")}
           </span>
 
         </div>
@@ -597,7 +643,7 @@ function FavouriteShlokas() {
             clearAllFavourites
           }
         >
-          <Trash2 className="btn-icon" size={16} /> {isHindi ? "सभी हटाएं" : "બધા દૂર કરો"}
+          <Trash2 className="btn-icon" size={16} /> {txt("બધા દૂર કરો", "सभी हटाएं", "Clear All")}
         </button>
 
       </section>
@@ -627,7 +673,9 @@ function FavouriteShlokas() {
               item.shlokNumber ||
               shlok.shlokNumber;
 
-            const localizedChapterName = isHindi
+            const localizedChapterName = isEnglish
+              ? (CHAPTER_NAMES?.[chapterNumber]?.nameEn || CHAPTER_NAMES?.[chapterNumber]?.en || item.chapterNameEn || item.chapterName)
+              : isHindi
               ? (CHAPTER_NAMES?.[chapterNumber]?.nameHi || CHAPTER_NAMES?.[chapterNumber]?.hi || shlok.chapterNameHi || item.chapterName)
               : (CHAPTER_NAMES?.[chapterNumber]?.name || CHAPTER_NAMES?.[chapterNumber]?.gu || item.chapterName || shlok.chapterName);
 
@@ -646,7 +694,7 @@ function FavouriteShlokas() {
                 <div className="favourite-card-header">
 
                   <div className="favourite-number">
-                    {isHindi ? "श्लोक" : "શ્લોક"}{" "}
+                    {txt("શ્લોક", "श्लोक", "Verse")}{" "}
                     {shlokNumber}
                   </div>
 
@@ -656,8 +704,8 @@ function FavouriteShlokas() {
                     onClick={() =>
                       removeFavourite(item)
                     }
-                    title={isHindi ? "पसंदीदा से हटाएं" : "Favourite દૂર કરો"}
-                    aria-label={isHindi ? "पसंदीदा से हटाएं" : "Favourite દૂર કરો"}
+                    title={txt("Favourite દૂર કરો", "पसंदीदा से हटाएं", "Remove from Favorites")}
+                    aria-label={txt("Favourite દૂર કરો", "पसंदीदा से हटाएं", "Remove from Favorites")}
                   >
                     <Heart fill="#ef4444" color="#ef4444" size={20} />
                   </button>
@@ -670,7 +718,7 @@ function FavouriteShlokas() {
 
                 <div className="favourite-card-body">
                   <div className="favourite-chapter">
-                    {isHindi ? "अध्याय" : "અધ્યાય"}{" "}
+                    {txt("અધ્યાય", "अध्याय", "Chapter")}{" "}
                     {chapterNumber}
 
                     {localizedChapterName && (
@@ -688,7 +736,7 @@ function FavouriteShlokas() {
                       openShloka(item)
                     }
                   >
-                    <BookOpen className="btn-icon" size={15} /> {isHindi ? "श्लोक पढ़ें" : "શ્લોક વાંચો"}
+                    <BookOpen className="btn-icon" size={15} /> {txt("શ્લોક વાંચો", "श्लोक पढ़ें", "Read Verse")}
                   </button>
                 </div>
 

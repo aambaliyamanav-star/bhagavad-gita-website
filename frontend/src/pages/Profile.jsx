@@ -28,7 +28,7 @@ import "./Profile.css";
 function Profile() {
   const navigate = useNavigate();
   const { logout } = useAuth();
-  const { isHindi } = useLanguage();
+  const { isHindi, isEnglish, isGujarati, txt } = useLanguage();
 
   // =====================================================
   // USER
@@ -131,7 +131,7 @@ const [showNewPassword, setShowNewPassword] =
             return;
           }
           throw new Error(
-            data.message || (isHindi ? "प्रोफ़ाइल नहीं मिली।" : "Profile મળ્યું નથી.")
+            data.message || txt("Profile મળ્યું નથી.", "प्रोफ़ाइल नहीं मिली।", "Profile not found.")
           );
         }
 
@@ -151,7 +151,7 @@ const [showNewPassword, setShowNewPassword] =
 
         setMessage(
           error.message ||
-            isHindi ? "Profile प्राप्त करने में समस्या आई।" : "Profile મેળવવામાં સમસ્યા આવી."
+            txt("Profile મેળવવામાં સમસ્યા આવી.", "Profile प्राप्त करने में समस्या आई।", "Error loading profile.")
         );
 
         setMessageType("error");
@@ -310,8 +310,8 @@ const [showNewPassword, setShowNewPassword] =
     if (!target) {
       setMessage(
         type === "email"
-          ? (isHindi ? "Email ID दर्ज करें।" : "Email ID નાખો.")
-          : (isHindi ? "Mobile Number दर्ज करें।" : "Mobile Number નાખો.")
+          ? txt("Email ID નાખો.", "Email ID दर्ज करें।", "Please enter Email ID.")
+          : txt("Mobile Number નાખો.", "Mobile Number दर्ज करें।", "Please enter Mobile Number.")
       );
 
       setMessageType("error");
@@ -328,7 +328,7 @@ const [showNewPassword, setShowNewPassword] =
         target
       )
     ) {
-      setMessage(isHindi ? "मान्य Email ID दर्ज करें।" : "યોગ્ય Email ID નાખો.");
+      setMessage(txt("યોગ્ય Email ID નાખો.", "मान्य Email ID दर्ज करें।", "Please enter a valid Email ID."));
       setMessageType("error");
       return;
     }
@@ -342,7 +342,7 @@ const [showNewPassword, setShowNewPassword] =
       !/^[0-9]{10}$/.test(target)
     ) {
       setMessage(
-        isHindi ? "मान्य 10 अंकों का Mobile Number दर्ज करें।" : "યોગ્ય 10 અંકનો Mobile Number નાખો."
+        txt("યોગ્ય 10 અંકનો Mobile Number નાખો.", "मान्य 10 अंकों का Mobile Number दर्ज करें।", "Please enter a valid 10-digit Mobile Number.")
       );
 
       setMessageType("error");
@@ -385,7 +385,7 @@ const [showNewPassword, setShowNewPassword] =
       if (!response.ok) {
         throw new Error(
           data.message ||
-            isHindi ? "OTP नहीं भेजा जा सका।" : "OTP મોકલી શકાયો નથી."
+            txt("OTP મોકલી શકાયો નથી.", "OTP नहीं भेजा जा सका।", "Could not send OTP.")
         );
       }
 
@@ -399,7 +399,11 @@ const [showNewPassword, setShowNewPassword] =
         setEmailOTP("");
 
         setMessage(
-          isHindi ? `Email बदलने के लिए OTP आपके वर्तमान पंजीकृत Email (${user.email}) पर भेजा गया है। ✉️` : `Email change માટે OTP તમારા હાલના registered Email (${user.email}) પર મોકલવામાં આવ્યો છે. ✉️`
+          txt(
+            `Email change માટે OTP તમારા હાલના registered Email (${user.email}) પર મોકલવામાં આવ્યો છે. ✉️`,
+            `Email बदलने के लिए OTP आपके वर्तमान पंजीकृत Email (${user.email}) पर भेजा गया है। ✉️`,
+            `OTP to change email has been sent to your current registered Email (${user.email}). ✉️`
+          )
         );
       }
 
@@ -413,7 +417,11 @@ const [showNewPassword, setShowNewPassword] =
         setMobileOTP("");
 
         setMessage(
-          isHindi ? `Mobile Number बदलने के लिए OTP आपके वर्तमान पंजीकृत Email (${user.email}) पर भेजा गया है। ✉️` : `Mobile Number change માટે OTP તમારા હાલના registered Email (${user.email}) પર મોકલવામાં આવ્યો છે. ✉️`
+          txt(
+            `Mobile Number change માટે OTP તમારા હાલના registered Email (${user.email}) પર મોકલવામાં આવ્યો છે. ✉️`,
+            `Mobile Number बदलने के लिए OTP आपके वर्तमान पंजीकृत Email (${user.email}) पर भेजा गया है। ✉️`,
+            `OTP to change mobile number has been sent to your current registered Email (${user.email}). ✉️`
+          )
         );
       }
 
@@ -426,7 +434,7 @@ const [showNewPassword, setShowNewPassword] =
 
       setMessage(
         error.message ||
-          isHindi ? "OTP भेजने में समस्या आई।" : "OTP મોકલવામાં સમસ્યા આવી."
+          txt("OTP મોકલવામાં સમસ્યા આવી.", "OTP भेजने में समस्या आई।", "Failed to send OTP.")
       );
 
       setMessageType("error");
@@ -450,7 +458,7 @@ const [showNewPassword, setShowNewPassword] =
 
     if (!cleanOTP) {
       setMessage(
-        isHindi ? "कृपया Email OTP दर्ज करें।" : "કૃપા કરીને Email OTP નાખો."
+        txt("કૃપા કરીને Email OTP નાખો.", "कृपया Email OTP दर्ज करें।", "Please enter Email OTP.")
       );
 
       setMessageType("error");
@@ -459,7 +467,7 @@ const [showNewPassword, setShowNewPassword] =
 
     if (!/^[0-9]{6}$/.test(cleanOTP)) {
       setMessage(
-        isHindi ? "6 अंकों का मान्य Email OTP दर्ज करें।" : "6 અંકનો યોગ્ય Email OTP નાખો."
+        txt("6 અંકનો યોગ્ય Email OTP નાખો.", "6 अंकों का मान्य Email OTP दर्ज करें।", "Please enter a valid 6-digit Email OTP.")
       );
 
       setMessageType("error");
@@ -481,7 +489,7 @@ const [showNewPassword, setShowNewPassword] =
 
     if (!value) {
       setMessage(
-        isHindi ? "Email ID आवश्यक है।" : "Email ID જરૂરી છે."
+        txt("Email ID જરૂરી છે.", "Email ID आवश्यक है।", "Email ID is required.")
       );
 
       setMessageType("error");
@@ -516,13 +524,13 @@ const [showNewPassword, setShowNewPassword] =
       if (!response.ok) {
         throw new Error(
           data.message ||
-            isHindi ? "Email OTP verify नहीं हो सका।" : "Email OTP verify થઈ શક્યો નથી."
+            txt("Email OTP verify થઈ શક્યો નથી.", "Email OTP verify नहीं हो सका।", "Could not verify Email OTP.")
         );
       }
 
       if (data.verified !== true) {
         throw new Error(
-          isHindi ? "OTP verify नहीं हुआ।" : isHindi ? "OTP verify नहीं हुआ।" : "OTP verify થયું નથી."
+          txt("OTP verify થયું નથી.", "OTP verify नहीं हुआ।", "OTP was not verified.")
         );
       }
 
@@ -530,7 +538,7 @@ const [showNewPassword, setShowNewPassword] =
       setEmailOTPVerified(true);
 
       setMessage(
-        isHindi ? "Email OTP सफलतापूर्वक verify हो गया है। ✅" : "Email OTP successfully verify થઈ ગયો છે. ✅"
+        txt("Email OTP successfully verify થઈ ગયો છે. ✅", "Email OTP सफलतापूर्वक verify हो गया है। ✅", "Email OTP verified successfully. ✅")
       );
 
       setMessageType("success");
@@ -544,7 +552,7 @@ const [showNewPassword, setShowNewPassword] =
 
       setMessage(
         error.message ||
-          isHindi ? "Email OTP verification में समस्या आई।" : "Email OTP verificationમાં સમસ્યા આવી."
+          txt("Email OTP verificationમાં સમસ્યા આવી.", "Email OTP verification में समस्या आई।", "Error during Email OTP verification.")
       );
 
       setMessageType("error");
@@ -564,7 +572,7 @@ const [showNewPassword, setShowNewPassword] =
 
     if (!cleanOTP) {
       setMessage(
-        isHindi ? "कृपया Mobile OTP दर्ज करें।" : "કૃપા કરીને Mobile OTP નાખો."
+        txt("કૃપા કરીને Mobile OTP નાખો.", "कृपया Mobile OTP दर्ज करें।", "Please enter Mobile OTP.")
       );
 
       setMessageType("error");
@@ -573,7 +581,7 @@ const [showNewPassword, setShowNewPassword] =
 
     if (!/^[0-9]{6}$/.test(cleanOTP)) {
       setMessage(
-        isHindi ? "6 अंकों का मान्य Mobile OTP दर्ज करें।" : "6 અંકનો યોગ્ય Mobile OTP નાખો."
+        txt("6 અંકનો યોગ્ય Mobile OTP નાખો.", "6 अंकों का मान्य Mobile OTP दर्ज करें।", "Please enter a valid 6-digit Mobile OTP.")
       );
 
       setMessageType("error");
@@ -594,7 +602,7 @@ const [showNewPassword, setShowNewPassword] =
 
     if (!value) {
       setMessage(
-        isHindi ? "Mobile Number आवश्यक है।" : "Mobile Number જરૂરી છે."
+        txt("Mobile Number જરૂરી છે.", "Mobile Number आवश्यक है।", "Mobile number is required.")
       );
 
       setMessageType("error");
@@ -629,13 +637,13 @@ const [showNewPassword, setShowNewPassword] =
       if (!response.ok) {
         throw new Error(
           data.message ||
-            isHindi ? "Mobile OTP verify नहीं हो सका।" : "Mobile OTP verify થઈ શક્યો નથી."
+            txt("Mobile OTP verify થઈ શક્યો નથી.", "Mobile OTP verify नहीं हो सका।", "Could not verify Mobile OTP.")
         );
       }
 
       if (data.verified !== true) {
         throw new Error(
-          isHindi ? "OTP verify नहीं हुआ।" : "OTP verify થયું નથી."
+          txt("OTP verify થયું નથી.", "OTP verify नहीं हुआ।", "OTP was not verified.")
         );
       }
 
@@ -643,7 +651,11 @@ const [showNewPassword, setShowNewPassword] =
       setMobileOTPVerified(true);
 
       setMessage(
-        isHindi ? "Mobile बदलने के लिए Email OTP सफलतापूर्वक verify हो गया है। ✅" : "Mobile change માટે Email OTP successfully verify થઈ ગયો છે. ✅"
+        txt(
+          "Mobile change માટે Email OTP successfully verify થઈ ગયો છે. ✅",
+          "Mobile बदलने के लिए Email OTP सफलतापूर्वक verify हो गया है। ✅",
+          "Email OTP for mobile change verified successfully. ✅"
+        )
       );
 
       setMessageType("success");
@@ -657,7 +669,7 @@ const [showNewPassword, setShowNewPassword] =
 
       setMessage(
         error.message ||
-          isHindi ? "Mobile OTP verification में समस्या आई।" : "Mobile OTP verificationમાં સમસ્યા આવી."
+          txt("Mobile OTP verificationમાં સમસ્યા આવી.", "Mobile OTP verification में समस्या आई।", "Error during Mobile OTP verification.")
       );
 
       setMessageType("error");
@@ -688,7 +700,11 @@ const [showNewPassword, setShowNewPassword] =
       !emailOTPVerified
     ) {
       setMessage(
-        isHindi ? "Email बदलने के लिए पहले अपने वर्तमान पंजीकृत Email पर आया OTP verify करें।" : "Email બદલવા માટે પહેલા તમારા હાલના registered Email પર આવેલ OTP verify કરો."
+        txt(
+          "Email બદલવા માટે પહેલા તમારા હાલના registered Email પર આવેલ OTP verify કરો.",
+          "Email बदलने के लिए पहले अपने वर्तमान पंजीकृत Email पर आया OTP verify करें।",
+          "Please verify the OTP sent to your current registered email before changing email."
+        )
       );
 
       setMessageType("error");
@@ -704,7 +720,11 @@ const [showNewPassword, setShowNewPassword] =
       !mobileOTPVerified
     ) {
       setMessage(
-        isHindi ? "Mobile Number बदलने के लिए पहले अपने वर्तमान पंजीकृत Email पर आया OTP verify करें।" : "Mobile Number બદલવા માટે પહેલા તમારા હાલના registered Email પર આવેલ OTP verify કરો."
+        txt(
+          "Mobile Number બદલવા માટે પહેલા તમારા હાલના registered Email પર આવેલ OTP verify કરો.",
+          "Mobile Number बदलने के लिए पहले अपने वर्तमान पंजीकृत Email पर आया OTP verify करें।",
+          "Please verify the OTP sent to your current registered email before changing mobile number."
+        )
       );
 
       setMessageType("error");
@@ -754,7 +774,7 @@ const [showNewPassword, setShowNewPassword] =
       if (!response.ok) {
         throw new Error(
           data.message ||
-            isHindi ? "Profile update नहीं हो सकी।" : "Profile update થઈ શક્યું નથી."
+            txt("Profile update થઈ શક્યું નથી.", "Profile update नहीं हो सकी।", "Could not update profile.")
         );
       }
 
@@ -806,7 +826,7 @@ const [showNewPassword, setShowNewPassword] =
       // =================================================
 
       setMessage(
-        isHindi ? "Profile सफलतापूर्वक update हो गई है। ✅" : "Profile સફળતાપૂર્વક update થઈ ગઈ છે. ✅"
+        txt("Profile સફળતાપૂર્વક update થઈ ગઈ છે. ✅", "Profile सफलतापूर्वक update हो गई है। ✅", "Profile updated successfully. ✅")
       );
 
       setMessageType("success");
@@ -818,7 +838,7 @@ const [showNewPassword, setShowNewPassword] =
 
       setMessage(
         error.message ||
-          isHindi ? "Profile update करने में समस्या आई।" : "Profile update કરવામાં સમસ્યા આવી."
+          txt("Profile update કરવામાં સમસ્યા આવી.", "Profile update करने में समस्या आई।", "Error updating profile.")
       );
 
       setMessageType("error");
@@ -833,7 +853,7 @@ const [showNewPassword, setShowNewPassword] =
 
   const handleLogout = () => {
     const confirmed = window.confirm(
-      isHindi ? "क्या आप वाकई Logout करना चाहते हैं?" : "શું તમે ખરેખર Logout કરવા માંગો છો?"
+      txt("શું તમે ખરેખર Logout કરવા માંગો છો?", "क्या आप वाकई Logout करना चाहते हैं?", "Are you sure you want to Logout?")
     );
 
     if (!confirmed) {
@@ -861,7 +881,7 @@ const [showNewPassword, setShowNewPassword] =
       <main className="profile-page">
         <div className="profile-card">
           <p>
-            {message || (isHindi ? "लोड हो रहा है..." : "લોડ થઈ રહ્યું છે...")}
+            {message || txt("લોડ થઈ રહ્યું છે...", "लोड हो रहा है...", "Loading...")}
           </p>
         </div>
       </main>
@@ -885,7 +905,7 @@ const [showNewPassword, setShowNewPassword] =
         </div>
 
         <h1>
-          {isHindi ? "मेरी Profile" : "મારું Profile"}
+          {txt("મારું Profile", "मेरी Profile", "My Profile")}
         </h1>
 
         <p className="profile-subtitle">
@@ -919,7 +939,7 @@ const [showNewPassword, setShowNewPassword] =
               {/* NAME */}
 
               <div className="profile-row">
-                <span>{isHindi ? "नाम" : "નામ"}</span>
+                <span>{txt("નામ", "नाम", "Name")}</span>
 
                 <strong>
                   {user.name}
@@ -929,7 +949,7 @@ const [showNewPassword, setShowNewPassword] =
               {/* MOBILE */}
 
               <div className="profile-row">
-                <span>Mobile</span>
+                <span>{txt("મોબાઇલ", "मोबाइल", "Mobile")}</span>
 
                 <strong>
                   {user.mobile}
@@ -950,7 +970,7 @@ const [showNewPassword, setShowNewPassword] =
 
               <div className="profile-row">
                 <span>
-                  Birth Date
+                  {txt("જન્મ તારીખ", "जन्म तिथि", "Date of Birth")}
                 </span>
 
                 <strong>
@@ -986,7 +1006,7 @@ const [showNewPassword, setShowNewPassword] =
 
               <div className="profile-row">
                 <span>
-                  {isHindi ? "Account बनाया" : "Account બનાવ્યું"}
+                  {txt("Account બનાવ્યું", "Account बनाया", "Account Created")}
                 </span>
 
                 <strong>
@@ -1010,7 +1030,7 @@ const [showNewPassword, setShowNewPassword] =
               className="profile-edit-btn"
               onClick={handleEdit}
             >
-              <Edit2 className="btn-icon" size={18} /> Edit Profile
+              <Edit2 className="btn-icon" size={18} /> {txt("Profile સુધારો", "Profile एडिट करें", "Edit Profile")}
             </button>
 
             {/* =================================================
@@ -1056,7 +1076,7 @@ const [showNewPassword, setShowNewPassword] =
 
             <div className="profile-edit-field">
               <label>
-                <User size={16} className="btn-icon" /> {isHindi ? "नाम" : "નામ"}
+                <User size={16} className="btn-icon" /> {txt("નામ", "नाम", "Name")}
               </label>
 
               <input
@@ -1073,7 +1093,7 @@ const [showNewPassword, setShowNewPassword] =
 
             <div className="profile-edit-field">
               <label>
-                <Phone size={16} className="btn-icon" /> Mobile Number
+                <Phone size={16} className="btn-icon" /> {txt("મોબાઇલ નંબર", "मोबाइल नंबर", "Mobile Number")}
               </label>
 
               <input
@@ -1118,8 +1138,8 @@ const [showNewPassword, setShowNewPassword] =
                   }
                 >
                   {mobileOTPLoading
-                    ? <><Loader2 className="spinner btn-icon" size={16} /> {isHindi ? "Email पर OTP भेजा जा रहा है..." : "Email પર OTP મોકલાઈ રહ્યો છે..."}</>
-                    : <><Smartphone className="btn-icon" size={16} /> {isHindi ? "Mobile Change के लिए Email OTP भेजें" : "Mobile Change માટે Email OTP મોકલો"}</>}
+                    ? <><Loader2 className="spinner btn-icon" size={16} /> {txt("Email પર OTP મોકલાઈ રહ્યો છે...", "Email પર OTP भेजा जा रहा है...", "Sending OTP to Email...")}</>
+                    : <><Smartphone className="btn-icon" size={16} /> {txt("Mobile Change માટે Email OTP મોકલો", "Mobile Change के लिए Email OTP भेजें", "Send Email OTP for Mobile Change")}</>}
                 </button>
               )}
 
@@ -1127,7 +1147,7 @@ const [showNewPassword, setShowNewPassword] =
 
               {mobileOTPVerified && (
                 <div className="otp-success-text">
-                  <CheckCircle className="btn-icon" size={16} /> Mobile change OTP verified
+                  <CheckCircle className="btn-icon" size={16} /> {txt("Mobile change OTP verified", "Mobile change OTP verified", "Mobile change OTP verified")}
                 </div>
               )}
 
@@ -1142,18 +1162,18 @@ const [showNewPassword, setShowNewPassword] =
                     </h3>
 
                     <p>
-                      {isHindi ? "आपके वर्तमान पंजीकृत Email (" : "તમારા હાલના registered Email ("}
+                      {txt("તમારા હાલના registered Email (", "आपके वर्तमान पंजीकृत Email (", "Enter 6-digit OTP sent to your registered Email (")}
                       <strong>
                         {user.email}
                       </strong>
-                      {isHindi ? ") पर आया 6 अंकों का OTP दर्ज करें।" : ") પર આવેલ 6 અંકનો OTP નાખો."}
+                      {txt(") પર આવેલ 6 અંકનો OTP નાખો.", ") पर आया 6 अंकों का OTP दर्ज करें।", ").")}
                     </p>
 
                     <input
                       type="text"
                       inputMode="numeric"
                       maxLength="6"
-                      placeholder={isHindi ? "6 अंकों का OTP" : "6 અંકનો OTP"}
+                      placeholder={txt("6 અંકનો OTP", "6 अंकों का OTP", "6-digit OTP")}
                       value={mobileOTP}
                       onChange={(e) => {
                         const value =
@@ -1190,8 +1210,8 @@ const [showNewPassword, setShowNewPassword] =
                       }
                     >
                       {mobileOTPLoading
-                        ? <><Loader2 className="spinner btn-icon" size={16} /> {isHindi ? "Verify हो रहा है..." : "Verify થઈ રહ્યું છે..."}</>
-                        : <><CheckCircle className="btn-icon" size={16} /> {isHindi ? "Mobile OTP Verify करें" : "Mobile OTP Verify કરો"}</>}
+                        ? <><Loader2 className="spinner btn-icon" size={16} /> {txt("Verify થઈ રહ્યું છે...", "Verify हो रहा है...", "Verifying...")}</>
+                        : <><CheckCircle className="btn-icon" size={16} /> {txt("Mobile OTP Verify કરો", "Mobile OTP Verify करें", "Verify Mobile OTP")}</>}
                     </button>
                   </div>
                 )}
@@ -1229,8 +1249,8 @@ const [showNewPassword, setShowNewPassword] =
                   }
                 >
                   {emailOTPLoading
-                    ? <><Loader2 className="spinner btn-icon" size={16} /> {isHindi ? "Registered Email पर OTP भेजा जा रहा है..." : "Registered Email પર OTP મોકલાઈ રહ્યો છે..."}</>
-                    : <><Mail className="btn-icon" size={16} /> {isHindi ? "Email Change के लिए OTP भेजें" : "Email Change માટે OTP મોકલો"}</>}
+                    ? <><Loader2 className="spinner btn-icon" size={16} /> {txt("Registered Email પર OTP મોકલાઈ રહ્યો છે...", "Registered Email पर OTP भेजा जा रहा है...", "Sending OTP to registered Email...")}</>
+                    : <><Mail className="btn-icon" size={16} /> {txt("Email Change માટે OTP મોકલો", "Email Change के लिए OTP भेजें", "Send OTP for Email Change")}</>}
                 </button>
               )}
 
@@ -1238,7 +1258,7 @@ const [showNewPassword, setShowNewPassword] =
 
               {emailOTPVerified && (
                 <div className="otp-success-text">
-                  <CheckCircle className="btn-icon" size={16} /> Email change OTP verified
+                  <CheckCircle className="btn-icon" size={16} /> {txt("Email change OTP verified", "Email change OTP verified", "Email change OTP verified")}
                 </div>
               )}
 
@@ -1253,18 +1273,18 @@ const [showNewPassword, setShowNewPassword] =
                     </h3>
 
                     <p>
-                      {isHindi ? "आपके वर्तमान पंजीकृत Email (" : "તમારા હાલના registered Email ("}
+                      {txt("તમારા હાલના registered Email (", "आपके वर्तमान पंजीकृत Email (", "Enter 6-digit OTP sent to your registered Email (")}
                       <strong>
                         {user.email}
                       </strong>
-                      {isHindi ? ") पर आया 6 अंकों का OTP दर्ज करें।" : ") પર આવેલ 6 અંકનો OTP નાખો."}
+                      {txt(") પર આવેલ 6 અંકનો OTP નાખો.", ") पर आया 6 अंकों का OTP दर्ज करें।", ").")}
                     </p>
 
                     <input
                       type="text"
                       inputMode="numeric"
                       maxLength="6"
-                      placeholder={isHindi ? "6 अंकों का OTP" : "6 અંકનો OTP"}
+                      placeholder={txt("6 અંકનો OTP", "6 अंकों का OTP", "6-digit OTP")}
                       value={emailOTP}
                       onChange={(e) => {
                         const value =
@@ -1301,8 +1321,8 @@ const [showNewPassword, setShowNewPassword] =
                       }
                     >
                       {emailOTPLoading
-                        ? <><Loader2 className="spinner btn-icon" size={16} /> {isHindi ? "Verify हो रहा है..." : "Verify થઈ રહ્યું છે..."}</>
-                        : <><CheckCircle className="btn-icon" size={16} /> {isHindi ? "Email OTP Verify करें" : "Email OTP Verify કરો"}</>}
+                        ? <><Loader2 className="spinner btn-icon" size={16} /> {txt("Verify થઈ રહ્યું છે...", "Verify हो रहा है...", "Verifying...")}</>
+                        : <><CheckCircle className="btn-icon" size={16} /> {txt("Email OTP Verify કરો", "Email OTP Verify करें", "Verify Email OTP")}</>}
                     </button>
                   </div>
                 )}
@@ -1314,7 +1334,7 @@ const [showNewPassword, setShowNewPassword] =
 
             <div className="profile-edit-field">
               <label>
-                <Calendar size={16} className="btn-icon" /> Birth Date
+                <Calendar size={16} className="btn-icon" /> {txt("જન્મ તારીખ", "जन्म तिथि", "Date of Birth")}
               </label>
 
               <input
@@ -1343,7 +1363,7 @@ const [showNewPassword, setShowNewPassword] =
         : "password"
     }
     name="currentPassword"
-    placeholder={isHindi ? "Password बदलना हो तो" : "Password બદલવો હોય તો"}
+    placeholder={txt("Password બદલવો હોય તો", "Password बदलना हो तो", "To change password")}
     value={
       formData.currentPassword
     }
@@ -1361,13 +1381,13 @@ const [showNewPassword, setShowNewPassword] =
     }
     aria-label={
       showCurrentPassword
-        ? (isHindi ? "Current Password छिपाएं" : "Current Password hide કરો")
-        : (isHindi ? "Current Password दिखाएं" : "Current Password show કરો")
+        ? txt("Current Password સંતાડો", "Current Password छिपाएं", "Hide Current Password")
+        : txt("Current Password બતાવો", "Current Password दिखाएं", "Show Current Password")
     }
     title={
       showCurrentPassword
-        ? (isHindi ? "Current Password छिपाएं" : "Current Password hide કરો")
-        : (isHindi ? "Current Password दिखाएं" : "Current Password show કરો")
+        ? txt("Current Password સંતાડો", "Current Password छिपाएं", "Hide Current Password")
+        : txt("Current Password બતાવો", "Current Password दिखाएं", "Show Current Password")
     }
   >
     {showCurrentPassword ? (
@@ -1404,7 +1424,7 @@ const [showNewPassword, setShowNewPassword] =
         : "password"
     }
     name="newPassword"
-    placeholder={isHindi ? "नया Password" : "નવો Password"}
+    placeholder={txt("નવો Password", "नया Password", "New Password")}
     value={
       formData.newPassword
     }
@@ -1422,13 +1442,13 @@ const [showNewPassword, setShowNewPassword] =
     }
     aria-label={
       showNewPassword
-        ? (isHindi ? "New Password छिपाएं" : "New Password hide કરો")
-        : (isHindi ? "New Password दिखाएं" : "New Password show કરો")
+        ? txt("New Password સંતાડો", "New Password छिपाएं", "Hide New Password")
+        : txt("New Password બતાવો", "New Password दिखाएं", "Show New Password")
     }
     title={
       showNewPassword
-        ? (isHindi ? "New Password छिपाएं" : "New Password hide કરો")
-        : (isHindi ? "New Password दिखाएं" : "New Password show કરો")
+        ? txt("New Password સંતાડો", "New Password छिपाएं", "Hide New Password")
+        : txt("New Password બતાવો", "New Password दिखाएं", "Show New Password")
     }
   >
     {showNewPassword ? (
@@ -1457,7 +1477,7 @@ const [showNewPassword, setShowNewPassword] =
                   handleForgotPassword
                 }
               >
-                <Unlock className="btn-icon" size={16} /> {isHindi ? "Password भूल गए हैं?" : "Password ભૂલી ગયા છો?"}
+                <Unlock className="btn-icon" size={16} /> {txt("Password ભૂલી ગયા છો?", "Password भूल गए हैं?", "Forgot Password?")}
               </button>
             </div>
 
@@ -1474,8 +1494,8 @@ const [showNewPassword, setShowNewPassword] =
                 disabled={loading}
               >
                 {loading
-                  ? <><Loader2 className="spinner btn-icon" size={18} /> {isHindi ? "सहेजा जा रहा है..." : "સેવ થઈ રહ્યું છે..."}</>
-                  : <><Save className="btn-icon" size={18} /> {isHindi ? "बदलाव सहेजें" : "Save Changes"}</>}
+                  ? <><Loader2 className="spinner btn-icon" size={18} /> {txt("સેવ થઈ રહ્યું છે...", "सहेजा जा रहा है...", "Saving...")}</>
+                  : <><Save className="btn-icon" size={18} /> {txt("Save Changes", "बदलाव सहेजें", "Save Changes")}</>}
               </button>
 
               <button
@@ -1484,7 +1504,7 @@ const [showNewPassword, setShowNewPassword] =
                 onClick={handleCancel}
                 disabled={loading}
               >
-                <X className="btn-icon" size={18} /> Cancel
+                <X className="btn-icon" size={18} /> {txt("Cancel", "रद्द करें", "Cancel")}
               </button>
 
             </div>

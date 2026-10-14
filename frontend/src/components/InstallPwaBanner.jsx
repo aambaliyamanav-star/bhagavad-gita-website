@@ -9,7 +9,7 @@ import { useLanguage } from "../context/LanguageContext.jsx";
 import "./InstallPwaBanner.css";
 
 function InstallPwaBanner() {
-  const { isHindi } = useLanguage();
+  const { isHindi, isEnglish, isGujarati, txt } = useLanguage();
   const [showBanner, setShowBanner] = useState(false);
   const [isIosDevice, setIsIosDevice] = useState(false);
   const [showIosGuide, setShowIosGuide] = useState(false);
@@ -107,7 +107,7 @@ function InstallPwaBanner() {
 
           <div className="pwa-banner-text">
             <span className="pwa-app-name">
-              {isHindi ? "श्रीमद्भगवद्गीता APP" : "શ્રીમદ્ ભગવદ્ ગીતા APP"}
+              {txt("શ્રીમદ્ ભગવદ્ ગીતા APP", "श्रीमद्भगवद्गीता APP", "Shrimad Bhagavad Gita APP")}
             </span>
           </div>
 
@@ -118,14 +118,14 @@ function InstallPwaBanner() {
               onClick={handleInstallClick}
             >
               <Download size={16} />
-              <span>{isHindi ? "इंस्टॉल करें" : "ઇન્સ્ટોલ કરો"}</span>
+              <span>{txt("ઇન્સ્ટોલ કરો", "इंस्टॉल करें", "Install App")}</span>
             </button>
 
             <button
               type="button"
               className="pwa-close-btn"
               onClick={handleDismiss}
-              aria-label={isHindi ? "बैनर बंद करें" : "Dismiss banner"}
+              aria-label={txt("બૅનર બંધ કરો", "बैनर बंद करें", "Dismiss banner")}
             >
               <X size={16} />
             </button>
@@ -146,7 +146,7 @@ function InstallPwaBanner() {
             <div className="ios-guide-header">
               <Smartphone size={24} className="ios-icon" />
               <h3>
-                {isHindi ? "iPhone / iPad पर ऐप जोड़ें" : "iPhone / iPad પર એપ ઉમેરો"}
+                {txt("iPhone / iPad પર એપ ઉમેરો", "iPhone / iPad पर ऐप जोड़ें", "Add App to iPhone / iPad")}
               </h3>
               <button
                 type="button"
@@ -159,21 +159,27 @@ function InstallPwaBanner() {
 
             <ol className="ios-steps">
               <li>
-                {isHindi ? (
+                {isEnglish ? (
+                  <>Tap the <strong>Share (📤)</strong> button at the bottom of Safari browser.</>
+                ) : isHindi ? (
                   <>सफ़ारी ब्राउज़र में नीचे <strong>Share (📤)</strong> बटन दबाएं।</>
                 ) : (
                   <>સફારી બ્રાઉઝરમાં નીચે <strong>Share (📤)</strong> બટન દબાવો.</>
                 )}
               </li>
               <li>
-                {isHindi ? (
+                {isEnglish ? (
+                  <>Scroll down the menu and choose <strong>&ldquo;Add to Home Screen (+)&rdquo;</strong>.</>
+                ) : isHindi ? (
                   <>मेनू को थोड़ा नीचे स्क्रॉल करके <strong>&ldquo;Add to Home Screen (प्लस +)&rdquo;</strong> चुनें।</>
                 ) : (
                   <>મેનૂને થોડું નીચે સ્ક્રોલ કરી <strong>&ldquo;Add to Home Screen (પ્લસ +)&rdquo;</strong> પસંદ કરો.</>
                 )}
               </li>
               <li>
-                {isHindi ? (
+                {isEnglish ? (
+                  <>Tap <strong>&ldquo;Add&rdquo;</strong> in the top-right corner.</>
+                ) : isHindi ? (
                   <>ऊपर दाईं ओर <strong>&ldquo;Add&rdquo;</strong> पर क्लिक करें।</>
                 ) : (
                   <>ઉપર જમણી બાજુ <strong>&ldquo;Add&rdquo;</strong> પર ક્લિક કરો.</>
@@ -189,7 +195,7 @@ function InstallPwaBanner() {
                 handleDismiss();
               }}
             >
-              {isHindi ? "समझ गया" : "સમજાઈ ગયું"}
+              {txt("સમજાઈ ગયું", "समझ गया", "Got it")}
             </button>
           </div>
         </div>
