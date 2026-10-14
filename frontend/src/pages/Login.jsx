@@ -17,7 +17,7 @@ function Login() {
   const location = useLocation();
 
   const { user, login } = useAuth();
-  const { isHindi } = useLanguage();
+  const { isHindi, isEnglish, isGujarati, txt } = useLanguage();
 
   // If user is already logged in, redirect away from /login
   useEffect(() => {
@@ -73,7 +73,11 @@ function Login() {
       const chapter = localStorage.getItem("pendingChapter");
       const shlok = localStorage.getItem("pendingShloka");
       if (chapter && shlok) {
-        return isHindi ? `अध्याय ${chapter} के श्लोक ${shlok} पढ़ने के लिए Login करना आवश्यक है।` : `અધ્યાય ${chapter} ના શ્લોક ${shlok} વાંચવા માટે Login કરવું જરૂરી છે.`;
+        return txt(
+          `અધ્યાય ${chapter} ના શ્લોક ${shlok} વાંચવા માટે Login કરવું જરૂરી છે.`,
+          `अध्याय ${chapter} के श्लोक ${shlok} पढ़ने के लिए Login करना आवश्यक है।`,
+          `Login is required to read Chapter ${chapter}, Verse ${shlok}.`
+        );
       }
     }
 
@@ -123,7 +127,7 @@ function Login() {
 
     if (!formData.email.trim()) {
       setMessage(
-        isHindi ? "कृपया Email ID दर्ज करें।" : "કૃપા કરીને Email ID નાખો."
+        txt("કૃપા કરીને Email ID નાખો.", "कृपया Email ID दर्ज करें।", "Please enter your Email ID.")
       );
 
       setMessageType("error");
@@ -137,7 +141,7 @@ function Login() {
       )
     ) {
       setMessage(
-        isHindi ? "कृपया मान्य Email ID दर्ज करें।" : "કૃપા કરીને યોગ્ય Email ID નાખો."
+        txt("કૃપા કરીને યોગ્ય Email ID નાખો.", "कृपया मान्य Email ID दर्ज करें।", "Please enter a valid Email ID.")
       );
 
       setMessageType("error");
@@ -151,7 +155,7 @@ function Login() {
 
     if (!formData.password) {
       setMessage(
-        isHindi ? "कृपया Password दर्ज करें।" : "કૃપા કરીને Password નાખો."
+        txt("કૃપા કરીને Password નાખો.", "कृपया Password दर्ज करें।", "Please enter your Password.")
       );
 
       setMessageType("error");
@@ -206,7 +210,7 @@ function Login() {
         );
 
         setMessage(
-          isHindi ? "Login सफल हुआ" : "Login સફળ થયું"
+          txt("Login સફળ થયું", "Login सफल हुआ", "Login successful")
         );
 
         setMessageType("success");
@@ -269,7 +273,7 @@ setTimeout(() => {
   else {
         setMessage(
           data.message ||
-            isHindi ? "Email या Password गलत है।" : "Email અથવા Password ખોટો છે."
+            txt("Email અથવા Password ખોટો છે.", "Email या Password गलत है।", "Invalid Email or Password.")
         );
 
         setMessageType("error");
@@ -281,7 +285,7 @@ setTimeout(() => {
       );
 
       setMessage(
-        isHindi ? "Server से connection नहीं हो सका।" : "Server સાથે connection થઈ શક્યું નથી."
+        txt("Server સાથે connection થઈ શક્યું નથી.", "Server से connection नहीं हो सका।", "Could not connect to the server.")
       );
 
       setMessageType("error");
@@ -314,11 +318,11 @@ setTimeout(() => {
           </div>
 
           <h1>
-            {isHindi ? "लॉगिन करें" : "લોગિન કરો"}
+            {txt("લોગિન કરો", "लॉगिन करें", "Login")}
           </h1>
 
           <p>
-            {isHindi ? "अपने Bhagavad Gita खाते में प्रवेश करें" : "તમારા Bhagavad Gita accountમાં પ્રવેશ કરો"}
+            {txt("તમારા Bhagavad Gita accountમાં પ્રવેશ કરો", "अपने Bhagavad Gita खाते में प्रवेश करें", "Sign in to your Bhagavad Gita account")}
           </p>
 
         </div>
@@ -384,7 +388,7 @@ setTimeout(() => {
               id="email"
               type="email"
               name="email"
-              placeholder={isHindi ? "आपका Email ID" : "તમારું Email ID"}
+              placeholder={txt("તમારું Email ID", "आपका Email ID", "Your Email ID")}
               value={formData.email}
               onChange={handleChange}
               autoComplete="email"
@@ -421,7 +425,7 @@ setTimeout(() => {
         : "password"
     }
     name="password"
-    placeholder={isHindi ? "आपका Password" : "તમારો Password"}
+    placeholder={txt("તમારો Password", "आपका Password", "Your Password")}
     value={formData.password}
     onChange={handleChange}
     autoComplete="current-password"
@@ -437,13 +441,13 @@ setTimeout(() => {
     }
     aria-label={
       showPassword
-        ? (isHindi ? "Password छिपाएं" : "Password hide કરો")
-        : (isHindi ? "Password दिखाएं" : "Password show કરો")
+        ? txt("Password hide કરો", "Password छिपाएं", "Hide password")
+        : txt("Password show કરો", "Password दिखाएं", "Show password")
     }
     title={
       showPassword
-        ? (isHindi ? "Password छिपाएं" : "Password hide કરો")
-        : (isHindi ? "Password दिखाएं" : "Password show કરો")
+        ? txt("Password hide કરો", "Password छिपाएं", "Hide password")
+        : txt("Password show કરો", "Password दिखाएं", "Show password")
     }
   >
     {showPassword ? (
@@ -471,7 +475,7 @@ setTimeout(() => {
           <div className="forgot-password-link">
 
             <Link to="/forgot-password">
-              {isHindi ? "Password भूल गए?" : "Password ભૂલી ગયા?"}
+              {txt("Password ભૂલી ગયા?", "Password भूल गए?", "Forgot Password?")}
             </Link>
 
           </div>
@@ -489,12 +493,12 @@ setTimeout(() => {
             {loading ? (
               <>
                 <Loader2 className="spinner btn-icon" size={18} />
-                {isHindi ? "Login हो रहा है..." : "Login થઈ રહ્યું છે..."}
+                {txt("Login થઈ રહ્યું છે...", "Login हो रहा है...", "Logging in...")}
               </>
             ) : (
               <>
                 <LogIn className="btn-icon" size={18} />
-                {isHindi ? "Login करें" : "Login કરો"}
+                {txt("Login કરો", "Login करें", "Login")}
               </>
             )}
           </button>
@@ -509,11 +513,11 @@ setTimeout(() => {
         <div className="auth-register">
 
           <span>
-            {isHindi ? "अभी तक account नहीं बनाया?" : "હજુ સુધી account બનાવ્યું નથી?"}
+            {txt("હજુ સુધી account બનાવ્યું નથી?", "अभी तक account नहीं बनाया?", "Don't have an account yet?")}
           </span>
 
           <Link to="/register">
-            {isHindi ? "Register करें" : "Register કરો"}
+            {txt("Register કરો", "Register करें", "Register")}
           </Link>
 
         </div>

@@ -364,7 +364,7 @@ const createWordId = () => {
 
 function ShlokManagement() {
   const navigate = useNavigate();
-  const { isHindi } = useLanguage();
+  const { isHindi, isEnglish, isGujarati, txt } = useLanguage();
 
   /* =====================================================
      STATE
@@ -1676,8 +1676,8 @@ function ShlokManagement() {
               >
                 <Sparkles className={`btn-icon ${translating ? "spinning" : ""}`} size={16} />
                 {translating
-                  ? (isHindi ? "AI हिन्दी अनुवाद हो रहा है..." : "AI હિન્દી અનુવાદ થઈ રહ્યું છે...")
-                  : (isHindi ? "✨ AI हिन्दी ऑटो-अनुवाद (Auto-Translate)" : "✨ AI હિન્દી ઓટો-અનુવાદ (Auto-Translate)")}
+                  ? txt("AI હિન્દી અનુવાદ થઈ રહ્યું છે...", "AI हिन्दी अनुवाद हो रहा है...", "AI translating to Hindi...")
+                  : txt("✨ AI હિન્દી ઓટો-અનુવાદ (Auto-Translate)", "✨ AI हिन्दी ऑटो-अनुवाद (Auto-Translate)", "✨ AI Hindi Auto-Translate")}
               </button>
             </div>
 
@@ -2201,7 +2201,7 @@ function ShlokManagement() {
 
           {loading ? (
             <div className="loading-box">
-              ⏳ {isHindi ? "श्लोक लोड हो रहे हैं..." : "શ્લોક લોડ થઈ રહ્યા છે..."}
+              ⏳ {txt("શ્લોક લોડ થઈ રહ્યા છે...", "श्लोक लोड हो रहे हैं...", "Loading shlokas...")}
             </div>
           ) : shlokas.length ===
             0 ? (

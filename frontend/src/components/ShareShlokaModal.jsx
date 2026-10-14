@@ -283,7 +283,7 @@ export default function ShareShlokaModal({
   onClose,
   shlokaData
 }) {
-  const { isHindi } = useLanguage();
+  const { isHindi, isEnglish, isGujarati, txt } = useLanguage();
   const canvasRef = useRef(null);
   const [selectedThemeId, setSelectedThemeId] = useState("royal-blue");
   const [previewUrl, setPreviewUrl] = useState("");
@@ -599,12 +599,12 @@ export default function ShareShlokaModal({
     // Sacred Heading (Comfortably below top inner border)
     ctx.font = 'bold 62px "Noto Sans Devanagari", "Noto Sans Gujarati", serif';
     ctx.fillStyle = currentTheme.headerColor;
-    ctx.fillText(isHindi ? "॥ श्रीमद्भगवद्गीता ॥" : "॥ શ્રીમદ્ભગવદ્ગીતા ॥", width / 2, headingCenterY);
+    ctx.fillText(txt("॥ શ્રીમદ્ભગવદ્ગીતા ॥", "॥ श्रीमद्भगवद्गीता ॥", "॥ Shrimad Bhagavad Gita ॥"), width / 2, headingCenterY);
 
     // Chapter & Shlok Badge Pill (Spaced cleanly below heading)
     const badgeText = chName
-      ? `અધ્યાય ${chNum} (${chName}) • શ્લોક ${shlokNum}`
-      : `અધ્યાય ${chNum} • શ્લોક ${shlokNum}`;
+      ? txt(`અધ્યાય ${chNum} (${chName}) • શ્લોક ${shlokNum}`, `अध्याय ${chNum} (${chName}) • श्लोक ${shlokNum}`, `Chapter ${chNum} (${chName}) • Shloka ${shlokNum}`)
+      : txt(`અધ્યાય ${chNum} • શ્લોક ${shlokNum}`, `अध्याय ${chNum} • श्लोक ${shlokNum}`, `Chapter ${chNum} • Shloka ${shlokNum}`);
     ctx.font = 'bold 30px "Noto Sans Gujarati", sans-serif';
     const badgeMetrics = ctx.measureText(badgeText);
     const badgeW = Math.min(width - 140, Math.max(340, badgeMetrics.width + 60));
@@ -667,7 +667,7 @@ export default function ShareShlokaModal({
     // 6. Gujarati Translation / Meaning Section (Right below Sanskrit)
     ctx.font = 'bold 40px "Noto Sans Gujarati", sans-serif';
     ctx.fillStyle = currentTheme.headerColor;
-    ctx.fillText(isHindi ? "• हिन्दी भावार्थ •" : "• ગુજરાતી ભાવાર્થ •", width / 2, currY + 12);
+    ctx.fillText(txt("• ગુજરાતી ભાવાર્થ •", "• हिन्दी भावार्थ •", "• English Translation •"), width / 2, currY + 12);
     currY += transTitleH;
 
     ctx.font = `bold ${transFontSize}px "Noto Sans Gujarati", sans-serif`;
@@ -686,7 +686,7 @@ export default function ShareShlokaModal({
 
       ctx.font = 'bold 38px "Noto Sans Gujarati", sans-serif';
       ctx.fillStyle = currentTheme.sanskritAccent;
-      ctx.fillText(isHindi ? "✨ दिव्य संदेश / जीवन बोध ✨" : "✨ દિવ્ય સંદેશ / જીવન બોધ ✨", width / 2, currY + 12);
+      ctx.fillText(txt("✨ દિવ્ય સંદેશ / જીવન બોધ ✨", "✨ दिव्य संदेश / जीवन बोध ✨", "✨ Divine Message / Life Wisdom ✨"), width / 2, currY + 12);
       currY += msgTitleH;
 
       ctx.font = `bold ${msgFontSize}px "Noto Sans Gujarati", sans-serif`;
@@ -753,7 +753,7 @@ export default function ShareShlokaModal({
   const handleShareWhatsApp = async () => {
     const canvas = canvasRef.current;
     const websiteUrl = "https://bhagavad-gita-website-rk1v.vercel.app";
-    const shareTitle = isHindi ? "श्रीमद्भगवद्गीता" : "શ્રીમદ્ભગવદ્ગીતા";
+    const shareTitle = txt("શ્રીમદ્ભગવદ્ગીતા", "श्रीमद्भगवद्गीता", "Shrimad Bhagavad Gita");
     const shareText = websiteUrl;
 
     if (canvas && navigator.canShare) {
@@ -802,18 +802,34 @@ export default function ShareShlokaModal({
     );
     const messagePoints = extractMessagePoints(shlokaData.message);
 
-    let copyText = (isHindi ? `॥ श्रीमद्भगवद्गीता ॥\n📌 अध्याय ${ch}${chName} • श्लोक ${shl}\n\n` : `॥ શ્રીમદ્ભગવદ્ગીતા ॥\n📌 અધ્યાય ${ch}${chName} • શ્લોક ${shl}\n\n`);
+    let copyText = txt(
+      `॥ શ્રીમદ્ભગવદ્ગીતા ॥\n📌 અધ્યાય ${ch}${chName} • શ્લોક ${shl}\n\n`,
+      `॥ श्रीमद्भगवद्गीता ॥\n📌 अध्याय ${ch}${chName} • श्लोक ${shl}\n\n`,
+      `॥ Shrimad Bhagavad Gita ॥\n📌 Chapter ${ch}${chName} • Shloka ${shl}\n\n`
+    );
     if (cleanSpeaker) {
       copyText += `🎙️ ~ ${cleanSpeaker} ~\n\n`;
     }
     if (cleanSanskrit) {
-      copyText += (isHindi ? `🕉️ संस्कृत श्लोक:\n${cleanSanskrit}\n\n` : `🕉️ સંસ્કૃત શ્લોક:\n${cleanSanskrit}\n\n`);
+      copyText += txt(
+        `🕉️ સંસ્કૃત શ્લોક:\n${cleanSanskrit}\n\n`,
+        `🕉️ संस्कृत श्लोक:\n${cleanSanskrit}\n\n`,
+        `🕉️ Sanskrit Shloka:\n${cleanSanskrit}\n\n`
+      );
     }
     if (cleanTranslation) {
-      copyText += (isHindi ? `📖 हिन्दी भावार्थ:\n${cleanTranslation}\n\n` : `📖 ગુજરાતી ભાવાર્થ:\n${cleanTranslation}\n\n`);
+      copyText += txt(
+        `📖 ગુજરાતી ભાવાર્થ:\n${cleanTranslation}\n\n`,
+        `📖 हिन्दी भावार्थ:\n${cleanTranslation}\n\n`,
+        `📖 Translation:\n${cleanTranslation}\n\n`
+      );
     }
     if (messagePoints && messagePoints.length > 0) {
-      copyText += (isHindi ? `✨ दिव्य संदेश / जीवन बोध:\n` : `✨ દિવ્ય સંદેશ / જીવન બોધ:\n`);
+      copyText += txt(
+        `✨ દિવ્ય સંદેશ / જીવન બોધ:\n`,
+        `✨ दिव्य संदेश / जीवन बोध:\n`,
+        `✨ Divine Message / Life Wisdom:\n`
+      );
       messagePoints.forEach((point) => {
         let prefix = "• ";
         if (/^\d+[.)]/.test(point) || /^•/.test(point) || /^✦/.test(point)) {
@@ -852,14 +868,14 @@ export default function ShareShlokaModal({
         <div className="share-modal-header">
           <div className="modal-header-title">
             <Sparkles className="header-sparkle-icon" size={20} />
-            <h2>{isHindi ? "श्लोक कार्ड शेयर करें" : "શ્લોક કાર્ડ શેર કરો"}</h2>
+            <h2>{txt("શ્લોક કાર્ડ શેર કરો", "श्लोक कार्ड शेयर करें", "Share Shloka Card")}</h2>
           </div>
           <button
             type="button"
             className="share-modal-close-btn"
             onClick={onClose}
-            aria-label="બંધ કરો"
-            title="બંધ કરો"
+            aria-label={txt("બંધ કરો", "बंद करें", "Close")}
+            title={txt("બંધ કરો", "बंद करें", "Close")}
           >
             <X size={20} />
           </button>
@@ -874,19 +890,20 @@ export default function ShareShlokaModal({
           <div className="theme-picker-section">
             <label className="picker-label">
               <Palette size={16} />
-              <span>{isHindi ? "कार्ड की थीम चुनें:" : "કાર્ડની થીમ પસંદ કરો:"}</span>
+              <span>{txt("કાર્ડની થીમ પસંદ કરો:", "कार्ड की थीम चुनें:", "Select Card Theme:")}</span>
             </label>
             <div className="theme-options-grid">
               {THEMES.map((theme) => {
                 const isActive = selectedThemeId === theme.id;
+                const localizedThemeName = isEnglish ? theme.englishName : (isHindi ? theme.nameHi : theme.name);
                 return (
                   <button
                     key={theme.id}
                     type="button"
                     className={`theme-color-btn ${isActive ? "active" : ""}`}
                     onClick={() => setSelectedThemeId(theme.id)}
-                    title={theme.name}
-                    aria-label={theme.name}
+                    title={localizedThemeName}
+                    aria-label={localizedThemeName}
                     style={{
                       "--btn-bg": `linear-gradient(135deg, ${theme.primaryGrad[0]}, ${theme.primaryGrad[1]})`,
                       "--border-gold": theme.borderGold,
@@ -910,7 +927,7 @@ export default function ShareShlokaModal({
                 target="_blank"
                 rel="noopener noreferrer"
                 className="share-card-preview-link"
-                title={isHindi ? "वेबसाइट खोलने के लिए क्लिक करें" : "વેબસાઇટ ખોલવા ક્લિક કરો"}
+                title={txt("વેબસાઇટ ખોલવા ક્લિક કરો", "वेबसाइट खोलने के लिए क्लिक करें", "Click to open website")}
               >
                 <img
                   src={previewUrl}
@@ -920,7 +937,7 @@ export default function ShareShlokaModal({
               </a>
             ) : (
               <div className="preview-loading">
-                <span>{isHindi ? "कार्ड तैयार हो रहा है..." : "કાર્ડ તૈયાર થઈ રહ્યું છે..."}</span>
+                <span>{txt("કાર્ડ તૈયાર થઈ રહ્યું છે...", "कार्ड तैयार हो रहा है...", "Generating card...")}</span>
               </div>
             )}
           </div>
@@ -932,7 +949,7 @@ export default function ShareShlokaModal({
               target="_blank"
               rel="noopener noreferrer"
               className="share-preview-clickable-link"
-              title={isHindi ? "वेबसाइट खोलने के लिए क्लिक करें" : "વેબસાઇટ પર સીધા જવા અહીં ક્લિક કરો"}
+              title={txt("વેબસાઇટ પર સીધા જવા અહીં ક્લિક કરો", "वेबसाइट खोलने के लिए क्लिक करें", "Click to visit website")}
             >
               <span>🔗 bhagavad-gita-website-rk1v.vercel.app</span>
             </a>
@@ -946,10 +963,10 @@ export default function ShareShlokaModal({
               className="action-btn download-btn"
               onClick={handleDownload}
               disabled={isGenerating || !previewUrl}
-              title={isHindi ? "हाई-क्वालिटी PNG इमेज डाउनलोड करें" : "હાઈ-ક્વોલિટી PNG ઈમેજ ડાઉનલોડ કરો"}
+              title={txt("હાઈ-ક્વોલિટી PNG ઈમેજ ડાઉનલોડ કરો", "हाई-क्वालिटी PNG इमेज डाउनलोड करें", "Download high-quality PNG image")}
             >
               <Download size={18} />
-              <span>{isHindi ? "इमेज डाउनलोड" : "ઈમેજ ડાઉનલોડ"}</span>
+              <span>{txt("ઈમેજ ડાઉનલોડ", "इमेज डाउनलोड", "Download Image")}</span>
             </button>
 
             {/* WHATSAPP SHARE */}
@@ -958,10 +975,10 @@ export default function ShareShlokaModal({
               className="action-btn whatsapp-btn"
               onClick={handleShareWhatsApp}
               disabled={isGenerating || !previewUrl}
-              title={isHindi ? "WhatsApp पर शेयर करें" : "WhatsApp પર શેર કરો"}
+              title={txt("WhatsApp પર શેર કરો", "WhatsApp पर शेयर करें", "Share on WhatsApp")}
             >
               <MessageCircle size={18} />
-              <span>{isHindi ? "WhatsApp शेयर" : "WhatsApp શેર"}</span>
+              <span>{txt("WhatsApp શેર", "WhatsApp शेयर", "WhatsApp Share")}</span>
             </button>
 
             {/* COPY TEXT */}
@@ -969,10 +986,10 @@ export default function ShareShlokaModal({
               type="button"
               className="action-btn copy-btn"
               onClick={handleCopyText}
-              title={isHindi ? "श्लोक और अर्थ कॉपी करें" : "શ્લોક અને ભાવાર્થ કોપી કરો"}
+              title={txt("શ્લોક અને ભાવાર્થ કોપી કરો", "श्लोक और अर्थ कॉपी करें", "Copy Shloka and Meaning")}
             >
               {copied ? <Check size={18} /> : <Copy size={18} />}
-              <span>{copied ? (isHindi ? "कॉपी हो गया!" : "કોપી થઈ ગયું!") : (isHindi ? "टेक्स्ट कॉपी" : "ટેક્સ્ટ કોપી")}</span>
+              <span>{copied ? txt("કોપી થઈ ગયું!", "कॉपी हो गया!", "Copied!") : txt("ટેક્સ્ટ કોપી", "टेक्स्ट कॉपी", "Copy Text")}</span>
             </button>
           </div>
         </div>

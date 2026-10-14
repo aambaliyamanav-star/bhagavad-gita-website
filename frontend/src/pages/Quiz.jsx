@@ -13,7 +13,7 @@ import "./Quiz.css";
 function Quiz() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { isHindi } = useLanguage();
+  const { isHindi, isEnglish, isGujarati, txt } = useLanguage();
 
   // =====================================================
   // STATE
@@ -151,7 +151,7 @@ function Quiz() {
           questionCount < 1
         ) {
           setError(
-            isHindi ? "Quiz प्रश्न संख्या उचित नहीं है।" : "Quiz question count યોગ્ય નથી."
+            txt("Quiz question count યોગ્ય નથી.", "Quiz प्रश्न संख्या उचित नहीं है।", "Invalid quiz question count.")
           );
 
           return;
@@ -186,7 +186,7 @@ function Quiz() {
           !isMahabharataQuiz
         ) {
           setError(
-            isHindi ? "Quiz श्रेणी उचित रूप से नहीं चुनी गई है।" : "Quiz category યોગ્ય રીતે પસંદ કરવામાં આવી નથી."
+            txt("Quiz category યોગ્ય રીતે પસંદ કરવામાં આવી નથી.", "Quiz श्रेणी उचित रूप से नहीं चुनी गई है।", "Quiz category is not properly selected.")
           );
 
           return;
@@ -304,7 +304,7 @@ function Quiz() {
           }
           throw new Error(
             data.message ||
-              (isHindi ? "Quiz प्रश्न लोड नहीं हो सके।" : "Quiz questions load થઈ શક્યા નથી.")
+              txt("Quiz questions load થઈ શક્યા નથી.", "Quiz प्रश्न लोड नहीं हो सके।", "Could not load quiz questions.")
           );
         }
 
@@ -405,8 +405,8 @@ function Quiz() {
         ) {
           setError(
             isChapterQuiz
-              ? (isHindi ? `अध्याय ${selectedChapter} के लिए वर्तमान में कोई quiz question उपलब्ध नहीं है।` : `અધ્યાય ${selectedChapter} માટે હાલમાં કોઈ quiz question ઉપલબ્ધ નથી.`)
-            : (isHindi ? "इस category के लिए वर्तमान में कोई quiz question उपलब्ध नहीं है।" : "આ category માટે હાલમાં કોઈ quiz question ઉપલબ્ધ નથી.")
+              ? txt(`અધ્યાય ${selectedChapter} માટે હાલમાં કોઈ quiz question ઉપલબ્ધ નથી.`, `अध्याय ${selectedChapter} के लिए वर्तमान में कोई quiz question उपलब्ध नहीं है।`, `Currently no quiz questions available for Chapter ${selectedChapter}.`)
+              : txt("આ category માટે હાલમાં કોઈ quiz question ઉપલબ્ધ નથી.", "इस category के लिए वर्तमान में कोई quiz question उपलब्ध नहीं है।", "Currently no quiz questions available for this category.")
           );
 
           return;
@@ -462,7 +462,7 @@ function Quiz() {
 
         setError(
           err.message ||
-            isHindi ? "Quiz लोड करने में त्रुटि आई।" : "Quiz load કરવામાં error આવ્યો."
+            txt("Quiz load કરવામાં error આવ્યો.", "Quiz लोड करने में त्रुटि आई।", "Error loading quiz.")
         );
 
       } finally {
@@ -493,6 +493,15 @@ function Quiz() {
   const getOptions = () => {
     if (!question) {
       return [];
+    }
+
+    if (
+      isEnglish &&
+      Array.isArray(question.optionsEn) &&
+      question.optionsEn.length === 4 &&
+      question.optionsEn.every((opt) => opt && String(opt).trim())
+    ) {
+      return question.optionsEn;
     }
 
     if (
@@ -545,6 +554,7 @@ function Quiz() {
     }
 
     const activeCorrectAnswer =
+      (isEnglish && question.correctAnswerEn) ||
       (isHindi && question.correctAnswerHi) ||
       question.correctAnswer ||
       "";
@@ -568,10 +578,34 @@ function Quiz() {
         ) ===
         normalizeAnswer(
           question.correctAnswerHi
+        )) ||
+      (question.correctAnswerEn &&
+        normalizeAnswer(
+          answer
+        ) ===
+        normalizeAnswer(
+          question.correctAnswerEn
         ));
 
     // Index check if options are translated
     if (
+      !isCorrect &&
+      isEnglish &&
+      Array.isArray(question.optionsEn) &&
+      question.optionsEn.length === 4 &&
+      Array.isArray(question.options) &&
+      question.options.length === 4
+    ) {
+      const selectedIdx = question.optionsEn.findIndex(
+        (opt) => normalizeAnswer(opt) === normalizeAnswer(answer)
+      );
+      const correctIdx = question.options.findIndex(
+        (opt) => normalizeAnswer(opt) === normalizeAnswer(question.correctAnswer)
+      );
+      if (selectedIdx !== -1 && selectedIdx === correctIdx) {
+        isCorrect = true;
+      }
+    } else if (
       !isCorrect &&
       isHindi &&
       Array.isArray(question.optionsHi) &&
@@ -997,7 +1031,7 @@ function Quiz() {
         }
         throw new Error(
           data.message ||
-            (isHindi ? "Quiz परिणाम सहेजा नहीं जा सका।" : "Quiz result save થઈ શક્યું નથી.")
+            txt("Quiz result save થઈ શક્યું નથી.", "Quiz परिणाम सहेजा नहीं जा सका।", "Could not save quiz result.")
         );
       }
 
@@ -1041,30 +1075,30 @@ function Quiz() {
 
       if (finalPercentage === 100) {
         triggered.push({
-          name: isHindi ? "अर्जुन दृष्टि" : "અર્જુન દ્રષ્ટિ",
-            desc: isHindi ? "100% परफेक्ट स्कोर प्राप्त करने पर काउंट बढ़ा!" : "૧૦૦% પરફેક્ટ સ્કોર મેળવવા બદલ કાઉન્ટ વધ્યો!",
+          name: txt("અર્જુન દ્રષ્ટિ", "अर्जुन दृष्टि", "Arjuna's Vision"),
+          desc: txt("૧૦૦% પરફેક્ટ સ્કોર મેળવવા બદલ કાઉન્ટ વધ્યો!", "100% परफेक्ट स्कोर प्राप्त करने पर काउंट बढ़ा!", "Count increased for achieving 100% perfect score!"),
         });
       }
 
       const allowedHalfTime = Math.max(15, questions.length * 15);
       if (finalPercentage >= 80 && durationSeconds <= allowedHalfTime) {
         triggered.push({
-          name: isHindi ? "तीक्ष्ण मति" : "ચપળ મતિ",
-            desc: isHindi ? "आधे समय में 80%+ स्कोर के साथ त्वरित विजय!" : "અડધા સમયમાં ૮૦%+ સ્કોર સાથે ઝડપી વિજય!",
+          name: txt("ચપળ મતિ", "तीक्ष्ण मति", "Swift Mind"),
+          desc: txt("અડધા સમયમાં ૮૦%+ સ્કોર સાથે ઝડપી વિજય!", "आधे समय में 80%+ स्कोर के साथ त्वरित विजय!", "Fast victory with 80%+ score in half the allowed time!"),
         });
       }
 
       if (categoryParam === "chapter" && finalPercentage >= 90) {
         triggered.push({
-          name: isHindi ? "विजयी पथ" : "વિજયી પંથ",
-            desc: isHindi ? `अध्याय ${chapterParam || ""} की क्विज़ में 90%+ अंक प्राप्त किए!` : `અધ્યાય ${chapterParam || ""} ની ક્વિઝમાં ૯૦%+ ગુણ પ્રાપ્ત કર્યા!`,
+          name: txt("વિજયી પંથ", "विजयी पथ", "Victorious Path"),
+          desc: txt(`અધ્યાય ${chapterParam || ""} ની ક્વિઝમાં ૯૦%+ ગુણ પ્રાપ્ત કર્યા!`, `अध्याय ${chapterParam || ""} की क्विज़ में 90%+ अंक प्राप्त किए!`, `Scored 90%+ in Chapter ${chapterParam || ""} Quiz!`),
         });
       }
 
       if (categoryParam === "mahabharata" && finalPercentage >= 85) {
         triggered.push({
-          name: isHindi ? "महाभारत महारथी" : "મહાભારત મહારથી",
-            desc: isHindi ? "महाभारत क्विज़ में 85%+ स्कोर के साथ विजय!" : "મહાભારત ક્વિઝમાં ૮૫%+ સ્કોર સાથે વિજય!",
+          name: txt("મહાભારત મહારથી", "महाभारत महारथी", "Mahabharata Maharathi"),
+          desc: txt("મહાભારત ક્વિઝમાં ૮૫%+ સ્કોર સાથે વિજય!", "महाभारत क्विज़ में 85%+ स्कोर के साथ विजय!", "Victory with 85%+ score in Mahabharata Quiz!"),
         });
       }
 
@@ -1073,8 +1107,8 @@ function Quiz() {
       const timeInMins = currentHour * 60 + currentMin;
       if (finalPercentage >= 80 && timeInMins >= 300 && timeInMins <= 510) {
         triggered.push({
-          name: isHindi ? "ब्रह्म मुहूर्त साधक" : "બ્રહ્મ મુહૂર્ત સાધક",
-            desc: isHindi ? "सुबह के पावन समय में 80%+ स्कोर प्राप्त!" : "સવારના પાવન સમયે ૮૦%+ સ્કોર પ્રાપ્ત!",
+          name: txt("બ્રહ્મ મુહૂર્ત સાધક", "ब्रह्म मुहूर्त साधक", "Brahma Muhurta Seeker"),
+          desc: txt("સવારના પાવન સમયે ૮૦%+ સ્કોર પ્રાપ્ત!", "सुबह के पावन समय में 80%+ स्कोर प्राप्त!", "Achieved 80%+ score during sacred morning hours!"),
         });
       }
 
@@ -1096,7 +1130,7 @@ function Quiz() {
 
       setError(
         err.message ||
-          isHindi ? "Quiz परिणाम सहेजने में त्रुटि आई।" : "Quiz result save કરવામાં error આવ્યો."
+          txt("Quiz result save કરવામાં error આવ્યો.", "Quiz परिणाम सहेजने में त्रुटि आई।", "Error occurred while saving quiz result.")
       );
 
     } finally {
@@ -1129,16 +1163,16 @@ function Quiz() {
       <main className="quiz-page">
         <SudarshanShimmerLoader
           type="quiz"
-          title={
-            isHindi
-              ? "गीता ज्ञान प्रश्नोत्तरी लोड हो रही है..."
-              : "ગીતા જ્ઞાન ક્વિઝ લોડ થઈ રહી છે..."
-          }
-          subtitle={
-            isHindi
-              ? "प्रश्न और आध्यात्मिक विकल्प तैयार हो रहे हैं..."
-              : "પ્રશ્નો અને આધ્યાત્મિક વિકલ્પો તૈયાર થઈ રહ્યા છે..."
-          }
+          title={txt(
+            "ગીતા જ્ઞાન ક્વિઝ લોડ થઈ રહી છે...",
+            "गीता ज्ञान प्रश्नोत्तरी लोड हो रही है...",
+            "Loading Gita Knowledge Quiz..."
+          )}
+          subtitle={txt(
+            "પ્રશ્નો અને આધ્યાત્મિક વિકલ્પો તૈયાર થઈ રહ્યા છે...",
+            "प्रश्न और आध्यात्मिक विकल्प तैयार हो रहे हैं...",
+            "Preparing questions and spiritual options..."
+          )}
         />
       </main>
     );
@@ -1158,7 +1192,7 @@ function Quiz() {
             <AlertCircle size={40} color="#ef4444" />
           </div>
 
-          <h2>{isHindi ? "कुछ समस्या आई" : "કંઈક સમસ્યા આવી"}</h2>
+          <h2>{txt("કંઈક સમસ્યા આવી", "कुछ समस्या आई", "Something went wrong")}</h2>
 
           <p>
             {error}
@@ -1170,14 +1204,14 @@ function Quiz() {
               type="button"
               onClick={retryQuiz}
             >
-              <RefreshCw size={15} className="btn-icon" /> {isHindi ? "पुनः प्रयास करें" : "ફરી પ્રયાસ કરો"}
+              <RefreshCw size={15} className="btn-icon" /> {txt("ફરી પ્રયાસ કરો", "पुनः प्रयास करें", "Try Again")}
             </button>
 
             <button
               type="button"
               onClick={exitQuiz}
             >
-              <ArrowLeft size={15} className="btn-icon" /> Quiz Category
+              <ArrowLeft size={15} className="btn-icon" /> {txt("ક્વિઝ શ્રેણીઓ", "क्विज़ श्रेणियां", "Quiz Categories")}
             </button>
 
           </div>
@@ -1204,15 +1238,15 @@ function Quiz() {
             <BookOpen size={40} color="#2563eb" />
           </div>
 
-          <h2>{isHindi ? "Quiz उपलब्ध नहीं है" : "Quiz ઉપલબ્ધ નથી"}</h2>
+          <h2>{txt("Quiz ઉપલબ્ધ નથી", "Quiz उपलब्ध नहीं है", "Quiz Not Available")}</h2>
 
-          <p>{isHindi ? "इस category के लिए वर्तमान में कोई question उपलब्ध नहीं है।" : "આ category માટે હાલમાં કોઈ question ઉપલબ્ધ નથી."}</p>
+          <p>{txt("આ category માટે હાલમાં કોઈ question ઉપલબ્ધ નથી.", "इस category के लिए वर्तमान में कोई question उपलब्ध नहीं है।", "No questions currently available for this category.")}</p>
 
           <button
             type="button"
             onClick={exitQuiz}
           >
-            <ArrowLeft size={15} className="btn-icon" /> Quiz Category
+            <ArrowLeft size={15} className="btn-icon" /> {txt("ક્વિઝ શ્રેણીઓ", "क्विज़ श्रेणियां", "Quiz Categories")}
           </button>
 
         </div>
@@ -1264,40 +1298,60 @@ function Quiz() {
     let resultSuggestion = "";
 
     if (percentage === 100) {
-      resultMessage = isHindi
-        ? "अद्भुत! 🎉 आपने सभी प्रश्नों के सही उत्तर दिए।"
-        : "અદ્ભુત! 🎉 તમે બધા પ્રશ્નોના સાચા જવાબ આપ્યા.";
-      resultSuggestion = isHindi
-        ? "आपकी तैयारी अत्यंत उत्तम है! इसी तरह आगे बढ़ते रहें। 🌟"
-        : "તમારી તૈયારી ખૂબ જ સરસ છે! આ જ રીતે આગળ વધતા રહો. 🌟";
+      resultMessage = txt(
+        "અદ્ભુત! 🎉 તમે બધા પ્રશ્નોના સાચા જવાબ આપ્યા.",
+        "अद्भुत! 🎉 आपने सभी प्रश्नों के सही उत्तर दिए।",
+        "Spectacular! 🎉 You answered all questions correctly."
+      );
+      resultSuggestion = txt(
+        "તમારી તૈયારી ખૂબ જ સરસ છે! આ જ રીતે આગળ વધતા રહો. 🌟",
+        "आपकी तैयारी अत्यंत उत्तम है! इसी तरह आगे बढ़ते रहें। 🌟",
+        "Your understanding is excellent! Keep moving forward like this. 🌟"
+      );
     } else if (percentage >= 80) {
-      resultMessage = isHindi
-        ? "बहुत बढ़िया! 👏 आपने बहुत अच्छा प्रदर्शन किया।"
-        : "ખૂબ સરસ! 👏 તમે ખૂબ સારું પ્રદર્શન કર્યું.";
-      resultSuggestion = isHindi
-        ? "थोड़े और अभ्यास से आप 100% प्राप्त कर सकते हैं। 💪"
-        : "થોડી વધુ પ્રેક્ટિસથી તમે 100% મેળવી શકો છો. 💪";
+      resultMessage = txt(
+        "ખૂબ સરસ! 👏 તમે ખૂબ સારું પ્રદર્શન કર્યું.",
+        "बहुत बढ़िया! 👏 आपने बहुत अच्छा प्रदर्शन किया।",
+        "Great job! 👏 You performed very well."
+      );
+      resultSuggestion = txt(
+        "થોડી વધુ પ્રેક્ટિસથી તમે 100% મેળવી શકો છો. 💪",
+        "थोड़े और अभ्यास से आप 100% प्राप्त कर सकते हैं। 💪",
+        "With a little more practice, you can score 100%. 💪"
+      );
     } else if (percentage >= 60) {
-      resultMessage = isHindi
-        ? "अच्छा प्रदर्शन! 👍"
-        : "સારું પ્રદર્શન! 👍";
-      resultSuggestion = isHindi
-        ? "थोड़ा और अभ्यास करें और अपने स्कोर को और बेहतर बनाएं। 📖"
-        : "થોડી વધુ પ્રેક્ટિસ કરો અને તમારા સ્કોરને વધુ સારો બનાવો. 📖";
+      resultMessage = txt(
+        "સારું પ્રદર્શન! 👍",
+        "अच्छा प्रदर्शन! 👍",
+        "Good performance! 👍"
+      );
+      resultSuggestion = txt(
+        "થોડી વધુ પ્રેક્ટિસ કરો અને તમારા સ્કોરને વધુ સારો બનાવો. 📖",
+        "थोड़ा और अभ्यास करें और अपने स्कोर को और बेहतर बनाएं। 📖",
+        "Practice a bit more to improve your score. 📖"
+      );
     } else if (percentage >= 40) {
-      resultMessage = isHindi
-        ? "अच्छा प्रयास! 😊"
-        : "સારો પ્રયાસ! 😊";
-      resultSuggestion = isHindi
-        ? "जिन प्रश्नों में भूल हुई है उनका पुनः अध्ययन करें और फिर से Quiz दें। 📚"
-        : "જે પ્રશ્નોમાં ભૂલ થઈ છે તેનો ફરી અભ્યાસ કરો અને ફરી Quiz આપો. 📚";
+      resultMessage = txt(
+        "સારો પ્રયાસ! 😊",
+        "अच्छा प्रयास! 😊",
+        "Good effort! 😊"
+      );
+      resultSuggestion = txt(
+        "જે પ્રશ્નોમાં ભૂલ થઈ છે તેનો ફરી અભ્યાસ કરો અને ફરી Quiz આપો. 📚",
+        "जिन प्रश्नों में भूल हुई है उनका पुनः अध्ययन करें और फिर से Quiz दें। 📚",
+        "Review the questions you missed and try the quiz again. 📚"
+      );
     } else {
-      resultMessage = isHindi
-        ? "चिंता न करें! 😊 आपने Quiz पूर्ण कर ली है।"
-        : "ચિંતા ન કરો! 😊 તમે Quiz પૂર્ણ કરી છે.";
-      resultSuggestion = isHindi
-        ? "अधिक गलत उत्तर हुए हैं। पुनः अध्ययन करें और फिर से Quiz दें। 💪📖"
-        : "વધુ ખોટા જવાબ આવ્યા છે. ફરીથી અભ્યાસ કરો અને ફરી Quiz આપો. 💪📖";
+      resultMessage = txt(
+        "ચિંતા ન કરો! 😊 તમે Quiz પૂર્ણ કરી છે.",
+        "चिंता न करें! 😊 आपने Quiz पूर्ण कर ली है।",
+        "Don't worry! 😊 You completed the quiz."
+      );
+      resultSuggestion = txt(
+        "વધુ ખોટા જવાબ આવ્યા છે. ફરીથી અભ્યાસ કરો અને ફરી Quiz આપો. 💪📖",
+        "अधिक गलत उत्तर हुए हैं। पुनः अध्ययन करें और फिर से Quiz दें। 💪📖",
+        "Keep practicing and review the chapters to improve. 💪📖"
+      );
     }
 
     return (
@@ -1309,7 +1363,7 @@ function Quiz() {
             <Trophy size={48} color="#2563eb" />
           </div>
 
-          <h1 className="quiz-result-title">{isHindi ? "Quiz पूर्ण हुआ!" : "Quiz પૂર્ણ થયું!"}</h1>
+          <h1 className="quiz-result-title">{txt("Quiz પૂર્ણ થયું!", "Quiz पूर्ण हुआ!", "Quiz Completed!")}</h1>
 
           <p className="quiz-result-message">
             {resultMessage}
@@ -1343,7 +1397,7 @@ function Quiz() {
                 {correctCount}
               </strong>
 
-              <span>{isHindi ? "सही" : "સાચા"}</span>
+              <span>{txt("સાચા", "सही", "Correct")}</span>
 
             </div>
 
@@ -1353,7 +1407,7 @@ function Quiz() {
                 {wrongCount}
               </strong>
 
-              <span>{isHindi ? "गलत" : "ખોટા"}</span>
+              <span>{txt("ખોટા", "गलत", "Wrong")}</span>
 
             </div>
 
@@ -1363,7 +1417,7 @@ function Quiz() {
                 {unansweredCount}
               </strong>
 
-              <span>{isHindi ? "छोड़े गए" : "છોડેલા"}</span>
+              <span>{txt("છોડેલા", "छोड़े गए", "Skipped")}</span>
 
             </div>
 
@@ -1377,7 +1431,7 @@ function Quiz() {
             <div className="quiz-earned-badges-banner">
               <div className="quiz-earned-badges-header">
                 <Award size={18} />
-                <span>{isHindi ? "नई उपलब्धि / बैज अपडेट!" : "નવી સિદ્ધિ / બેજ અપડેટ!"}</span>
+                <span>{txt("નવી સિદ્ધિ / બેજ અપડેટ!", "नई उपलब्धि / बैज अपडेट!", "New Achievement / Badge Update!")}</span>
               </div>
               <div className="quiz-earned-badges-list">
                 {earnedBadges.map((b, idx) => (
@@ -1395,7 +1449,7 @@ function Quiz() {
               type="button"
               onClick={retryQuiz}
             >
-              <RefreshCw size={15} className="btn-icon" /> {isHindi ? "पुनः Quiz दें" : "ફરી Quiz આપો"}
+              <RefreshCw size={15} className="btn-icon" /> {txt("ફરી Quiz આપો", "पुनः Quiz दें", "Retake Quiz")}
             </button>
 
             <button
@@ -1403,14 +1457,14 @@ function Quiz() {
               className="quiz-achievements-btn"
               onClick={() => navigate("/quiz-achievements")}
             >
-              <Award size={15} className="btn-icon" /> {isHindi ? "क्विज़ उपलब्धियां देखें" : "ક્વિઝ સિદ્ધિઓ જુઓ"}
+              <Award size={15} className="btn-icon" /> {txt("ક્વિઝ સિદ્ધિઓ જુઓ", "क्विज़ उपलब्धियां देखें", "View Quiz Achievements")}
             </button>
 
             <button
               type="button"
               onClick={exitQuiz}
             >
-              <BookOpen size={15} className="btn-icon" /> Quiz Category
+              <BookOpen size={15} className="btn-icon" /> {txt("ક્વિઝ શ્રેણીઓ", "क्विज़ श्रेणियां", "Quiz Categories")}
             </button>
 
           </div>
@@ -1448,14 +1502,14 @@ function Quiz() {
   // =====================================================
 
   let quizTitle =
-    "All Chapters";
+    txt("બધા અધ્યાયો", "सभी अध्याय", "All Chapters");
 
   if (
     categoryParam ===
       "chapter" &&
     chapterParam
   ) {
-    quizTitle = isHindi ? `अध्याय ${chapterParam}` : `અધ્યાય ${chapterParam}`;
+    quizTitle = txt(`અધ્યાય ${chapterParam}`, `अध्याय ${chapterParam}`, `Chapter ${chapterParam}`);
   }
 
   if (
@@ -1463,7 +1517,7 @@ function Quiz() {
     "mahabharata"
   ) {
     quizTitle =
-      "Mahabharata Quiz";
+      txt("મહાભારત ક્વિઝ", "महाभारत क्विज़", "Mahabharata Quiz");
   }
 
   // =====================================================
@@ -1491,7 +1545,7 @@ function Quiz() {
 
           <div>
 
-            <span>{isHindi ? "भगवद् गीता Quiz" : "ભગવદ્ ગીતા Quiz"}</span>
+            <span>{txt("ભગવદ્ ગીતા Quiz", "भगवद् गीता Quiz", "Bhagavad Gita Quiz")}</span>
 
             <h1>
               {quizTitle}
@@ -1515,7 +1569,7 @@ function Quiz() {
 
         <div className="quiz-progress-info">
 
-          <span>{isHindi ? "प्रश्न" : "પ્રશ્ન"}{" "}
+          <span>{txt("પ્રશ્ન", "प्रश्न", "Question")}{" "}
             {currentQuestion + 1}
             {" / "}
             {questions.length}
@@ -1550,11 +1604,11 @@ function Quiz() {
 
       <section className="quiz-question-card">
 
-        <div className="quiz-question-number">{isHindi ? "प्रश्न" : "પ્રશ્ન"} {currentQuestion + 1}</div>
+        <div className="quiz-question-number">{txt("પ્રશ્ન", "प्रश्न", "Question")} {currentQuestion + 1}</div>
 
         <h2 className="quiz-question-text">
 
-          {(isHindi && (question.questionHi || question.questionTextHi)) || question.question || question.questionText || (isHindi ? "प्रश्न उपलब्ध नहीं है।" : "Question ઉપલબ્ધ નથી.")}
+          {(isEnglish && (question.questionEn || question.questionTextEn)) || (isHindi && (question.questionHi || question.questionTextHi)) || question.question || question.questionText || txt("Question ઉપલબ્ધ નથી.", "प्रश्न उपलब्ध नहीं है।", "Question not available.")}
 
         </h2>
 
@@ -1588,6 +1642,7 @@ function Quiz() {
                 );
 
               const activeCorrectAnswer =
+                (isEnglish && question.correctAnswerEn) ||
                 (isHindi && question.correctAnswerHi) ||
                 question.correctAnswer ||
                 "";
@@ -1596,7 +1651,9 @@ function Quiz() {
                 normalizeAnswer(optionText) === normalizeAnswer(activeCorrectAnswer) ||
                 normalizeAnswer(optionText) === normalizeAnswer(question.correctAnswer) ||
                 (question.correctAnswerHi &&
-                  normalizeAnswer(optionText) === normalizeAnswer(question.correctAnswerHi));
+                  normalizeAnswer(optionText) === normalizeAnswer(question.correctAnswerHi)) ||
+                (question.correctAnswerEn &&
+                  normalizeAnswer(optionText) === normalizeAnswer(question.correctAnswerEn));
 
               let optionClass =
                 "quiz-option";
@@ -1702,22 +1759,23 @@ function Quiz() {
 
               <>
                 <strong>
-                  <Check size={15} className="btn-icon" /> {isHindi ? "सही उत्तर!" : "સાચો જવાબ!"}
+                  <Check size={15} className="btn-icon" /> {txt("સાચો જવાબ!", "सही उत्तर!", "Correct Answer!")}
                 </strong>
 
-                <span>{isHindi ? "बहुत बढ़िया!" : "ખૂબ સરસ!"}</span>
+                <span>{txt("ખૂબ સરસ!", "बहुत बढ़िया!", "Well done!")}</span>
               </>
 
             ) : (
 
               <>
                 <strong>
-                  <X size={15} className="btn-icon" /> {isHindi ? "गलत उत्तर" : "ખોટો જવાબ"}
+                  <X size={15} className="btn-icon" /> {txt("ખોટો જવાબ", "गलत उत्तर", "Wrong Answer")}
                 </strong>
 
-                <span>{isHindi ? "सही उत्तर: " : "સાચો જવાબ: "}
+                <span>{txt("સાચો જવાબ: ", "सही उत्तर: ", "Correct Answer: ")}
                   <b>
                     {
+                      (isEnglish && question.correctAnswerEn) ||
                       (isHindi && question.correctAnswerHi) ||
                       question.correctAnswer
                     }
@@ -1739,11 +1797,11 @@ function Quiz() {
           <div className="quiz-explanation">
 
             <div className="quiz-explanation-title">
-              <Lightbulb size={15} className="btn-icon" /> {isHindi ? "व्याख्या" : "સમજણ"}
+              <Lightbulb size={15} className="btn-icon" /> {txt("સમજણ", "व्याख्या", "Explanation")}
             </div>
 
             <div className="quiz-explanation-text">
-              {(isHindi && question.explanationHi) || question.explanation || question.explanationText || (isHindi ? "इस प्रश्न के लिए कोई व्याख्या उपलब्ध नहीं है।" : "આ પ્રશ્ન માટે કોઈ સમજણ ઉપલબ્ધ નથી.")}
+              {(isEnglish && question.explanationEn) || (isHindi && question.explanationHi) || question.explanation || question.explanationText || txt("આ પ્રશ્ન માટે કોઈ સમજણ ઉપલબ્ધ નથી.", "इस प्रश्न के लिए कोई व्याख्या उपलब्ध नहीं है।", "No explanation available for this question.")}
             </div>
 
           </div>
@@ -1767,7 +1825,7 @@ function Quiz() {
               submitting
             }
           >
-            <ChevronLeft size={16} className="btn-icon" /> {isHindi ? "पिछला प्रश्न" : "પાછલો પ્રશ્ન"}
+            <ChevronLeft size={16} className="btn-icon" /> {txt("પાછલો પ્રશ્ન", "पिछला प्रश्न", "Previous Question")}
           </button>
 
           <button
@@ -1783,11 +1841,11 @@ function Quiz() {
           >
 
             {submitting
-              ? <><Loader2 size={15} className="spinner btn-icon" /> {isHindi ? "Result save हो रहा है..." : "Result save થઈ રહ્યું છે..."}</>
+              ? <><Loader2 size={15} className="spinner btn-icon" /> {txt("Result save થઈ રહ્યું છે...", "Result save हो रहा है...", "Saving result...")}</>
               : currentQuestion ===
                 questions.length - 1
-              ? <><Trophy size={15} className="btn-icon" /> {isHindi ? "Quiz पूर्ण करें" : "Quiz પૂર્ણ કરો"}</>
-              : <>{isHindi ? "अगला प्रश्न" : "આગળનો પ્રશ્ન"} <ChevronRight size={16} /></>}
+              ? <><Trophy size={15} className="btn-icon" /> {txt("Quiz પૂર્ણ કરો", "Quiz पूर्ण करें", "Complete Quiz")}</>
+              : <>{txt("આગળનો પ્રશ્ન", "अगला प्रश्न", "Next Question")} <ChevronRight size={16} /></>}
 
           </button>
 

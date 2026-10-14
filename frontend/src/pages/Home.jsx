@@ -28,7 +28,7 @@ function Home() {
   // LANGUAGE CONTEXT
   // =====================================================
 
-  const { isHindi, t, getLocalizedShlok } = useLanguage();
+  const { isHindi, isEnglish, t, txt, getLocalizedShlok, getChapterName } = useLanguage();
 
   // =====================================================
   // AUTH CONTEXT
@@ -200,6 +200,36 @@ useEffect(() => {
     18: "मोक्षसंन्यास योग",
   };
 
+  const chapterNamesEn = {
+    1: "Arjuna Vishada Yoga",
+    2: "Sankhya Yoga",
+    3: "Karma Yoga",
+    4: "Jnana Karma Sanyasa Yoga",
+    5: "Karma Sanyasa Yoga",
+    6: "Atma Samyama Yoga",
+    7: "Jnana Vijnana Yoga",
+    8: "Akshara Brahma Yoga",
+    9: "Raja Vidya Raja Guhya Yoga",
+    10: "Vibhuti Yoga",
+    11: "Vishwarupa Darshana Yoga",
+    12: "Bhakti Yoga",
+    13: "Kshetra Kshetrajna Vibhaga Yoga",
+    14: "Gunatraya Vibhaga Yoga",
+    15: "Purushottama Yoga",
+    16: "Daivasura Sampad Vibhaga Yoga",
+    17: "Shraddhatraya Vibhaga Yoga",
+    18: "Moksha Sanyasa Yoga",
+  };
+
+  const getCurrentChapterName = (num) => {
+    if (!num) return "";
+    return txt(
+      chapterNames[num] || `અધ્યાય ${num}`,
+      chapterNamesHi[num] || `अध्याय ${num}`,
+      chapterNamesEn[num] || `Chapter ${num}`
+    );
+  };
+
   // =====================================================
   // LOAD TODAY'S SHLOK (PUBLIC FOR EVERYONE)
   // =====================================================
@@ -240,7 +270,7 @@ useEffect(() => {
         if (!response.ok) {
           throw new Error(
             data.message ||
-              (isHindi ? "श्लोक डेटा लोड नहीं हो सका।" : "Shlok data load થઈ શક્યો નથી.")
+              txt("Shlok data load થઈ શક્યો નથી.", "श्लोक डेटा लोड नहीं हो सका।", "Could not load shlok data.")
           );
         }
 
@@ -273,7 +303,7 @@ useEffect(() => {
         );
 
         setMessage(
-          isHindi ? "सर्वर के साथ कनेक्शन नहीं हो सका।" : "Server સાથે connection થઈ શક્યું નથી."
+          txt("Server સાથે connection થઈ શક્યું નથી.", "सर्वर के साथ कनेक्शन नहीं हो सका।", "Could not connect to the server.")
         );
       } finally {
         setLoading(false);
@@ -325,7 +355,7 @@ useEffect(() => {
         if (!response.ok) {
           throw new Error(
             data.message ||
-              (isHindi ? "पठन जारी रखें लोड नहीं हो सका।" : "Continue Reading load થઈ શક્યું નથી.")
+              txt("Continue Reading load થઈ શક્યું નથી.", "पठन जारी रखें लोड नहीं हो सका।", "Could not load Continue Reading.")
           );
         }
 
@@ -366,9 +396,11 @@ useEffect(() => {
           ? `/chapter/${continueReading.chapterNumber}?shloka=${continueReading.shlokNumber}`
           : "/chapters";
 
-      const loginMsg = isHindi
-        ? "पठन जारी रखने के लिए Login आवश्यक है।"
-        : "વાંચન ચાલુ રાખવા માટે Login કરવું જરૂરી છે.";
+      const loginMsg = txt(
+        "વાંચન ચાલુ રાખવા માટે Login કરવું જરૂરી છે.",
+        "पठन जारी रखने के लिए Login आवश्यक है।",
+        "Login is required to continue reading."
+      );
 
       sessionStorage.setItem(
         "authRedirect",
@@ -416,9 +448,11 @@ useEffect(() => {
   const handleQuiz = () => {
     // Login ન હોય તો Login page પર message અને target path સાથે મોકલો
     if (!user) {
-      const loginMsg = isHindi
-        ? "क्विज़ खेलने के लिए Login आवश्यक है।"
-        : "Quiz રમવા માટે Login કરવું જરૂરી છે.";
+      const loginMsg = txt(
+        "Quiz રમવા માટે Login કરવું જરૂરી છે.",
+        "क्विज़ खेलने के लिए Login आवश्यक है।",
+        "Login is required to play Quiz."
+      );
 
       sessionStorage.setItem(
         "authRedirect",
@@ -447,9 +481,11 @@ useEffect(() => {
 
   const handleReadingTracker = () => {
     if (!user) {
-      const loginMsg = isHindi
-        ? "पठन प्रगति देखने के लिए Login आवश्यक है।"
-        : "વાંચન પ્રગતિ જોવા માટે Login કરવું જરૂરી છે.";
+      const loginMsg = txt(
+        "વાંચન પ્રગતિ જોવા માટે Login કરવું જરૂરી છે.",
+        "पठन प्रगति देखने के लिए Login आवश्यक है।",
+        "Login is required to view reading progress."
+      );
 
       sessionStorage.setItem(
         "authRedirect",
@@ -710,9 +746,11 @@ useEffect(() => {
 
     if (loading && allShlokas.length === 0) {
       setMessage(
-        isHindi
-          ? "श्लोक लोड हो रहे हैं, कृपया कुछ क्षण प्रतीक्षा करें..."
-          : "શ્લોક લોડ થઈ રહ્યા છે, કૃપા કરીને થોડી ક્ષણ રાહ જુઓ..."
+        txt(
+          "શ્લોક લોડ થઈ રહ્યા છે, કૃપા કરીને થોડી ક્ષણ રાહ જુઓ...",
+          "श्लोक लोड हो रहे हैं, कृपया कुछ क्षण प्रतीक्षा करें...",
+          "Shlokas are loading, please wait a moment..."
+        )
       );
       return;
     }
@@ -723,9 +761,11 @@ useEffect(() => {
       !textValue
     ) {
       setMessage(
-        isHindi
-          ? "कृपया खोजने के लिए कुछ लिखें।"
-          : "કૃપા કરીને શોધવા માટે કંઈક લખો."
+        txt(
+          "કૃપા કરીને શોધવા માટે કંઈક લખો.",
+          "कृपया खोजने के लिए कुछ लिखें।",
+          "Please enter something to search."
+        )
       );
       return;
     }
@@ -736,9 +776,11 @@ useEffect(() => {
       !textValue
     ) {
       setMessage(
-        isHindi
-          ? "केवल अध्याय संख्या से नहीं खोजा जा सकता। श्लोक संख्या या शब्द भी लिखें।"
-          : "માત્ર અધ્યાય નંબરથી શોધી શકાશે નહીં. શ્લોક નંબર અથવા શબ્દ પણ લખો."
+        txt(
+          "માત્ર અધ્યાય નંબરથી શોધી શકાશે નહીં. શ્લોક નંબર અથવા શબ્દ પણ લખો.",
+          "केवल अध्याय संख्या से नहीं खोजा जा सकता। श्लोक संख्या या शब्द भी लिखें।",
+          "Cannot search only by chapter number. Please provide a shloka number or keyword."
+        )
       );
       return;
     }
@@ -751,9 +793,11 @@ useEffect(() => {
       )
     ) {
       setMessage(
-        isHindi
-          ? "अध्याय संख्या केवल 1 से 18 तक हो सकती है।"
-          : "અધ્યાય નંબર 1 થી 18 સુધી જ હોઈ શકે છે."
+        txt(
+          "અધ્યાય નંબર 1 થી 18 સુધી જ હોઈ શકે છે.",
+          "अध्याय संख्या केवल 1 से 18 तक हो सकती है।",
+          "Chapter number must be between 1 and 18."
+        )
       );
       return;
     }
@@ -771,27 +815,33 @@ useEffect(() => {
 
       if (shlokaNum === 0) {
         setMessage(
-          isHindi
-            ? "इस अध्याय में वर्तमान में कोई श्लोक उपलब्ध नहीं है।"
-            : "આ અધ્યાયમાં હાલમાં કોઈ શ્લોક ઉપલબ્ધ નથી."
+          txt(
+            "આ અધ્યાયમાં હાલમાં કોઈ શ્લોક ઉપલબ્ધ નથી.",
+            "इस अध्याय में वर्तमान में कोई श्लोक उपलब्ध नहीं है।",
+            "No shlokas currently available in this chapter."
+          )
         );
         return;
       }
 
       if (shlokaNum < 1) {
         setMessage(
-          isHindi
-            ? "श्लोक संख्या 1 या उससे अधिक होनी चाहिए।"
-            : "શ્લોક નંબર 1 અથવા તેનાથી મોટો હોવો જોઈએ."
+          txt(
+            "શ્લોક નંબર 1 અથવા તેનાથી મોટો હોવો જોઈએ.",
+            "श्लोक संख्या 1 या उससे अधिक होनी चाहिए।",
+            "Shloka number must be 1 or greater."
+          )
         );
         return;
       }
 
       if (maxShloka === 0) {
         setMessage(
-          isHindi
-            ? "इस अध्याय में वर्तमान में कोई श्लोक उपलब्ध नहीं है।"
-            : "આ અધ્યાયમાં હાલમાં કોઈ શ્લોક ઉપલબ્ધ નથી."
+          txt(
+            "આ અધ્યાયમાં હાલમાં કોઈ શ્લોક ઉપલબ્ધ નથી.",
+            "इस अध्याय में वर्तमान में कोई श्लोक उपलब्ध नहीं है।",
+            "No shlokas currently available in this chapter."
+          )
         );
         return;
       }
@@ -800,17 +850,11 @@ useEffect(() => {
         shlokaNum > maxShloka
       ) {
         setMessage(
-          isHindi
-            ? `${
-                chapterValue
-                  ? "इस अध्याय में"
-                  : "गीता में"
-              } अधिकतम श्लोक संख्या ${maxShloka} तक ही है।`
-            : `${
-                chapterValue
-                  ? "આ અધ્યાયમાં"
-                  : "ગીતા માં"
-              } મહત્તમ શ્લોક નંબર ${maxShloka} સુધી જ છે.`
+          txt(
+            `${chapterValue ? "આ અધ્યાયમાં" : "ગીતા માં"} મહત્તમ શ્લોક નંબર ${maxShloka} સુધી જ છે.`,
+            `${chapterValue ? "इस अध्याय में" : "गीता में"} अधिकतम श्लोक संख्या ${maxShloka} तक ही है।`,
+            `Maximum shloka number in ${chapterValue ? "this chapter" : "the Gita"} is ${maxShloka}.`
+          )
         );
         return;
       }
@@ -843,11 +887,15 @@ useEffect(() => {
             shlok.sanskritLine2,
             shlok.translation,
             shlok.translationHi,
+            shlok.translationEn,
             shlok.message,
             shlok.messageHi,
+            shlok.messageEn,
             shlok.speaker,
+            shlok.speakerEn,
             shlok.chapterName,
             shlok.chapterNameHi,
+            shlok.chapterNameEn,
           ]
             .filter(Boolean)
             .join(" ")
@@ -871,9 +919,11 @@ useEffect(() => {
       matches.length === 0
     ) {
       setMessage(
-        isHindi
-          ? "कोई श्लोक नहीं मिला।"
-          : "કોઈ શ્લોક મળ્યો નથી."
+        txt(
+          "કોઈ શ્લોક મળ્યો નથી.",
+          "कोई श्लोक नहीं मिला।",
+          "No shlokas found."
+        )
       );
       return;
     }
@@ -901,9 +951,11 @@ useEffect(() => {
   const openShloka = (item) => {
     if (!user && Number(item.shlokNumber) > 5) {
       const redirectPath = `/chapter/${item.chapterNumber}?shloka=${item.shlokNumber}`;
-      const redirectMsg = isHindi
-        ? `अध्याय ${item.chapterNumber} के श्लोक ${item.shlokNumber} पढ़ने के लिए Login करना आवश्यक है।`
-        : `અધ્યાય ${item.chapterNumber} ના શ્લોક ${item.shlokNumber} વાંચવા માટે Login કરવું જરૂરી છે.`;
+      const redirectMsg = txt(
+        `અધ્યાય ${item.chapterNumber} ના શ્લોક ${item.shlokNumber} વાંચવા માટે Login કરવું જરૂરી છે.`,
+        `अध्याय ${item.chapterNumber} के श्लोक ${item.shlokNumber} पढ़ने के लिए Login करना आवश्यक है।`,
+        `Login is required to read Chapter ${item.chapterNumber}, Shloka ${item.shlokNumber}.`
+      );
 
       localStorage.setItem("pendingChapter", String(item.chapterNumber));
       localStorage.setItem("pendingShloka", String(item.shlokNumber));
@@ -943,7 +995,7 @@ useEffect(() => {
             className="continue-reading-button"
             disabled
           >
-            <Loader2 className="btn-icon spinner" size={20} /> {isHindi ? "पढ़ना जारी रखें..." : "Continue Reading..."}
+            <Loader2 className="btn-icon spinner" size={20} /> {txt("Continue Reading...", "पढ़ना जारी रखें...", "Continue Reading...")}
           </button>
         );
       }
@@ -961,14 +1013,14 @@ useEffect(() => {
               handleContinueReading
             }
           >
-            <BookOpen className="btn-icon" size={20} /> {isHindi ? "पढ़ना जारी रखें" : "Continue Reading"}
+            <BookOpen className="btn-icon" size={20} /> {txt("Continue Reading", "पढ़ना जारी रखें", "Continue Reading")}
             {" • "}
-            {isHindi ? "अध्याय" : "અધ્યાય"}{" "}
+            {txt("અધ્યાય", "अध्याय", "Chapter")}{" "}
             {
               continueReading.chapterNumber
             }
             {" • "}
-            {isHindi ? "श्लोक" : "શ્લોક"}{" "}
+            {txt("શ્લોક", "श्लोक", "Shloka")}{" "}
             {
               continueReading.shlokNumber
             }
@@ -984,7 +1036,7 @@ useEffect(() => {
             handleStartReading
           }
         >
-          <BookOpen className="btn-icon" size={20} /> {isHindi ? "गीता पढ़ना शुरू करें" : "ગીતા વાંચવાનું શરૂ કરો"}
+          <BookOpen className="btn-icon" size={20} /> {txt("ગીતા વાંચવાનું શરૂ કરો", "गीता पढ़ना शुरू करें", "Start Reading Gita")}
         </button>
       );
     }
@@ -1014,15 +1066,17 @@ useEffect(() => {
         {/* MAIN TITLE */}
 
         <h1>
-          {isHindi ? "भगवद् गीता" : "ભગવદ્ ગીતા"}
+          {txt("ભગવદ્ ગીતા", "भगवद् गीता", "Bhagavad Gita")}
         </h1>
 
         {/* DESCRIPTION */}
 
         <p className="description">
-          {isHindi
-            ? "भगवान श्रीकृष्ण के दिव्य ज्ञान और जीवन को सही दिशा देने वाले अमूल्य उपदेश की पवित्र यात्रा में आपका स्वागत है।"
-            : "ભગવાન શ્રીકૃષ્ણના દિવ્ય જ્ઞાન અને જીવનને સાચી દિશા આપતા અમૂલ્ય ઉપદેશની પવિત્ર યાત્રામાં આપનું સ્વાગત છે."}
+          {txt(
+            "ભગવાન શ્રીકૃષ્ણના દિવ્ય જ્ઞાન અને જીવનને સાચી દિશા આપતા અમૂલ્ય ઉપદેશની પવિત્ર યાત્રામાં આપનું સ્વાગત છે.",
+            "भगवान श्रीकृष्ण के दिव्य ज्ञान और जीवन को सही दिशा देने वाले अमूल्य उपदेश की पवित्र यात्रा में आपका स्वागत है।",
+            "Welcome to the sacred journey of Lord Krishna's divine wisdom and life-transforming teachings."
+          )}
         </p>
 
         {/* =================================================
@@ -1040,7 +1094,7 @@ useEffect(() => {
                 handleStartReading
               }
             >
-              <BookOpen className="btn-icon" size={20} /> {isHindi ? "गीता पढ़ना शुरू करें" : "ગીતા વાંચવાનું શરૂ કરો"}
+              <BookOpen className="btn-icon" size={20} /> {txt("ગીતા વાંચવાનું શરૂ કરો", "गीता पढ़ना शुरू करें", "Start Reading Gita")}
             </button>
           )}
 
@@ -1049,9 +1103,9 @@ useEffect(() => {
             type="button"
             className="quiz-home-button quiz-button tracker-hero-btn"
             onClick={handleReadingTracker}
-            title={isHindi ? "गीता पठन प्रगति और बैज देखें" : "ગીતા વાંચન પ્રગતિ અને બેજ જુઓ"}
+            title={txt("ગીતા વાંચન પ્રગતિ અને બેજ જુઓ", "गीता पठन प्रगति और बैज देखें", "View Gita Reading Progress & Badges")}
           >
-            <Trophy className="btn-icon tracker-trophy-blue" size={20} /> {isHindi ? "पठन प्रगति" : "વાંચન પ્રગતિ"}
+            <Trophy className="btn-icon tracker-trophy-blue" size={20} /> {txt("વાંચન પ્રગતિ", "पठन प्रगति", "Reading Tracker")}
             {readingStats.currentStreak > 0 && (
               <span className="hero-streak-chip">
                 <Flame size={14} className="streak-chip-flame" /> {readingStats.currentStreak}d
@@ -1069,7 +1123,7 @@ useEffect(() => {
           {/* SEARCH TITLE */}
 
           <div className="search-title">
-            <Search className="title-icon" size={22} /> {isHindi ? "गीता श्लोक खोजें" : "ગીતા શ્લોક શોધો"}
+            <Search className="title-icon" size={22} /> {txt("ગીતા શ્લોક શોધો", "गीता श्लोक खोजें", "Search Gita Shlokas")}
           </div>
 
           {/* SEARCH FIELDS */}
@@ -1080,7 +1134,7 @@ useEffect(() => {
 
             <input
               type="number"
-              placeholder={isHindi ? "अध्याय संख्या" : "અધ્યાય નંબર"}
+              placeholder={txt("અધ્યાય નંબર", "अध्याय संख्या", "Chapter No.")}
               value={chapterNumber}
               onChange={
                 handleChapterChange
@@ -1101,11 +1155,13 @@ useEffect(() => {
                   ? getChapterMaxShloka(
                       chapterNumber
                     ) === 0
-                    ? (isHindi ? "श्लोक संख्या (0)" : "શ્લોક નંબર (0)")
-                    : (isHindi
-                        ? `श्लोक संख्या (1-${getChapterMaxShloka(chapterNumber)})`
-                        : `શ્લોક નંબર (1-${getChapterMaxShloka(chapterNumber)})`)
-                  : (isHindi ? "श्लोक संख्या (1-78)" : "શ્લોક નંબર (1-78)")
+                    ? txt("શ્લોક નંબર (0)", "श्लोक संख्या (0)", "Shloka No. (0)")
+                    : txt(
+                        `શ્લોક નંબર (1-${getChapterMaxShloka(chapterNumber)})`,
+                        `श्लोक संख्या (1-${getChapterMaxShloka(chapterNumber)})`,
+                        `Shloka No. (1-${getChapterMaxShloka(chapterNumber)})`
+                      )
+                  : txt("શ્લોક નંબર (1-78)", "श्लोक संख्या (1-78)", "Shloka No. (1-78)")
               }
               value={shlokaNumber}
               onChange={
@@ -1135,7 +1191,7 @@ useEffect(() => {
 
             <input
               type="text"
-              placeholder={isHindi ? "श्लोक / शब्द खोजें..." : "શ્લોક / શબ્દ શોધો..."}
+              placeholder={txt("શ્લોક / શબ્દ શોધો...", "श्लोक / शब्द खोजें...", "Search shloka / word...")}
               value={searchText}
               onChange={
                 handleTextChange
@@ -1153,10 +1209,10 @@ useEffect(() => {
               onClick={
                 handleSearch
               }
-              title={isHindi ? "श्लोक खोजें" : "શ્લોક શોધો"}
+              title={txt("શ્લોક શોધો", "श्लोक खोजें", "Search Shloka")}
             >
               <Search className="btn-icon" size={18} />
-              <span className="search-btn-text">{isHindi ? "खोजें" : "શોધો"}</span>
+              <span className="search-btn-text">{txt("શોધો", "खोजें", "Search")}</span>
             </button>
 
           </div>
@@ -1175,7 +1231,7 @@ useEffect(() => {
             <div className="search-results">
 
               <h3>
-                <Search className="title-icon" size={20} /> {result.length} {isHindi ? "परिणाम मिले" : "પરિણામ મળ્યા"}
+                <Search className="title-icon" size={20} /> {result.length} {txt("પરિણામ મળ્યા", "परिणाम मिले", "results found")}
               </h3>
 
               {result.map(
@@ -1191,35 +1247,33 @@ useEffect(() => {
                   >
 
                     <div className="result-chapter">
-                      {isHindi ? "अध्याय" : "અધ્યાય"}{" "}
+                      {txt("અધ્યાય", "अध्याय", "Chapter")}{" "}
                       {
                         item.chapterNumber
                       }
 
                       {" • "}
 
-                      {isHindi ? "श्लोक" : "શ્લોક"}{" "}
+                      {txt("શ્લોક", "श्लोक", "Shloka")}{" "}
                       {
                         item.shlokNumber
                       }
                     </div>
 
                     <h4>
-                      {isHindi
-                        ? (item.chapterNameHi || chapterNamesHi[item.chapterNumber] || item.chapterName || `अध्याय ${item.chapterNumber}`)
-                        : (item.chapterName || chapterNames[item.chapterNumber] || `અધ્યાય ${item.chapterNumber}`)}
+                      {getCurrentChapterName(item.chapterNumber)}
                     </h4>
 
                     <p>
-                      {
-                        isHindi
-                          ? (item.translationHi || item.translation)
-                          : item.translation
-                      }
+                      {txt(
+                        item.translation,
+                        item.translationHi || item.translation,
+                        item.translationEn || item.translation
+                      )}
                     </p>
 
                     <span>
-                      {isHindi ? "श्लोक पढ़ें" : "શ્લોક વાંચો"}
+                      {txt("શ્લોક વાંચો", "श्लोक पढ़ें", "Read Shloka")}
                     </span>
 
                   </div>
@@ -1239,9 +1293,7 @@ useEffect(() => {
 
       {todayShlok && (() => {
         const localizedToday = getLocalizedShlok(todayShlok);
-        const todayChapterName = isHindi
-          ? (todayShlok.chapterNameHi || chapterNamesHi[todayShlok.chapterNumber] || todayShlok.chapterName)
-          : (todayShlok.chapterName || chapterNames[todayShlok.chapterNumber] || `અધ્યાય ${todayShlok.chapterNumber}`);
+        const todayChapterName = getCurrentChapterName(todayShlok.chapterNumber);
 
         return (
           <section className="today-shlok">
@@ -1253,14 +1305,14 @@ useEffect(() => {
 
               <div>
                 <h2>
-                  {isHindi ? "आज का श्लोक" : "આજનો શ્લોક"}
+                  {txt("આજનો શ્લોક", "आज का श्लोक", "Today's Shloka")}
                 </h2>
               </div>
             </div>
 
             <div className="today-shlok-meta">
               <span>
-                {isHindi ? `अध्याय ${todayShlok.chapterNumber}` : `અધ્યાય ${todayShlok.chapterNumber}`}
+                {txt(`અધ્યાય ${todayShlok.chapterNumber}`, `अध्याय ${todayShlok.chapterNumber}`, `Chapter ${todayShlok.chapterNumber}`)}
               </span>
 
               <span>
@@ -1268,7 +1320,7 @@ useEffect(() => {
               </span>
 
               <span>
-                {isHindi ? `श्लोक ${todayShlok.shlokNumber}` : `શ્લોક ${todayShlok.shlokNumber}`}
+                {txt(`શ્લોક ${todayShlok.shlokNumber}`, `श्लोक ${todayShlok.shlokNumber}`, `Shloka ${todayShlok.shlokNumber}`)}
               </span>
             </div>
 
@@ -1290,7 +1342,7 @@ useEffect(() => {
                 <div className="today-translation">
                   <h3>
                     <BookOpen className="section-icon" size={20} />{" "}
-                    {isHindi ? "हिन्दी अनुवाद" : "ગુજરાતી અનુવાદ"}
+                    {txt("ગુજરાતી અનુવાદ", "हिन्दी अनुवाद", "English Translation")}
                   </h3>
 
                   <div
@@ -1307,7 +1359,7 @@ useEffect(() => {
                 <div className="today-message">
                   <h3>
                     <Sparkles className="section-icon" size={20} />{" "}
-                    {isHindi ? "आज का सन्देश" : "આજનો સંદેશ"}
+                    {txt("આજનો સંદેશ", "आज का सन्देश", "Today's Message")}
                   </h3>
 
                   <div
@@ -1328,16 +1380,16 @@ useEffect(() => {
                 onClick={handleTodayShlok}
               >
                 <BookOpen className="btn-icon" size={18} />{" "}
-                {isHindi ? "सम्पूर्ण श्लोक पढ़ें" : "સંપૂર્ણ શ્લોક વાંચો"}
+                {txt("સંપૂર્ણ શ્લોક વાંચો", "सम्पूर्ण श्लोक पढ़ें", "Read Full Shloka")}
               </button>
               <button
                 type="button"
                 className="today-shlok-button today-share-button"
                 onClick={handleShareTodayShlok}
-                title={isHindi ? "श्लोक कार्ड शेयर / डाउनलोड करें" : "શ્લોક કાર્ડ શેર કરો / ડાઉનલોડ કરો"}
+                title={txt("શ્લોક કાર્ડ શેર કરો / ડાઉનલોડ કરો", "श्लोक कार्ड शेयर / डाउनलोड करें", "Share / Download Shloka Card")}
               >
                 <Share2 className="btn-icon" size={18} />{" "}
-                {isHindi ? "श्लोक कार्ड शेयर करें" : "શ્લોક કાર્ડ શેર કરો"}
+                {txt("શ્લોક કાર્ડ શેર કરો", "श्लोक कार्ड शेयर करें", "Share Shloka Card")}
               </button>
             </div>
 
@@ -1350,9 +1402,7 @@ useEffect(() => {
       ================================================= */}
       {todayShlok && (() => {
         const localizedToday = getLocalizedShlok(todayShlok);
-        const todayChapterName = isHindi
-          ? (todayShlok.chapterNameHi || chapterNamesHi[todayShlok.chapterNumber] || todayShlok.chapterName)
-          : (todayShlok.chapterName || (typeof chapterNames !== "undefined" && chapterNames[todayShlok.chapterNumber]) || `અધ્યાય ${todayShlok.chapterNumber}`);
+        const todayChapterName = getCurrentChapterName(todayShlok.chapterNumber);
 
         return (
           <ShareShlokaModal

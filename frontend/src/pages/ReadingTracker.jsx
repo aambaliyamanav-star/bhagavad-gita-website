@@ -55,7 +55,7 @@ const BADGE_ICONS = {
 function ReadingTracker() {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { isHindi, CHAPTER_NAMES } = useLanguage();
+  const { isHindi, isEnglish, isGujarati, txt, CHAPTER_NAMES } = useLanguage();
 
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState(false);
@@ -108,7 +108,11 @@ function ReadingTracker() {
       navigate("/login", {
         state: {
           from: "/reading-tracker",
-          message: isHindi ? "Cloud Sync के लिए Login आवश्यक है।" : "Cloud Sync માટે Login કરવું જરૂરી છે.",
+          message: txt(
+            "Cloud Sync માટે Login કરવું જરૂરી છે.",
+            "Cloud Sync के लिए Login आवश्यक है।",
+            "Login is required for Cloud Sync."
+          ),
         },
       });
       return;
@@ -121,12 +125,20 @@ function ReadingTracker() {
       if (res.success) {
         await loadProgress();
         setSyncSuccess(true);
-        setSyncMessage(isHindi ? "डेटा सफलतापूर्वक Cloud के साथ Sync हो गया।" : "ડેટા સફળતાપૂર્વક Cloud સાથે Sync થઈ ગયો.");
+        setSyncMessage(txt(
+          "ડેટા સફળતાપૂર્વક Cloud સાથે Sync થઈ ગયો.",
+          "डेटा सफलतापूर्वक Cloud के साथ Sync हो गया।",
+          "Data successfully synced to Cloud."
+        ));
       } else {
-        setSyncMessage(isHindi ? "Sync असफल रहा। पुनः प्रयास करें।" : "Sync failed. ફરી પ્રયત્ન કરો.");
+        setSyncMessage(txt(
+          "Sync નિષ્ફળ. ફરી પ્રયત્ન કરો.",
+          "Sync असफल रहा। पुनः प्रयास करें।",
+          "Sync failed. Please try again."
+        ));
       }
     } catch (err) {
-      setSyncMessage(isHindi ? ("Sync त्रुटि: " + (err.message || "Unknown error")) : ("Sync error: " + (err.message || "Unknown error")));
+      setSyncMessage(txt("Sync ભૂલ: ", "Sync त्रुटि: ", "Sync error: ") + (err.message || "Unknown error"));
     } finally {
       setSyncing(false);
       setTimeout(() => setSyncMessage(""), 5000);
@@ -200,7 +212,7 @@ function ReadingTracker() {
               <BookMarked size={22} />
             </div>
             <div>
-              <h1 className="rt-page-title">{isHindi ? "पठन प्रगति" : "વાંચન પ્રગતિ"}</h1>
+              <h1 className="rt-page-title">{txt("વાંચન પ્રગતિ", "पठन प्रगति", "Reading Progress")}</h1>
             </div>
           </div>
 
@@ -213,7 +225,7 @@ function ReadingTracker() {
                 disabled={syncing}
               >
                 <RefreshCw size={15} className={syncing ? "rt-spin" : ""} />
-                {syncing ? (isHindi ? "सिंक हो रहा है..." : "Syncing...") : (isHindi ? "क्लाउड सिंक" : "Cloud Sync")}
+                {syncing ? txt("Sync થઈ રહ્યું છે...", "सिंक हो रहा है...", "Syncing...") : txt("Cloud Sync", "क्लाउड सिंक", "Cloud Sync")}
               </button>
             ) : (
               <button
@@ -222,7 +234,7 @@ function ReadingTracker() {
                 onClick={() => navigate("/login")}
               >
                 <LogIn size={15} />
-                {isHindi ? "सुरक्षित करने हेतु Login करें" : "Login to Save"}
+                {txt("સાચવવા Login કરો", "सुरक्षित करने हेतु Login करें", "Login to Save")}
               </button>
             )}
           </div>
@@ -262,9 +274,9 @@ function ReadingTracker() {
               </div>
             </div>
             <div className="rt-stat-body">
-              <span className="rt-stat-label">{isHindi ? "सम्पूर्ण गीता प्रगति" : "સમગ્ર ગીતા પ્રગતિ"}</span>
+              <span className="rt-stat-label">{txt("સમગ્ર ગીતા પ્રગતિ", "सम्पूर्ण गीता प्रगति", "Overall Gita Progress")}</span>
               <div className="rt-stat-value">{readCount} <span className="rt-stat-of">/ {TOTAL_GITA_SHLOKAS}</span></div>
-              <p className="rt-stat-sub">{isHindi ? "श्लोक पढ़े गए" : "શ્લોક વંચાયા"}</p>
+              <p className="rt-stat-sub">{txt("શ્લોક વંચાયા", "श्लोक पढ़े गए", "Verses Read")}</p>
             </div>
           </div>
 
@@ -274,16 +286,16 @@ function ReadingTracker() {
               <Flame size={26} />
             </div>
             <div className="rt-stat-body">
-              <span className="rt-stat-label">{isHindi ? "दैनिक पठन स्ट्रीक" : "દૈનિક વાંચન સ્ટ્રીક"}</span>
-              <div className="rt-stat-value">{progressData.currentStreak || 0} <span className="rt-stat-of">{isHindi ? "दिन" : "દિવસ"}</span></div>
+              <span className="rt-stat-label">{txt("દૈનિક વાંચન સ્ટ્રીક", "दैनिक पठन स्ट्रीक", "Daily Reading Streak")}</span>
+              <div className="rt-stat-value">{progressData.currentStreak || 0} <span className="rt-stat-of">{txt("દિવસ", "दिन", "days")}</span></div>
               <div className="rt-streak-meta">
                 <span className="rt-best-streak">
-                  <Trophy size={12} /> {isHindi ? "सर्वोच्च" : "સર્વોચ્ચ"}: {progressData.longestStreak || 0} {isHindi ? "दिन" : "દિ."}
+                  <Trophy size={12} /> {txt("સર્વોચ્ચ", "सर्वोच्च", "Best")}: {progressData.longestStreak || 0} {txt("દિ.", "दिन", "days")}
                 </span>
                 <span className={`rt-today-pill ${isReadToday ? "rt-pill-done" : "rt-pill-pending"}`}>
                   {isReadToday
-                    ? <><CheckCircle2 size={12} /> {isHindi ? "आज पढ़ा गया" : "આજે વંચાયું"}</>
-                    : <><Clock size={12} /> {isHindi ? "आज का बाकी" : "આજનું બાકી"}</>
+                    ? <><CheckCircle2 size={12} /> {txt("આજે વંચાયું", "आज पढ़ा गया", "Read Today")}</>
+                    : <><Clock size={12} /> {txt("આજનું બાકી", "आज का बाकी", "Pending Today")}</>
                   }
                 </span>
               </div>
@@ -296,15 +308,15 @@ function ReadingTracker() {
               <Award size={26} />
             </div>
             <div className="rt-stat-body">
-              <span className="rt-stat-label">{isHindi ? "अर्जित बैज" : "સિદ્ધ બેજ"}</span>
+              <span className="rt-stat-label">{txt("સિદ્ધ બેજ", "अर्जित बैज", "Unlocked Badges")}</span>
               <div className="rt-stat-value">{unlockedBadgesCount} <span className="rt-stat-of">/ {SPIRITUAL_BADGES.length}</span></div>
               <div className="rt-mini-bar-track">
                 <div className="rt-mini-bar-fill" style={{ width: `${(unlockedBadgesCount / SPIRITUAL_BADGES.length) * 100}%` }} />
               </div>
               <p className="rt-stat-sub">
                 {unlockedBadgesCount === SPIRITUAL_BADGES.length
-                  ? (isHindi ? "सभी बैज प्राप्त!" : "તમામ બેજ પ્રાપ્ત!")
-                  : (isHindi ? "और पढ़ें, बैज अनलॉक करें" : "વધુ વાંચો, બેજ અનલોક કરો")}
+                  ? txt("તમામ બેજ પ્રાપ્ત!", "सभी बैज प्राप्त!", "All Badges Earned!")
+                  : txt("વધુ વાંચો, બેજ અનલોક કરો", "और पढ़ें, बैज अनलॉक करें", "Read more to unlock badges")}
               </p>
             </div>
           </div>
@@ -315,32 +327,32 @@ function ReadingTracker() {
               <BookOpen size={26} />
             </div>
             <div className="rt-stat-body">
-              <span className="rt-stat-label">{isHindi ? "आगे पढ़ें" : "આગળ વાંચો"}</span>
+              <span className="rt-stat-label">{txt("આગળ વાંચો", "आगे पढ़ें", "Continue Reading")}</span>
               {lastReadInfo ? (
                 <>
                   <div className="rt-continue-chapter">
-                    {isHindi ? "अ." : "અ."} {lastReadInfo.chapterNumber} &nbsp;•&nbsp; {isHindi ? "श्लोक" : "શ્લોક"} {lastReadInfo.shlokNumber}
+                    {txt("અ.", "अ.", "Ch.")} {lastReadInfo.chapterNumber} &nbsp;•&nbsp; {txt("શ્લોક", "श्लोक", "Verse")} {lastReadInfo.shlokNumber}
                   </div>
-                  <p className="rt-stat-sub">{isHindi ? "पिछला यहाँ तक" : "છેલ્લે અહીં સુધી"}</p>
+                  <p className="rt-stat-sub">{txt("છેલ્લે અહીં સુધી", "पिछला यहाँ तक", "Last read up to here")}</p>
                   <button
                     type="button"
                     className="rt-continue-btn"
                     onClick={() => navigate(`/chapter/${lastReadInfo.chapterNumber}?shloka=${lastReadInfo.shlokNumber}`)}
                   >
-                    <span>{isHindi ? "जारी रखें" : "ચાલુ રાખો"}</span>
+                    <span>{txt("ચાલુ રાખો", "जारी रखें", "Continue")}</span>
                     <ArrowRight size={15} />
                   </button>
                 </>
               ) : (
                 <>
-                  <div className="rt-continue-chapter">{isHindi ? "प्रथम अध्याय" : "પ્રથમ અધ્યાય"}</div>
-                  <p className="rt-stat-sub">{isHindi ? "गीता पठन शुरू करें" : "ગીતા વાંચના ઉઘડો"}</p>
+                  <div className="rt-continue-chapter">{txt("પ્રથમ અધ્યાય", "प्रथम अध्याय", "Chapter 1")}</div>
+                  <p className="rt-stat-sub">{txt("ગીતા વાંચન શરૂ કરો", "गीता पठन शुरू करें", "Start reading Gita")}</p>
                   <button
                     type="button"
                     className="rt-continue-btn"
                     onClick={() => navigate("/chapter/1?shloka=1")}
                   >
-                    <span>{isHindi ? "शुरू करें" : "શરૂ કરો"}</span>
+                    <span>{txt("શરૂ કરો", "शुरू करें", "Start")}</span>
                     <ArrowRight size={15} />
                   </button>
                 </>
@@ -361,17 +373,19 @@ function ReadingTracker() {
             <div className="rt-section-title-row">
               <Award size={20} className="rt-section-icon rt-icon-blue-text" />
               <div>
-                <h2 className="rt-section-title">{isHindi ? "आध्यात्मिक उपलब्धियां" : "આધ્યાત્મિક સિદ્ધિઓ"}</h2>
+                <h2 className="rt-section-title">{txt("આધ્યાત્મિક સિદ્ધિઓ", "आध्यात्मिक उपलब्धियां", "Spiritual Achievements")}</h2>
                 <p className="rt-section-desc">
-                  {isHindi
-                    ? "स्ट्रीक, अध्ययन और भक्ति पर आधारित १० उपलब्धियां"
-                    : "સ્ટ્રીક, અધ્યયન અને ભક્તિ આધારિત ૧૦ ઉપલબ્ધિઓ"}
+                  {txt(
+                    "સ્ટ્રીક, અધ્યયન અને ભક્તિ આધારિત ૧૦ ઉપલબ્ધિઓ",
+                    "स्ट्रीक, अध्ययन और भक्ति पर आधारित १० उपलब्धियां",
+                    "10 achievements based on study, streak, and devotion"
+                  )}
                 </p>
               </div>
             </div>
             <div className="rt-badge-count-chip">
               <Award size={13} />
-              {unlockedBadgesCount} / {SPIRITUAL_BADGES.length} {isHindi ? "अनलॉक" : "અનલોક"}
+              {unlockedBadgesCount} / {SPIRITUAL_BADGES.length} {txt("અનલોક", "अनलॉक", "Unlocked")}
             </div>
           </div>
 
@@ -379,6 +393,9 @@ function ReadingTracker() {
             {SPIRITUAL_BADGES.map((badge) => {
               const isUnlocked = unlockedBadgeIds.has(badge.id);
               const IconComp = BADGE_ICONS[badge.icon] || Award;
+              const badgeTitle = isEnglish ? (badge.titleEn || badge.title) : isHindi ? (badge.titleHi || badge.title) : badge.title;
+              const badgeCriteria = isEnglish ? (badge.criteriaTextEn || badge.criteriaText) : isHindi ? (badge.criteriaTextHi || badge.criteriaText) : badge.criteriaText;
+
               return (
                 <div
                   key={badge.id}
@@ -400,10 +417,10 @@ function ReadingTracker() {
                     }
                   </div>
                   <div className="rt-badge-info">
-                    <h4 className="rt-badge-name">{(isHindi && badge.titleHi) ? badge.titleHi : badge.title}</h4>
+                    <h4 className="rt-badge-name">{badgeTitle}</h4>
                     {isUnlocked
-                      ? <span className="rt-badge-tag rt-tag-unlocked"><CheckCircle2 size={12} /> {isHindi ? "सिद्ध" : "સિદ્ધ"}</span>
-                      : <span className="rt-badge-tag rt-tag-locked"><Lock size={12} /> {(isHindi && badge.criteriaTextHi) ? badge.criteriaTextHi : badge.criteriaText}</span>
+                      ? <span className="rt-badge-tag rt-tag-unlocked"><CheckCircle2 size={12} /> {txt("સિદ્ધ", "सिद्ध", "Unlocked")}</span>
+                      : <span className="rt-badge-tag rt-tag-locked"><Lock size={12} /> {badgeCriteria}</span>
                     }
                   </div>
                   {isUnlocked && <div className="rt-badge-shimmer" />}
@@ -422,17 +439,17 @@ function ReadingTracker() {
               <BookOpen size={20} className="rt-section-icon rt-icon-blue-text" />
               <div>
                 <h2 className="rt-section-title">
-                  {isHindi ? "१८ अध्याय – प्रगति" : "૧૮ અધ્યાય – પ્રગતિ"}
+                  {txt("૧૮ અધ્યાય – પ્રગતિ", "१८ अध्याय – प्रगति", "18 Chapters – Progress")}
                 </h2>
               </div>
             </div>
 
             <div className="rt-filter-tabs">
               {[
-                { key: "all", label: isHindi ? "सभी" : "બધા" },
-                { key: "completed", label: isHindi ? "पूर्ण" : "સંપૂર્ણ" },
-                { key: "in_progress", label: isHindi ? "प्रगति में" : "ચાલુ" },
-                { key: "unread", label: isHindi ? "शेष" : "બાકી" },
+                { key: "all", label: txt("બધા", "सभी", "All") },
+                { key: "completed", label: txt("સંપૂર્ણ", "पूर्ण", "Completed") },
+                { key: "in_progress", label: txt("ચાલુ", "प्रगति में", "In Progress") },
+                { key: "unread", label: txt("બાકી", "शेष", "Unread") },
               ].map((f) => (
                 <button
                   key={f.key}
@@ -450,7 +467,7 @@ function ReadingTracker() {
             <Search size={16} className="rt-search-icon" />
             <input
               type="text"
-              placeholder={isHindi ? "नाम या संख्या (उदा. 2, Karma Yoga)..." : "નામ અથવા નંબર (દા.ત. 2, Karma Yoga)..."}
+              placeholder={txt("નામ અથવા નંબર (દા.ત. 2, Karma Yoga)...", "नाम या संख्या (उदा. 2, Karma Yoga)...", "Name or chapter number (e.g. 2, Karma Yoga)...")}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
@@ -464,7 +481,7 @@ function ReadingTracker() {
           {filteredChapters.length === 0 ? (
             <div className="rt-empty">
               <Info size={26} />
-              <p>{isHindi ? "इस फ़िल्टर के लिए कोई अध्याय नहीं है।" : "આ ફિલ્ટર માટે કોઈ અધ્યાય નથી."}</p>
+              <p>{txt("આ ફિલ્ટર માટે કોઈ અધ્યાય નથી.", "इस फ़िल्टर के लिए कोई अध्याय नहीं है।", "No chapters found for this filter.")}</p>
             </div>
           ) : (
             <div className="rt-chapters-grid">
@@ -476,7 +493,9 @@ function ReadingTracker() {
                 const percent = Math.min(100, Math.round((read / item.shlokas) * 100));
                 const isCompleted = read >= item.shlokas;
                 const isInProgress = read > 0 && !isCompleted;
-                const chapterTitle = isHindi
+                const chapterTitle = isEnglish
+                  ? (CHAPTER_NAMES?.[item.chapter]?.nameEn || CHAPTER_NAMES?.[item.chapter]?.en || item.englishName || item.name)
+                  : isHindi
                   ? (CHAPTER_NAMES?.[item.chapter]?.nameHi || CHAPTER_NAMES?.[item.chapter]?.hi || item.name)
                   : (CHAPTER_NAMES?.[item.chapter]?.name || CHAPTER_NAMES?.[item.chapter]?.gu || item.name);
 
@@ -493,13 +512,13 @@ function ReadingTracker() {
                         <h4 className="rt-ch-guj" title={chapterTitle}>{chapterTitle}</h4>
                       </div>
                       <div className={`rt-ch-pill ${isCompleted ? "rt-pill-done-ch" : isInProgress ? "rt-pill-prog-ch" : "rt-pill-unread-ch"}`}>
-                        {isCompleted ? (isHindi ? "पूर्ण" : "સંપૂર્ણ") : isInProgress ? `${percent}%` : (isHindi ? "शेष" : "બાકી")}
+                        {isCompleted ? txt("સંપૂર્ણ", "पूर्ण", "Completed") : isInProgress ? `${percent}%` : txt("બાકી", "शेष", "Unread")}
                       </div>
                     </div>
 
                     <div className="rt-ch-middle">
                       <div className="rt-ch-info-row">
-                        <span className="rt-ch-count"><strong>{read}</strong> / {item.shlokas} {isHindi ? "श्लोक" : "શ્લોક"}</span>
+                        <span className="rt-ch-count"><strong>{read}</strong> / {item.shlokas} {txt("શ્લોક", "श्लोक", "verses")}</span>
                         <span className="rt-ch-pct">{percent}%</span>
                       </div>
                       <div className="rt-ch-track">
@@ -515,7 +534,7 @@ function ReadingTracker() {
                       className="rt-ch-btn"
                       onClick={() => navigate(`/chapter/${item.chapter}`)}
                     >
-                      <span>{isCompleted ? (isHindi ? "पुनरावृत्ति" : "પુનરાવર્તન") : isInProgress ? (isHindi ? "जारी रखें" : "ચાલુ રાખો") : (isHindi ? "पढ़ें" : "વાંચો")}</span>
+                      <span>{isCompleted ? txt("પુનરાવર્તન", "पुनरावृत्ति", "Revisit") : isInProgress ? txt("ચાલુ રાખો", "जारी रखें", "Continue") : txt("વાંચો", "पढ़ें", "Read")}</span>
                       <ChevronRight size={15} />
                     </button>
                   </div>
@@ -545,16 +564,34 @@ function ReadingTracker() {
                 : <Lock size={40} className="rt-modal-lock-svg" />
               }
             </div>
-            <h3 className="rt-modal-title">{(isHindi && selectedBadge.titleHi) ? selectedBadge.titleHi : selectedBadge.title}</h3>
-            <div className="rt-modal-desc">{(isHindi && selectedBadge.descriptionHi) ? selectedBadge.descriptionHi : selectedBadge.description}</div>
+            <h3 className="rt-modal-title">
+              {isEnglish
+                ? (selectedBadge.titleEn || selectedBadge.title)
+                : isHindi
+                ? (selectedBadge.titleHi || selectedBadge.title)
+                : selectedBadge.title}
+            </h3>
+            <div className="rt-modal-desc">
+              {isEnglish
+                ? (selectedBadge.descriptionEn || selectedBadge.description)
+                : isHindi
+                ? (selectedBadge.descriptionHi || selectedBadge.description)
+                : selectedBadge.description}
+            </div>
             <div className="rt-modal-criteria">
-              <span className="rt-criteria-label">{isHindi ? "प्राप्ति शर्त" : "પ્રાપ્તિ શરત"}</span>
-              <span className="rt-criteria-val">{(isHindi && selectedBadge.criteriaTextHi) ? selectedBadge.criteriaTextHi : selectedBadge.criteriaText}</span>
+              <span className="rt-criteria-label">{txt("પ્રાપ્તિ શરત", "प्राप्ति शर्त", "Requirement")}</span>
+              <span className="rt-criteria-val">
+                {isEnglish
+                  ? (selectedBadge.criteriaTextEn || selectedBadge.criteriaText)
+                  : isHindi
+                  ? (selectedBadge.criteriaTextHi || selectedBadge.criteriaText)
+                  : selectedBadge.criteriaText}
+              </span>
             </div>
             <div className={`rt-modal-status ${selectedBadge.isUnlocked ? "rt-modal-status-done" : "rt-modal-status-locked"}`}>
               {selectedBadge.isUnlocked
-                ? <><CheckCircle2 size={16} /> {isHindi ? "सिद्ध — यह उपलब्धि प्राप्त हुई है" : "સિદ્ધ — આ ઉપલબ્ધિ પ્રાપ્ત થઈ છે"}</>
-                : <><Lock size={15} /> {isHindi ? "अभी अनलॉक नहीं हुआ" : "હજુ અનલોક થઈ નથી"}</>
+                ? <><CheckCircle2 size={16} /> {txt("સિદ્ધ — આ ઉપલબ્ધિ પ્રાપ્ત થઈ છે", "सिद्ध — यह उपलब्धि प्राप्त हुई है", "Earned — You have unlocked this achievement")}</>
+                : <><Lock size={15} /> {txt("હજુ અનલોક થઈ નથી", "अभी अनलॉक नहीं हुआ", "Locked — Not yet unlocked")}</>
               }
             </div>
           </div>
