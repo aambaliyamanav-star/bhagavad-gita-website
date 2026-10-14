@@ -12,6 +12,7 @@ const {
   addQuizQuestion,
   updateQuizQuestion,
   deleteQuizQuestion,
+  autoTranslateQuizQuestion,
 } = require("../controllers/quizController");
 
 const {
@@ -111,6 +112,23 @@ router.delete(
   protect,
   adminOnly,
   deleteQuizQuestion
+);
+
+
+// AUTO TRANSLATE QUIZ QUESTION (GUJARATI -> HINDI)
+
+router.post(
+  "/admin/auto-translate",
+  protect,
+  adminOnly,
+  autoTranslateQuizQuestion
+);
+
+router.post(
+  "/auto-translate",
+  protect,
+  adminOnly,
+  autoTranslateQuizQuestion
 );
 
 

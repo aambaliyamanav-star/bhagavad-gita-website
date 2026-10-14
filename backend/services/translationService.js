@@ -217,8 +217,144 @@ Word Meanings: ${JSON.stringify(
   };
 }
 
+/**
+ * Translates Gujarati Quiz Question into devotional Hindi via Gemini AI
+ */
+async function translateQuizToHindi({
+  question,
+  options = [],
+  correctAnswer,
+  explanation = "",
+  category = "all",
+  chapterNumber = null,
+}) {
+  const apiKey = process.env.GEMINI_API_KEY;
+  const cleanKey = String(apiKey || "").trim();
+
+  const fallback = {
+    questionHi: cleanHtml(question),
+    optionsHi: (options || []).map((o) => cleanHtml(o)),
+    correctAnswerHi: cleanHtml(correctAnswer),
+    explanationHi: cleanHtml(explanation),
+  };
+
+  if (!cleanKey) {
+    console.warn("GEMINI_API_KEY missing. Returning fallback Hindi quiz translation.");
+    return fallback;
+  }
+
+  const prompt = `You are a revered Vedic and Bhagavad Gita scholar.
+Translate the following Bhagavad Gita / Mahabharata Quiz Question, its 4 options, the correct answer, and explanation from Gujarati into authentic, clear, and devotional Hindi (Devanagari script).
+
+STRICT RULES:
+1. SANSKRIT / HOLY NAMES INTEGRITY: Keep divine names, characters, Sanskrit terms, and places authentic and dignified (e.g., શ્રીકૃષ્ણ -> श्रीकृष्ण, અર્જુન -> अर्जुन, ભીષ્મ -> भीष्म, કુરુક્ષેત્ર -> कुरुक्षेत्र, ધર્મક્ષેત્રે -> धर्मक्षेत्रे).
+2. ACCURATE TRANSLATION:
+   - Question: Translate the Gujarati question into clear, natural, grammatically pure Hindi.
+   - Options: Translate each of the 4 options accurately in the EXACT SAME ORDER (indexes 0 to 3).
+   - Correct Answer: Translate the correct answer to MATCH EXACTLY the text of the translated correct option in optionsHi.
+   - Explanation: If provided, translate the Gujarati explanation into inspiring, clear Hindi.
+3. OUTPUT FORMAT: Return ONLY a valid JSON object without markdown fences, comments, or extra text:
+{
+  "questionHi": "...",
+  "optionsHi": ["...", "...", "...", "..."],
+  "correctAnswerHi": "...",
+  "explanationHi": "..."
+}
+
+DATA TO TRANSLATE:
+Category: ${category || "all"}
+Chapter Number: ${chapterNumber || ""}
+Gujarati Question: ${cleanHtml(question)}
+Gujarati Options: ${JSON.stringify((options || []).map((o) => cleanHtml(o)))}
+Gujarati Correct Answer: ${cleanHtml(correctAnswer)}
+Gujarati Explanation: ${cleanHtml(explanation)}`;
+
+  const modelsToTry = [
+    "gemini-2.5-flash",
+    "gemini-2.0-flash",
+    "gemini-1.5-flash",
+    "gemini-flash-lite-latest",
+    "gemini-flash-latest",
+  ];
+
+  for (const modelName of modelsToTry) {
+    try {
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(
+          cleanKey
+        )}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": cleanKey,
+          },
+          body: JSON.stringify({
+            contents: [{ role: "user", parts: [{ text: prompt }] }],
+            generationConfig: {
+              temperature: 0.2,
+              response_mime_type: "application/json",
+            },
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+
+        if (rawText) {
+          const jsonStr = rawText
+            .replace(/^```json/i, "")
+            .replace(/^```/, "")
+            .replace(/```$/, "")
+            .trim();
+
+          const parsed = JSON.parse(jsonStr);
+
+          // Find the index of original correct answer to ensure correctAnswerHi perfectly matches optionsHi
+          const origIdx = (options || []).findIndex(
+            (opt) =>
+              String(opt || "").trim().toLowerCase() ===
+              String(correctAnswer || "").trim().toLowerCase()
+          );
+
+          let finalCorrectAnswerHi = parsed.correctAnswerHi || "";
+          const finalOptionsHi = Array.isArray(parsed.optionsHi)
+            ? parsed.optionsHi
+            : [];
+
+          if (origIdx !== -1 && finalOptionsHi[origIdx]) {
+            finalCorrectAnswerHi = finalOptionsHi[origIdx];
+          }
+
+          return {
+            questionHi: parsed.questionHi || cleanHtml(question),
+            optionsHi:
+              finalOptionsHi.length === 4
+                ? finalOptionsHi
+                : fallback.optionsHi,
+            correctAnswerHi:
+              finalCorrectAnswerHi || cleanHtml(correctAnswer),
+            explanationHi:
+              parsed.explanationHi || cleanHtml(explanation),
+          };
+        }
+      } else {
+        const err = await response.text();
+        console.warn(`Quiz Translation API warning (${modelName}):`, err);
+      }
+    } catch (err) {
+      console.warn(`Quiz Translation attempt failed with ${modelName}:`, err.message);
+    }
+  }
+
+  return fallback;
+}
+
 module.exports = {
   translateShlokToHindi,
+  translateQuizToHindi,
   SPEAKER_MAP_HI,
   CHAPTER_MAP_HI,
 };

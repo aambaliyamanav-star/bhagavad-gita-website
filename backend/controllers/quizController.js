@@ -1,5 +1,6 @@
 const QuizQuestion = require("../models/QuizQuestion");
 const QuizResult = require("../models/QuizResult");
+const { translateQuizToHindi } = require("../services/translationService");
 
 // =====================================================
 // SHUFFLE ARRAY
@@ -372,14 +373,35 @@ const submitQuiz = async (
           }
 
           // -------------------------------------------
-          // ANSWER CHECK
+          // ANSWER CHECK (GUJARATI & HINDI SUPPORT)
           // -------------------------------------------
 
-          const isCorrect =
-            selectedAnswer
-              .toLowerCase() ===
-            correctAnswer
-              .toLowerCase();
+          const normSelected = String(selectedAnswer || "").trim().toLowerCase();
+          const normCorrectGu = String(correctAnswer || "").trim().toLowerCase();
+          const normCorrectHi = String(question.correctAnswerHi || "").trim().toLowerCase();
+
+          let isCorrect =
+            (normSelected && normSelected === normCorrectGu) ||
+            (normSelected && normCorrectHi && normSelected === normCorrectHi);
+
+          // Position-based index check if language strings differ
+          if (
+            !isCorrect &&
+            Array.isArray(question.optionsHi) &&
+            question.optionsHi.length === 4 &&
+            Array.isArray(question.options) &&
+            question.options.length === 4
+          ) {
+            const selectedIdxHi = question.optionsHi.findIndex(
+              (opt) => String(opt || "").trim().toLowerCase() === normSelected
+            );
+            const correctIdxGu = question.options.findIndex(
+              (opt) => String(opt || "").trim().toLowerCase() === normCorrectGu
+            );
+            if (selectedIdxHi !== -1 && selectedIdxHi === correctIdxGu) {
+              isCorrect = true;
+            }
+          }
 
           // -------------------------------------------
           // SCORE
@@ -793,6 +815,10 @@ const addQuizQuestion = async (
       options,
       correctAnswer,
       explanation,
+      questionHi,
+      optionsHi,
+      correctAnswerHi,
+      explanationHi,
     } = req.body;
 
     // =================================================
@@ -979,6 +1005,10 @@ const addQuizQuestion = async (
     // CREATE
     // =================================================
 
+    const cleanOptionsHi = Array.isArray(optionsHi)
+      ? optionsHi.map((opt) => String(opt || "").trim())
+      : [];
+
     const newQuestion =
       await QuizQuestion.create({
         category,
@@ -989,16 +1019,32 @@ const addQuizQuestion = async (
         question:
           question.trim(),
 
+        questionHi:
+          questionHi ? String(questionHi).trim() : "",
+
         options:
           cleanOptions,
 
+        optionsHi:
+          cleanOptionsHi,
+
         correctAnswer:
           cleanCorrectAnswer,
+
+        correctAnswerHi:
+          correctAnswerHi ? String(correctAnswerHi).trim() : "",
 
         explanation:
           explanation
             ? String(
                 explanation
+              ).trim()
+            : "",
+
+        explanationHi:
+          explanationHi
+            ? String(
+                explanationHi
               ).trim()
             : "",
 
@@ -1052,6 +1098,10 @@ const updateQuizQuestion =
         options,
         correctAnswer,
         explanation,
+        questionHi,
+        optionsHi,
+        correctAnswerHi,
+        explanationHi,
       } = req.body;
 
       // =================================================
@@ -1278,6 +1328,22 @@ const updateQuizQuestion =
             ).trim()
           : "";
 
+      if (questionHi !== undefined) {
+        existingQuestion.questionHi = String(questionHi || "").trim();
+      }
+
+      if (optionsHi !== undefined && Array.isArray(optionsHi)) {
+        existingQuestion.optionsHi = optionsHi.map((opt) => String(opt || "").trim());
+      }
+
+      if (correctAnswerHi !== undefined) {
+        existingQuestion.correctAnswerHi = String(correctAnswerHi || "").trim();
+      }
+
+      if (explanationHi !== undefined) {
+        existingQuestion.explanationHi = String(explanationHi || "").trim();
+      }
+
       await existingQuestion.save();
 
       // =================================================
@@ -1362,6 +1428,59 @@ const deleteQuizQuestion =
 
 
 // =====================================================
+// ADMIN - AUTO TRANSLATE QUIZ QUESTION (GUJARATI -> HINDI)
+// =====================================================
+
+const autoTranslateQuizQuestion = async (req, res) => {
+  try {
+    const {
+      question,
+      options,
+      correctAnswer,
+      explanation,
+      category,
+      chapterNumber,
+    } = req.body;
+
+    if (!question || !String(question).trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "Question જરૂરી છે.",
+      });
+    }
+
+    if (!Array.isArray(options) || options.length !== 4) {
+      return res.status(400).json({
+        success: false,
+        message: "ચાર Options જરૂરી છે.",
+      });
+    }
+
+    const translated = await translateQuizToHindi({
+      question: String(question).trim(),
+      options: options.map((opt) => String(opt || "").trim()),
+      correctAnswer: String(correctAnswer || "").trim(),
+      explanation: explanation ? String(explanation).trim() : "",
+      category,
+      chapterNumber,
+    });
+
+    return res.status(200).json({
+      success: true,
+      data: translated,
+      translated,
+    });
+  } catch (error) {
+    console.error("❌ Auto Translate Quiz Question Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Quiz question ઓટો-અનુવાદ કરવામાં error આવ્યો.",
+      error: error.message,
+    });
+  }
+};
+
+// =====================================================
 // EXPORTS
 // =====================================================
 
@@ -1384,4 +1503,6 @@ module.exports = {
   updateQuizQuestion,
 
   deleteQuizQuestion,
+
+  autoTranslateQuizQuestion,
 };
