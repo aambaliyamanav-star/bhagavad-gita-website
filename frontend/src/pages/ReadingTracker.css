@@ -744,8 +744,10 @@
 
 .rt-chapters-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 16px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* Chapter Card — EXACT UNIFORM SIZE & SYMMETRY */
@@ -758,6 +760,8 @@
   flex-direction: column;
   gap: 14px;
   box-sizing: border-box;
+  min-width: 0;
+  overflow: hidden;
   transition: all 0.22s ease;
   position: relative;
 }
@@ -777,6 +781,8 @@
   display: flex;
   align-items: center;
   gap: 10px;
+  min-width: 0;
+  width: 100%;
 }
 
 .rt-ch-num {
@@ -1095,10 +1101,17 @@
    RESPONSIVE
    ========================================================================== */
 
-@media (max-width: 1080px) {
+@media (max-width: 1180px) {
   .rt-chapters-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 14px;
+  }
+}
+
+@media (max-width: 820px) {
+  .rt-chapters-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
   }
 }
 
@@ -1115,11 +1128,6 @@
 
   .rt-badges-grid {
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 12px;
-  }
-
-  .rt-chapters-grid {
-    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
   }
 
