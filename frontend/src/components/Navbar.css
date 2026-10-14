@@ -427,6 +427,13 @@ body {
   align-items: center;
 }
 
+/* Hide language dropdown in top navbar on mobile view */
+@media (max-width: 768px) {
+  .nav-lang-container {
+    display: none !important;
+  }
+}
+
 .nav-lang-toggle-btn {
   display: inline-flex;
   align-items: center;
