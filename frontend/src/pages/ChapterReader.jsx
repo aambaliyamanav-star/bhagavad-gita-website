@@ -1,6 +1,6 @@
 import { getValidToken, clearAuthSession } from "../utils/authHelper.js";
 import { useEffect, useRef, useState } from "react";
-import { BookOpen, Heart, Mic, Loader2, Sparkles, AlertCircle, ChevronLeft, ChevronRight, Share2 } from "lucide-react";
+import { BookOpen, Heart, Mic, Loader2, Sparkles, AlertCircle, ChevronLeft, ChevronRight, Share2, Globe } from "lucide-react";
 import "./ChapterReader.css";
 import ShareShlokaModal from "../components/ShareShlokaModal.jsx";
 import SudarshanShimmerLoader from "../components/SudarshanShimmerLoader.jsx";
@@ -24,7 +24,7 @@ function ChapterReader() {
   // LANGUAGE CONTEXT
   // =====================================================
 
-  const { isHindi, isEnglish, t, txt, getLocalizedShlok, CHAPTER_NAMES } = useLanguage();
+  const { language, setLanguage, isHindi, isEnglish, t, txt, getLocalizedShlok, CHAPTER_NAMES } = useLanguage();
 
   // =====================================================
   // AUTH CONTEXT
@@ -1550,6 +1550,40 @@ const prepareSanskritLines = () => {
                 ? <Heart fill="#ef4444" color="#ef4444" size={20} />
                 : <Heart size={20} />}
             </button>
+          </div>
+
+          {/* READING LANGUAGE SWITCHER: GUJARATI | HINDI | ENGLISH */}
+          <div className="shloka-reading-lang-bar" role="tablist" aria-label="Reading Language">
+            <span className="shloka-reading-lang-title">
+              <Globe size={15} />
+              {txt("વાંચવાની ભાષા:", "पढ़ने की भाषा:", "Reading Language:")}
+            </span>
+            <div className="shloka-reading-lang-pills">
+              <button
+                type="button"
+                className={`shloka-lang-pill-btn ${language === "gu" ? "active" : ""}`}
+                onClick={() => setLanguage("gu")}
+                title="ગુજરાતીમાં વાંચો"
+              >
+                <span className="pill-flag">🇬🇯</span> ગુજરાતી
+              </button>
+              <button
+                type="button"
+                className={`shloka-lang-pill-btn ${language === "hi" ? "active" : ""}`}
+                onClick={() => setLanguage("hi")}
+                title="हिन्दी में पढ़ें"
+              >
+                <span className="pill-flag">🇮🇳</span> हिन्दी
+              </button>
+              <button
+                type="button"
+                className={`shloka-lang-pill-btn ${language === "en" ? "active" : ""}`}
+                onClick={() => setLanguage("en")}
+                title="Read in English"
+              >
+                <span className="pill-flag">🇬🇧</span> English
+              </button>
+            </div>
           </div>
 
           {/* SPEAKER */}

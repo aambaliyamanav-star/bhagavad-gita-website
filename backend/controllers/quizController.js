@@ -1,6 +1,9 @@
 const QuizQuestion = require("../models/QuizQuestion");
 const QuizResult = require("../models/QuizResult");
-const { translateQuizToHindi } = require("../services/translationService");
+const {
+  translateQuizToHindi,
+  translateQuizToEnglish,
+} = require("../services/translationService");
 
 // =====================================================
 // SHUFFLE ARRAY
@@ -819,6 +822,10 @@ const addQuizQuestion = async (
       optionsHi,
       correctAnswerHi,
       explanationHi,
+      questionEn,
+      optionsEn,
+      correctAnswerEn,
+      explanationEn,
     } = req.body;
 
     // =================================================
@@ -1009,6 +1016,10 @@ const addQuizQuestion = async (
       ? optionsHi.map((opt) => String(opt || "").trim())
       : [];
 
+    const cleanOptionsEn = Array.isArray(optionsEn)
+      ? optionsEn.map((opt) => String(opt || "").trim())
+      : [];
+
     const newQuestion =
       await QuizQuestion.create({
         category,
@@ -1022,17 +1033,26 @@ const addQuizQuestion = async (
         questionHi:
           questionHi ? String(questionHi).trim() : "",
 
+        questionEn:
+          questionEn ? String(questionEn).trim() : "",
+
         options:
           cleanOptions,
 
         optionsHi:
           cleanOptionsHi,
 
+        optionsEn:
+          cleanOptionsEn,
+
         correctAnswer:
           cleanCorrectAnswer,
 
         correctAnswerHi:
           correctAnswerHi ? String(correctAnswerHi).trim() : "",
+
+        correctAnswerEn:
+          correctAnswerEn ? String(correctAnswerEn).trim() : "",
 
         explanation:
           explanation
@@ -1045,6 +1065,13 @@ const addQuizQuestion = async (
           explanationHi
             ? String(
                 explanationHi
+              ).trim()
+            : "",
+
+        explanationEn:
+          explanationEn
+            ? String(
+                explanationEn
               ).trim()
             : "",
 
@@ -1102,6 +1129,10 @@ const updateQuizQuestion =
         optionsHi,
         correctAnswerHi,
         explanationHi,
+        questionEn,
+        optionsEn,
+        correctAnswerEn,
+        explanationEn,
       } = req.body;
 
       // =================================================
@@ -1344,6 +1375,22 @@ const updateQuizQuestion =
         existingQuestion.explanationHi = String(explanationHi || "").trim();
       }
 
+      if (questionEn !== undefined) {
+        existingQuestion.questionEn = String(questionEn || "").trim();
+      }
+
+      if (optionsEn !== undefined && Array.isArray(optionsEn)) {
+        existingQuestion.optionsEn = optionsEn.map((opt) => String(opt || "").trim());
+      }
+
+      if (correctAnswerEn !== undefined) {
+        existingQuestion.correctAnswerEn = String(correctAnswerEn || "").trim();
+      }
+
+      if (explanationEn !== undefined) {
+        existingQuestion.explanationEn = String(explanationEn || "").trim();
+      }
+
       await existingQuestion.save();
 
       // =================================================
@@ -1428,7 +1475,7 @@ const deleteQuizQuestion =
 
 
 // =====================================================
-// ADMIN - AUTO TRANSLATE QUIZ QUESTION (GUJARATI -> HINDI)
+// ADMIN - AUTO TRANSLATE QUIZ QUESTION
 // =====================================================
 
 const autoTranslateQuizQuestion = async (req, res) => {
@@ -1440,6 +1487,7 @@ const autoTranslateQuizQuestion = async (req, res) => {
       explanation,
       category,
       chapterNumber,
+      targetLang,
     } = req.body;
 
     if (!question || !String(question).trim()) {
@@ -1453,6 +1501,50 @@ const autoTranslateQuizQuestion = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "ચાર Options જરૂરી છે.",
+      });
+    }
+
+    if (targetLang === "en") {
+      const translated = await translateQuizToEnglish({
+        question: String(question).trim(),
+        options: options.map((opt) => String(opt || "").trim()),
+        correctAnswer: String(correctAnswer || "").trim(),
+        explanation: explanation ? String(explanation).trim() : "",
+        category,
+        chapterNumber,
+      });
+
+      return res.status(200).json({
+        success: true,
+        data: translated,
+        translated,
+      });
+    }
+
+    if (targetLang === "all" || targetLang === "both") {
+      const [hiResult, enResult] = await Promise.all([
+        translateQuizToHindi({
+          question: String(question).trim(),
+          options: options.map((opt) => String(opt || "").trim()),
+          correctAnswer: String(correctAnswer || "").trim(),
+          explanation: explanation ? String(explanation).trim() : "",
+          category,
+          chapterNumber,
+        }),
+        translateQuizToEnglish({
+          question: String(question).trim(),
+          options: options.map((opt) => String(opt || "").trim()),
+          correctAnswer: String(correctAnswer || "").trim(),
+          explanation: explanation ? String(explanation).trim() : "",
+          category,
+          chapterNumber,
+        }),
+      ]);
+
+      return res.status(200).json({
+        success: true,
+        data: { ...hiResult, ...enResult },
+        translated: { ...hiResult, ...enResult },
       });
     }
 

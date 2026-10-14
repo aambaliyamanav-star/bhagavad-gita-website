@@ -1,4 +1,11 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
+import {
+  getEnglishSpeaker,
+  getHindiSpeaker,
+  getEnglishTranslationFallback,
+  getEnglishMessageFallback,
+  getEnglishWordMeaning,
+} from "../utils/englishGitaHelper.js";
 
 // =====================================================
 // CHAPTER NAMES (GUJARATI, HINDI & ENGLISH)
@@ -140,18 +147,18 @@ export function LanguageProvider({ children }) {
         shlok.chapterName,
 
       speaker:
-        (isEn && (shlok.speakerEn || shlok.speaker)) ||
-        (isHi && shlok.speakerHi) ||
+        (isEn && (shlok.speakerEn || getEnglishSpeaker(shlok.speaker))) ||
+        (isHi && (shlok.speakerHi || getHindiSpeaker(shlok.speaker))) ||
         shlok.speaker,
 
       translation:
-        (isEn && (shlok.translationEn || shlok.translation)) ||
-        (isHi && shlok.translationHi) ||
+        (isEn && (shlok.translationEn || getEnglishTranslationFallback(shlok))) ||
+        (isHi && (shlok.translationHi || shlok.translation)) ||
         shlok.translation,
 
       message:
-        (isEn && (shlok.messageEn || shlok.message)) ||
-        (isHi && shlok.messageHi) ||
+        (isEn && (shlok.messageEn || getEnglishMessageFallback(shlok))) ||
+        (isHi && (shlok.messageHi || shlok.message)) ||
         shlok.message,
 
       // Word meanings: Sanskrit 'word' stays untouched, 'meaning' switches to English/Hindi if available
@@ -159,8 +166,8 @@ export function LanguageProvider({ children }) {
         ...w,
         word: w.word, // Sanskrit stays untouched
         meaning:
-          (isEn && (w.meaningEn || w.meaning)) ||
-          (isHi && w.meaningHi) ||
+          (isEn && (w.meaningEn || getEnglishWordMeaning(w.word, w.meaning))) ||
+          (isHi && (w.meaningHi || w.meaning)) ||
           w.meaning,
       })),
     };

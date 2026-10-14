@@ -44,6 +44,15 @@ const quizQuestionSchema = new mongoose.Schema(
     },
 
     // =====================================================
+    // QUESTION (ENGLISH)
+    // =====================================================
+    questionEn: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    // =====================================================
     // FOUR OPTIONS (GUJARATI)
     // =====================================================
     options: {
@@ -77,6 +86,19 @@ const quizQuestionSchema = new mongoose.Schema(
     },
 
     // =====================================================
+    // FOUR OPTIONS (ENGLISH)
+    // =====================================================
+    optionsEn: {
+      type: [
+        {
+          type: String,
+          trim: true,
+        },
+      ],
+      default: [],
+    },
+
+    // =====================================================
     // CORRECT ANSWER (GUJARATI)
     // =====================================================
     correctAnswer: {
@@ -95,6 +117,15 @@ const quizQuestionSchema = new mongoose.Schema(
     },
 
     // =====================================================
+    // CORRECT ANSWER (ENGLISH)
+    // =====================================================
+    correctAnswerEn: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    // =====================================================
     // OPTIONAL EXPLANATION (GUJARATI)
     // =====================================================
     explanation: {
@@ -107,6 +138,15 @@ const quizQuestionSchema = new mongoose.Schema(
     // OPTIONAL EXPLANATION (HINDI)
     // =====================================================
     explanationHi: {
+      type: String,
+      default: "",
+      trim: true,
+    },
+
+    // =====================================================
+    // OPTIONAL EXPLANATION (ENGLISH)
+    // =====================================================
+    explanationEn: {
       type: String,
       default: "",
       trim: true,

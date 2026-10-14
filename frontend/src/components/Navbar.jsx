@@ -29,6 +29,7 @@ import {
   Download,
   Bell,
   Globe,
+  Check,
 } from "lucide-react";
 
 import { useAuth } from "../context/AuthContext.jsx";
@@ -56,7 +57,21 @@ function Navbar() {
   // LANGUAGE CONTEXT
   // =====================================================
 
-  const { language, toggleLanguage, isHindi, isEnglish, txt } = useLanguage();
+  const { language, setLanguage, toggleLanguage, isHindi, isEnglish, txt } = useLanguage();
+
+  // 3-Language Menu State & Outside Click Handler
+  const [langMenuOpen, setLangMenuOpen] = useState(false);
+  const langMenuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (langMenuRef.current && !langMenuRef.current.contains(e.target)) {
+        setLangMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // =====================================================
   // AUTH CONTEXT
@@ -692,17 +707,63 @@ function Navbar() {
 
         <div className="navbar-right">
 
-          {/* LANGUAGE TOGGLE BUTTON */}
-          <button
-            type="button"
-            className="nav-lang-toggle-btn"
-            onClick={toggleLanguage}
-            title={txt("Switch to Hindi (हिन्दी)", "Switch to English", "Switch to Gujarati (ગુજરાતી)")}
-            aria-label="ભાષા બદલો / भाषा बदलें / Change Language"
-          >
-            <Globe size={15} className="nav-lang-icon" />
-            <span className="nav-lang-text">{txt("ગુજરાતી", "हिन्दी", "English")}</span>
-          </button>
+          {/* LANGUAGE SELECTOR WITH 3-OPTION DROPDOWN */}
+          <div className="nav-lang-container" ref={langMenuRef}>
+            <button
+              type="button"
+              className={`nav-lang-toggle-btn ${langMenuOpen ? "active" : ""}`}
+              onClick={() => setLangMenuOpen((prev) => !prev)}
+              title={txt("ભાષા પસંદ કરો (ગુજરાતી / हिन्दी / English)", "भाषा चुनें (ગુજરાતી / हिन्दी / English)", "Select Language (ગુજરાતી / हिन्दी / English)")}
+              aria-label="ભાષા બદલો / भाषा बदलें / Change Language"
+              aria-expanded={langMenuOpen}
+            >
+              <Globe size={15} className="nav-lang-icon" />
+              <span className="nav-lang-text">
+                {language === "en" ? "🇬🇧 English" : language === "hi" ? "🇮🇳 हिन्दी" : "🇬🇯 ગુજરાતી"}
+              </span>
+            </button>
+
+            {langMenuOpen && (
+              <div className="nav-lang-dropdown">
+                <button
+                  type="button"
+                  className={`nav-lang-option ${language === "gu" ? "selected" : ""}`}
+                  onClick={() => {
+                    setLanguage("gu");
+                    setLangMenuOpen(false);
+                  }}
+                >
+                  <span className="lang-option-flag">🇬🇯</span>
+                  <span className="lang-option-label">ગુજરાતી</span>
+                  {language === "gu" && <Check size={14} className="lang-check" />}
+                </button>
+                <button
+                  type="button"
+                  className={`nav-lang-option ${language === "hi" ? "selected" : ""}`}
+                  onClick={() => {
+                    setLanguage("hi");
+                    setLangMenuOpen(false);
+                  }}
+                >
+                  <span className="lang-option-flag">🇮🇳</span>
+                  <span className="lang-option-label">हिन्दी</span>
+                  {language === "hi" && <Check size={14} className="lang-check" />}
+                </button>
+                <button
+                  type="button"
+                  className={`nav-lang-option ${language === "en" ? "selected" : ""}`}
+                  onClick={() => {
+                    setLanguage("en");
+                    setLangMenuOpen(false);
+                  }}
+                >
+                  <span className="lang-option-flag">🇬🇧</span>
+                  <span className="lang-option-label">English</span>
+                  {language === "en" && <Check size={14} className="lang-check" />}
+                </button>
+              </div>
+            )}
+          </div>
 
           {/* CURRENT PAGE NAME */}
 
@@ -1283,31 +1344,57 @@ function Navbar() {
 
 
           {/* =================================================
-              LANGUAGE SWITCH
+              LANGUAGE SWITCH (3 OPTIONS)
           ================================================= */}
 
-          <button
-            type="button"
-            className="side-menu-theme side-menu-lang"
-            onClick={toggleLanguage}
-            title={txt("Switch to Hindi", "Switch to English", "Switch to Gujarati")}
-          >
-            <span className="theme-left">
-              <span className="theme-icon">
-                <Globe size={20} strokeWidth={1.8} />
-              </span>
+          <div className="side-menu-lang-group">
+            <div className="side-menu-lang-header">
+              <span className="theme-left">
+                <span className="theme-icon">
+                  <Globe size={20} strokeWidth={1.8} />
+                </span>
 
-              <span className="side-menu-text">
-                <strong>
-                  {txt("ભાષા: ગુજરાતી", "भाषा: हिन्दी", "Language: English")}
-                </strong>
+                <span className="side-menu-text">
+                  <strong>
+                    {txt("ભાષા પસંદ કરો", "भाषा चुनें", "Choose Language")}
+                  </strong>
+                </span>
               </span>
-            </span>
+            </div>
 
-            <span className="side-lang-pill">
-              {txt("🇮🇳 हिन्दी", "🇬🇧 English", "🇬🇯 ગુજરાતી")}
-            </span>
-          </button>
+            <div className="side-lang-segmented-bar">
+              <button
+                type="button"
+                className={`side-lang-seg-btn ${language === "gu" ? "active" : ""}`}
+                onClick={() => {
+                  setLanguage("gu");
+                  setMenuOpen(false);
+                }}
+              >
+                🇬🇯 ગુજરાતી
+              </button>
+              <button
+                type="button"
+                className={`side-lang-seg-btn ${language === "hi" ? "active" : ""}`}
+                onClick={() => {
+                  setLanguage("hi");
+                  setMenuOpen(false);
+                }}
+              >
+                🇮🇳 हिन्दी
+              </button>
+              <button
+                type="button"
+                className={`side-lang-seg-btn ${language === "en" ? "active" : ""}`}
+                onClick={() => {
+                  setLanguage("en");
+                  setMenuOpen(false);
+                }}
+              >
+                🇬🇧 English
+              </button>
+            </div>
+          </div>
 
 
           {/* =================================================

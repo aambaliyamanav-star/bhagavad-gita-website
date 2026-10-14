@@ -99,6 +99,14 @@ function QuizManagement() {
       option4Hi: "",
       correctAnswerHi: "",
       explanationHi: "",
+      // English fields
+      questionEn: "",
+      option1En: "",
+      option2En: "",
+      option3En: "",
+      option4En: "",
+      correctAnswerEn: "",
+      explanationEn: "",
     });
 
   // =====================================================
@@ -243,6 +251,13 @@ function QuizManagement() {
       option4Hi: "",
       correctAnswerHi: "",
       explanationHi: "",
+      questionEn: "",
+      option1En: "",
+      option2En: "",
+      option3En: "",
+      option4En: "",
+      correctAnswerEn: "",
+      explanationEn: "",
     });
 
     setEditingId(null);
@@ -330,6 +345,28 @@ function QuizManagement() {
 
       explanationHi:
         question.explanationHi || "",
+
+      // English fields
+      questionEn:
+        question.questionEn || "",
+
+      option1En:
+        question.optionsEn?.[0] || "",
+
+      option2En:
+        question.optionsEn?.[1] || "",
+
+      option3En:
+        question.optionsEn?.[2] || "",
+
+      option4En:
+        question.optionsEn?.[3] || "",
+
+      correctAnswerEn:
+        question.correctAnswerEn || "",
+
+      explanationEn:
+        question.explanationEn || "",
     });
 
     setActiveLangTab("gu");
@@ -344,10 +381,10 @@ function QuizManagement() {
   };
 
   // =====================================================
-  // AI AUTO-TRANSLATE (GUJARATI -> HINDI)
+  // AI AUTO-TRANSLATE (GUJARATI -> HINDI & ENGLISH)
   // =====================================================
 
-  const handleAutoTranslate = async () => {
+  const handleAutoTranslate = async (targetLang = "all") => {
     try {
       setTranslating(true);
       setError("");
@@ -355,7 +392,7 @@ function QuizManagement() {
 
       if (!formData.question || !formData.question.trim()) {
         throw new Error(
-          "કૃપા કરીને પહેલાં ગુજરાતી પ્રશ્ન (Question) લખો જેથી AI તેનું હિન્દીમાં ઓટો-અનુવાદ કરી શકે."
+          "કૃપા કરીને પહેલાં ગુજરાતી પ્રશ્ન (Question) લખો જેથી AI તેનું હિન્દી અને અંગ્રેજીમાં ઓટો-અનુવાદ કરી શકે."
         );
       }
 
@@ -368,7 +405,7 @@ function QuizManagement() {
 
       if (rawOptions.some((o) => !o)) {
         throw new Error(
-          "કૃપા કરીને પહેલાં ચારેય ગુજરાતી વિકલ્પો (Options 1 થી 4) ભરો જેથી AI તેનું હિન્દી અનુવાદ કરી શકે."
+          "કૃપા કરીને પહેલાં ચારેય ગુજરાતી વિકલ્પો (Options 1 થી 4) ભરો જેથી AI તેનું અનુવાદ કરી શકે."
         );
       }
 
@@ -393,6 +430,7 @@ function QuizManagement() {
           options: rawOptions,
           correctAnswer: formData.correctAnswer,
           explanation: formData.explanation,
+          targetLang: targetLang || "all",
         }),
       });
 
@@ -428,12 +466,32 @@ function QuizManagement() {
           translated.correctAnswerHi || prev.correctAnswerHi,
         explanationHi:
           translated.explanationHi || prev.explanationHi,
+
+        // English fields
+        questionEn:
+          translated.questionEn || prev.questionEn,
+        option1En:
+          translated.optionsEn?.[0] || prev.option1En,
+        option2En:
+          translated.optionsEn?.[1] || prev.option2En,
+        option3En:
+          translated.optionsEn?.[2] || prev.option3En,
+        option4En:
+          translated.optionsEn?.[3] || prev.option4En,
+        correctAnswerEn:
+          translated.correctAnswerEn || prev.correctAnswerEn,
+        explanationEn:
+          translated.explanationEn || prev.explanationEn,
       }));
 
       setAutoTranslateSuccess(
-        "✨ ગુજરાતી પ્રશ્ન અને વિકલ્પોનું શુદ્ધ હિન્દીમાં સફળતાપૂર્વક ઓટો-અનુવાદ થઈ ગયું!"
+        "✨ ગુજરાતી પ્રશ્ન અને વિકલ્પોનું હિન્દી અને અંગ્રેજીમાં સફળતાપૂર્વક AI ઓટો-અનુવાદ થઈ ગયું!"
       );
-      setActiveLangTab("hi");
+      if (targetLang === "en") {
+        setActiveLangTab("en");
+      } else if (targetLang === "hi") {
+        setActiveLangTab("hi");
+      }
     } catch (err) {
       console.error("Auto translate error:", err);
       setError(
@@ -650,6 +708,27 @@ function QuizManagement() {
       }
 
       // =================================================
+      // ENGLISH DATA PREPARATION
+      // =================================================
+
+      const rawOptionsEn = [
+        formData.option1En,
+        formData.option2En,
+        formData.option3En,
+        formData.option4En,
+      ].map((opt) => String(opt || "").trim());
+
+      let finalCorrectAnswerEn = formData.correctAnswerEn?.trim() || "";
+      if (!finalCorrectAnswerEn && rawOptionsEn.some(Boolean)) {
+        const correctIndex = options.findIndex(
+          (opt) => opt.toLowerCase() === formData.correctAnswer.trim().toLowerCase()
+        );
+        if (correctIndex !== -1 && rawOptionsEn[correctIndex]) {
+          finalCorrectAnswerEn = rawOptionsEn[correctIndex];
+        }
+      }
+
+      // =================================================
       // PAYLOAD
       // =================================================
 
@@ -683,6 +762,19 @@ function QuizManagement() {
 
         explanationHi:
           formData.explanationHi?.trim() || "",
+
+        // English fields
+        questionEn:
+          formData.questionEn?.trim() || "",
+
+        optionsEn:
+          rawOptionsEn,
+
+        correctAnswerEn:
+          finalCorrectAnswerEn,
+
+        explanationEn:
+          formData.explanationEn?.trim() || "",
       };
 
       let response;
@@ -1218,25 +1310,32 @@ function QuizManagement() {
                 className={`admin-lang-tab ${activeLangTab === "hi" ? "active" : ""}`}
                 onClick={() => setActiveLangTab("hi")}
               >
-                🇮🇳 हिन्दी प्रश्न एवं विकल्प (Auto-Translated)
+                🇮🇳 हिन्दी प्रश्न एवं विकल्प (Auto)
+              </button>
+              <button
+                type="button"
+                className={`admin-lang-tab ${activeLangTab === "en" ? "active" : ""}`}
+                onClick={() => setActiveLangTab("en")}
+              >
+                🇬🇧 English Question & Options (Auto)
               </button>
             </div>
 
             <button
               type="button"
               className="auto-translate-ai-btn"
-              onClick={handleAutoTranslate}
+              onClick={() => handleAutoTranslate("all")}
               disabled={translating}
-              title="ગુજરાતી પ્રશ્ન અને વિકલ્પો પરથી AI દ્વારા આપોઆપ હિન્દી અનુવાદ કરો"
+              title="ગુજરાતી પ્રશ્ન અને વિકલ્પો પરથી AI દ્વારા આપોઆપ હિન્દી અને અંગ્રેજી અનુવાદ કરો"
             >
               <Sparkles className={`btn-icon ${translating ? "spinning" : ""}`} size={16} />
               {translating
-                ? txt("AI હિન્દી અનુવાદ થઈ રહ્યું છે...", "AI हिन्दी अनुवाद हो रहा है...", "AI translating to Hindi...")
-                : txt("✨ AI હિન્દી ઓટો-અનુવાદ (Auto-Translate)", "✨ AI हिन्दी ऑटो-अनुवाद (Auto-Translate)", "✨ AI Hindi Auto-Translate")}
+                ? txt("AI અનુવાદ થઈ રહ્યું છે...", "AI अनुवाद हो रहा है...", "AI translating...")
+                : txt("✨ AI બધી ભાષા ઓટો-અનુવાદ (Hindi & English)", "✨ AI सभी भाषा ऑटो-अनुवाद (Hindi & English)", "✨ AI Auto-Translate (Hindi & English)")}
             </button>
           </div>
 
-          {activeLangTab === "gu" ? (
+          {activeLangTab === "gu" && (
             <>
               {/* =================================================
                   GUJARATI QUESTION
@@ -1356,7 +1455,9 @@ function QuizManagement() {
                 />
               </div>
             </>
-          ) : (
+          )}
+
+          {activeLangTab === "hi" && (
             <>
               {/* =================================================
                   HINDI QUESTION (AUTO-TRANSLATED / EDITABLE)
@@ -1458,6 +1559,114 @@ function QuizManagement() {
                   value={formData.explanationHi}
                   onChange={handleChange}
                   placeholder="हिन्दी में व्याख्या લખો અથવા AI ઓટો-અનુવાદ વાપરો..."
+                  rows="3"
+                />
+              </div>
+            </>
+          )}
+
+          {activeLangTab === "en" && (
+            <>
+              {/* =================================================
+                  ENGLISH QUESTION (AUTO-TRANSLATED / EDITABLE)
+              ================================================= */}
+              <div className="quiz-form-group">
+                <label>
+                  Question (English Question) - <i>AI દ્વારા આપોઆપ ભરાશે અથવા તમે જાતે પણ લખી શકો છો</i>
+                </label>
+                <textarea
+                  name="questionEn"
+                  value={formData.questionEn}
+                  onChange={handleChange}
+                  placeholder="Type question in English or click '✨ AI બધી ભાષા ઓટો-અનુવાદ' above..."
+                  rows="4"
+                />
+              </div>
+
+              {/* ENGLISH OPTION 1 */}
+              <div className="quiz-form-group">
+                <label>Option 1 (English)</label>
+                <input
+                  type="text"
+                  name="option1En"
+                  value={formData.option1En}
+                  onChange={handleChange}
+                  placeholder="English Option 1"
+                />
+              </div>
+
+              {/* ENGLISH OPTION 2 */}
+              <div className="quiz-form-group">
+                <label>Option 2 (English)</label>
+                <input
+                  type="text"
+                  name="option2En"
+                  value={formData.option2En}
+                  onChange={handleChange}
+                  placeholder="English Option 2"
+                />
+              </div>
+
+              {/* ENGLISH OPTION 3 */}
+              <div className="quiz-form-group">
+                <label>Option 3 (English)</label>
+                <input
+                  type="text"
+                  name="option3En"
+                  value={formData.option3En}
+                  onChange={handleChange}
+                  placeholder="English Option 3"
+                />
+              </div>
+
+              {/* ENGLISH OPTION 4 */}
+              <div className="quiz-form-group">
+                <label>Option 4 (English)</label>
+                <input
+                  type="text"
+                  name="option4En"
+                  value={formData.option4En}
+                  onChange={handleChange}
+                  placeholder="English Option 4"
+                />
+              </div>
+
+              {/* ENGLISH CORRECT ANSWER */}
+              <div className="quiz-form-group">
+                <label>
+                  Correct Answer (English Correct Answer)
+                </label>
+                <select
+                  name="correctAnswerEn"
+                  value={formData.correctAnswerEn}
+                  onChange={handleChange}
+                >
+                  <option value="">-- Select English Correct Answer --</option>
+                  {[
+                    formData.option1En,
+                    formData.option2En,
+                    formData.option3En,
+                    formData.option4En,
+                  ]
+                    .filter((option) => option && option.trim())
+                    .map((option, index) => (
+                      <option key={index} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                </select>
+              </div>
+
+              {/* ENGLISH EXPLANATION */}
+              <div className="quiz-form-group">
+                <label>
+                  Explanation (English Explanation) <span> (Optional)</span>
+                </label>
+                <textarea
+                  name="explanationEn"
+                  value={formData.explanationEn}
+                  onChange={handleChange}
+                  placeholder="Explain why this answer is correct in English..."
                   rows="3"
                 />
               </div>
