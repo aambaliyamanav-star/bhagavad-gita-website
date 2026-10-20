@@ -36,11 +36,6 @@ export default function MobileLanguageModal() {
 
     const checkEligibility = () => {
       const isStandalone = isRunningInStandaloneApp();
-      const isMobile =
-        window.innerWidth <= 768 ||
-        /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
-          navigator.userAgent
-        );
 
       if (isStandalone) {
         // INSTALLED APP (PWA):
@@ -50,10 +45,8 @@ export default function MobileLanguageModal() {
           localStorage.getItem("gita_app_lang_selected") === "true";
         return !appLangChosen;
       } else {
-        // MOBILE WEB:
-        // Ask whenever the user opens the web (every new browser session / visit)
-        // Only in mobile view.
-        if (!isMobile) return false;
+        // WEB (DESKTOP, TABLET, MOBILE):
+        // Prompts when the user opens the web until chosen for that session
         const sessionLangChosen =
           sessionStorage.getItem("gita_web_lang_selected") === "true";
         return !sessionLangChosen;
@@ -64,6 +57,18 @@ export default function MobileLanguageModal() {
       const timer = setTimeout(() => {
         setShowModal(true);
       }, 200);
+      return () => clearTimeout(timer);
+    } else {
+      // Language already chosen previously - immediately signal next step
+      const timer = setTimeout(() => {
+        try {
+          window.dispatchEvent(
+            new CustomEvent("gita-language-selected", {
+              detail: { language: language || "gu", alreadySet: true },
+            })
+          );
+        } catch (e) {}
+      }, 250);
       return () => clearTimeout(timer);
     }
   }, []);
@@ -105,18 +110,17 @@ export default function MobileLanguageModal() {
       sessionStorage.setItem("gita_web_lang_selected", "true");
     }
 
-    try {
-      window.dispatchEvent(
-        new CustomEvent("gita-language-selected", {
-          detail: { language: selectedLang },
-        })
-      );
-    } catch (e) {}
-
     setIsClosing(true);
     setTimeout(() => {
       setShowModal(false);
       setIsClosing(false);
+      try {
+        window.dispatchEvent(
+          new CustomEvent("gita-language-selected", {
+            detail: { language: selectedLang },
+          })
+        );
+      } catch (e) {}
     }, 280);
   };
 
