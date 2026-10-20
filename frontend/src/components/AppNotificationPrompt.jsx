@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Bell, Sparkles, X, Check } from "lucide-react";
+import { checkIsInstalled } from "../utils/pwaManager.js";
 import {
   isAppPushSupported,
   isAppNotificationEnabled,
@@ -30,7 +31,13 @@ function AppNotificationPrompt() {
 
   useEffect(() => {
     const handleStartNotificationCheck = () => {
-      // 1. If push notifications not supported in this browser, move to next step
+      // STRICT: Notifications are ONLY for installed App! Never on regular Web browser.
+      if (!checkIsInstalled()) {
+        finishStep();
+        return;
+      }
+
+      // 1. If push notifications not supported in this runtime, move to next step
       if (!isAppPushSupported()) {
         finishStep();
         return;
