@@ -34,6 +34,8 @@ export default function MobileLanguageModal() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
+    let modalTimer = null;
+
     const checkEligibility = () => {
       const isStandalone = isRunningInStandaloneApp();
 
@@ -53,24 +55,35 @@ export default function MobileLanguageModal() {
       }
     };
 
-    if (checkEligibility()) {
-      const timer = setTimeout(() => {
-        setShowModal(true);
-      }, 200);
-      return () => clearTimeout(timer);
-    } else {
-      // Language already chosen previously - immediately signal next step
-      const timer = setTimeout(() => {
-        try {
-          window.dispatchEvent(
-            new CustomEvent("gita-language-selected", {
-              detail: { language: language || "gu", alreadySet: true },
-            })
-          );
-        } catch (e) {}
-      }, 250);
-      return () => clearTimeout(timer);
-    }
+    const runLanguageCheck = () => {
+      if (checkEligibility()) {
+        modalTimer = setTimeout(() => {
+          setShowModal(true);
+        }, 200);
+      } else {
+        // Language already chosen previously - immediately signal next step
+        modalTimer = setTimeout(() => {
+          try {
+            window.dispatchEvent(
+              new CustomEvent("gita-language-selected", {
+                detail: { language: language || "gu", alreadySet: true },
+              })
+            );
+          } catch (e) {}
+        }, 200);
+      }
+    };
+
+    // Wait for splash transition to complete before prompting
+    window.addEventListener("gita-splash-finished", runLanguageCheck, { once: true });
+    // Safety fallback in case splash completes earlier or is skipped
+    const fallbackTimer = setTimeout(runLanguageCheck, 1700);
+
+    return () => {
+      window.removeEventListener("gita-splash-finished", runLanguageCheck);
+      clearTimeout(modalTimer);
+      clearTimeout(fallbackTimer);
+    };
   }, []);
 
   // Sync selectedLang with current language when modal opens
