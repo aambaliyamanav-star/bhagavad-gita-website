@@ -416,6 +416,8 @@ function ShlokManagement() {
 
   const [translating, setTranslating] =
     useState(false);
+  const [translatingLang, setTranslatingLang] =
+    useState(null);
 
   const [autoTranslateSuccess, setAutoTranslateSuccess] =
     useState("");
@@ -1031,9 +1033,10 @@ function ShlokManagement() {
      AUTO TRANSLATE VIA AI (GEMINI)
   ===================================================== */
 
-  const handleAutoTranslate = async (targetLang = "all") => {
+  const handleAutoTranslate = async (targetLang = "hi") => {
     try {
       setTranslating(true);
+      setTranslatingLang(targetLang);
       setError("");
       setAutoTranslateSuccess("");
 
@@ -1041,7 +1044,11 @@ function ShlokManagement() {
 
       if (!formData.translation?.trim() && !plainTranslation) {
         throw new Error(
-          "કૃપા કરીને પહેલાં ગુજરાતી અનુવાદ લખો જેથી AI તેનું હિન્દી અને અંગ્રેજીમાં ઓટો-અનુવાદ કરી શકે."
+          targetLang === "hi"
+            ? "કૃપા કરીને પહેલાં ગુજરાતી અનુવાદ લખો જેથી AI તેનું હિન્દીમાં ઓટો-અનુવાદ કરી શકે."
+            : targetLang === "en"
+            ? "કૃપા કરીને પહેલાં ગુજરાતી અનુવાદ લખો જેથી AI તેનું અંગ્રેજીમાં ઓટો-અનુવાદ કરી શકે."
+            : "કૃપા કરીને પહેલાં ગુજરાતી અનુવાદ લખો જેથી AI તેનું હિન્દી અને અંગ્રેજીમાં ઓટો-અનુવાદ કરી શકે."
         );
       }
 
@@ -1139,7 +1146,11 @@ function ShlokManagement() {
       }
 
       setAutoTranslateSuccess(
-        "✨ ગુજરાતીમાંથી હિન્દી અને અંગ્રેજીમાં સફળતાપૂર્વક AI ઓટો-અનુવાદ થઈ ગયું! સંસ્કૃત શ્લોક સુરક્ષિત છે."
+        targetLang === "hi"
+          ? "✨ ગુજરાતીમાંથી હિન્દીમાં સફળતાપૂર્વક AI ઓટો-અનુવાદ થઈ ગયું!"
+          : targetLang === "en"
+          ? "✨ ગુજરાતીમાંથી અંગ્રેજીમાં સફળતાપૂર્વક AI ઓટો-અનુવાદ થઈ ગયું!"
+          : "✨ ગુજરાતીમાંથી હિન્દી અને અંગ્રેજીમાં સફળતાપૂર્વક AI ઓટો-અનુવાદ થઈ ગયું! સંસ્કૃત શ્લોક સુરક્ષિત છે."
       );
       if (targetLang === "en") {
         setActiveLangTab("en");
@@ -1154,6 +1165,7 @@ function ShlokManagement() {
       );
     } finally {
       setTranslating(false);
+      setTranslatingLang(null);
     }
   };
 
@@ -1810,18 +1822,35 @@ function ShlokManagement() {
                 </button>
               </div>
 
-              <button
-                type="button"
-                className="auto-translate-ai-btn"
-                onClick={() => handleAutoTranslate("all")}
-                disabled={translating}
-                title="ગુજરાતી અનુવાદ અને સંદેશ પરથી AI દ્વારા આપોઆપ હિન્દી અને અંગ્રેજી અનુવાદ કરો"
-              >
-                <Sparkles className={`btn-icon ${translating ? "spinning" : ""}`} size={16} />
-                {translating
-                  ? txt("AI અનુવાદ થઈ રહ્યું છે...", "AI अनुवाद हो रहा है...", "AI translating...")
-                  : txt("✨ AI બધી ભાષા ઓટો-અનુવાદ (Hindi & English)", "✨ AI सभी भाषा ऑटो-अनुवाद (Hindi & English)", "✨ AI Auto-Translate (Hindi & English)")}
-              </button>
+              <div className="auto-translate-btns-group">
+                {/* 1. HINDI AUTO-TRANSLATE */}
+                <button
+                  type="button"
+                  className="auto-translate-ai-btn hi-btn"
+                  onClick={() => handleAutoTranslate("hi")}
+                  disabled={translating}
+                  title="ગુજરાતી અનુવાદ અને સંદેશ પરથી AI દ્વારા આપોઆપ હિન્દી અનુવાદ કરો"
+                >
+                  <Sparkles className={`btn-icon ${translatingLang === "hi" ? "spinning" : ""}`} size={16} />
+                  {translatingLang === "hi"
+                    ? txt("AI હિન્દી અનુવાદ થઈ રહ્યું છે...", "AI हिन्दी अनुवाद हो रहा है...", "AI translating Hindi...")
+                    : txt("✨ AI હિન્દી ઓટો-અનુવાદ", "✨ AI हिन्दी ऑटो-अनुवाद", "✨ AI Hindi Auto-Translate")}
+                </button>
+
+                {/* 2. ENGLISH AUTO-TRANSLATE */}
+                <button
+                  type="button"
+                  className="auto-translate-ai-btn en-btn"
+                  onClick={() => handleAutoTranslate("en")}
+                  disabled={translating}
+                  title="ગુજરાતી અનુવાદ અને સંદેશ પરથી AI દ્વારા આપોઆપ અંગ્રેજી અનુવાદ કરો"
+                >
+                  <Sparkles className={`btn-icon ${translatingLang === "en" ? "spinning" : ""}`} size={16} />
+                  {translatingLang === "en"
+                    ? txt("AI અંગ્રેજી અનુવાદ થઈ રહ્યું છે...", "AI अंग्रेज़ी अनुवाद हो रहा है...", "AI translating English...")
+                    : txt("✨ AI અંગ્રેજી ઓટો-અનુવાદ", "✨ AI अंग्रेज़ी ऑटो-अनुवाद", "✨ AI English Auto-Translate")}
+                </button>
+              </div>
             </div>
 
             {/* AUTO TRANSLATE SUCCESS BANNER */}

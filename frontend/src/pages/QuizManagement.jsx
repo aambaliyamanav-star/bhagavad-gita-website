@@ -60,6 +60,7 @@ function QuizManagement() {
   // Active language tab: "gu" (Gujarati) or "hi" (Hindi)
   const [activeLangTab, setActiveLangTab] = useState("gu");
   const [translating, setTranslating] = useState(false);
+  const [translatingLang, setTranslatingLang] = useState(null);
   const [autoTranslateSuccess, setAutoTranslateSuccess] = useState("");
   const [deletingAll, setDeletingAll] = useState(false);
 
@@ -385,15 +386,20 @@ function QuizManagement() {
   // AI AUTO-TRANSLATE (GUJARATI -> HINDI & ENGLISH)
   // =====================================================
 
-  const handleAutoTranslate = async (targetLang = "all") => {
+  const handleAutoTranslate = async (targetLang = "hi") => {
     try {
       setTranslating(true);
+      setTranslatingLang(targetLang);
       setError("");
       setAutoTranslateSuccess("");
 
       if (!formData.question || !formData.question.trim()) {
         throw new Error(
-          "કૃપા કરીને પહેલાં ગુજરાતી પ્રશ્ન (Question) લખો જેથી AI તેનું હિન્દી અને અંગ્રેજીમાં ઓટો-અનુવાદ કરી શકે."
+          targetLang === "hi"
+            ? "કૃપા કરીને પહેલાં ગુજરાતી પ્રશ્ન (Question) લખો જેથી AI તેનું હિન્દીમાં ઓટો-અનુવાદ કરી શકે."
+            : targetLang === "en"
+            ? "કૃપા કરીને પહેલાં ગુજરાતી પ્રશ્ન (Question) લખો જેથી AI તેનું અંગ્રેજીમાં ઓટો-અનુવાદ કરી શકે."
+            : "કૃપા કરીને પહેલાં ગુજરાતી પ્રશ્ન (Question) લખો જેથી AI તેનું હિન્દી અને અંગ્રેજીમાં ઓટો-અનુવાદ કરી શકે."
         );
       }
 
@@ -486,7 +492,11 @@ function QuizManagement() {
       }));
 
       setAutoTranslateSuccess(
-        "✨ ગુજરાતી પ્રશ્ન અને વિકલ્પોનું હિન્દી અને અંગ્રેજીમાં સફળતાપૂર્વક AI ઓટો-અનુવાદ થઈ ગયું!"
+        targetLang === "hi"
+          ? "✨ ગુજરાતી પ્રશ્ન અને વિકલ્પોનું હિન્દીમાં સફળતાપૂર્વક AI ઓટો-અનુવાદ થઈ ગયું!"
+          : targetLang === "en"
+          ? "✨ ગુજરાતી પ્રશ્ન અને વિકલ્પોનું અંગ્રેજીમાં સફળતાપૂર્વક AI ઓટો-અનુવાદ થઈ ગયું!"
+          : "✨ ગુજરાતી પ્રશ્ન અને વિકલ્પોનું હિન્દી અને અંગ્રેજીમાં સફળતાપૂર્વક AI ઓટો-અનુવાદ થઈ ગયું!"
       );
       if (targetLang === "en") {
         setActiveLangTab("en");
@@ -500,6 +510,7 @@ function QuizManagement() {
       );
     } finally {
       setTranslating(false);
+      setTranslatingLang(null);
     }
   };
 
@@ -1461,18 +1472,35 @@ function QuizManagement() {
               </button>
             </div>
 
-            <button
-              type="button"
-              className="auto-translate-ai-btn"
-              onClick={() => handleAutoTranslate("all")}
-              disabled={translating}
-              title="ગુજરાતી પ્રશ્ન અને વિકલ્પો પરથી AI દ્વારા આપોઆપ હિન્દી અને અંગ્રેજી અનુવાદ કરો"
-            >
-              <Sparkles className={`btn-icon ${translating ? "spinning" : ""}`} size={16} />
-              {translating
-                ? txt("AI અનુવાદ થઈ રહ્યું છે...", "AI अनुवाद हो रहा है...", "AI translating...")
-                : txt("✨ AI બધી ભાષા ઓટો-અનુવાદ (Hindi & English)", "✨ AI सभी भाषा ऑटो-अनुवाद (Hindi & English)", "✨ AI Auto-Translate (Hindi & English)")}
-            </button>
+            <div className="auto-translate-btns-group">
+              {/* 1. HINDI AUTO-TRANSLATE */}
+              <button
+                type="button"
+                className="auto-translate-ai-btn hi-btn"
+                onClick={() => handleAutoTranslate("hi")}
+                disabled={translating}
+                title="ગુજરાતી પ્રશ્ન અને વિકલ્પો પરથી AI દ્વારા આપોઆપ હિન્દી અનુવાદ કરો"
+              >
+                <Sparkles className={`btn-icon ${translatingLang === "hi" ? "spinning" : ""}`} size={16} />
+                {translatingLang === "hi"
+                  ? txt("AI હિન્દી અનુવાદ થઈ રહ્યું છે...", "AI हिन्दी अनुवाद हो रहा है...", "AI translating Hindi...")
+                  : txt("✨ AI હિન્દી ઓટો-અનુવાદ", "✨ AI हिन्दी ऑटो-अनुवाद", "✨ AI Hindi Auto-Translate")}
+              </button>
+
+              {/* 2. ENGLISH AUTO-TRANSLATE */}
+              <button
+                type="button"
+                className="auto-translate-ai-btn en-btn"
+                onClick={() => handleAutoTranslate("en")}
+                disabled={translating}
+                title="ગુજરાતી પ્રશ્ન અને વિકલ્પો પરથી AI દ્વારા આપોઆપ અંગ્રેજી અનુવાદ કરો"
+              >
+                <Sparkles className={`btn-icon ${translatingLang === "en" ? "spinning" : ""}`} size={16} />
+                {translatingLang === "en"
+                  ? txt("AI અંગ્રેજી અનુવાદ થઈ રહ્યું છે...", "AI अंग्रेज़ी अनुवाद हो रहा है...", "AI translating English...")
+                  : txt("✨ AI અંગ્રેજી ઓટો-અનુવાદ", "✨ AI अंग्रेज़ी ऑटो-अनुवाद", "✨ AI English Auto-Translate")}
+              </button>
+            </div>
           </div>
 
           {activeLangTab === "gu" && (
