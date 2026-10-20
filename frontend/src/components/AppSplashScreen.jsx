@@ -1,23 +1,16 @@
 import React, { useState, useEffect, useRef } from "react";
-import { useLanguage } from "../context/LanguageContext.jsx";
 import "./AppSplashScreen.css";
 
 export default function AppSplashScreen() {
-  const { txt } = useLanguage();
   const [showSplash, setShowSplash] = useState(true);
-  const [isFadingText, setIsFadingText] = useState(false);
   const [isFadingBackdrop, setIsFadingBackdrop] = useState(false);
-  const [isFlying, setIsFlying] = useState(false);
-  const [flyStyle, setFlyStyle] = useState({
-    borderRadius: "24px",
-  });
-
+  const [flyStyle, setFlyStyle] = useState({});
   const logoRef = useRef(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // 1. Initially hide the target logo in Navbar until our splash logo flies into it
+    // 1. Ensure target navbar logo is completely hidden before splash logo arrives
     const hideNavLogo = () => {
       const target = document.getElementById("navbar-gita-logo");
       if (target) {
@@ -25,19 +18,19 @@ export default function AppSplashScreen() {
         target.classList.remove("logo-landed-pulse");
       }
     };
-
     hideNavLogo();
-    // Safety interval to ensure it stays hidden until flight
-    const safetyCheck = setInterval(hideNavLogo, 80);
 
-    // Lock body scroll while splash is active
+    // Safety check for target element
+    const safetyCheck = setInterval(hideNavLogo, 40);
+
+    // Lock body scroll during the brief transition
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
-    // 2. At 650ms, start the flight and fade-out transition
+    // 2. Start flight immediately after initial paint (tiny 60ms delay)
+    // Seamlessly connects the first opening logo straight into navbar!
     const flightTimer = setTimeout(() => {
       clearInterval(safetyCheck);
-      setIsFadingText(true);
       setIsFadingBackdrop(true);
 
       const target = document.getElementById("navbar-gita-logo");
@@ -56,29 +49,23 @@ export default function AppSplashScreen() {
         const deltaY = targetCenterY - splashCenterY;
         const scale = targetRect.width / splashRect.width;
 
-        setIsFlying(true);
         setFlyStyle({
           transform: `translate3d(${deltaX}px, ${deltaY}px, 0) scale(${scale})`,
           borderRadius: "8px",
-          transition: "transform 0.72s cubic-bezier(0.2, 0.9, 0.28, 1), border-radius 0.72s ease, box-shadow 0.72s ease",
-          boxShadow: "0 2px 6px rgba(0, 0, 0, 0.4)",
+          transition: "transform 0.65s cubic-bezier(0.2, 0.95, 0.3, 1), border-radius 0.65s ease",
         });
-      } else {
-        // Fallback if target navbar logo not found
-        setIsFlying(true);
       }
-    }, 650);
+    }, 60);
 
-    // 3. At 1400ms (750ms flight duration), the logo has perfectly landed in the navbar!
+    // 3. Complete transition at 720ms (flight finished, perfectly dock into navbar)
     const finishTimer = setTimeout(() => {
-      // Reveal the target logo in the Navbar with divine landing pulse
       const target = document.getElementById("navbar-gita-logo");
       if (target) {
         target.classList.remove("logo-hidden-for-splash");
         target.classList.add("logo-landed-pulse");
         setTimeout(() => {
           target.classList.remove("logo-landed-pulse");
-        }, 600);
+        }, 400);
       }
 
       // Signal completion to onboarding flow (Language modal, etc.)
@@ -86,10 +73,9 @@ export default function AppSplashScreen() {
         window.dispatchEvent(new CustomEvent("gita-splash-finished"));
       } catch (e) {}
 
-      // Clean up body scroll and unmount splash
       document.body.style.overflow = originalOverflow;
       setShowSplash(false);
-    }, 1400);
+    }, 720);
 
     return () => {
       clearInterval(safetyCheck);
@@ -107,36 +93,20 @@ export default function AppSplashScreen() {
 
   return (
     <div className="app-splash-overlay" aria-hidden="true">
-      {/* Background with fading animation */}
+      {/* Seamless backdrop matching native phone splash background */}
       <div className={`app-splash-backdrop ${isFadingBackdrop ? "fade-out" : ""}`} />
 
-      {/* Decorative spinning sacred mandala */}
-      <div className="app-splash-mandala" />
-
-      {/* Splash Center */}
-      <div className="app-splash-content">
-        {/* Animated Flying Logo Box */}
-        <div
-          ref={logoRef}
-          className="app-splash-logo-box"
-          style={flyStyle}
-        >
-          <div className={`app-splash-logo-glow ${isFlying ? "glow-hidden" : ""}`} />
-          <img
-            src="/icons/icon-192x192.png"
-            alt="Bhagavad Gita Logo"
-            className="app-splash-logo-img"
-          />
-        </div>
-
-        {/* Text Group Beneath Logo (Fades out when flight starts) */}
-        <div className={`app-splash-text-group ${isFadingText ? "text-fade-out" : ""}`}>
-          <span className="app-splash-om">ॐ</span>
-          <h1 className="app-splash-title">॥ શ્રીમદ્ભગવદ્ગીતા ॥</h1>
-          <p className="app-splash-subtitle">
-            {txt("યતો ધર્મસ્તતો જયઃ", "यतो धर्मस्ततो जयः", "Where Dharma is, Victory is")}
-          </p>
-        </div>
+      {/* Centered logo (identical in size and position to native splash icon) */}
+      <div
+        ref={logoRef}
+        className="app-splash-logo-box"
+        style={flyStyle}
+      >
+        <img
+          src="/icons/icon-192x192.png"
+          alt="Bhagavad Gita Logo"
+          className="app-splash-logo-img"
+        />
       </div>
     </div>
   );
