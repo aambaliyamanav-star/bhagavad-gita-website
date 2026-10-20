@@ -77,7 +77,7 @@ export default function MobileLanguageModal() {
     // Wait for splash transition to complete before prompting
     window.addEventListener("gita-splash-finished", runLanguageCheck, { once: true });
     // Safety fallback in case splash completes earlier or is skipped
-    const fallbackTimer = setTimeout(runLanguageCheck, 1700);
+    const fallbackTimer = setTimeout(runLanguageCheck, 900);
 
     return () => {
       window.removeEventListener("gita-splash-finished", runLanguageCheck);
