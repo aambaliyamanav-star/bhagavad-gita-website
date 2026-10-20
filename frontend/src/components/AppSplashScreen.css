@@ -1,6 +1,6 @@
 /* =========================================================
    APP SPLASH TO NAVBAR LOGO SEAMLESS TRANSITION
-   Logo moves towards navbar continuously while shrinking
+   100% GPU-accelerated single-curve fluid motion
    ========================================================= */
 
 .app-splash-overlay {
@@ -13,13 +13,15 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 .app-splash-backdrop {
   position: absolute;
   inset: 0;
   background-color: #0d2238;
-  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.45s cubic-bezier(0.25, 0.1, 0.25, 1);
   will-change: opacity;
 }
 
@@ -37,13 +39,16 @@
   align-items: center;
   justify-content: center;
   border-radius: 20px;
-  will-change: transform, border-radius;
+  transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  will-change: transform;
   transform-origin: center center;
 }
 
-/* Active flight animation: Logo moves towards navbar immediately and shrinks continuously as it travels */
+/* Pure single-curve GPU accelerated flight: continuous, non-choppy motion */
 .app-splash-logo-box.is-flying {
-  animation: logoGlideToNav 0.68s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+  animation: logoGlideToNav 0.62s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
 }
 
 @keyframes logoGlideToNav {
@@ -51,18 +56,7 @@
     transform: translate3d(0, 0, 0) scale(1);
     border-radius: 20px;
   }
-  30% {
-    /* Starts moving towards navbar immediately with full presence */
-    transform: translate3d(calc(var(--fly-x) * 0.35), calc(var(--fly-y) * 0.35), 0) scale(0.88);
-    border-radius: 16px;
-  }
-  65% {
-    /* 72% of distance traversed, shrinking smoothly along the flight path */
-    transform: translate3d(calc(var(--fly-x) * 0.72), calc(var(--fly-y) * 0.72), 0) scale(0.58);
-    border-radius: 12px;
-  }
   100% {
-    /* Reaches exact navbar location at target navbar logo size */
     transform: translate3d(var(--fly-x), var(--fly-y), 0) scale(var(--fly-scale));
     border-radius: 8px;
   }
@@ -73,6 +67,8 @@
   height: 100%;
   object-fit: cover;
   border-radius: inherit;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
 
 /* Navbar Logo States During Splash */
