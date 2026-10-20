@@ -151,15 +151,85 @@ function Navbar() {
   };
 
   // =====================================================
-  // NAVIGATION HISTORY (ATOMIC STATE & REF)
+  // NAVIGATION HISTORY (PERSISTED IN SESSIONSTORAGE)
   // =====================================================
 
-  const [navHistory, setNavHistory] = useState(() => ({
-    stack: [location.pathname + location.search],
-    index: 0,
-  }));
+  const [navHistory, setNavHistory] = useState(() => {
+    const currentPath =
+      typeof window !== "undefined"
+        ? window.location.pathname + window.location.search
+        : location.pathname + location.search;
+
+    if (typeof window !== "undefined") {
+      try {
+        const savedStack = sessionStorage.getItem("gita_nav_history_stack");
+        const savedIndex = sessionStorage.getItem("gita_nav_history_index");
+
+        if (savedStack && savedIndex !== null) {
+          const parsedStack = JSON.parse(savedStack);
+          const parsedIndex = parseInt(savedIndex, 10);
+
+          if (
+            Array.isArray(parsedStack) &&
+            parsedStack.length > 0 &&
+            !isNaN(parsedIndex) &&
+            parsedIndex >= 0 &&
+            parsedIndex < parsedStack.length
+          ) {
+            // If the refreshed page matches the path at savedIndex, restore perfectly
+            if (parsedStack[parsedIndex] === currentPath) {
+              return {
+                stack: parsedStack,
+                index: parsedIndex,
+              };
+            }
+
+            // If the refreshed page exists in the stack, locate it
+            const matchingIndex = parsedStack.lastIndexOf(currentPath);
+            if (matchingIndex >= 0) {
+              return {
+                stack: parsedStack,
+                index: matchingIndex,
+              };
+            }
+
+            // If a different URL was navigated to on reload, append to the stack
+            const newStack = [
+              ...parsedStack.slice(0, parsedIndex + 1),
+              currentPath,
+            ];
+            return {
+              stack: newStack,
+              index: newStack.length - 1,
+            };
+          }
+        }
+      } catch (e) {}
+    }
+
+    return {
+      stack: [currentPath],
+      index: 0,
+    };
+  });
 
   const isNavigatingRef = useRef(false);
+
+  // Sync navHistory changes to sessionStorage so page refresh never loses back/forward state
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      try {
+        sessionStorage.setItem(
+          "gita_nav_history_stack",
+          JSON.stringify(navHistory.stack)
+        );
+        sessionStorage.setItem(
+          "gita_nav_history_index",
+          navHistory.index.toString()
+        );
+      } catch (e) {}
+    }
+  }, [navHistory]);
 
   // Helper to check if a route requires login
   const isProtectedPath = (path) => {
@@ -319,6 +389,23 @@ function Navbar() {
       // Same page - do not push duplicate
       if (currentInStack === currentPath) {
         return previous;
+      }
+
+      // Check if user navigated with browser native back/forward buttons
+      if (previous.index > 0 && previous.stack[previous.index - 1] === currentPath) {
+        return {
+          ...previous,
+          index: previous.index - 1,
+        };
+      }
+      if (
+        previous.index < previous.stack.length - 1 &&
+        previous.stack[previous.index + 1] === currentPath
+      ) {
+        return {
+          ...previous,
+          index: previous.index + 1,
+        };
       }
 
       const prevPath =
