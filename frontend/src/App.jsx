@@ -38,13 +38,12 @@ import GitaAIAssistant from "./components/GitaAIAssistant.jsx";
 import FeedbackModal from "./components/FeedbackModal.jsx";
 import InstallPwaBanner from "./components/InstallPwaBanner.jsx";
 import AppNotificationPrompt from "./components/AppNotificationPrompt.jsx";
-import LoginPromptModal from "./components/LoginPromptModal.jsx";
 import MobileLanguageModal from "./components/MobileLanguageModal.jsx";
 import About from "./pages/About.jsx";
 import { trackVisit } from "./utils/visitorTracker.js";
 
 // =====================================================
-import { isTokenExpired } from "./utils/authHelper.js";
+import { isTokenExpired, getValidToken } from "./utils/authHelper.js";
 import { useLanguage } from "./context/LanguageContext.jsx";
 
 // =====================================================
@@ -172,6 +171,57 @@ function AdminRoute({ children }) {
   }
 
   return children;
+}
+
+// =====================================================
+// STARTUP AUTH REDIRECTOR (LOGIN STEP IN STARTUP FLOW)
+// =====================================================
+
+function StartupAuthRedirector() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user } = useAuth();
+
+  useEffect(() => {
+    const handleNotificationDone = () => {
+      const token = getValidToken();
+
+      // 1. If already logged in, skip login page and proceed to rating step directly
+      if (user || token) {
+        window.dispatchEvent(new CustomEvent("gita-login-prompt-done"));
+        return;
+      }
+
+      // 2. If already skipped in this browser/app session, skip to rating step directly
+      const sessionSkipped =
+        sessionStorage.getItem("gita_login_prompt_skipped_session") === "true";
+      if (sessionSkipped) {
+        window.dispatchEvent(new CustomEvent("gita-login-prompt-done"));
+        return;
+      }
+
+      // 3. If currently on auth page (/login, /register, /forgot-password), don't re-navigate
+      const currentPath = location.pathname;
+      if (
+        currentPath === "/login" ||
+        currentPath === "/register" ||
+        currentPath === "/forgot-password"
+      ) {
+        return;
+      }
+
+      // 4. User is NOT logged in and hasn't skipped this session:
+      // Navigate directly to the actual Login page!
+      navigate("/login", { state: { fromStartup: true } });
+    };
+
+    window.addEventListener("gita-notification-prompt-done", handleNotificationDone);
+    return () => {
+      window.removeEventListener("gita-notification-prompt-done", handleNotificationDone);
+    };
+  }, [user, location.pathname, navigate]);
+
+  return null;
 }
 
 function AnimatedRoutes() {
@@ -455,6 +505,7 @@ function App() {
         <AuthProvider>
           <BrowserRouter>
             <Navbar />
+            <StartupAuthRedirector />
             <AnimatedRoutes />
             {/* =================================================
                 FEEDBACK & STAR RATING (FLOATING BOTTOM-LEFT WIDGET)
@@ -469,13 +520,9 @@ function App() {
             ================================================= */}
             <InstallPwaBanner />
             {/* =================================================
-                5x DAILY NOTIFICATIONS PROMPT (WEB & APP)
+                5x DAILY NOTIFICATIONS PROMPT (APP ONLY)
             ================================================= */}
             <AppNotificationPrompt />
-            {/* =================================================
-                LOGIN / ONBOARDING PROMPT (EVERY VISIT UNTIL LOGGED IN)
-            ================================================= */}
-            <LoginPromptModal />
             {/* =================================================
                 LANGUAGE SELECTION PROMPT (ALL DEVICES)
             ================================================= */}

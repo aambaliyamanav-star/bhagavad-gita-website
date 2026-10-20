@@ -190,6 +190,14 @@ export default function FeedbackModal() {
       const alreadyRated = localStorage.getItem("gita_rating_submitted") === "true";
       if (alreadyRated) return;
 
+      // Do not auto-open if currently on auth pages (/login, /register, etc.)
+      if (typeof window !== "undefined") {
+        const path = window.location.pathname;
+        if (path === "/login" || path === "/register" || path === "/forgot-password") {
+          return;
+        }
+      }
+
       // 2. Check 2-Day Cooldown (48 hours)
       // "notification ni jem 2 2 divse aavvu joie ane tema pan skip no option aave ane tya shudhi j aavvu joie jya shudhi te rating aape nay"
       const skippedTime = localStorage.getItem("gita_rating_skipped_time");

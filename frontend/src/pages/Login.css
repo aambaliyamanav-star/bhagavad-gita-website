@@ -605,6 +605,57 @@
 
 
 /* =====================================================
+   SKIP ACTION
+   ===================================================== */
+
+.auth-skip-action {
+  margin-top: 14px;
+  display: flex;
+  justify-content: center;
+}
+
+.auth-skip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 20px;
+  background: rgba(40, 105, 173, 0.08);
+  border: 1px solid rgba(40, 105, 173, 0.22);
+  border-radius: 9999px;
+  color: #2869ad;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 2px 6px rgba(40, 105, 173, 0.06);
+}
+
+.auth-skip-btn:hover {
+  background: rgba(40, 105, 173, 0.16);
+  color: #174f86;
+  transform: translateY(-1.5px);
+  border-color: rgba(40, 105, 173, 0.38);
+  box-shadow: 0 4px 12px rgba(40, 105, 173, 0.14);
+}
+
+.auth-skip-btn:active {
+  transform: translateY(0);
+}
+
+[data-theme="dark"] .auth-skip-btn {
+  background: rgba(96, 165, 250, 0.12);
+  border-color: rgba(96, 165, 250, 0.28);
+  color: #93c5fd;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+[data-theme="dark"] .auth-skip-btn:hover {
+  background: rgba(96, 165, 250, 0.22);
+  color: #bfdbfe;
+  border-color: rgba(96, 165, 250, 0.45);
+}
+
+/* =====================================================
    BOTTOM OM
    ===================================================== */
 
