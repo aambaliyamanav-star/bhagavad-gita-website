@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Eye, EyeOff, Lock, Mail, LogIn, Loader2, CheckCircle, AlertCircle, Sparkles } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail, LogIn, Loader2, CheckCircle, AlertCircle, Sparkles, ChevronRight } from "lucide-react";
 
 import {
   Link,
@@ -18,6 +18,20 @@ function Login() {
 
   const { user, login } = useAuth();
   const { isHindi, isEnglish, isGujarati, txt } = useLanguage();
+
+  const handleSkip = () => {
+    sessionStorage.setItem("gita_login_prompt_skipped_session", "true");
+    sessionStorage.removeItem("authRedirect");
+    localStorage.removeItem("pendingChapter");
+    localStorage.removeItem("pendingShloka");
+
+    // Signal next step in startup sequence (Rating popup)
+    try {
+      window.dispatchEvent(new CustomEvent("gita-login-prompt-done"));
+    } catch (e) {}
+
+    navigate("/", { replace: true });
+  };
 
   // If user is already logged in, redirect away from /login
   useEffect(() => {
@@ -253,9 +267,15 @@ setTimeout(() => {
   }
 
   // Clean up all pending storage artifacts
+  sessionStorage.setItem("gita_login_prompt_skipped_session", "true");
   sessionStorage.removeItem("authRedirect");
   localStorage.removeItem("pendingChapter");
   localStorage.removeItem("pendingShloka");
+
+  // Signal that login is done so rating popup can trigger if eligible
+  try {
+    window.dispatchEvent(new CustomEvent("gita-login-prompt-done"));
+  } catch (e) {}
 
   if (destination) {
     navigate(destination, { replace: true });
@@ -520,6 +540,22 @@ setTimeout(() => {
             {txt("Register કરો", "Register करें", "Register")}
           </Link>
 
+        </div>
+
+
+        {/* =================================================
+            SKIP FOR NOW ACTION
+        ================================================= */}
+
+        <div className="auth-skip-action">
+          <button
+            type="button"
+            className="auth-skip-btn"
+            onClick={handleSkip}
+          >
+            <span>{txt("પછીથી લૉગિન કરો (Skip)", "बाद में लॉगिन करें (Skip)", "Skip for now")}</span>
+            <ChevronRight size={16} />
+          </button>
         </div>
 
 
