@@ -1467,19 +1467,9 @@ function Navbar() {
         ================================================= */}
 
         <div className="side-menu-footer">
-
-          <span className="side-menu-footer-icon-wrap">
-            <img
-              src="/icons/icon-192x192.png"
-              alt="Bhagavad Gita"
-              className="side-menu-footer-logo-img"
-            />
-          </span>
-
           <p>
             ॥ श्रीमद्भगवद्गीता ॥
           </p>
-
         </div>
 
       </aside>
