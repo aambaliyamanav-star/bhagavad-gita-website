@@ -126,6 +126,7 @@ export default function FeedbackModal() {
               setExistingRating(data.rating || 0);
               setRating(data.rating);
               setIsLocked(Boolean(data.isLocked || data.rating === 5));
+              localStorage.setItem("gita_rating_submitted", "true");
             } else {
               setHasRated(false);
               setExistingRating(0);
@@ -168,7 +169,7 @@ export default function FeedbackModal() {
     }
   };
 
-  // Listen to open-feedback-modal event
+  // Listen to manual open-feedback-modal event
   useEffect(() => {
     const handleOpenEvent = () => {
       setIsOpen(true);
@@ -179,6 +180,40 @@ export default function FeedbackModal() {
     window.addEventListener("open-feedback-modal", handleOpenEvent);
     return () => {
       window.removeEventListener("open-feedback-modal", handleOpenEvent);
+    };
+  }, []);
+
+  // Listen to sequential flow trigger: gita-login-prompt-done
+  useEffect(() => {
+    const handleAutoPrompt = () => {
+      // 1. If rating already submitted, NEVER prompt again!
+      const alreadyRated = localStorage.getItem("gita_rating_submitted") === "true";
+      if (alreadyRated) return;
+
+      // 2. Check 2-Day Cooldown (48 hours)
+      // "notification ni jem 2 2 divse aavvu joie ane tema pan skip no option aave ane tya shudhi j aavvu joie jya shudhi te rating aape nay"
+      const skippedTime = localStorage.getItem("gita_rating_skipped_time");
+      if (skippedTime) {
+        const TWO_DAYS_MS = 2 * 24 * 60 * 60 * 1000;
+        if (Date.now() - Number(skippedTime) < TWO_DAYS_MS) {
+          return;
+        }
+      }
+
+      // 3. Gentle delay before displaying
+      const timer = setTimeout(() => {
+        setIsOpen(true);
+        setError("");
+        fetchUserRating();
+        fetchStats();
+      }, 450);
+
+      return () => clearTimeout(timer);
+    };
+
+    window.addEventListener("gita-login-prompt-done", handleAutoPrompt);
+    return () => {
+      window.removeEventListener("gita-login-prompt-done", handleAutoPrompt);
     };
   }, []);
 
@@ -262,6 +297,8 @@ export default function FeedbackModal() {
     if (success) {
       setSubmitted(true);
       setMessage("");
+      localStorage.setItem("gita_rating_submitted", "true");
+      localStorage.removeItem("gita_rating_skipped_time");
       fetchUserRating();
       fetchStats();
     } else {
@@ -270,6 +307,10 @@ export default function FeedbackModal() {
   };
 
   const handleClose = () => {
+    // If closing/skipping before submitting or locking, set 2-day cooldown
+    if (!isLocked && !hasRated && !submitted) {
+      localStorage.setItem("gita_rating_skipped_time", Date.now().toString());
+    }
     setIsOpen(false);
     setTimeout(() => {
       setSubmitted(false);
@@ -553,35 +594,45 @@ export default function FeedbackModal() {
                     </div>
                   )}
 
-                  {/* Submit Button */}
-                  <button
-                    type="submit"
-                    className="feedback-submit-btn"
-                    disabled={submitting}
-                  >
-                    {submitting ? (
-                      <>
-                        <Loader2
-                          size={18}
-                          className="feedback-spinning"
-                        />
-                        <span>
-                          {txt("સબમિટ થઈ રહ્યું છે...", "सबमिट हो रहा है...", "Submitting...")}
-                        </span>
-                      </>
-                    ) : (
-                      <>
-                        <Send size={16} />
-                        <span>
-                          {isLocked
-                            ? txt("સૂચન સબમિટ કરો", "सुझाव सबमिट करें", "Submit Suggestion")
-                            : hasRated
-                            ? txt("રેટિંગ / સૂચન અપડેટ કરો", "रेटिंग / सुझाव अपडेट करें", "Update Rating / Suggestion")
-                            : txt("રેટિંગ અને સૂચન સબમિટ કરો", "रेटिंग और सुझाव सबमिट करें", "Submit Rating & Suggestion")}
-                        </span>
-                      </>
-                    )}
-                  </button>
+                  {/* Action Buttons: Submit & Skip */}
+                  <div className="feedback-form-actions">
+                    <button
+                      type="submit"
+                      className="feedback-submit-btn"
+                      disabled={submitting}
+                    >
+                      {submitting ? (
+                        <>
+                          <Loader2
+                            size={18}
+                            className="feedback-spinning"
+                          />
+                          <span>
+                            {txt("સબમિટ થઈ રહ્યું છે...", "सबमिट हो रहा है...", "Submitting...")}
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <Send size={16} />
+                          <span>
+                            {isLocked
+                              ? txt("સૂચન સબમિટ કરો", "सुझाव सबमिट करें", "Submit Suggestion")
+                              : hasRated
+                              ? txt("રેટિંગ / સૂચન અપડેટ કરો", "रेटिंग / सुझाव अपडेट करें", "Update Rating / Suggestion")
+                              : txt("રેટિંગ અને સૂચન સબમિટ કરો", "रेटिंग और सुझाव सबमिट करें", "Submit Rating & Suggestion")}
+                          </span>
+                        </>
+                      )}
+                    </button>
+
+                    <button
+                      type="button"
+                      className="feedback-skip-btn"
+                      onClick={handleClose}
+                    >
+                      {txt("પછીથી (Skip)", "बाद में (Skip)", "Later (Skip)")}
+                    </button>
+                  </div>
                 </form>
               </>
             )}

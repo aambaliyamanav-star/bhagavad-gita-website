@@ -32,11 +32,9 @@ function getApiBase() {
     : "https://bhagavad-gita-website.onrender.com";
 }
 
-// Check if push notifications are supported and running as App
+// Check if push notifications are supported across web and app
 export function isAppPushSupported() {
   if (typeof window === "undefined") return false;
-  // STRICT: Only true if running inside installed standalone app!
-  if (!checkIsInstalled()) return false;
   return "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
 }
 

@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Bell, Sparkles, X, Check } from "lucide-react";
-import { checkIsInstalled } from "../utils/pwaManager.js";
 import {
   isAppPushSupported,
   isAppNotificationEnabled,
@@ -13,57 +12,80 @@ import { useAuth } from "../context/AuthContext.jsx";
 import { useLanguage } from "../context/LanguageContext.jsx";
 import "./AppNotificationPrompt.css";
 
+const TWO_DAYS_MS = 2 * 24 * 60 * 60 * 1000; // 48 hours cooldown
+
 function AppNotificationPrompt() {
   const { user } = useAuth();
-  const { isHindi, isEnglish, isGujarati, txt } = useLanguage();
+  const { txt } = useLanguage();
   const [showPrompt, setShowPrompt] = useState(false);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
+  // Notify next modal in sequence (Login prompt)
+  const finishStep = () => {
+    try {
+      window.dispatchEvent(new CustomEvent("gita-notification-prompt-done"));
+    } catch (e) {}
+  };
+
   useEffect(() => {
-    // 1. STRICT: If not running as installed standalone app, NEVER show or run!
-    if (!checkIsInstalled()) {
-      return;
-    }
+    const handleStartNotificationCheck = () => {
+      // 1. If push notifications not supported in this browser, move to next step
+      if (!isAppPushSupported()) {
+        finishStep();
+        return;
+      }
 
-    // Track app open in analytics
-    trackAppInstallOrOpen(false);
+      // Track open
+      try {
+        trackAppInstallOrOpen(false);
+        recordAppOpen(user);
+      } catch (e) {}
 
-    // 2. If push not supported in this runtime, skip
-    if (!isAppPushSupported()) {
-      return;
-    }
+      // 2. If notifications already enabled, auto-sync and skip prompt permanently!
+      if (
+        isAppNotificationEnabled() ||
+        (typeof Notification !== "undefined" && Notification.permission === "granted") ||
+        localStorage.getItem("app_push_notifications_enabled") === "true"
+      ) {
+        localStorage.setItem("app_push_notifications_enabled", "true");
+        try {
+          syncAppSubscription(user);
+        } catch (e) {}
+        finishStep();
+        return;
+      }
 
-    // Record open in app for daily goal tracking
-    recordAppOpen(user);
+      // 3. If permission denied in system/browser settings, skip
+      if (typeof Notification !== "undefined" && Notification.permission === "denied") {
+        finishStep();
+        return;
+      }
 
-    // 3. If notifications already enabled, auto-sync and skip prompt
-    if (isAppNotificationEnabled()) {
-      syncAppSubscription(user);
-      return;
-    }
+      // 4. Check 2-Day Cooldown (48 hours)
+      // "ek var skip karya pachi 2 divse aavvu joie jya sudhi notification on no kare tya shudhi"
+      const skippedTime = localStorage.getItem("gita_notif_skipped_time");
+      if (skippedTime) {
+        const timeDiff = Date.now() - Number(skippedTime);
+        if (timeDiff < TWO_DAYS_MS) {
+          finishStep();
+          return;
+        }
+      }
 
-    // 4. If permission denied in browser/system settings, skip
-    if (Notification.permission === "denied") {
-      return;
-    }
+      // 5. Eligible! Show prompt with gentle 350ms delay
+      const timer = setTimeout(() => {
+        setShowPrompt(true);
+      }, 350);
 
-    // 5. If running in installed app for the very first time, wait for language selection first
-    if (localStorage.getItem("gita_app_lang_selected") !== "true") {
-      return;
-    }
+      return () => clearTimeout(timer);
+    };
 
-    // 6. If dismissed in the current session, don't nag repeatedly on every page navigation
-    if (sessionStorage.getItem("app_notif_dismissed_session") === "true") {
-      return;
-    }
-
-    // Gentle 1.5-second delay after opening the app to remind user
-    const timer = setTimeout(() => {
-      setShowPrompt(true);
-    }, 1500);
-
-    return () => clearTimeout(timer);
+    // Listen for language selection completion
+    window.addEventListener("gita-language-selected", handleStartNotificationCheck);
+    return () => {
+      window.removeEventListener("gita-language-selected", handleStartNotificationCheck);
+    };
   }, [user]);
 
   // Listen for manual changes from Navbar toggle
@@ -71,6 +93,9 @@ function AppNotificationPrompt() {
     const handleStatusChanged = (e) => {
       if (e.detail?.enabled) {
         setShowPrompt(false);
+        localStorage.setItem("app_push_notifications_enabled", "true");
+        localStorage.removeItem("gita_notif_skipped_time");
+        finishStep();
       }
     };
     window.addEventListener("app-notification-status-changed", handleStatusChanged);
@@ -86,19 +111,27 @@ function AppNotificationPrompt() {
 
     if (res.success) {
       setSuccess(true);
-      trackAppInstallOrOpen(false);
+      localStorage.setItem("app_push_notifications_enabled", "true");
+      localStorage.removeItem("gita_notif_skipped_time");
+      try {
+        trackAppInstallOrOpen(false);
+      } catch (e) {}
+
       setTimeout(() => {
         setShowPrompt(false);
-      }, 1500);
+        finishStep();
+      }, 1200);
     } else {
       setShowPrompt(false);
+      finishStep();
     }
   };
 
   const handleDismiss = () => {
     setShowPrompt(false);
-    // Dismiss only for this active browsing session; reminds them on next app open
-    sessionStorage.setItem("app_notif_dismissed_session", "true");
+    // 2-day cooldown timestamp saved in localStorage
+    localStorage.setItem("gita_notif_skipped_time", Date.now().toString());
+    finishStep();
   };
 
   if (!showPrompt) return null;
