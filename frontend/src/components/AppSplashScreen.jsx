@@ -2,7 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import "./AppSplashScreen.css";
 
 export default function AppSplashScreen() {
-  const [showSplash, setShowSplash] = useState(true);
+  // Check if splash was already played in this browsing/app session (e.g. on page refresh)
+  const isAlreadyShown =
+    typeof window !== "undefined" &&
+    sessionStorage.getItem("gita_splash_already_shown") === "true";
+
+  const [showSplash, setShowSplash] = useState(!isAlreadyShown);
   const [isFadingBackdrop, setIsFadingBackdrop] = useState(false);
   const [isFlying, setIsFlying] = useState(false);
   const logoRef = useRef(null);
@@ -10,7 +15,23 @@ export default function AppSplashScreen() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // 1. Ensure target navbar logo is completely hidden before splash logo arrives
+    // IF ALREADY SHOWN IN THIS SESSION (PAGE REFRESH):
+    // Do NOT play splash screen again! Keep navbar logo visible immediately.
+    if (isAlreadyShown) {
+      const target = document.getElementById("navbar-gita-logo");
+      if (target) {
+        target.classList.remove("logo-hidden-for-splash");
+      }
+      try {
+        window.dispatchEvent(new CustomEvent("gita-splash-finished"));
+      } catch (e) {}
+      return;
+    }
+
+    // Mark as shown so refreshing the page NEVER shows the splash again!
+    sessionStorage.setItem("gita_splash_already_shown", "true");
+
+    // 1. Ensure target navbar logo is hidden until our splash logo docks into it
     const hideNavLogo = () => {
       const target = document.getElementById("navbar-gita-logo");
       if (target) {
@@ -27,7 +48,7 @@ export default function AppSplashScreen() {
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
-    // 2. Start flight and shrinking in parallel across the flight path
+    // 2. Start smooth continuous flight into navbar (single smooth GPU curve)
     const flightTimer = setTimeout(() => {
       clearInterval(safetyCheck);
 
@@ -47,7 +68,7 @@ export default function AppSplashScreen() {
         const deltaY = targetCenterY - splashCenterY;
         const scale = targetRect.width / splashRect.width;
 
-        // Feed exact pixel trajectory to keyframe animation
+        // Feed exact pixel trajectory to single-curve keyframe animation
         splashLogo.style.setProperty("--fly-x", `${deltaX}px`);
         splashLogo.style.setProperty("--fly-y", `${deltaY}px`);
         splashLogo.style.setProperty("--fly-scale", scale.toString());
@@ -55,9 +76,9 @@ export default function AppSplashScreen() {
         setIsFlying(true);
         setIsFadingBackdrop(true);
       }
-    }, 50);
+    }, 40);
 
-    // 3. Complete transition at 740ms (0.68s flight finishes, perfectly docks into navbar)
+    // 3. Complete transition at 680ms (0.62s flight completes seamlessly)
     const finishTimer = setTimeout(() => {
       const target = document.getElementById("navbar-gita-logo");
       if (target) {
@@ -75,7 +96,7 @@ export default function AppSplashScreen() {
 
       document.body.style.overflow = originalOverflow;
       setShowSplash(false);
-    }, 740);
+    }, 680);
 
     return () => {
       clearInterval(safetyCheck);
@@ -87,7 +108,7 @@ export default function AppSplashScreen() {
         target.classList.remove("logo-hidden-for-splash");
       }
     };
-  }, []);
+  }, [isAlreadyShown]);
 
   if (!showSplash) return null;
 
@@ -96,7 +117,7 @@ export default function AppSplashScreen() {
       {/* Seamless backdrop matching native phone splash background */}
       <div className={`app-splash-backdrop ${isFadingBackdrop ? "fade-out" : ""}`} />
 
-      {/* Centered logo (moves towards navbar and shrinks simultaneously) */}
+      {/* Centered logo (single smooth GPU accelerated glide into navbar) */}
       <div
         ref={logoRef}
         className={`app-splash-logo-box ${isFlying ? "is-flying" : ""}`}
