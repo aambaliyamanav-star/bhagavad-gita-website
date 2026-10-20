@@ -39,6 +39,7 @@ import FeedbackModal from "./components/FeedbackModal.jsx";
 import InstallPwaBanner from "./components/InstallPwaBanner.jsx";
 import AppNotificationPrompt from "./components/AppNotificationPrompt.jsx";
 import MobileLanguageModal from "./components/MobileLanguageModal.jsx";
+import AppSplashScreen from "./components/AppSplashScreen.jsx";
 import About from "./pages/About.jsx";
 import { trackVisit } from "./utils/visitorTracker.js";
 
@@ -504,6 +505,10 @@ function App() {
       <LanguageProvider>
         <AuthProvider>
           <BrowserRouter>
+            {/* =================================================
+                APP OPENING SPLASH SCREEN & LOGO MORPH ANIMATION
+            ================================================= */}
+            <AppSplashScreen />
             <Navbar />
             <StartupAuthRedirector />
             <AnimatedRoutes />

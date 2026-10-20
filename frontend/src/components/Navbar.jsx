@@ -778,6 +778,7 @@ function Navbar() {
           aria-label={txt("18 અધ્યાય", "18 अध्याय", "18 Chapters")}
         >
           <img
+            id="navbar-gita-logo"
             src="/icons/icon-192x192.png"
             alt={txt("ભગવદ્ ગીતા", "भगवद् गीता", "Bhagavad Gita")}
             className="logo-icon-img"
