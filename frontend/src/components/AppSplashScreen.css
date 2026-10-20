@@ -1,6 +1,6 @@
 /* =========================================================
    APP SPLASH TO NAVBAR LOGO SEAMLESS TRANSITION
-   No second screen, no text, smooth flight directly into navbar
+   Logo moves towards navbar continuously while shrinking
    ========================================================= */
 
 .app-splash-overlay {
@@ -19,7 +19,7 @@
   position: absolute;
   inset: 0;
   background-color: #0d2238;
-  transition: opacity 0.48s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: opacity;
 }
 
@@ -39,6 +39,33 @@
   border-radius: 20px;
   will-change: transform, border-radius;
   transform-origin: center center;
+}
+
+/* Active flight animation: Logo moves towards navbar immediately and shrinks continuously as it travels */
+.app-splash-logo-box.is-flying {
+  animation: logoGlideToNav 0.68s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+}
+
+@keyframes logoGlideToNav {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+    border-radius: 20px;
+  }
+  30% {
+    /* Starts moving towards navbar immediately with full presence */
+    transform: translate3d(calc(var(--fly-x) * 0.35), calc(var(--fly-y) * 0.35), 0) scale(0.88);
+    border-radius: 16px;
+  }
+  65% {
+    /* 72% of distance traversed, shrinking smoothly along the flight path */
+    transform: translate3d(calc(var(--fly-x) * 0.72), calc(var(--fly-y) * 0.72), 0) scale(0.58);
+    border-radius: 12px;
+  }
+  100% {
+    /* Reaches exact navbar location at target navbar logo size */
+    transform: translate3d(var(--fly-x), var(--fly-y), 0) scale(var(--fly-scale));
+    border-radius: 8px;
+  }
 }
 
 .app-splash-logo-img {

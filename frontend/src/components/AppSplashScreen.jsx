@@ -4,7 +4,7 @@ import "./AppSplashScreen.css";
 export default function AppSplashScreen() {
   const [showSplash, setShowSplash] = useState(true);
   const [isFadingBackdrop, setIsFadingBackdrop] = useState(false);
-  const [flyStyle, setFlyStyle] = useState({});
+  const [isFlying, setIsFlying] = useState(false);
   const logoRef = useRef(null);
 
   useEffect(() => {
@@ -21,17 +21,15 @@ export default function AppSplashScreen() {
     hideNavLogo();
 
     // Safety check for target element
-    const safetyCheck = setInterval(hideNavLogo, 40);
+    const safetyCheck = setInterval(hideNavLogo, 30);
 
     // Lock body scroll during the brief transition
     const originalOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
-    // 2. Start flight immediately after initial paint (tiny 60ms delay)
-    // Seamlessly connects the first opening logo straight into navbar!
+    // 2. Start flight and shrinking in parallel across the flight path
     const flightTimer = setTimeout(() => {
       clearInterval(safetyCheck);
-      setIsFadingBackdrop(true);
 
       const target = document.getElementById("navbar-gita-logo");
       const splashLogo = logoRef.current;
@@ -49,15 +47,17 @@ export default function AppSplashScreen() {
         const deltaY = targetCenterY - splashCenterY;
         const scale = targetRect.width / splashRect.width;
 
-        setFlyStyle({
-          transform: `translate3d(${deltaX}px, ${deltaY}px, 0) scale(${scale})`,
-          borderRadius: "8px",
-          transition: "transform 0.65s cubic-bezier(0.2, 0.95, 0.3, 1), border-radius 0.65s ease",
-        });
-      }
-    }, 60);
+        // Feed exact pixel trajectory to keyframe animation
+        splashLogo.style.setProperty("--fly-x", `${deltaX}px`);
+        splashLogo.style.setProperty("--fly-y", `${deltaY}px`);
+        splashLogo.style.setProperty("--fly-scale", scale.toString());
 
-    // 3. Complete transition at 720ms (flight finished, perfectly dock into navbar)
+        setIsFlying(true);
+        setIsFadingBackdrop(true);
+      }
+    }, 50);
+
+    // 3. Complete transition at 740ms (0.68s flight finishes, perfectly docks into navbar)
     const finishTimer = setTimeout(() => {
       const target = document.getElementById("navbar-gita-logo");
       if (target) {
@@ -75,7 +75,7 @@ export default function AppSplashScreen() {
 
       document.body.style.overflow = originalOverflow;
       setShowSplash(false);
-    }, 720);
+    }, 740);
 
     return () => {
       clearInterval(safetyCheck);
@@ -96,11 +96,10 @@ export default function AppSplashScreen() {
       {/* Seamless backdrop matching native phone splash background */}
       <div className={`app-splash-backdrop ${isFadingBackdrop ? "fade-out" : ""}`} />
 
-      {/* Centered logo (identical in size and position to native splash icon) */}
+      {/* Centered logo (moves towards navbar and shrinks simultaneously) */}
       <div
         ref={logoRef}
-        className="app-splash-logo-box"
-        style={flyStyle}
+        className={`app-splash-logo-box ${isFlying ? "is-flying" : ""}`}
       >
         <img
           src="/icons/icon-192x192.png"
