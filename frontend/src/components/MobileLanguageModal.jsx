@@ -99,16 +99,12 @@ export default function MobileLanguageModal() {
 
   const handleConfirm = () => {
     setLanguage(selectedLang);
-    const isStandalone = isRunningInStandaloneApp();
 
-    if (isStandalone) {
-      // PWA: Save permanently so it never asks on subsequent app launches
-      localStorage.setItem("gita_app_lang_selected", "true");
-    } else {
-      // Mobile Web: Save for this session so it doesn't interrupt while browsing,
-      // but will politely prompt on the next new web session
-      sessionStorage.setItem("gita_web_lang_selected", "true");
-    }
+    // 1. Permanent flag for installed App: Once selected, NEVER asks again on subsequent app opens
+    localStorage.setItem("gita_app_lang_selected", "true");
+
+    // 2. Session flag for Web: Saved for this browsing session, prompts on next new visit
+    sessionStorage.setItem("gita_web_lang_selected", "true");
 
     setIsClosing(true);
     setTimeout(() => {

@@ -11,7 +11,9 @@ let isInstalled = false;
 // Check if running in standalone mode (already running inside installed app)
 export function isRunningInStandaloneApp() {
   if (typeof window === "undefined") return false;
-  return Boolean(
+  if (sessionStorage.getItem("gita_is_app_session") === "true") return true;
+
+  const isStandalone = Boolean(
     window.matchMedia("(display-mode: standalone)").matches ||
     window.matchMedia("(display-mode: fullscreen)").matches ||
     window.matchMedia("(display-mode: minimal-ui)").matches ||
@@ -19,6 +21,14 @@ export function isRunningInStandaloneApp() {
     (document.referrer && document.referrer.includes("android-app://")) ||
     (window.location.search && window.location.search.includes("source=pwa"))
   );
+
+  if (isStandalone) {
+    try {
+      sessionStorage.setItem("gita_is_app_session", "true");
+    } catch (e) {}
+  }
+
+  return isStandalone;
 }
 
 // Backwards compatibility alias
