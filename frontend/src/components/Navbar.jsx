@@ -8,7 +8,6 @@ import {
 import {
   ChevronLeft,
   ChevronRight,
-  Flower2,
   Home,
   BookOpen,
   Heart,
@@ -691,10 +690,10 @@ function Navbar() {
           title={txt("18 અધ્યાય", "18 अध्याय", "18 Chapters")}
           aria-label={txt("18 અધ્યાય", "18 अध्याय", "18 Chapters")}
         >
-          <Flower2
-            size={26}
-            strokeWidth={1.8}
-            className="logo-icon"
+          <img
+            src="/icons/icon-192x192.png"
+            alt={txt("ભગવદ્ ગીતા", "भगवद् गीता", "Bhagavad Gita")}
+            className="logo-icon-img"
           />
           {txt("ભગવદ્ ગીતા", "भगवद् गीता", "Bhagavad Gita")}
         </Link>
@@ -849,9 +848,10 @@ function Navbar() {
           <div className="side-menu-title">
 
             <div className="side-menu-logo">
-              <Flower2
-                size={26}
-                strokeWidth={1.6}
+              <img
+                src="/icons/icon-192x192.png"
+                alt={txt("ભગવદ્ ગીતા", "भगवद् गीता", "Bhagavad Gita")}
+                className="side-menu-logo-img"
               />
             </div>
 
@@ -1469,7 +1469,11 @@ function Navbar() {
         <div className="side-menu-footer">
 
           <span className="side-menu-footer-icon-wrap">
-            <Flower2 size={22} strokeWidth={1.8} className="side-menu-footer-icon" />
+            <img
+              src="/icons/icon-192x192.png"
+              alt="Bhagavad Gita"
+              className="side-menu-footer-logo-img"
+            />
           </span>
 
           <p>
