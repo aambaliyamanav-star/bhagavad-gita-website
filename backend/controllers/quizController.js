@@ -39,6 +39,9 @@ const getQuizQuestions = async (req, res) => {
       category,
       chapter,
       limit,
+      shlokaFrom,
+      shlokaTo,
+      shlokaRange,
     } = req.query;
 
     // =================================================
@@ -85,6 +88,25 @@ const getQuizQuestions = async (req, res) => {
     // =================================================
     // FETCH QUESTIONS
     // =================================================
+
+    // =================================================
+    // SHLOKA RANGE FILTER
+    // =================================================
+
+    let from = shlokaFrom ? Number(shlokaFrom) : null;
+    let to = shlokaTo ? Number(shlokaTo) : null;
+
+    if ((!from || !to) && shlokaRange && shlokaRange !== "all") {
+      const parts = String(shlokaRange).split("-").map(Number);
+      if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+        from = parts[0];
+        to = parts[1];
+      }
+    }
+
+    if (from !== null && to !== null) {
+      query.shlokaNumber = { $gte: from, $lte: to };
+    }
 
     let questions =
       await QuizQuestion.find(query);
@@ -148,6 +170,81 @@ const getQuizQuestions = async (req, res) => {
     });
   }
 };
+
+// =====================================================
+// GET QUIZ QUESTIONS COUNT
+// =====================================================
+
+const getQuizQuestionsCount = async (req, res) => {
+  try {
+    const {
+      category,
+      chapter,
+      shlokaFrom,
+      shlokaTo,
+      shlokaRange,
+    } = req.query;
+
+    const query = {
+      isActive: true,
+    };
+
+    if (chapter && chapter !== "all") {
+      const chapterNumber = Number(chapter);
+      if (
+        Number.isInteger(chapterNumber) &&
+        chapterNumber >= 1 &&
+        chapterNumber <= 18
+      ) {
+        query.chapterNumber = chapterNumber;
+      }
+    }
+
+    if (category && category !== "all") {
+      if (category.startsWith("chapter-")) {
+        query.category = category;
+      } else if (category === "chapter" && query.chapterNumber) {
+        query.category = {
+          $in: [`chapter-${query.chapterNumber}`, "chapter", "gita"],
+        };
+      } else {
+        query.category = category;
+      }
+    }
+
+    let from = shlokaFrom ? Number(shlokaFrom) : null;
+    let to = shlokaTo ? Number(shlokaTo) : null;
+
+    if ((!from || !to) && shlokaRange && shlokaRange !== "all") {
+      const parts = String(shlokaRange).split("-").map(Number);
+      if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
+        from = parts[0];
+        to = parts[1];
+      }
+    }
+
+    if (from !== null && to !== null) {
+      query.shlokaNumber = { $gte: from, $lte: to };
+    }
+
+    const count = await QuizQuestion.countDocuments(query);
+
+    return res.status(200).json({
+      success: true,
+      count,
+      totalQuestions: count,
+    });
+  } catch (error) {
+    console.error("❌ Get Quiz Questions Count Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Questions count fetch કરવામાં error આવ્યો.",
+      count: 0,
+      totalQuestions: 0,
+    });
+  }
+};
+
 
 
 // =====================================================
@@ -224,6 +321,7 @@ const submitQuiz = async (
       chapter,
       answers,
       timeTaken,
+      shlokaRange,
     } = req.body;
 
     // =================================================
@@ -542,6 +640,9 @@ const submitQuiz = async (
 
         percentage,
 
+        shlokaRange:
+          shlokaRange ? String(shlokaRange).trim() : "",
+
         timeTaken:
           Number(timeTaken) || 0,
 
@@ -727,6 +828,7 @@ const getAllQuizQuestionsAdmin =
       const {
         category,
         chapter,
+        shloka,
       } = req.query;
 
       const query = {};
@@ -763,6 +865,13 @@ const getAllQuizQuestionsAdmin =
         ) {
           query.chapterNumber =
             chapterNumber;
+        }
+      }
+
+      if (shloka && shloka !== "all") {
+        const shlokaNum = Number(shloka);
+        if (Number.isInteger(shlokaNum) && shlokaNum >= 1) {
+          query.shlokaNumber = shlokaNum;
         }
       }
 
@@ -814,6 +923,7 @@ const addQuizQuestion = async (
     const {
       category,
       chapterNumber,
+      shlokaNumber,
       question,
       options,
       correctAnswer,
@@ -1027,6 +1137,9 @@ const addQuizQuestion = async (
         chapterNumber:
           finalChapterNumber,
 
+        shlokaNumber:
+          shlokaNumber && Number(shlokaNumber) >= 1 ? Number(shlokaNumber) : null,
+
         question:
           question.trim(),
 
@@ -1121,6 +1234,7 @@ const updateQuizQuestion =
       const {
         category,
         chapterNumber,
+        shlokaNumber,
         question,
         options,
         correctAnswer,
@@ -1342,6 +1456,11 @@ const updateQuizQuestion =
 
       existingQuestion.chapterNumber =
         finalChapterNumber;
+
+      if (shlokaNumber !== undefined) {
+        existingQuestion.shlokaNumber =
+          shlokaNumber && Number(shlokaNumber) >= 1 ? Number(shlokaNumber) : null;
+      }
 
       existingQuestion.question =
         question.trim();
@@ -1637,6 +1756,8 @@ const autoTranslateQuizQuestion = async (req, res) => {
 
 module.exports = {
   getQuizQuestions,
+
+  getQuizQuestionsCount,
 
   getQuizQuestionById,
 

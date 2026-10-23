@@ -2,6 +2,7 @@ const express = require("express");
 
 const {
   getQuizQuestions,
+  getQuizQuestionsCount,
   getQuizQuestionById,
   submitQuiz,
   getMyQuizResults,
@@ -26,6 +27,12 @@ const router = express.Router();
 // =====================================================
 // USER QUIZ ROUTES
 // =====================================================
+
+// GET QUIZ QUESTIONS COUNT (FOR CATEGORY SETUP)
+router.get(
+  "/questions/count",
+  getQuizQuestionsCount
+);
 
 // GET QUIZ QUESTIONS
 
