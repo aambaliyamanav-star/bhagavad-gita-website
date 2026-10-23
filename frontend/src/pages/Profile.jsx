@@ -26,7 +26,6 @@ import {
 import { useAuth } from "../context/AuthContext.jsx";
 import { useLanguage } from "../context/LanguageContext.jsx";
 import { getLocalizedStates, getCitiesForState } from "../utils/indiaLocations.js";
-import SearchableLocationSelect from "../components/SearchableLocationSelect.jsx";
 import "./Profile.css";
 
 function Profile() {
@@ -1401,37 +1400,29 @@ const [showNewPassword, setShowNewPassword] =
                 <Landmark size={16} className="btn-icon" /> {txt("રાજ્ય", "राज्य", "State")}
               </label>
 
-              <SearchableLocationSelect
-                id="profile-state"
+              <select
                 name="state"
                 value={formData.state}
-                items={stateList}
-                language={currentLang}
-                placeholder={txt("રાજ્ય પસંદ કરો અથવા શોધો...", "राज्य चुनें या खोजें...", "Select or search state...")}
-                emptyText={txt("કોઈ રાજ્ય મળ્યું નથી", "कोई राज्य नहीं मिला", "No state found")}
-                addCustomText={txt("+ આ રાજ્ય દાખલ કરો:", "+ यह राज्य दर्ज करें:", "+ Add this state:")}
-                onChange={(selectedId) => {
+                onChange={(e) => {
+                  const newState = e.target.value;
                   setFormData((prev) => ({
                     ...prev,
-                    state: selectedId,
-                    customState: selectedId === "OTHER" ? prev.customState : "",
-                    city: selectedId === "OTHER" ? "OTHER" : "",
+                    state: newState,
+                    customState: "",
+                    city: newState === "OTHER" ? "OTHER" : "",
                     customCity: "",
                   }));
                 }}
-                onCustomEnter={(customVal) => {
-                  setFormData((prev) => ({
-                    ...prev,
-                    state: "OTHER",
-                    customState: customVal,
-                    city: "OTHER",
-                    customCity: "",
-                  }));
-                }}
-              />
+              >
+                {stateList.map((st) => (
+                  <option key={st.id} value={st.id}>
+                    {st.name}
+                  </option>
+                ))}
+              </select>
 
               {formData.state === "OTHER" && (
-                <div className="profile-custom-input-box" style={{ marginTop: "10px" }}>
+                <div className="profile-custom-input-box">
                   <input
                     type="text"
                     name="customState"
@@ -1453,35 +1444,31 @@ const [showNewPassword, setShowNewPassword] =
               </label>
 
               {formData.state !== "OTHER" && (
-                <SearchableLocationSelect
-                  id="profile-city"
+                <select
                   name="city"
                   value={formData.city}
-                  items={cityList}
-                  language={currentLang}
-                  placeholder={txt("શહેર અથવા ગામ પસંદ કરો / શોધો...", "शहर या गांव चुनें / खोजें...", "Select or search city / village...")}
-                  emptyText={txt("કોઈ શહેર/ગામ મળ્યું નથી", "कोई शहर/गांव नहीं मिला", "No city/village found")}
-                  addCustomText={txt("+ આ શહેર/ગામ દાખલ કરો:", "+ यह शहर/गांव दर्ज करें:", "+ Add this city/village:")}
-                  onChange={(selectedId, selectedObj) => {
-                    const finalVal = selectedId === "OTHER" ? "OTHER" : (selectedObj?.name || selectedId);
+                  onChange={(e) => {
+                    const val = e.target.value;
                     setFormData((prev) => ({
                       ...prev,
-                      city: finalVal,
-                      customCity: selectedId === "OTHER" ? prev.customCity : "",
+                      city: val,
+                      customCity: val === "OTHER" ? prev.customCity : "",
                     }));
                   }}
-                  onCustomEnter={(customVal) => {
-                    setFormData((prev) => ({
-                      ...prev,
-                      city: "OTHER",
-                      customCity: customVal,
-                    }));
-                  }}
-                />
+                >
+                  <option value="" disabled>
+                    {txt("-- શહેર / ગામ પસંદ કરો --", "-- शहर / गांव चुनें --", "-- Select City / Village --")}
+                  </option>
+                  {cityList.map((c) => (
+                    <option key={c.id} value={c.id === "OTHER" ? "OTHER" : c.name}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
               )}
 
               {(formData.city === "OTHER" || formData.state === "OTHER") && (
-                <div className="profile-custom-input-box" style={{ marginTop: "10px" }}>
+                <div className="profile-custom-input-box">
                   <input
                     type="text"
                     name="customCity"
