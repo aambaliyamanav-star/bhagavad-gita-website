@@ -48,6 +48,22 @@ const userSchema = new mongoose.Schema(
     },
 
     // ===================================================
+    // STATE & CITY (LOCATION)
+    // ===================================================
+
+    state: {
+      type: String,
+      trim: true,
+      default: "Gujarat",
+    },
+
+    city: {
+      type: String,
+      trim: true,
+      default: "",
+    },
+
+    // ===================================================
     // PASSWORD
     // ===================================================
 

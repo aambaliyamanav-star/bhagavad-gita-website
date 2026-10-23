@@ -465,6 +465,12 @@ function Admin() {
         (user.birthDate || "")
           .toLowerCase()
           .includes(searchText) ||
+        (user.state || "")
+          .toLowerCase()
+          .includes(searchText) ||
+        (user.city || "")
+          .toLowerCase()
+          .includes(searchText) ||
         (user.role || "")
           .toLowerCase()
           .includes(searchText)
@@ -1986,6 +1992,10 @@ function Admin() {
 
                       <th>Birth Date</th>
 
+                      <th>State</th>
+
+                      <th>City / Village</th>
+
                       <th>Role</th>
 
                       <th>મુલાકાતો</th>
@@ -2036,6 +2046,18 @@ function Admin() {
                                 )
                               : "-"}
 
+                          </td>
+
+
+                          <td>
+                            <span className="user-location-badge">
+                              {user.state || "Gujarat"}
+                            </span>
+                          </td>
+
+
+                          <td className="user-city-cell">
+                            {user.city || "-"}
                           </td>
 
 

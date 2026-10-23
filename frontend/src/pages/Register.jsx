@@ -15,10 +15,13 @@ import {
   UserPlus,
   RefreshCw,
   Hash,
-  ArrowLeft
+  ArrowLeft,
+  MapPin,
+  Landmark
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useLanguage } from "../context/LanguageContext.jsx";
+import { INDIAN_STATES, getCitiesForState } from "../utils/indiaLocations.js";
 import "./Register.css";
 
 function Register() {
@@ -51,6 +54,8 @@ function Register() {
     mobile: "",
     email: "",
     birthDate: "",
+    state: "Gujarat",
+    city: "",
     password: "",
     confirmPassword: "",
   });
@@ -335,6 +340,28 @@ const [showConfirmPassword, setShowConfirmPassword] =
       return false;
     }
 
+    // STATE
+    if (!formData.state || !formData.state.trim()) {
+      setMessage(
+        txt("કૃપા કરીને તમારું રાજ્ય (State) પસંદ કરો.", "कृपया अपना राज्य (State) चुनें।", "Please select your State.")
+      );
+
+      setMessageType("error");
+
+      return false;
+    }
+
+    // CITY
+    if (!formData.city || !formData.city.trim()) {
+      setMessage(
+        txt("કૃપા કરીને તમારું શહેર અથવા ગામ (City/Village) લખો અથવા પસંદ કરો.", "कृपया अपना शहर या गांव (City/Village) चुनें या लिखें।", "Please select or type your city / village.")
+      );
+
+      setMessageType("error");
+
+      return false;
+    }
+
     return true;
   };
 
@@ -374,6 +401,10 @@ const [showConfirmPassword, setShowConfirmPassword] =
               convertBirthDateForServer(
                 formData.birthDate
               ),
+
+            state: formData.state.trim(),
+
+            city: formData.city.trim(),
           }),
         }
       );
@@ -583,6 +614,10 @@ const [showConfirmPassword, setShowConfirmPassword] =
                 birthDate
               ),
 
+            state: formData.state.trim(),
+
+            city: formData.city.trim(),
+
             password,
 
             otp,
@@ -611,6 +646,8 @@ const [showConfirmPassword, setShowConfirmPassword] =
         mobile: "",
         email: "",
         birthDate: "",
+        state: "Gujarat",
+        city: "",
         password: "",
         confirmPassword: "",
       });
@@ -976,6 +1013,82 @@ const [showConfirmPassword, setShowConfirmPassword] =
 
               </div>
 
+            </div>
+
+            {/* STATE (રાજ્ય) */}
+            <div className="register-field">
+              <label htmlFor="state">
+                <span className="field-icon teal">
+                  <Landmark size={16} />
+                </span>
+                <span>
+                  {txt("રાજ્ય (State)", "राज्य (State)", "State")}
+                </span>
+              </label>
+
+              <select
+                id="state"
+                name="state"
+                value={formData.state}
+                onChange={(e) => {
+                  const newState = e.target.value;
+                  setFormData((previous) => ({
+                    ...previous,
+                    state: newState,
+                    city: "",
+                  }));
+                  setMessage("");
+                  setMessageType("");
+                }}
+                className="register-select"
+              >
+                {INDIAN_STATES.map((st) => (
+                  <option key={st.id} value={st.id}>
+                    {isEnglish ? st.nameEn : isHindi ? st.nameHi : st.nameGu}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* CITY / VILLAGE (શહેર / ગામ / તાલુકો) */}
+            <div className="register-field">
+              <label htmlFor="city">
+                <span className="field-icon green">
+                  <MapPin size={16} />
+                </span>
+                <span>
+                  {txt("શહેર / ગામ / તાલુકો (City / Village)", "शहर / गांव / तहसील (City / Village)", "City / Town / Village")}
+                </span>
+              </label>
+
+              <div className="register-city-input-wrap">
+                <input
+                  id="city"
+                  type="text"
+                  name="city"
+                  list="city-options-list"
+                  placeholder={
+                    formData.state === "Gujarat"
+                      ? txt("તમારું શહેર કે ગામ પસંદ કરો અથવા લખો...", "अपना शहर या गांव चुनें या लिखें...", "Select or type your city / village...")
+                      : txt("શહેર અથવા ગામ લખો અથવા પસંદ કરો...", "शहर या गांव लिखें या चुनें...", "Enter or select city / village...")
+                  }
+                  value={formData.city}
+                  onChange={handleChange}
+                  autoComplete="address-level2"
+                />
+                <datalist id="city-options-list">
+                  {getCitiesForState(formData.state).map((cityItem, idx) => (
+                    <option key={idx} value={cityItem} />
+                  ))}
+                </datalist>
+              </div>
+              <small className="register-field-hint">
+                {txt(
+                  "💡 લિસ્ટમાંથી પસંદ કરો અથવા તમારા ગામ/શહેરનું નામ સીધું ટાઈપ કરો.",
+                  "💡 सूची में से चुनें या अपने गांव/शहर का नाम सीधे टाइप करें।",
+                  "💡 Select from the list or type your village/city directly."
+                )}
+              </small>
             </div>
 
             {/* SEND OTP */}
