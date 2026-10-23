@@ -189,15 +189,19 @@
 }
 
 .app-notif-later-btn {
-  width: 100%;
-  padding: 8px;
-  border: none;
-  background: transparent;
+  width: auto;
+  margin: 4px auto 0;
+  padding: 4px 12px;
+  border: none !important;
+  outline: none;
+  background: transparent !important;
+  box-shadow: none !important;
   color: #64748b;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 500;
   cursor: pointer;
   transition: color 0.2s ease;
+  text-decoration: none;
 }
 
 [data-theme="dark"] .app-notif-later-btn {
@@ -206,6 +210,11 @@
 
 .app-notif-later-btn:hover {
   color: #0f172a;
+  text-decoration: underline;
+}
+
+[data-theme="dark"] .app-notif-later-btn:hover {
+  color: #ffffff;
 }
 
 /* Success state */

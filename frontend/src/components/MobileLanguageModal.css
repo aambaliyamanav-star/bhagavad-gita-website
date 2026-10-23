@@ -392,6 +392,35 @@
   transform: translateX(3px);
 }
 
+.mobile-lang-skip-btn {
+  width: auto;
+  margin: 8px auto 0;
+  padding: 4px 12px;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  text-align: center;
+  text-decoration: none;
+}
+
+.mobile-lang-skip-btn:hover {
+  color: #1e293b;
+  text-decoration: underline;
+}
+
+[data-theme="dark"] .mobile-lang-skip-btn {
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .mobile-lang-skip-btn:hover {
+  color: #ffffff;
+}
+
 /* Extra small devices */
 @media (max-width: 360px) {
   .mobile-lang-card {

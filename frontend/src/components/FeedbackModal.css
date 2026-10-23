@@ -463,16 +463,19 @@
 }
 
 .feedback-skip-btn {
-  width: 100%;
-  padding: 8px 12px;
-  background: transparent;
-  border: none;
+  width: auto;
+  margin: 4px auto 0;
+  padding: 4px 12px;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
   color: #64748b;
-  font-size: 0.875rem;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
   transition: color 0.18s ease;
   text-align: center;
+  text-decoration: none;
 }
 
 .feedback-skip-btn:hover {
