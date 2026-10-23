@@ -74,7 +74,17 @@ export default function MobileLanguageModal() {
       }
     };
 
-    // Wait for splash transition to complete before prompting
+    const isStandalone = isRunningInStandaloneApp();
+
+    if (!isStandalone) {
+      // Regular Web browser: no splash screen, run language check directly!
+      runLanguageCheck();
+      return () => {
+        clearTimeout(modalTimer);
+      };
+    }
+
+    // Installed App (PWA): Wait for splash transition to complete before prompting
     window.addEventListener("gita-splash-finished", runLanguageCheck, { once: true });
     // Safety fallback in case splash completes earlier or is skipped
     const fallbackTimer = setTimeout(runLanguageCheck, 900);
