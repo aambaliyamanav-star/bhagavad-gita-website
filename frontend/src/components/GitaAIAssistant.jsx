@@ -321,8 +321,20 @@ export default function GitaAIAssistant() {
     }, 2500);
   };
 
-  // WhatsApp-like pill expand & collapse sequence on initial load
+  // WhatsApp-like pill expand & collapse sequence: ONLY on first open per session!
   useEffect(() => {
+    // If already shown in this session (e.g. on page refresh), DO NOT PLAY AGAIN!
+    const introAlreadyShown =
+      typeof window !== "undefined" &&
+      sessionStorage.getItem("gita_fab_intro_shown") === "true";
+
+    if (introAlreadyShown) {
+      return;
+    }
+
+    // Mark as shown so refreshing the page NEVER plays the intro again!
+    sessionStorage.setItem("gita_fab_intro_shown", "true");
+
     let expandTimer;
     let collapseTimer;
 
