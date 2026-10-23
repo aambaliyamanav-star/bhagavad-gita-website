@@ -431,11 +431,6 @@ export default function FeedbackModal() {
                         : "5.0"}
                     </span>
                     <span className="feedback-avg-max">/ 5</span>
-                    {stats && stats.totalCount > 0 && (
-                      <span className="feedback-avg-total">
-                        ({stats.totalCount} {txt("રેટિંગ્સ", "रेटिंग्स", "ratings")})
-                      </span>
-                    )}
                   </div>
                 </div>
 
