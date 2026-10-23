@@ -1,13 +1,19 @@
 import React, { useState, useEffect, useRef } from "react";
+import { isRunningInStandaloneApp } from "../utils/pwaManager.js";
 import "./AppSplashScreen.css";
 
 export default function AppSplashScreen() {
+  // STRICT: Only run in installed standalone App (PWA)! Never on regular Web browser.
+  const isApp = typeof window !== "undefined" && isRunningInStandaloneApp();
+
   // Check if splash was already played in this browsing/app session (e.g. on page refresh)
   const isAlreadyShown =
     typeof window !== "undefined" &&
     sessionStorage.getItem("gita_splash_already_shown") === "true";
 
-  const [showSplash, setShowSplash] = useState(!isAlreadyShown);
+  const shouldShow = isApp && !isAlreadyShown;
+
+  const [showSplash, setShowSplash] = useState(shouldShow);
   const [isFadingBackdrop, setIsFadingBackdrop] = useState(false);
   const [isFlying, setIsFlying] = useState(false);
   const logoRef = useRef(null);
@@ -15,9 +21,9 @@ export default function AppSplashScreen() {
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // IF ALREADY SHOWN IN THIS SESSION (PAGE REFRESH):
-    // Do NOT play splash screen again! Keep navbar logo visible immediately.
-    if (isAlreadyShown) {
+    // IF NOT RUNNING IN APP OR ALREADY SHOWN IN THIS SESSION:
+    // Do NOT play splash screen! Keep navbar logo visible immediately.
+    if (!shouldShow) {
       const target = document.getElementById("navbar-gita-logo");
       if (target) {
         target.classList.remove("logo-hidden-for-splash");
@@ -28,7 +34,7 @@ export default function AppSplashScreen() {
       return;
     }
 
-    // Mark as shown so refreshing the page NEVER shows the splash again!
+    // Mark as shown so refreshing the app NEVER shows the splash again!
     sessionStorage.setItem("gita_splash_already_shown", "true");
 
     // 1. Ensure target navbar logo is hidden until our splash logo docks into it
@@ -108,7 +114,7 @@ export default function AppSplashScreen() {
         target.classList.remove("logo-hidden-for-splash");
       }
     };
-  }, [isAlreadyShown]);
+  }, [shouldShow]);
 
   if (!showSplash) return null;
 
