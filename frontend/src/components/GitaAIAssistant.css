@@ -454,6 +454,41 @@
   }
 }
 
+.gita-hero-logo-box {
+  width: 76px;
+  height: 76px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(17, 85, 204, 0.15));
+  border: 1.5px solid rgba(255, 215, 0, 0.45);
+  box-shadow: 0 8px 24px rgba(10, 61, 143, 0.18), 0 0 14px rgba(255, 215, 0, 0.25);
+  padding: 6px;
+  transition: transform 0.3s ease;
+  animation: heroLogoGlow 3s infinite ease-in-out;
+}
+
+@keyframes heroLogoGlow {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 8px 24px rgba(10, 61, 143, 0.18), 0 0 12px rgba(255, 215, 0, 0.2);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 12px 28px rgba(10, 61, 143, 0.28), 0 0 20px rgba(255, 215, 0, 0.45);
+  }
+}
+
+.gita-hero-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 14px;
+  filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.25));
+}
+
 .gita-hero-greeting {
   font-size: 1.1rem;
   font-weight: 600;
@@ -482,6 +517,11 @@
 }
 
 @media (max-width: 480px) {
+  .gita-hero-logo-box {
+    width: 64px;
+    height: 64px;
+    margin-bottom: 10px;
+  }
   .gita-hero-title {
     font-size: 1.35rem;
   }
