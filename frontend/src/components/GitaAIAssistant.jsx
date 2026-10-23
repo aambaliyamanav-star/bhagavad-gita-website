@@ -284,6 +284,7 @@ export default function GitaAIAssistant() {
   })();
 
   const [isOpen, setIsOpen] = useState(false);
+  const [isLabelExpanded, setIsLabelExpanded] = useState(false);
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -319,6 +320,50 @@ export default function GitaAIAssistant() {
       setToastMessage((cur) => (cur === msg ? null : cur));
     }, 2500);
   };
+
+  // WhatsApp-like pill expand & collapse sequence on initial load
+  useEffect(() => {
+    let expandTimer;
+    let collapseTimer;
+
+    const startPillSequence = () => {
+      expandTimer = setTimeout(() => {
+        setIsLabelExpanded(true);
+
+        collapseTimer = setTimeout(() => {
+          setIsLabelExpanded(false);
+          // Signal to Rating FAB to start its expand sequence next!
+          try {
+            window.dispatchEvent(new CustomEvent("gita-ai-pill-closed"));
+          } catch (e) {}
+        }, 2800);
+      }, 400);
+    };
+
+    const splashAlreadyShown =
+      typeof window !== "undefined" &&
+      sessionStorage.getItem("gita_splash_already_shown") === "true";
+
+    if (!splashAlreadyShown) {
+      const handleSplashDone = () => {
+        startPillSequence();
+      };
+      window.addEventListener("gita-splash-finished", handleSplashDone, { once: true });
+      const fallbackTimer = setTimeout(startPillSequence, 1200);
+      return () => {
+        window.removeEventListener("gita-splash-finished", handleSplashDone);
+        clearTimeout(fallbackTimer);
+        clearTimeout(expandTimer);
+        clearTimeout(collapseTimer);
+      };
+    } else {
+      startPillSequence();
+      return () => {
+        clearTimeout(expandTimer);
+        clearTimeout(collapseTimer);
+      };
+    }
+  }, []);
 
   // Retrieve or resolve the current active conversation object
   const getActiveConversation = () => {
@@ -1160,7 +1205,7 @@ export default function GitaAIAssistant() {
       {!isOpen && (
         <button
           type="button"
-          className="gita-ai-fab"
+          className={`gita-ai-fab ${isLabelExpanded ? "label-expanded" : ""}`}
           onClick={handleFabClick}
           title={txt("ગીતા AI માર્ગદર્શક સાથે વાત કરો", "गीता AI मार्गदर्शक से बात करें", "Talk with Gita AI Guide")}
           aria-label={txt("ગીતા AI ખોલો", "गीता AI खोलें", "Open Gita AI")}
@@ -1173,6 +1218,9 @@ export default function GitaAIAssistant() {
               className="gita-fab-ai-img"
             />
           </div>
+          <span className="gita-ai-fab-pill-text">
+            {txt("ગીતા AI ને પૂછો", "गीता AI से पूछें", "Ask Gita AI")}
+          </span>
         </button>
       )}
 
