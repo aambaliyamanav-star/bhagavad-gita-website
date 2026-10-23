@@ -49,6 +49,29 @@
   animation: modalZoomIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+.share-modal-container::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 280px;
+  height: 280px;
+  background-image: url("/icons/icon-512x512.png");
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.04;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.share-modal-header,
+.share-modal-body {
+  position: relative;
+  z-index: 1;
+}
+
 @keyframes modalZoomIn {
   from {
     opacity: 0;
