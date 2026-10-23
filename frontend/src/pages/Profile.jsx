@@ -25,13 +25,16 @@ import {
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useLanguage } from "../context/LanguageContext.jsx";
-import { INDIAN_STATES, getCitiesForState } from "../utils/indiaLocations.js";
+import { getLocalizedStates, getCitiesForState } from "../utils/indiaLocations.js";
 import "./Profile.css";
 
 function Profile() {
   const navigate = useNavigate();
   const { logout } = useAuth();
   const { isHindi, isEnglish, isGujarati, txt } = useLanguage();
+
+  const currentLang = isEnglish ? "en" : isHindi ? "hi" : "gu";
+  const stateList = getLocalizedStates(currentLang);
 
   // =====================================================
   // USER
@@ -62,10 +65,14 @@ function Profile() {
     email: "",
     birthDate: "",
     state: "Gujarat",
+    customState: "",
     city: "",
+    customCity: "",
     currentPassword: "",
     newPassword: "",
   });
+
+  const cityList = getCitiesForState(formData.state, currentLang);
 
   // =====================================================
   // EMAIL OTP
@@ -209,6 +216,13 @@ const [showNewPassword, setShowNewPassword] =
   const handleEdit = () => {
     if (!user) return;
 
+    const userState = user.state || "Gujarat";
+    const isKnownState = stateList.some((s) => s.id === userState || s.name === userState);
+
+    const initialCityList = getCitiesForState(isKnownState ? userState : "OTHER", currentLang);
+    const userCity = user.city || "";
+    const isKnownCity = initialCityList.some((c) => c.name === userCity);
+
     setFormData({
       name: user.name || "",
       mobile: user.mobile || "",
@@ -218,8 +232,10 @@ const [showNewPassword, setShowNewPassword] =
             .toISOString()
             .split("T")[0]
         : "",
-      state: user.state || "Gujarat",
-      city: user.city || "",
+      state: isKnownState ? userState : "OTHER",
+      customState: isKnownState ? "" : userState,
+      city: isKnownCity ? userCity : (userCity ? "OTHER" : ""),
+      customCity: isKnownCity ? "" : userCity,
       currentPassword: "",
       newPassword: "",
     });
@@ -738,6 +754,16 @@ const [showNewPassword, setShowNewPassword] =
       return;
     }
 
+    const finalState =
+      formData.state === "OTHER"
+        ? (formData.customState || "").trim()
+        : (stateList.find((s) => s.id === formData.state)?.name || formData.state || "").trim();
+
+    const finalCity =
+      formData.city === "OTHER" || formData.state === "OTHER"
+        ? (formData.customCity || "").trim()
+        : (formData.city || "").trim();
+
     try {
       setLoading(true);
       setMessage("");
@@ -758,8 +784,8 @@ const [showNewPassword, setShowNewPassword] =
             mobile: formData.mobile,
             email: formData.email,
             birthDate: formData.birthDate,
-            state: formData.state,
-            city: formData.city,
+            state: finalState,
+            city: finalCity,
 
             currentPassword:
               formData.currentPassword,
@@ -996,11 +1022,11 @@ const [showNewPassword, setShowNewPassword] =
               {/* STATE & CITY */}
               <div className="profile-row">
                 <span>
-                  {txt("રાજ્ય / શહેર (Location)", "राज्य / शहर (Location)", "Location")}
+                  {txt("રાજ્ય / શહેર", "राज्य / शहर", "Location")}
                 </span>
 
                 <strong>
-                  {user.city ? `${user.city}, ` : ""}{user.state || "Gujarat"}
+                  {user.city ? `${user.city}, ` : ""}{user.state || ""}
                 </strong>
               </div>
 
@@ -1371,7 +1397,7 @@ const [showNewPassword, setShowNewPassword] =
 
             <div className="profile-edit-field">
               <label>
-                <Landmark size={16} className="btn-icon" /> {txt("રાજ્ય (State)", "राज्य (State)", "State")}
+                <Landmark size={16} className="btn-icon" /> {txt("રાજ્ય", "राज्य", "State")}
               </label>
 
               <select
@@ -1382,16 +1408,30 @@ const [showNewPassword, setShowNewPassword] =
                   setFormData((prev) => ({
                     ...prev,
                     state: newState,
-                    city: "",
+                    customState: "",
+                    city: newState === "OTHER" ? "OTHER" : "",
+                    customCity: "",
                   }));
                 }}
               >
-                {INDIAN_STATES.map((st) => (
+                {stateList.map((st) => (
                   <option key={st.id} value={st.id}>
-                    {isEnglish ? st.nameEn : isHindi ? st.nameHi : st.nameGu}
+                    {st.name}
                   </option>
                 ))}
               </select>
+
+              {formData.state === "OTHER" && (
+                <div className="profile-custom-input-box">
+                  <input
+                    type="text"
+                    name="customState"
+                    placeholder={txt("તમારું રાજ્ય અથવા દેશ દાખલ કરો...", "अपना राज्य या देश दर्ज करें...", "Enter your state or country...")}
+                    value={formData.customState}
+                    onChange={handleChange}
+                  />
+                </div>
+              )}
             </div>
 
             {/* =================================================
@@ -1400,26 +1440,44 @@ const [showNewPassword, setShowNewPassword] =
 
             <div className="profile-edit-field">
               <label>
-                <MapPin size={16} className="btn-icon" /> {txt("શહેર / ગામ / તાલુકો (City / Village)", "शहर / गांव / तहसील (City / Village)", "City / Town / Village")}
+                <MapPin size={16} className="btn-icon" /> {txt("શહેર / ગામ", "शहर / गांव", "City / Village")}
               </label>
 
-              <input
-                type="text"
-                name="city"
-                list="profile-city-list"
-                placeholder={
-                  formData.state === "Gujarat"
-                    ? txt("તમારું શહેર કે ગામ પસંદ કરો અથવા લખો...", "अपना शहर या गांव चुनें या लिखें...", "Select or type your city / village...")
-                    : txt("શહેર અથવા ગામ લખો અથવા પસંદ કરો...", "शहर या गांव लिखें या चुनें...", "Enter or select city / village...")
-                }
-                value={formData.city}
-                onChange={handleChange}
-              />
-              <datalist id="profile-city-list">
-                {getCitiesForState(formData.state).map((c, i) => (
-                  <option key={i} value={c} />
-                ))}
-              </datalist>
+              {formData.state !== "OTHER" && (
+                <select
+                  name="city"
+                  value={formData.city}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setFormData((prev) => ({
+                      ...prev,
+                      city: val,
+                      customCity: val === "OTHER" ? prev.customCity : "",
+                    }));
+                  }}
+                >
+                  <option value="" disabled>
+                    {txt("-- શહેર / ગામ પસંદ કરો --", "-- शहर / गांव चुनें --", "-- Select City / Village --")}
+                  </option>
+                  {cityList.map((c) => (
+                    <option key={c.id} value={c.id === "OTHER" ? "OTHER" : c.name}>
+                      {c.name}
+                    </option>
+                  ))}
+                </select>
+              )}
+
+              {(formData.city === "OTHER" || formData.state === "OTHER") && (
+                <div className="profile-custom-input-box">
+                  <input
+                    type="text"
+                    name="customCity"
+                    placeholder={txt("તમારું શહેર અથવા ગામ દાખલ કરો...", "अपना शहर या गांव दर्ज करें...", "Enter your city or village...")}
+                    value={formData.customCity}
+                    onChange={handleChange}
+                  />
+                </div>
+              )}
             </div>
 
             {/* =================================================

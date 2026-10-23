@@ -651,6 +651,11 @@
   cursor: pointer;
 }
 
+.profile-custom-input-box {
+  margin-top: 8px;
+  width: 100%;
+}
+
 .profile-edit-field select option {
   background: #ffffff;
   color: #1e293b;

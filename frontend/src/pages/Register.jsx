@@ -21,13 +21,16 @@ import {
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useLanguage } from "../context/LanguageContext.jsx";
-import { INDIAN_STATES, getCitiesForState } from "../utils/indiaLocations.js";
+import { getLocalizedStates, getCitiesForState } from "../utils/indiaLocations.js";
 import "./Register.css";
 
 function Register() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { isHindi, isEnglish, isGujarati, txt } = useLanguage();
+
+  const currentLang = isEnglish ? "en" : isHindi ? "hi" : "gu";
+  const stateList = getLocalizedStates(currentLang);
 
   // If user is already logged in, redirect away from /register
   useEffect(() => {
@@ -55,10 +58,14 @@ function Register() {
     email: "",
     birthDate: "",
     state: "Gujarat",
+    customState: "",
     city: "",
+    customCity: "",
     password: "",
     confirmPassword: "",
   });
+
+  const cityList = getCitiesForState(formData.state, currentLang);
 
   // =====================================================
   // OTP
@@ -222,6 +229,24 @@ const [showConfirmPassword, setShowConfirmPassword] =
   };
 
   // =====================================================
+  // GET RESOLVED FINAL LOCATION FOR SUBMISSION
+  // =====================================================
+
+  const getResolvedLocation = () => {
+    const finalState =
+      formData.state === "OTHER"
+        ? (formData.customState || "").trim()
+        : (stateList.find((s) => s.id === formData.state)?.name || formData.state || "").trim();
+
+    const finalCity =
+      formData.city === "OTHER" || formData.state === "OTHER"
+        ? (formData.customCity || "").trim()
+        : (formData.city || "").trim();
+
+    return { finalState, finalCity };
+  };
+
+  // =====================================================
   // VALIDATE PERSONAL INFORMATION
   // =====================================================
 
@@ -340,10 +365,14 @@ const [showConfirmPassword, setShowConfirmPassword] =
       return false;
     }
 
+    const { finalState, finalCity } = getResolvedLocation();
+
     // STATE
-    if (!formData.state || !formData.state.trim()) {
+    if (!finalState) {
       setMessage(
-        txt("કૃપા કરીને તમારું રાજ્ય (State) પસંદ કરો.", "कृपया अपना राज्य (State) चुनें।", "Please select your State.")
+        formData.state === "OTHER"
+          ? txt("કૃપા કરીને તમારું રાજ્ય અથવા દેશ દાખલ કરો.", "कृपया अपना राज्य या देश दर्ज करें।", "Please enter your state or country.")
+          : txt("કૃપા કરીને તમારું રાજ્ય પસંદ કરો.", "कृपया अपना राज्य चुनें।", "Please select your state.")
       );
 
       setMessageType("error");
@@ -352,9 +381,11 @@ const [showConfirmPassword, setShowConfirmPassword] =
     }
 
     // CITY
-    if (!formData.city || !formData.city.trim()) {
+    if (!finalCity) {
       setMessage(
-        txt("કૃપા કરીને તમારું શહેર અથવા ગામ (City/Village) લખો અથવા પસંદ કરો.", "कृपया अपना शहर या गांव (City/Village) चुनें या लिखें।", "Please select or type your city / village.")
+        formData.city === "OTHER" || formData.state === "OTHER"
+          ? txt("કૃપા કરીને તમારું શહેર અથવા ગામ દાખલ કરો.", "कृपया अपना शहर या गांव दर्ज करें।", "Please enter your city or village.")
+          : txt("કૃપા કરીને તમારું શહેર અથવા ગામ પસંદ કરો.", "कृपया अपना शहर या गांव चुनें।", "Please select your city or village.")
       );
 
       setMessageType("error");
@@ -373,6 +404,8 @@ const [showConfirmPassword, setShowConfirmPassword] =
     if (!validatePersonalInformation()) {
       return;
     }
+
+    const { finalState, finalCity } = getResolvedLocation();
 
     try {
       setLoading(true);
@@ -402,9 +435,9 @@ const [showConfirmPassword, setShowConfirmPassword] =
                 formData.birthDate
               ),
 
-            state: formData.state.trim(),
+            state: finalState,
 
-            city: formData.city.trim(),
+            city: finalCity,
           }),
         }
       );
@@ -586,6 +619,8 @@ const [showConfirmPassword, setShowConfirmPassword] =
       return;
     }
 
+    const { finalState, finalCity } = getResolvedLocation();
+
     try {
       setLoading(true);
       setMessage("");
@@ -614,9 +649,9 @@ const [showConfirmPassword, setShowConfirmPassword] =
                 birthDate
               ),
 
-            state: formData.state.trim(),
+            state: finalState,
 
-            city: formData.city.trim(),
+            city: finalCity,
 
             password,
 
@@ -647,7 +682,9 @@ const [showConfirmPassword, setShowConfirmPassword] =
         email: "",
         birthDate: "",
         state: "Gujarat",
+        customState: "",
         city: "",
+        customCity: "",
         password: "",
         confirmPassword: "",
       });
@@ -1022,7 +1059,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
                   <Landmark size={16} />
                 </span>
                 <span>
-                  {txt("રાજ્ય (State)", "राज्य (State)", "State")}
+                  {txt("રાજ્ય", "राज्य", "State")}
                 </span>
               </label>
 
@@ -1035,60 +1072,89 @@ const [showConfirmPassword, setShowConfirmPassword] =
                   setFormData((previous) => ({
                     ...previous,
                     state: newState,
-                    city: "",
+                    customState: "",
+                    city: newState === "OTHER" ? "OTHER" : "",
+                    customCity: "",
                   }));
                   setMessage("");
                   setMessageType("");
                 }}
                 className="register-select"
               >
-                {INDIAN_STATES.map((st) => (
+                {stateList.map((st) => (
                   <option key={st.id} value={st.id}>
-                    {isEnglish ? st.nameEn : isHindi ? st.nameHi : st.nameGu}
+                    {st.name}
                   </option>
                 ))}
               </select>
+
+              {/* CUSTOM STATE INPUT IF "OTHER" SELECTED */}
+              {formData.state === "OTHER" && (
+                <div className="register-custom-input-box">
+                  <input
+                    type="text"
+                    name="customState"
+                    placeholder={txt("તમારું રાજ્ય અથવા દેશ દાખલ કરો...", "अपना राज्य या देश दर्ज करें...", "Enter your state or country...")}
+                    value={formData.customState}
+                    onChange={handleChange}
+                    autoFocus
+                  />
+                </div>
+              )}
             </div>
 
-            {/* CITY / VILLAGE (શહેર / ગામ / તાલુકો) */}
+            {/* CITY / VILLAGE (શહેર / ગામ) */}
             <div className="register-field">
               <label htmlFor="city">
                 <span className="field-icon green">
                   <MapPin size={16} />
                 </span>
                 <span>
-                  {txt("શહેર / ગામ / તાલુકો (City / Village)", "शहर / गांव / तहसील (City / Village)", "City / Town / Village")}
+                  {txt("શહેર / ગામ", "शहर / गांव", "City / Village")}
                 </span>
               </label>
 
-              <div className="register-city-input-wrap">
-                <input
+              {formData.state !== "OTHER" && (
+                <select
                   id="city"
-                  type="text"
                   name="city"
-                  list="city-options-list"
-                  placeholder={
-                    formData.state === "Gujarat"
-                      ? txt("તમારું શહેર કે ગામ પસંદ કરો અથવા લખો...", "अपना शहर या गांव चुनें या लिखें...", "Select or type your city / village...")
-                      : txt("શહેર અથવા ગામ લખો અથવા પસંદ કરો...", "शहर या गांव लिखें या चुनें...", "Enter or select city / village...")
-                  }
                   value={formData.city}
-                  onChange={handleChange}
-                  autoComplete="address-level2"
-                />
-                <datalist id="city-options-list">
-                  {getCitiesForState(formData.state).map((cityItem, idx) => (
-                    <option key={idx} value={cityItem} />
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    setFormData((previous) => ({
+                      ...previous,
+                      city: val,
+                      customCity: val === "OTHER" ? previous.customCity : "",
+                    }));
+                    setMessage("");
+                    setMessageType("");
+                  }}
+                  className="register-select"
+                >
+                  <option value="" disabled>
+                    {txt("-- શહેર / ગામ પસંદ કરો --", "-- शहर / गांव चुनें --", "-- Select City / Village --")}
+                  </option>
+                  {cityList.map((c) => (
+                    <option key={c.id} value={c.id === "OTHER" ? "OTHER" : c.name}>
+                      {c.name}
+                    </option>
                   ))}
-                </datalist>
-              </div>
-              <small className="register-field-hint">
-                {txt(
-                  "💡 લિસ્ટમાંથી પસંદ કરો અથવા તમારા ગામ/શહેરનું નામ સીધું ટાઈપ કરો.",
-                  "💡 सूची में से चुनें या अपने गांव/शहर का नाम सीधे टाइप करें।",
-                  "💡 Select from the list or type your village/city directly."
-                )}
-              </small>
+                </select>
+              )}
+
+              {/* CUSTOM CITY INPUT IF "OTHER" SELECTED OR STATE IS "OTHER" */}
+              {(formData.city === "OTHER" || formData.state === "OTHER") && (
+                <div className="register-custom-input-box">
+                  <input
+                    type="text"
+                    name="customCity"
+                    placeholder={txt("તમારું શહેર અથવા ગામ દાખલ કરો...", "अपना शहर या गांव दर्ज करें...", "Enter your city or village...")}
+                    value={formData.customCity}
+                    onChange={handleChange}
+                    autoFocus={formData.state !== "OTHER"}
+                  />
+                </div>
+              )}
             </div>
 
             {/* SEND OTP */}
