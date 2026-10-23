@@ -285,10 +285,27 @@ export default function ShareShlokaModal({
 }) {
   const { isHindi, isEnglish, isGujarati, txt } = useLanguage();
   const canvasRef = useRef(null);
+  const logoImageRef = useRef(null);
   const [selectedThemeId, setSelectedThemeId] = useState("royal-blue");
   const [previewUrl, setPreviewUrl] = useState("");
   const [copied, setCopied] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+
+  // Pre-load App Logo for Background Watermark
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const img = new Image();
+    img.src = "/icons/icon-512x512.png";
+    img.onload = () => {
+      logoImageRef.current = img;
+      if (isOpen && shlokaData) {
+        renderCanvasCard();
+      }
+    };
+    if (img.complete && img.naturalWidth > 0) {
+      logoImageRef.current = img;
+    }
+  }, [isOpen, shlokaData]);
 
   useEffect(() => {
     if (isOpen) {
@@ -527,6 +544,19 @@ export default function ShareShlokaModal({
     topGlow.addColorStop(1, "transparent");
     ctx.fillStyle = topGlow;
     ctx.fillRect(0, 0, width, cardHeight);
+
+    // Subtle App Logo Background Watermark (Ensures crystal-clear font readability)
+    const logoImg = logoImageRef.current;
+    if (logoImg && logoImg.complete && logoImg.naturalWidth > 0) {
+      ctx.save();
+      // Gentle opacity ensuring fonts remain 100% crisp, sharp and high-contrast
+      ctx.globalAlpha = 0.085;
+      const logoSize = 650;
+      const logoX = (width - logoSize) / 2;
+      const logoY = (cardHeight - logoSize) / 2 + 40;
+      ctx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
+      ctx.restore();
+    }
 
     // Ornamental Borders
     // Outer gold border
