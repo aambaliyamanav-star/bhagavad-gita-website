@@ -60,6 +60,9 @@ function Quiz() {
   const chapterParam =
     searchParams.get("chapter");
 
+  const shlokaRangeParam =
+    searchParams.get("shlokaRange");
+
   // IMPORTANT:
   // QuizCategory.jsx માંથી પસંદ કરેલો count
   const countParam =
@@ -216,6 +219,10 @@ function Quiz() {
             "chapter",
             String(selectedChapter)
           );
+
+          if (shlokaRangeParam && shlokaRangeParam !== "all") {
+            queryParams.set("shlokaRange", shlokaRangeParam);
+          }
         }
 
         // =================================================
@@ -331,6 +338,18 @@ function Quiz() {
                   item.chapterNumber
                 ) === selectedChapter
             );
+
+          if (shlokaRangeParam && shlokaRangeParam !== "all") {
+            const parts = shlokaRangeParam.split("-");
+            const from = parseInt(parts[0], 10);
+            const to = parseInt(parts[1], 10);
+            if (!isNaN(from) && !isNaN(to)) {
+              fetchedQuestions = fetchedQuestions.filter((item) => {
+                const sNum = Number(item.shlokaNumber);
+                return !isNaN(sNum) && sNum >= from && sNum <= to;
+              });
+            }
+          }
         }
 
         // =================================================
@@ -475,6 +494,7 @@ function Quiz() {
   }, [
     categoryParam,
     chapterParam,
+    shlokaRangeParam,
     questionCount,
     navigate,
   ]);
@@ -972,6 +992,11 @@ function Quiz() {
                 chapterParam
               )
             : null,
+
+        shlokaRange:
+          categoryParam === "chapter" && shlokaRangeParam
+            ? shlokaRangeParam
+            : "",
 
         answers:
           finalAnswers.map(
@@ -1509,7 +1534,11 @@ function Quiz() {
       "chapter" &&
     chapterParam
   ) {
-    quizTitle = txt(`અધ્યાય ${chapterParam}`, `अध्याय ${chapterParam}`, `Chapter ${chapterParam}`);
+    const rangeSuffix =
+      shlokaRangeParam && shlokaRangeParam !== "all"
+        ? ` (${txt("શ્લોક", "श्लोक", "Verse")} ${shlokaRangeParam})`
+        : "";
+    quizTitle = `${txt(`અધ્યાય ${chapterParam}`, `अध्याय ${chapterParam}`, `Chapter ${chapterParam}`)}${rangeSuffix}`;
   }
 
   if (
@@ -1604,7 +1633,14 @@ function Quiz() {
 
       <section className="quiz-question-card">
 
-        <div className="quiz-question-number">{txt("પ્રશ્ન", "प्रश्न", "Question")} {currentQuestion + 1}</div>
+        <div className="quiz-question-number">
+          <span>{txt("પ્રશ્ન", "प्रश्न", "Question")} {currentQuestion + 1}</span>
+          {question.shlokaNumber && (
+            <span style={{ marginLeft: "8px", fontSize: "0.88em", opacity: 0.85, fontWeight: "500" }}>
+              ({txt("શ્લોક", "श्लोक", "Verse")} {question.shlokaNumber})
+            </span>
+          )}
+        </div>
 
         <h2 className="quiz-question-text">
 

@@ -78,6 +78,9 @@ function QuizManagement() {
   const [questionFilter, setQuestionFilter] =
     useState("all");
 
+  const [shlokaFilter, setShlokaFilter] =
+    useState("all");
+
   // =====================================================
   // FORM
   // =====================================================
@@ -86,6 +89,7 @@ function QuizManagement() {
     useState({
       category: "all",
       chapterNumber: "",
+      shlokaNumber: "",
       question: "",
       option1: "",
       option2: "",
@@ -239,6 +243,7 @@ function QuizManagement() {
     setFormData({
       category: "all",
       chapterNumber: "",
+      shlokaNumber: "",
       question: "",
       option1: "",
       option2: "",
@@ -304,6 +309,9 @@ function QuizManagement() {
       category,
 
       chapterNumber,
+
+      shlokaNumber:
+        question.shlokaNumber || "",
 
       question:
         question.question || "",
@@ -751,6 +759,11 @@ function QuizManagement() {
         chapterNumber:
           finalChapterNumber,
 
+        shlokaNumber:
+          formData.shlokaNumber && Number(formData.shlokaNumber) >= 1
+            ? Number(formData.shlokaNumber)
+            : null,
+
         question:
           formData.question.trim(),
 
@@ -1153,27 +1166,26 @@ function QuizManagement() {
   const filteredQuestions =
     questions.filter(
       (item) => {
+        let matchesCategory = false;
 
         // ---------------------------------------------
         // ALL
         // ---------------------------------------------
-
         if (
           questionFilter ===
           "all"
         ) {
-          return true;
+          matchesCategory = true;
         }
 
         // ---------------------------------------------
         // MAHABHARATA
         // ---------------------------------------------
-
-        if (
+        else if (
           questionFilter ===
           "mahabharata"
         ) {
-          return (
+          matchesCategory = (
             item.category ===
             "mahabharata"
           );
@@ -1182,8 +1194,7 @@ function QuizManagement() {
         // ---------------------------------------------
         // CHAPTER
         // ---------------------------------------------
-
-        if (
+        else if (
           questionFilter.startsWith(
             "chapter-"
           )
@@ -1211,23 +1222,59 @@ function QuizManagement() {
             itemChapter ===
             selectedChapter
           ) {
-            return true;
+            matchesCategory = true;
           }
 
           // Old data support
-          if (
+          else if (
             itemCategory ===
             `chapter-${selectedChapter}`
           ) {
-            return true;
+            matchesCategory = true;
           }
+        }
 
+        if (!matchesCategory) {
           return false;
         }
 
-        return false;
+        // Shloka filter within chapter
+        if (questionFilter.startsWith("chapter-") && shlokaFilter !== "all") {
+          if (shlokaFilter === "none") {
+            return !item.shlokaNumber;
+          }
+          return Number(item.shlokaNumber) === Number(shlokaFilter);
+        }
+
+        return true;
       }
     );
+
+  // =====================================================
+  // SHLOKA STATS FOR SELECTED CHAPTER
+  // =====================================================
+
+  const shlokaStats = (() => {
+    if (!questionFilter.startsWith("chapter-")) return null;
+    const selectedChapter = Number(questionFilter.replace("chapter-", ""));
+    const chapterQuestions = questions.filter((item) => {
+      const itemChapter = Number(item.chapterNumber);
+      const itemCategory = String(item.category || "");
+      return itemChapter === selectedChapter || itemCategory === `chapter-${selectedChapter}`;
+    });
+
+    const counts = {};
+    let unassigned = 0;
+    chapterQuestions.forEach((q) => {
+      if (q.shlokaNumber && Number(q.shlokaNumber) >= 1) {
+        counts[q.shlokaNumber] = (counts[q.shlokaNumber] || 0) + 1;
+      } else {
+        unassigned++;
+      }
+    });
+
+    return { counts, unassigned, total: chapterQuestions.length };
+  })();
 
   // =====================================================
   // FILTER CHANGE
@@ -1240,6 +1287,7 @@ function QuizManagement() {
       event.target.value;
 
     setQuestionFilter(filter);
+    setShlokaFilter("all");
 
     // Close opened question
     setExpandedQuestionId(null);
@@ -1399,38 +1447,65 @@ function QuizManagement() {
 
 
           {/* =================================================
-              CHAPTER INFORMATION
+              CHAPTER & SHLOKA INFORMATION
           ================================================= */}
 
           {formData.category.startsWith(
             "chapter-"
           ) && (
-            <div className="quiz-form-group">
+            <>
+              <div className="quiz-form-group">
 
-              <label>
-                Chapter Number
-              </label>
+                <label>
+                  Chapter Number (અધ્યાય નંબર)
+                </label>
 
-              <input
-                type="number"
-                name="chapterNumber"
-                value={
-                  formData.chapterNumber
-                }
-                onChange={
-                  handleChange
-                }
-                min="1"
-                max="18"
-                placeholder="1 થી 18"
-              />
+                <input
+                  type="number"
+                  name="chapterNumber"
+                  value={
+                    formData.chapterNumber
+                  }
+                  onChange={
+                    handleChange
+                  }
+                  min="1"
+                  max="18"
+                  placeholder="1 થી 18"
+                />
 
-              <small>
-                આ question આ અધ્યાયમાં
-                અને "બધા અધ્યાય" quizમાં દેખાશે.
-              </small>
+                <small>
+                  આ question આ અધ્યાયમાં
+                  અને "બધા અધ્યાય" quizમાં દેખાશે.
+                </small>
 
-            </div>
+              </div>
+
+              <div className="quiz-form-group">
+
+                <label>
+                  શ્લોક નંબર (Shloka Number - વૈકલ્પિક)
+                </label>
+
+                <input
+                  type="number"
+                  name="shlokaNumber"
+                  value={
+                    formData.shlokaNumber || ""
+                  }
+                  onChange={
+                    handleChange
+                  }
+                  min="1"
+                  placeholder="દા.ત. 1, 5, 12... (શ્લોક નંબર)"
+                />
+
+                <small>
+                  આ પ્રશ્ન કયા શ્લોકનો છે તે દર્શાવવા માટે (જેથી 1-5, 1-10 જેવી રેન્જમાં સિસ્ટમ આ પ્રશ્ન ફિલ્ટર કરી શકે).
+                </small>
+
+              </div>
+            </>
           )}
 
 
@@ -2026,6 +2101,109 @@ function QuizManagement() {
 
 
         {/* =================================================
+            SHLOKA BREAKDOWN & CHIP FILTER (FOR CHAPTERS)
+        ================================================= */}
+        {shlokaStats && shlokaStats.total > 0 && (
+          <div style={{
+            margin: "0 0 20px 0",
+            padding: "12px 18px",
+            background: "#f0fdf4",
+            border: "1px solid #bbf7d0",
+            borderRadius: "12px",
+            fontSize: "13px"
+          }}>
+            <div style={{
+              fontWeight: "700",
+              color: "#166534",
+              marginBottom: "10px",
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+              flexWrap: "wrap",
+              gap: "8px"
+            }}>
+              <span>📖 {getFilterLabel()} - શ્લોક વાઈઝ પ્રશ્નોની ગણતરી (કુલ: {shlokaStats.total})</span>
+              {shlokaFilter !== "all" && (
+                <button
+                  type="button"
+                  onClick={() => setShlokaFilter("all")}
+                  style={{
+                    background: "#fee2e2",
+                    border: "1px solid #fca5a5",
+                    color: "#991b1b",
+                    borderRadius: "6px",
+                    cursor: "pointer",
+                    fontSize: "11.5px",
+                    padding: "3px 8px",
+                    fontWeight: "600"
+                  }}
+                >
+                  ✕ ફિલ્ટર હટાવો (બધા શ્લોક દર્શાવો)
+                </button>
+              )}
+            </div>
+
+            <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+              {Object.keys(shlokaStats.counts).length === 0 && shlokaStats.unassigned > 0 ? (
+                <span style={{ color: "#64748b" }}>
+                  હજુ કોઈ પ્રશ્નમાં શ્લોક નંબર ઉમેરેલ નથી (બધા સામાન્ય પ્રશ્નો છે). પ્રશ્ન edit કરીને શ્લોક નંબર ઉમેરી શકો છો.
+                </span>
+              ) : (
+                Object.entries(shlokaStats.counts)
+                  .sort(([a], [b]) => Number(a) - Number(b))
+                  .map(([sNum, count]) => {
+                    const isSelected = String(shlokaFilter) === String(sNum);
+                    return (
+                      <button
+                        key={sNum}
+                        type="button"
+                        onClick={() => setShlokaFilter(isSelected ? "all" : sNum)}
+                        style={{
+                          cursor: "pointer",
+                          padding: "4px 12px",
+                          borderRadius: "16px",
+                          background: isSelected ? "#15803d" : "#ffffff",
+                          color: isSelected ? "#ffffff" : "#166534",
+                          fontWeight: "600",
+                          fontSize: "12.5px",
+                          border: isSelected ? "1px solid #15803d" : "1px solid #86efac",
+                          boxShadow: "0 1px 2px rgba(0,0,0,0.05)",
+                          transition: "all 0.15s ease"
+                        }}
+                        title={`શ્લોક ${sNum} ના પ્રશ્નો જોવા ક્લિક કરો`}
+                      >
+                        શ્લોક {sNum}: <span style={{ opacity: isSelected ? 1 : 0.85, fontWeight: "700" }}>{count}</span>
+                      </button>
+                    );
+                  })
+              )}
+
+              {shlokaStats.unassigned > 0 && Object.keys(shlokaStats.counts).length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setShlokaFilter(shlokaFilter === "none" ? "all" : "none")}
+                  style={{
+                    cursor: "pointer",
+                    padding: "4px 12px",
+                    borderRadius: "16px",
+                    background: shlokaFilter === "none" ? "#475569" : "#f1f5f9",
+                    color: shlokaFilter === "none" ? "#ffffff" : "#475569",
+                    fontWeight: "600",
+                    fontSize: "12px",
+                    border: "1px solid #cbd5e1",
+                    transition: "all 0.15s ease"
+                  }}
+                  title="સામાન્ય પ્રશ્નો (જેમાં કોઈ શ્લોક નંબર નથી)"
+                >
+                  અન્ય/સામાન્ય: {shlokaStats.unassigned}
+                </button>
+              )}
+            </div>
+          </div>
+        )}
+
+
+        {/* =================================================
             NO QUESTIONS AFTER FILTER
         ================================================= */}
 
@@ -2200,6 +2378,11 @@ function QuizManagement() {
 
                             <BookOpen className="btn-icon" size={14} /> Chapter{" "}
                             {item.chapterNumber}
+                            {item.shlokaNumber && (
+                              <span style={{ marginLeft: "8px", background: "#fef3c7", color: "#92400e", padding: "2px 8px", borderRadius: "6px", fontWeight: "600", fontSize: "11.5px" }}>
+                                શ્લોક: {item.shlokaNumber}
+                              </span>
+                            )}
 
                           </div>
                         )}

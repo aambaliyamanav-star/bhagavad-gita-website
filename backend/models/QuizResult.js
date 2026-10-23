@@ -118,6 +118,18 @@ const quizResultSchema =
         default: null,
       },
 
+      // =================================================
+      // SHLOKA RANGE (e.g. 1-5, 1-10, 1-47)
+      // =================================================
+
+      shlokaRange: {
+        type: String,
+
+        default: "",
+
+        trim: true,
+      },
+
 
       // =================================================
       // TOTAL QUESTIONS

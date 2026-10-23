@@ -83,6 +83,27 @@ function QuizCategory() {
     18: "Moksha Sanyasa Yoga",
   };
 
+  const CHAPTER_VERSES = {
+    1: 47,
+    2: 72,
+    3: 43,
+    4: 42,
+    5: 29,
+    6: 47,
+    7: 30,
+    8: 28,
+    9: 34,
+    10: 42,
+    11: 55,
+    12: 20,
+    13: 35,
+    14: 27,
+    15: 20,
+    16: 24,
+    17: 28,
+    18: 78,
+  };
+
   // =====================================================
   // STATE
   // =====================================================
@@ -91,6 +112,9 @@ function QuizCategory() {
 
   const [selectedChapter, setSelectedChapter] =
     useState("");
+
+  const [selectedShlokaRange, setSelectedShlokaRange] =
+    useState("all");
 
   const [questionCount, setQuestionCount] =
     useState(10);
@@ -102,6 +126,43 @@ function QuizCategory() {
     useState(false);
 
   const [error, setError] = useState("");
+
+  // Helper to generate shloka range intervals: 1-5, 1-10, 1-15... up to 1-total
+  const getShlokaRangeOptions = (chapterNum) => {
+    const total = CHAPTER_VERSES[Number(chapterNum)] || 47;
+    const ranges = [
+      {
+        value: "all",
+        label: txt(
+          `તમામ શ્લોક (૧ થી ${total})`,
+          `सभी श्लोक (१ से ${total})`,
+          `All Shlokas (1 to ${total})`
+        ),
+      },
+    ];
+
+    for (let end = 5; end < total; end += 5) {
+      ranges.push({
+        value: `1-${end}`,
+        label: txt(
+          `શ્લોક ૧ થી ${end}`,
+          `श्लोक १ से ${end}`,
+          `Shlokas 1 to ${end}`
+        ),
+      });
+    }
+
+    ranges.push({
+      value: `1-${total}`,
+      label: txt(
+        `શ્લોક ૧ થી ${total}`,
+        `श्लोक १ से ${total}`,
+        `Shlokas 1 to ${total}`
+      ),
+    });
+
+    return ranges;
+  };
 
   // =====================================================
   // GET TOKEN
@@ -132,6 +193,9 @@ function QuizCategory() {
           selectedChapter
         ) {
           url += `?category=chapter&chapter=${selectedChapter}`;
+          if (selectedShlokaRange && selectedShlokaRange !== "all") {
+            url += `&shlokaRange=${selectedShlokaRange}`;
+          }
         }
 
         // -------------------------------------------------
@@ -235,6 +299,7 @@ function QuizCategory() {
   }, [
     quizType,
     selectedChapter,
+    selectedShlokaRange,
   ]);
 
   // =====================================================
@@ -248,6 +313,7 @@ function QuizCategory() {
 
     if (type !== "chapter") {
       setSelectedChapter("");
+      setSelectedShlokaRange("all");
     }
 
     setQuestionCount(10);
@@ -263,6 +329,7 @@ function QuizCategory() {
       event.target.value
     );
 
+    setSelectedShlokaRange("all");
     setQuestionCount(10);
     setError("");
   };
@@ -392,6 +459,13 @@ function QuizCategory() {
         "chapter",
         selectedChapter
       );
+
+      if (selectedShlokaRange && selectedShlokaRange !== "all") {
+        params.set(
+          "shlokaRange",
+          selectedShlokaRange
+        );
+      }
     }
 
     // =================================================
@@ -416,7 +490,7 @@ function QuizCategory() {
   // =====================================================
 
   const getQuestionCountOptions = () => {
-    const options = [
+    const baseOptions = [
       5,
       10,
       15,
@@ -427,30 +501,25 @@ function QuizCategory() {
       50,
     ];
 
-    if (
-      availableQuestions &&
-      availableQuestions > 0
-    ) {
-      if (
-        !options.includes(
-          availableQuestions
-        )
-      ) {
-        options.push(
-          availableQuestions
-        );
+    if (availableQuestions !== null && availableQuestions !== undefined) {
+      if (availableQuestions <= 0) {
+        return [];
       }
+
+      // Filter options so NONE exceed availableQuestions!
+      const filtered = baseOptions.filter(
+        (count) => count <= availableQuestions
+      );
+
+      // If availableQuestions is not in the list, add exact availableQuestions count
+      if (!filtered.includes(availableQuestions)) {
+        filtered.push(availableQuestions);
+      }
+
+      return filtered.sort((a, b) => a - b);
     }
 
-    return options
-      .filter(
-        (count) =>
-          !availableQuestions ||
-          count <= availableQuestions
-      )
-      .sort(
-        (a, b) => a - b
-      );
+    return baseOptions;
   };
 
   // =====================================================
@@ -667,6 +736,36 @@ function QuizCategory() {
                 )
               )}
 
+            </select>
+
+          </div>
+        )}
+
+        {/* =================================================
+            SHLOKA RANGE SELECT (ONLY FOR CHAPTER QUIZ)
+        ================================================= */}
+
+        {quizType === "chapter" && selectedChapter && (
+          <div className="quiz-setup-group">
+
+            <label htmlFor="quiz-shloka-select">
+              <BookOpen size={14} className="btn-icon" /> {txt("શ્લોક પસંદ કરો (Shloka Range)", "श्लोक चुनें (Shloka Range)", "Select Shloka Range")}
+            </label>
+
+            <select
+              id="quiz-shloka-select"
+              className="quiz-setup-select"
+              value={selectedShlokaRange}
+              onChange={(e) => {
+                setSelectedShlokaRange(e.target.value);
+                setError("");
+              }}
+            >
+              {getShlokaRangeOptions(selectedChapter).map((opt) => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
             </select>
 
           </div>
