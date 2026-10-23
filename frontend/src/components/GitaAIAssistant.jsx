@@ -1606,6 +1606,13 @@ export default function GitaAIAssistant() {
           <div className={`gita-ai-body ${!hasUserMessages ? "has-suggestions" : ""}`}>
             {!hasUserMessages && !isLoading && (
               <div className="gita-new-chat-hero">
+                <div className="gita-hero-logo-box">
+                  <img
+                    src="/icons/gita-ai-icon-192.png"
+                    alt={txt("ગીતા AI", "गीता AI", "Gita AI")}
+                    className="gita-hero-logo-img"
+                  />
+                </div>
                 <span className="gita-hero-greeting">{txt("જય શ્રી કૃષ્ણ", "जय श्री कृष्ण", "Jai Shree Krishna")}</span>
                 <h2 className="gita-hero-title">
                   {txt("હું તમને કેવી રીતે મદદ કરી શકું", "मैं आपकी क्या सहायता कर सकता हूँ", "How can I help you")}{userFirstName ? `, ${userFirstName}` : ""}?
