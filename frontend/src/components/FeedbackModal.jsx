@@ -50,6 +50,7 @@ export default function FeedbackModal() {
   const [hoverRating, setHoverRating] = useState(0);
   const [hasRated, setHasRated] = useState(false);
   const [isLocked, setIsLocked] = useState(false);
+  const [isLabelExpanded, setIsLabelExpanded] = useState(false);
 
   const [category] = useState("feedback");
   const [name, setName] = useState("");
@@ -64,6 +65,37 @@ export default function FeedbackModal() {
   // Pre-fetch website average rating stats on mount
   useEffect(() => {
     fetchStats();
+  }, []);
+
+  // WhatsApp-like pill expand & collapse animation: starts AFTER AI pill closes
+  useEffect(() => {
+    let expandTimer;
+    let collapseTimer;
+
+    const runRatingPill = () => {
+      expandTimer = setTimeout(() => {
+        setIsLabelExpanded(true);
+
+        collapseTimer = setTimeout(() => {
+          setIsLabelExpanded(false);
+        }, 2800);
+      }, 350);
+    };
+
+    // Listen for AI pill finish event
+    window.addEventListener("gita-ai-pill-closed", runRatingPill, { once: true });
+
+    // Safety fallback: if AI assistant is not present or event delayed, run after 4.5 seconds
+    const safetyFallback = setTimeout(() => {
+      runRatingPill();
+    }, 4500);
+
+    return () => {
+      window.removeEventListener("gita-ai-pill-closed", runRatingPill);
+      clearTimeout(safetyFallback);
+      clearTimeout(expandTimer);
+      clearTimeout(collapseTimer);
+    };
   }, []);
 
   // Initialize name and email from logged-in user
@@ -329,7 +361,7 @@ export default function FeedbackModal() {
       {/* Floating Action Button (FAB) */}
       <button
         type="button"
-        className="feedback-fab-trigger"
+        className={`feedback-fab-trigger ${isLabelExpanded ? "label-expanded" : ""}`}
         onClick={() => {
           setIsOpen(true);
           setError("");
