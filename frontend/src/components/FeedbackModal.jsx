@@ -78,17 +78,17 @@ export default function FeedbackModal() {
 
         collapseTimer = setTimeout(() => {
           setIsLabelExpanded(false);
-        }, 2800);
+        }, 4000); // 4 seconds duration
       }, 350);
     };
 
     // Listen for AI pill finish event
     window.addEventListener("gita-ai-pill-closed", runRatingPill, { once: true });
 
-    // Safety fallback: if AI assistant is not present or event delayed, run after 4.5 seconds
+    // Safety fallback: if AI assistant is not present or event delayed, run after 6 seconds
     const safetyFallback = setTimeout(() => {
       runRatingPill();
-    }, 4500);
+    }, 6000);
 
     return () => {
       window.removeEventListener("gita-ai-pill-closed", runRatingPill);
@@ -371,7 +371,7 @@ export default function FeedbackModal() {
         aria-label={txt("પ્રતિસાદ અને રેટિંગ આપો", "प्रतिक्रिया और रेटिंग दें", "Give feedback and rating")}
         title={txt("વેબસાઇટ માટે તમારો પ્રતિસાદ અને રેટિંગ આપો", "वेबसाइट के लिए अपनी प्रतिक्रिया और रेटिंग दें", "Give your feedback and rating for the website")}
       >
-        <Star size={18} className="feedback-fab-star-icon" />
+        <Star size={16} className="feedback-fab-star-icon" />
         <span className="feedback-fab-text">
           {txt("પ્રતિસાદ / રેટિંગ", "प्रतिक्रिया / रेटिंग", "Feedback / Rating")}
         </span>

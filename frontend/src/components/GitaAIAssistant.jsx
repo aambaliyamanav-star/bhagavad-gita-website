@@ -336,7 +336,7 @@ export default function GitaAIAssistant() {
           try {
             window.dispatchEvent(new CustomEvent("gita-ai-pill-closed"));
           } catch (e) {}
-        }, 2800);
+        }, 4000); // 4 seconds duration
       }, 400);
     };
 
