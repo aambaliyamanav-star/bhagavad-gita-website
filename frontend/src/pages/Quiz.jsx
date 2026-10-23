@@ -116,6 +116,44 @@ function Quiz() {
   };
 
   // =====================================================
+  // SHUFFLE QUESTION OPTIONS (A, B, C, D)
+  // =====================================================
+  // દરેક પ્રશ્નના વિકલ્પો (A, B, C, D) નો ક્રમ આડાઅવળો (random) થઈ જશે
+  // જેથી દર વખતે વિકલ્પો અલગ સ્થાને આવે પણ સાચો જવાબ યોગ્ય રીતે ચકાસાય.
+
+  const shuffleQuestionOptions = (q) => {
+    if (!q || !Array.isArray(q.options) || q.options.length < 2) {
+      return q;
+    }
+
+    const indices = q.options.map((_, i) => i);
+
+    for (let i = indices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [indices[i], indices[j]] = [indices[j], indices[i]];
+    }
+
+    const newOptions = indices.map((i) => q.options[i]);
+
+    const newOptionsHi =
+      Array.isArray(q.optionsHi) && q.optionsHi.length === q.options.length
+        ? indices.map((i) => q.optionsHi[i])
+        : q.optionsHi;
+
+    const newOptionsEn =
+      Array.isArray(q.optionsEn) && q.optionsEn.length === q.options.length
+        ? indices.map((i) => q.optionsEn[i])
+        : q.optionsEn;
+
+    return {
+      ...q,
+      options: newOptions,
+      optionsHi: newOptionsHi,
+      optionsEn: newOptionsEn,
+    };
+  };
+
+  // =====================================================
   // FETCH QUESTIONS
   // =====================================================
 
@@ -391,13 +429,13 @@ function Quiz() {
         }
 
         // =================================================
-        // SHUFFLE
+        // SHUFFLE QUESTIONS & OPTIONS (A, B, C, D)
         // =================================================
 
         fetchedQuestions =
           shuffleQuestions(
             fetchedQuestions
-          );
+          ).map(shuffleQuestionOptions);
 
         // =================================================
         // IMPORTANT:

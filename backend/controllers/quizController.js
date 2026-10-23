@@ -28,6 +28,35 @@ const shuffleQuestions = (items) => {
   return shuffled;
 };
 
+// =====================================================
+// SHUFFLE QUESTION OPTIONS (A, B, C, D)
+// =====================================================
+
+const shuffleQuestionOptions = (q) => {
+  if (!q || !Array.isArray(q.options) || q.options.length < 2) {
+    return q;
+  }
+
+  const indices = q.options.map((_, i) => i);
+  for (let i = indices.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [indices[i], indices[j]] = [indices[j], indices[i]];
+  }
+
+  const doc = q.toObject ? q.toObject() : { ...q };
+  doc.options = indices.map((i) => q.options[i]);
+
+  if (Array.isArray(q.optionsHi) && q.optionsHi.length === q.options.length) {
+    doc.optionsHi = indices.map((i) => q.optionsHi[i]);
+  }
+  if (Array.isArray(q.optionsEn) && q.optionsEn.length === q.options.length) {
+    doc.optionsEn = indices.map((i) => q.optionsEn[i]);
+  }
+
+  return doc;
+};
+
+
 
 // =====================================================
 // GET QUIZ QUESTIONS
@@ -138,10 +167,9 @@ const getQuizQuestions = async (req, res) => {
       Number(limit) || 10;
 
     questions =
-      questions.slice(
-        0,
-        questionLimit
-      );
+      questions
+        .slice(0, questionLimit)
+        .map(shuffleQuestionOptions);
 
     // =================================================
     // RESPONSE
@@ -480,10 +508,12 @@ const submitQuiz = async (
           const normSelected = String(selectedAnswer || "").trim().toLowerCase();
           const normCorrectGu = String(correctAnswer || "").trim().toLowerCase();
           const normCorrectHi = String(question.correctAnswerHi || "").trim().toLowerCase();
+          const normCorrectEn = String(question.correctAnswerEn || "").trim().toLowerCase();
 
           let isCorrect =
             (normSelected && normSelected === normCorrectGu) ||
-            (normSelected && normCorrectHi && normSelected === normCorrectHi);
+            (normSelected && normCorrectHi && normSelected === normCorrectHi) ||
+            (normSelected && normCorrectEn && normSelected === normCorrectEn);
 
           // Position-based index check if language strings differ
           if (
