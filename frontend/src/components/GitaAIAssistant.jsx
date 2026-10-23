@@ -332,12 +332,14 @@ export default function GitaAIAssistant() {
 
         collapseTimer = setTimeout(() => {
           setIsLabelExpanded(false);
-          // Signal to Rating FAB to start its expand sequence next!
-          try {
-            window.dispatchEvent(new CustomEvent("gita-ai-pill-closed"));
-          } catch (e) {}
+          // Wait for smooth collapse glide (750ms) to finish, then trigger rating pill!
+          setTimeout(() => {
+            try {
+              window.dispatchEvent(new CustomEvent("gita-ai-pill-closed"));
+            } catch (e) {}
+          }, 750);
         }, 4000); // 4 seconds duration
-      }, 400);
+      }, 500);
     };
 
     const splashAlreadyShown =

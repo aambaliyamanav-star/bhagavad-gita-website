@@ -85,10 +85,10 @@ export default function FeedbackModal() {
     // Listen for AI pill finish event
     window.addEventListener("gita-ai-pill-closed", runRatingPill, { once: true });
 
-    // Safety fallback: if AI assistant is not present or event delayed, run after 6 seconds
+    // Safety fallback: if AI assistant is not present or event delayed, run after 7 seconds
     const safetyFallback = setTimeout(() => {
       runRatingPill();
-    }, 6000);
+    }, 7000);
 
     return () => {
       window.removeEventListener("gita-ai-pill-closed", runRatingPill);
