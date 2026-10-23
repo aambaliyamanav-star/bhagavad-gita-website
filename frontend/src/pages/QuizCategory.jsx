@@ -245,19 +245,21 @@ function QuizCategory() {
         setAvailableQuestions(count);
 
         // -------------------------------------------------
-        // QUESTION COUNT ADJUST
+        // QUESTION COUNT ADJUST (10, 20, 30, 50, 70, 100)
         // -------------------------------------------------
 
-        if (count > 0) {
-          setQuestionCount((previous) => {
-            if (previous > count) {
-              return count;
-            }
+        const allowedOptions = [10, 20, 30, 50, 70, 100];
+        const validEnabled = allowedOptions.filter((opt) => opt <= count);
 
+        if (validEnabled.length > 0) {
+          setQuestionCount((previous) => {
+            if (!previous || previous > count || !allowedOptions.includes(previous)) {
+              return validEnabled[0];
+            }
             return previous;
           });
         } else {
-          setQuestionCount(0);
+          setQuestionCount("");
         }
 
       } catch (error) {
@@ -333,11 +335,21 @@ function QuizCategory() {
   const handleQuestionCountChange = (
     event
   ) => {
-    const count =
-      Number(event.target.value);
+    const val = Number(event.target.value);
+    if (!val) {
+      setQuestionCount("");
+      return;
+    }
 
-    setQuestionCount(count);
+    if (
+      availableQuestions !== null &&
+      availableQuestions !== undefined &&
+      val > availableQuestions
+    ) {
+      return;
+    }
 
+    setQuestionCount(val);
     setError("");
   };
 
@@ -478,41 +490,10 @@ function QuizCategory() {
   };
 
   // =====================================================
-  // QUESTION COUNT OPTIONS
+  // QUESTION COUNT OPTIONS: 10, 20, 30, 50, 70, 100
   // =====================================================
 
-  const getQuestionCountOptions = () => {
-    const baseOptions = [
-      5,
-      10,
-      15,
-      20,
-      25,
-      30,
-      40,
-      50,
-    ];
-
-    if (availableQuestions !== null && availableQuestions !== undefined) {
-      if (availableQuestions <= 0) {
-        return [];
-      }
-
-      // Filter options so NONE exceed availableQuestions!
-      const filtered = baseOptions.filter(
-        (count) => count <= availableQuestions
-      );
-
-      // If availableQuestions is not in the list, add exact availableQuestions count
-      if (!filtered.includes(availableQuestions)) {
-        filtered.push(availableQuestions);
-      }
-
-      return filtered.sort((a, b) => a - b);
-    }
-
-    return baseOptions;
-  };
+  const QUESTION_COUNT_OPTIONS = [10, 20, 30, 50, 70, 100];
 
   // =====================================================
   // RENDER
@@ -794,16 +775,22 @@ function QuizCategory() {
                 {txt("-- પ્રશ્નોની સંખ્યા પસંદ કરો --", "-- प्रश्नों की संख्या चुनें --", "-- Select Question Count --")}
               </option>
 
-              {getQuestionCountOptions().map(
-                (count) => (
+              {QUESTION_COUNT_OPTIONS.map((count) => {
+                const isDisabled =
+                  availableQuestions !== null &&
+                  availableQuestions !== undefined &&
+                  count > availableQuestions;
+
+                return (
                   <option
                     key={count}
                     value={count}
+                    disabled={isDisabled}
                   >
                     {count} {txt("પ્રશ્નો", "प्रश्न", "Questions")}
                   </option>
-                )
-              )}
+                );
+              })}
 
             </select>
 

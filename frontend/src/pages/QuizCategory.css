@@ -734,6 +734,14 @@
   transform: none;
 }
 
+.quiz-setup-select option:disabled {
+  color: #94a3b8;
+
+  background-color: #f1f5f9;
+
+  cursor: not-allowed;
+}
+
 
 /* =========================================================
    QUESTION COUNT
