@@ -69,10 +69,22 @@ export default function FeedbackModal() {
 
   // WhatsApp-like pill expand & collapse animation: starts AFTER AI pill closes
   useEffect(() => {
+    // If already shown in this session (e.g. on page refresh), DO NOT PLAY AGAIN!
+    const introAlreadyShown =
+      typeof window !== "undefined" &&
+      sessionStorage.getItem("gita_fab_rating_intro_shown") === "true";
+
+    if (introAlreadyShown) {
+      return;
+    }
+
     let expandTimer;
     let collapseTimer;
 
     const runRatingPill = () => {
+      // Mark as shown so refreshing the page NEVER plays the intro again!
+      sessionStorage.setItem("gita_fab_rating_intro_shown", "true");
+
       expandTimer = setTimeout(() => {
         setIsLabelExpanded(true);
 
