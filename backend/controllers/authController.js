@@ -268,6 +268,8 @@ const sendOTP = async (
       mobile,
       email,
       birthDate,
+      state,
+      city,
     } = req.body;
 
     // =================================================
@@ -400,6 +402,8 @@ const sendOTP = async (
         mobile: cleanMobile,
         birthDate:
           parsedBirthDate,
+        state: (state || "Gujarat").toString().trim(),
+        city: (city || "").toString().trim(),
       }
     );
 
@@ -689,6 +693,8 @@ const registerUser = async (
       birthDate,
       password,
       otp,
+      state,
+      city,
     } = req.body;
 
     if (
@@ -813,6 +819,18 @@ const registerUser = async (
         10
       );
 
+    const finalState = (
+      state ||
+      (storedOTP && storedOTP.state) ||
+      "Gujarat"
+    ).toString().trim();
+
+    const finalCity = (
+      city ||
+      (storedOTP && storedOTP.city) ||
+      ""
+    ).toString().trim();
+
     const user =
       await User.create({
         name:
@@ -826,6 +844,12 @@ const registerUser = async (
 
         birthDate:
           parsedBirthDate,
+
+        state:
+          finalState,
+
+        city:
+          finalCity,
 
         password:
           hashedPassword,
@@ -857,6 +881,12 @@ const registerUser = async (
 
         birthDate:
           user.birthDate,
+
+        state:
+          user.state,
+
+        city:
+          user.city,
 
         role:
           user.role,
@@ -978,6 +1008,12 @@ const loginUser = async (
 
         birthDate:
           user.birthDate,
+
+        state:
+          user.state || "Gujarat",
+
+        city:
+          user.city || "",
 
         role:
           user.role,
@@ -1776,6 +1812,18 @@ const updateProfile = async (
 
       user.birthDate =
         parsedBirthDate;
+    }
+
+    // =================================================
+    // STATE & CITY UPDATE
+    // =================================================
+
+    if (req.body.state !== undefined) {
+      user.state = req.body.state.toString().trim();
+    }
+
+    if (req.body.city !== undefined) {
+      user.city = req.body.city.toString().trim();
     }
 
     // =================================================

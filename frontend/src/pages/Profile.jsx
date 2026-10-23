@@ -19,10 +19,13 @@ import {
   CheckCircle,
   Smartphone,
   ShieldCheck,
-  Loader2
+  Loader2,
+  MapPin,
+  Landmark
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useLanguage } from "../context/LanguageContext.jsx";
+import { INDIAN_STATES, getCitiesForState } from "../utils/indiaLocations.js";
 import "./Profile.css";
 
 function Profile() {
@@ -58,6 +61,8 @@ function Profile() {
     mobile: "",
     email: "",
     birthDate: "",
+    state: "Gujarat",
+    city: "",
     currentPassword: "",
     newPassword: "",
   });
@@ -213,6 +218,8 @@ const [showNewPassword, setShowNewPassword] =
             .toISOString()
             .split("T")[0]
         : "",
+      state: user.state || "Gujarat",
+      city: user.city || "",
       currentPassword: "",
       newPassword: "",
     });
@@ -751,6 +758,8 @@ const [showNewPassword, setShowNewPassword] =
             mobile: formData.mobile,
             email: formData.email,
             birthDate: formData.birthDate,
+            state: formData.state,
+            city: formData.city,
 
             currentPassword:
               formData.currentPassword,
@@ -981,6 +990,17 @@ const [showNewPassword, setShowNewPassword] =
                         "en-IN"
                       )
                     : "-"}
+                </strong>
+              </div>
+
+              {/* STATE & CITY */}
+              <div className="profile-row">
+                <span>
+                  {txt("રાજ્ય / શહેર (Location)", "राज्य / शहर (Location)", "Location")}
+                </span>
+
+                <strong>
+                  {user.city ? `${user.city}, ` : ""}{user.state || "Gujarat"}
                 </strong>
               </div>
 
@@ -1343,6 +1363,63 @@ const [showNewPassword, setShowNewPassword] =
                 value={formData.birthDate}
                 onChange={handleChange}
               />
+            </div>
+
+            {/* =================================================
+                STATE
+            ================================================= */}
+
+            <div className="profile-edit-field">
+              <label>
+                <Landmark size={16} className="btn-icon" /> {txt("રાજ્ય (State)", "राज्य (State)", "State")}
+              </label>
+
+              <select
+                name="state"
+                value={formData.state}
+                onChange={(e) => {
+                  const newState = e.target.value;
+                  setFormData((prev) => ({
+                    ...prev,
+                    state: newState,
+                    city: "",
+                  }));
+                }}
+              >
+                {INDIAN_STATES.map((st) => (
+                  <option key={st.id} value={st.id}>
+                    {isEnglish ? st.nameEn : isHindi ? st.nameHi : st.nameGu}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* =================================================
+                CITY
+            ================================================= */}
+
+            <div className="profile-edit-field">
+              <label>
+                <MapPin size={16} className="btn-icon" /> {txt("શહેર / ગામ / તાલુકો (City / Village)", "शहर / गांव / तहसील (City / Village)", "City / Town / Village")}
+              </label>
+
+              <input
+                type="text"
+                name="city"
+                list="profile-city-list"
+                placeholder={
+                  formData.state === "Gujarat"
+                    ? txt("તમારું શહેર કે ગામ પસંદ કરો અથવા લખો...", "अपना शहर या गांव चुनें या लिखें...", "Select or type your city / village...")
+                    : txt("શહેર અથવા ગામ લખો અથવા પસંદ કરો...", "शहर या गांव लिखें या चुनें...", "Enter or select city / village...")
+                }
+                value={formData.city}
+                onChange={handleChange}
+              />
+              <datalist id="profile-city-list">
+                {getCitiesForState(formData.state).map((c, i) => (
+                  <option key={i} value={c} />
+                ))}
+              </datalist>
             </div>
 
             {/* =================================================
