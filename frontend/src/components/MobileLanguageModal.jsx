@@ -220,6 +220,14 @@ export default function MobileLanguageModal() {
             </span>
             <ChevronRight size={18} className="mobile-lang-arrow" />
           </button>
+
+          <button
+            type="button"
+            className="mobile-lang-skip-btn"
+            onClick={handleConfirm}
+          >
+            Skip
+          </button>
         </div>
       </div>
     </div>

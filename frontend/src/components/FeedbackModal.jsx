@@ -628,7 +628,7 @@ export default function FeedbackModal() {
                       className="feedback-skip-btn"
                       onClick={handleClose}
                     >
-                      {txt("પછીથી (Skip)", "बाद में (Skip)", "Later (Skip)")}
+                      Skip
                     </button>
                   </div>
                 </form>

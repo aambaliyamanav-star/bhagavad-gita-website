@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Eye, EyeOff, Lock, Mail, LogIn, Loader2, CheckCircle, AlertCircle, Sparkles, ChevronRight } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail, LogIn, Loader2, CheckCircle, AlertCircle, Sparkles } from "lucide-react";
 
 import {
   Link,
@@ -553,8 +553,7 @@ setTimeout(() => {
             className="auth-skip-btn"
             onClick={handleSkip}
           >
-            <span>{txt("પછીથી લૉગિન કરો (Skip)", "बाद में लॉगिन करें (Skip)", "Skip for now")}</span>
-            <ChevronRight size={16} />
+            Skip
           </button>
         </div>
 

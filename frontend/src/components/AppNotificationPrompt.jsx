@@ -200,7 +200,7 @@ function AppNotificationPrompt() {
                 className="app-notif-later-btn"
                 onClick={handleDismiss}
               >
-                {txt("પછીથી", "बाद में", "Later")}
+                Skip
               </button>
             </div>
           </>
