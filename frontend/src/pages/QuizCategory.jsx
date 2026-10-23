@@ -127,14 +127,15 @@ function QuizCategory() {
 
   const [error, setError] = useState("");
 
-  // Helper to generate shloka range intervals: 1-5, 1-10, 1-15... up to 1-total
+  // Helper to generate shloka range intervals: 1-5, 1-10, 1-15...
+  // (છેલ્લો વિકલ્પ 1-total નથી રાખ્યો કારણ કે ઉપર "બધા શ્લોક" નો વિકલ્પ પહેલેથી જ છે)
   const getShlokaRangeOptions = (chapterNum) => {
     const total = CHAPTER_VERSES[Number(chapterNum)] || 47;
     const ranges = [
       {
         value: "all",
         label: txt(
-          `તમામ શ્લોક (૧ થી ${total})`,
+          `બધા શ્લોક (૧ થી ${total})`,
           `सभी श्लोक (१ से ${total})`,
           `All Shlokas (1 to ${total})`
         ),
@@ -151,15 +152,6 @@ function QuizCategory() {
         ),
       });
     }
-
-    ranges.push({
-      value: `1-${total}`,
-      label: txt(
-        `શ્લોક ૧ થી ${total}`,
-        `श्लोक १ से ${total}`,
-        `Shlokas 1 to ${total}`
-      ),
-    });
 
     return ranges;
   };
@@ -814,16 +806,6 @@ function QuizCategory() {
               )}
 
             </select>
-
-            {loadingQuestions ? (
-              <span className="quiz-available-count">
-                <Loader2 size={13} className="spinner btn-icon" /> {txt("Questions તપાસી રહ્યા છીએ...", "Questions जांच रहे हैं...", "Checking questions...")}
-              </span>
-            ) : availableQuestions !== null ? (
-              <span className="quiz-available-count">
-                {availableQuestions} {txt("પ્રશ્નો ઉપલબ્ધ", "प्रश्न उपलब्ध", "questions available")}
-              </span>
-            ) : null}
 
           </div>
 
