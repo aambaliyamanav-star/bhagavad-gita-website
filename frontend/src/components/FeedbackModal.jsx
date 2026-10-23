@@ -408,7 +408,7 @@ export default function FeedbackModal() {
                 <div className="feedback-avg-rating-badge">
                   <div className="feedback-avg-rating-left">
                     <span className="feedback-avg-rating-label">
-                      {txt("વેબસાઇટ સરેરાશ રેટિંગ", "वेबसाइट औसत रेटिंग", "Website Average Rating")}
+                      {txt("સરેરાશ રેટિંગ", "औसत रेटिंग", "Average Rating")}
                     </span>
                     <div className="feedback-avg-rating-stars">
                       {[1, 2, 3, 4, 5].map((i) => {
