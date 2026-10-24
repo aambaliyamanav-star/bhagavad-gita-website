@@ -533,14 +533,14 @@ export default function FeedbackModal() {
                   {/* 5. આપનું સૂચન અથવા પ્રતિસાદ (Textarea, limit: 2000, no character counter) */}
                   <div className="feedback-textarea-wrap">
                     <label className="feedback-group-title">
-                      {txt("આપનું સૂચન અથવા પ્રતિસાદ (મરજિયાત)", "आपका सुझाव या प्रतिक्रिया (वैकल्पिक)", "Your Suggestion or Feedback (Optional)")}
+                      {txt("આપનું સૂચન અથવા પ્રતિસાદ", "आपका सुझाव या प्रतिक्रिया", "Your Suggestion or Feedback")}
                     </label>
                     <textarea
                       className="feedback-textarea"
                       placeholder={txt(
-                        "કોઈ નવું સૂચન, સુધારો કે આપનો પવિત્ર અનુભવ અહીં લખો (મરજિયાત)...",
-                        "कोई नया सुझाव, सुधार या अपना पवित्र अनुभव यहाँ लिखें (वैकल्पिक)...",
-                        "Write any suggestion, improvement, or your sacred experience here (optional)..."
+                        "કોઈ નવું સૂચન, સુધારો કે આપનો પવિત્ર અનુભવ અહીં લખો...",
+                        "कोई नया सुझाव, सुधार या अपना पवित्र अनुभव यहाँ लिखें...",
+                        "Write any suggestion, improvement, or your sacred experience here..."
                       )}
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
