@@ -66,13 +66,8 @@ const submitFeedback = async (req, res) => {
     const { category, message, device } = req.body;
     let { rating, name, email } = req.body;
 
-    // Enforce compulsory message/text
-    if (!message || message.trim().length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: "કૃપા કરીને તમારું સૂચન કે પ્રતિસાદ લખો (લખાણ લખવું ફરજિયાત છે).",
-      });
-    }
+    // Message is optional - user can submit rating with or without writing a suggestion
+    const trimmedMessage = message && typeof message === "string" ? message.trim() : "";
 
     // Handle user identification
     if (req.user) {
@@ -172,14 +167,14 @@ const submitFeedback = async (req, res) => {
       previousMessage: prevFeedbackMessage,
       isUpdatedRating: ratingUpdated || Boolean(prevFeedbackRating),
       category: finalCategory,
-      message: message.trim(),
+      message: trimmedMessage,
       device: device || "",
       status: "active",
     });
 
     let responseMessage = "આપનો પ્રતિસાદ સફળતાપૂર્વક સબમિટ થયો છે. ધન્યવાદ!";
     if (ratingUpdated && isRatingLocked) {
-      responseMessage = "૫-સ્ટાર રેટિંગ અને પ્રતિસાદ સફળતાપૂર્વક સબમિટ થયો. આપનું ૫-સ્ટાર રેટિંગ હવે લૉક થઈ ગયું છે. ખૂબ ખૂબ ધન્યવાદ!";
+      responseMessage = "આપનો પ્રતિસાદ અને રેટિંગ સફળતાપૂર્વક સબમિટ થયો છે. ખૂબ ખૂબ ધન્યવાદ!";
     } else if (ratingUpdated) {
       responseMessage = "તમારું રેટિંગ સફળતાપૂર્વક અપડેટ થયું છે.";
     }

@@ -259,23 +259,12 @@ export default function FeedbackModal() {
     e.preventDefault();
     setError("");
 
-    if (!isLocked && (!rating || rating < 1 || rating > 5)) {
+    if (!rating || rating < 1 || rating > 5) {
       setError(
         txt(
           "કૃપા કરીને ૧ થી ૫ વચ્ચે સ્ટાર રેટિંગ પસંદ કરો.",
           "कृपया 1 से 5 के बीच स्टार रेटिंग चुनें।",
           "Please select a star rating between 1 and 5."
-        )
-      );
-      return;
-    }
-
-    if (!message.trim()) {
-      setError(
-        txt(
-          "કૃપા કરીને આપનો પ્રતિસાદ અથવા સૂચન લખો.",
-          "कृपया अपनी प्रतिक्रिया या सुझाव लिखें।",
-          "Please write your feedback or suggestion."
         )
       );
       return;
@@ -301,7 +290,7 @@ export default function FeedbackModal() {
     }
 
     const payload = {
-      rating: isLocked ? 5 : rating,
+      rating: rating || 5,
       category: "feedback",
       name: name.trim() || (user?.name || txt("અનામી સાધક", "अनाम साधक", "Anonymous Seeker")),
       email: email.trim() || (user?.email || ""),
@@ -418,17 +407,11 @@ export default function FeedbackModal() {
                   {txt("ધન્યવાદ!", "धन्यवाद!", "Thank you!")}
                 </h3>
                 <p className="feedback-success-desc">
-                  {isLocked
-                    ? txt(
-                        "આપનો પ્રતિસાદ સફળતાપૂર્વક નોંધાઈ ગયો છે. આપનું ૫-સ્ટાર રેટિંગ લૉક થયેલું છે. આપના અમૂલ્ય સાથ બદલ ખૂબ ખૂબ આભાર!",
-                        "आपकी प्रतिक्रिया सफलतापूर्वक दर्ज हो गई है। आपकी 5-स्टार रेटिंग लॉक है। आपके अमूल्य सहयोग के लिए बहुत-बहुत धन्यवाद!",
-                        "Your feedback has been recorded successfully. Your 5-star rating is locked. Thank you so much for your invaluable support!"
-                      )
-                    : txt(
-                        "આપનો પ્રતિસાદ અને રેટિંગ સફળતાપૂર્વક નોંધાઈ ગયો છે. આપના સૂચનો આ પવિત્ર પ્લેટફોર્મને વધુ ઉત્કૃષ્ટ બનાવવામાં મદદરૂપ થશે.",
-                        "आपकी प्रतिक्रिया और रेटिंग सफलतापूर्वक दर्ज हो गई है। आपके सुझाव इस पवित्र मंच को और अधिक उत्कृष्ट बनाने में मदद करेंगे।",
-                        "Your feedback and rating have been recorded successfully. Your suggestions will help make this sacred platform even better."
-                      )}
+                  {txt(
+                    "આપનો પ્રતિસાદ અને રેટિંગ સફળતાપૂર્વક નોંધાઈ ગયો છે. આપના અમૂલ્ય સાથ બદલ ખૂબ ખૂબ આભાર!",
+                    "आपकी प्रतिक्रिया और रेटिंग सफलतापूर्वक दर्ज हो गई है। आपके अमूल्य सहयोग के लिए बहुत-बहुत धन्यवाद!",
+                    "Your feedback and rating have been recorded successfully. Thank you so much for your invaluable support!"
+                  )}
                 </p>
                 <button
                   type="button"
@@ -480,16 +463,13 @@ export default function FeedbackModal() {
 
                 <form onSubmit={handleSubmit}>
                   {/* 2. Rating Box (રેટિંગ બોક્સ) */}
-                  <div className={`feedback-rating-section ${isLocked ? "rating-locked-box" : ""}`}>
+                  <div className="feedback-rating-section">
                     <div className="feedback-rating-header-row">
                       <label className="feedback-section-label">
-                        {isLocked
-                          ? txt("આપનું ૫-સ્ટાર રેટિંગ (લૉક થયેલ છે)", "आपकी 5-स्टार रेटिंग (लॉक है)", "Your 5-Star Rating (Locked)")
-                          : hasRated
-                          ? txt("તમારું હાલનું રેટિંગ", "आपकी वर्तमान रेटिंग", "Your Current Rating")
+                        {hasRated
+                          ? txt("તમારું રેટિંગ", "आपकी रेटिंग", "Your Rating")
                           : txt("વેબસાઇટને સ્ટાર રેટિંગ આપો", "वेबसाइट को स्टार रेटिंग दें", "Rate this website")}
                       </label>
-                      {isLocked && <Lock size={14} color="#d97706" />}
                     </div>
 
                     <div className="feedback-stars-row">
@@ -497,23 +477,12 @@ export default function FeedbackModal() {
                         <button
                           key={starNum}
                           type="button"
-                          className={`feedback-star-btn ${isLocked ? "disabled-star" : ""}`}
-                          disabled={isLocked}
-                          onMouseEnter={() => !isLocked && setHoverRating(starNum)}
-                          onMouseLeave={() => !isLocked && setHoverRating(0)}
-                          onClick={() => {
-                            if (isLocked) return;
-                            if (hasRated && existingRating > 0 && starNum < existingRating) {
-                              return;
-                            }
-                            setRating(starNum);
-                          }}
+                          className="feedback-star-btn"
+                          onMouseEnter={() => setHoverRating(starNum)}
+                          onMouseLeave={() => setHoverRating(0)}
+                          onClick={() => setRating(starNum)}
                           aria-label={`${starNum} ${txt("સ્ટાર", "स्टार", "Star")}`}
-                          title={
-                            isLocked
-                              ? txt("૫-સ્ટાર રેટિંગ લૉક છે", "5-स्टार रेटिंग लॉक है", "5-Star rating is locked")
-                              : `${starNum} ${txt("સ્ટાર", "स्टार", "Star")}`
-                          }
+                          title={`${starNum} ${txt("સ્ટાર", "स्टार", "Star")}`}
                         >
                           <Star
                             size={32}
@@ -527,13 +496,7 @@ export default function FeedbackModal() {
                     </div>
 
                     <div className="feedback-rating-descriptor">
-                      {isLocked ? (
-                        <span style={{ color: "#d97706", display: "inline-flex", alignItems: "center", gap: "4px" }}>
-                          <Lock size={13} /> {txt("આપનું ૫-સ્ટાર રેટિંગ નોંધાઈ ગયું છે", "आपकी 5-स्टार रेटिंग दर्ज हो गई है", "Your 5-Star rating has been recorded")}
-                        </span>
-                      ) : (
-                        ratingLabels[activeRating] || ""
-                      )}
+                      {ratingLabels[activeRating] || ""}
                     </div>
                   </div>
 
@@ -570,20 +533,19 @@ export default function FeedbackModal() {
                   {/* 5. આપનું સૂચન અથવા પ્રતિસાદ (Textarea, limit: 2000, no character counter) */}
                   <div className="feedback-textarea-wrap">
                     <label className="feedback-group-title">
-                      {txt("આપનું સૂચન અથવા પ્રતિસાદ", "आपका सुझाव या प्रतिक्रिया", "Your Suggestion or Feedback")}
+                      {txt("આપનું સૂચન અથવા પ્રતિસાદ (મરજિયાત)", "आपका सुझाव या प्रतिक्रिया (वैकल्पिक)", "Your Suggestion or Feedback (Optional)")}
                     </label>
                     <textarea
                       className="feedback-textarea"
                       placeholder={txt(
-                        "કોઈ નવું સૂચન, સુધારો કે આપનો પવિત્ર અનુભવ અહીં લખો...",
-                        "कोई नया सुझाव, सुधार या अपना पवित्र अनुभव यहाँ लिखें...",
-                        "Write any suggestion, improvement, or your sacred experience here..."
+                        "કોઈ નવું સૂચન, સુધારો કે આપનો પવિત્ર અનુભવ અહીં લખો (મરજિયાત)...",
+                        "कोई नया सुझाव, सुधार या अपना पवित्र अनुभव यहाँ लिखें (वैकल्पिक)...",
+                        "Write any suggestion, improvement, or your sacred experience here (optional)..."
                       )}
                       value={message}
                       onChange={(e) => setMessage(e.target.value)}
                       maxLength={2000}
                       rows={4}
-                      required
                     />
                   </div>
 
@@ -613,11 +575,9 @@ export default function FeedbackModal() {
                         <>
                           <Send size={16} />
                           <span>
-                            {isLocked
-                              ? txt("સૂચન સબમિટ કરો", "सुझाव सबमिट करें", "Submit Suggestion")
-                              : hasRated
-                              ? txt("રેટિંગ / સૂચન અપડેટ કરો", "रेटिंग / सुझाव अपडेट करें", "Update Rating / Suggestion")
-                              : txt("રેટિંગ અને સૂચન સબમિટ કરો", "रेटिंग और सुझाव सबमिट करें", "Submit Rating & Suggestion")}
+                            {hasRated
+                              ? txt("રેટિંગ સબમિટ કરો", "रेटिंग सबमिट करें", "Submit Rating")
+                              : txt("સબમિટ કરો", "सबमिट करें", "Submit")}
                           </span>
                         </>
                       )}
