@@ -1,5 +1,7 @@
 const QuizQuestion = require("../models/QuizQuestion");
 const QuizResult = require("../models/QuizResult");
+const QuizUserProgress = require("../models/QuizUserProgress");
+
 const {
   translateQuizToHindi,
   translateQuizToEnglish,
@@ -59,6 +61,30 @@ const shuffleQuestionOptions = (q) => {
 
 
 // =====================================================
+// =====================================================
+// GET SCOPE KEY HELPER
+// =====================================================
+
+const getScopeKey = (category, chapter, shlokaRange) => {
+  let cat = String(category || "").trim().toLowerCase();
+  let ch = chapter ? String(chapter).trim() : "";
+  let range = String(shlokaRange || "all").trim().toLowerCase();
+
+  if (ch && !cat.startsWith("chapter-")) {
+    cat = `chapter-${ch}`;
+  }
+
+  if (cat.startsWith("chapter-")) {
+    return `${cat}:${range || "all"}`;
+  }
+
+  if (cat === "mahabharata") {
+    return "mahabharata:all";
+  }
+
+  return "all:all";
+};
+
 // GET QUIZ QUESTIONS
 // =====================================================
 
@@ -137,39 +163,116 @@ const getQuizQuestions = async (req, res) => {
       query.shlokaNumber = { $gte: from, $lte: to };
     }
 
-    let questions =
+    // =================================================
+    // FETCH ALL ELIGIBLE QUESTIONS
+    // =================================================
+
+    let eligibleQuestions =
       await QuizQuestion.find(query);
 
-    // =================================================
-    // RANDOMIZE QUESTIONS
-    // =================================================
-    //
-    // દરેક Quiz attempt વખતે questions
-    // અલગ random orderમાં આવશે.
-    //
-    // Fisher-Yates shuffle વાપરવામાં આવ્યો છે.
-    //
-    // એક જ fetch થયેલા questionsમાં
-    // duplicate question નહીં આવે.
-    //
-    // =================================================
-
-    questions =
-      shuffleQuestions(
-        questions
-      );
-
-    // =================================================
-    // LIMIT
-    // =================================================
+    if (!eligibleQuestions || eligibleQuestions.length === 0) {
+      return res.status(200).json({
+        success: true,
+        count: 0,
+        questions: [],
+      });
+    }
 
     const questionLimit =
       Number(limit) || 10;
 
-    questions =
-      questions
-        .slice(0, questionLimit)
-        .map(shuffleQuestionOptions);
+    const needed = Math.min(
+      questionLimit,
+      eligibleQuestions.length
+    );
+
+    let selectedQuestions = [];
+    const userId = req.user ? (req.user._id || req.user.id) : null;
+
+    // =================================================
+    // NO-REPEAT DECK/CYCLE ALGORITHM PER USER
+    // =================================================
+    // જ્યાં સુધી યુઝર તમામ પ્રશ્નો એકવાર ન રમી લે
+    // ત્યાં સુધી આગળ રમાયેલા પ્રશ્નો રીપીટ નહીં થાય.
+    // બધા પ્રશ્નો રમાઈ ગયા પછી જ નવી સાયકલ શરૂ થશે.
+    // =================================================
+
+    if (userId) {
+      const scopeKey = getScopeKey(category, chapter, shlokaRange);
+
+      let progress = await QuizUserProgress.findOne({
+        user: userId,
+        scopeKey,
+      });
+
+      if (!progress) {
+        progress = new QuizUserProgress({
+          user: userId,
+          scopeKey,
+          seenQuestionIds: [],
+          cycleCount: 1,
+        });
+      }
+
+      const seenSet = new Set(
+        (progress.seenQuestionIds || []).map((id) => String(id))
+      );
+
+      let unseen = eligibleQuestions.filter(
+        (q) => !seenSet.has(String(q._id))
+      );
+      let alreadySeen = eligibleQuestions.filter(
+        (q) => seenSet.has(String(q._id))
+      );
+
+      if (unseen.length >= needed) {
+        // કેસ 1: બાકી રહેલા પ્રશ્નોમાંથી જરૂરી સંખ્યા મળી રહે છે
+        unseen = shuffleQuestions(unseen);
+        selectedQuestions = unseen.slice(0, needed);
+
+        selectedQuestions.forEach((q) => {
+          progress.seenQuestionIds.push(q._id);
+        });
+
+        // જો બધા પ્રશ્નો રમાઈ ગયા હોય તો આગલી વખત માટે સાયકલ રીસેટ કરો
+        if (progress.seenQuestionIds.length >= eligibleQuestions.length) {
+          progress.seenQuestionIds = [];
+          progress.cycleCount = (progress.cycleCount || 1) + 1;
+        }
+      } else if (unseen.length > 0) {
+        // કેસ 2: થોડા અનસીન પ્રશ્નો બાકી છે (પણ જરૂર કરતાં ઓછા)
+        unseen = shuffleQuestions(unseen);
+        const fromUnseen = unseen;
+
+        // આ સાયકલ પૂર્ણ થઈ!
+        progress.cycleCount = (progress.cycleCount || 1) + 1;
+
+        // રીસેટ થયેલ પૂલમાંથી બાકીના પ્રશ્નો લો
+        const stillNeeded = needed - fromUnseen.length;
+        alreadySeen = shuffleQuestions(alreadySeen);
+        const fromResetPool = alreadySeen.slice(0, stillNeeded);
+
+        selectedQuestions = shuffleQuestions([...fromUnseen, ...fromResetPool]);
+        progress.seenQuestionIds = fromResetPool.map((q) => q._id);
+      } else {
+        // કેસ 3: આ પૂલના બધા પ્રશ્નો રમાઈ ગયા છે - સાયકલ રીસેટ
+        progress.cycleCount = (progress.cycleCount || 1) + 1;
+        const shuffledPool = shuffleQuestions(eligibleQuestions);
+        selectedQuestions = shuffledPool.slice(0, needed);
+        progress.seenQuestionIds = selectedQuestions.map((q) => q._id);
+      }
+
+      progress.lastPlayedAt = new Date();
+      await progress.save();
+    } else {
+      selectedQuestions = shuffleQuestions(eligibleQuestions).slice(0, needed);
+    }
+
+    // =================================================
+    // SHUFFLE OPTIONS (A, B, C, D) FOR EVERY QUESTION
+    // =================================================
+
+    const questions = selectedQuestions.map(shuffleQuestionOptions);
 
     // =================================================
     // RESPONSE
@@ -177,10 +280,7 @@ const getQuizQuestions = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-
-      count:
-        questions.length,
-
+      count: questions.length,
       questions,
     });
 
