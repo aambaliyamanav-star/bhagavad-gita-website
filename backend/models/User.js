@@ -70,6 +70,7 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: true,
+      select: false, // Prevents accidental leakage in User queries
     },
 
     // ===================================================

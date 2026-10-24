@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
+const cron = require("node-cron");
 
 const connectDB = require("./config/db");
 const authRoutes = require("./routes/authRoutes");
@@ -17,28 +18,56 @@ const feedbackRoutes = require("./routes/feedbackRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const appAnalyticsRoutes = require("./routes/appAnalyticsRoutes");
 const notificationController = require("./controllers/notificationController");
-const cron = require("node-cron");
+
+const {
+  securityHeaders,
+  noSqlSanitizer,
+  generalApiLimiter,
+  corsOptions,
+  secureErrorHandler,
+} = require("./middleware/securityMiddleware");
 
 const app = express();
 
+// Trust reverse proxy (Render, Vercel, Cloudflare) for accurate client IP in rate limiting
+app.set("trust proxy", 1);
+
+// Connect MongoDB Database
 connectDB();
 
-app.use(cors());
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(express.text({ type: ["text/plain", "application/json"] }));
+// =====================================================
+// SECURITY SUITE
+// =====================================================
 
-// Routes
+// 1. Disable server fingerprinting (Hides Express signature)
+app.disable("x-powered-by");
+
+// 2. Set strict HTTP security headers (HSTS, Anti-Clickjacking, Anti-XSS, MIME-sniffing protection)
+app.use(securityHeaders);
+
+// 3. Strict CORS Whitelist
+app.use(cors(corsOptions));
+
+// 4. Request Body Size Limiting (Prevents buffer overflow & DoS memory exhaustion)
+app.use(express.json({ limit: "1mb" }));
+app.use(express.urlencoded({ extended: true, limit: "1mb" }));
+app.use(express.text({ type: ["text/plain", "application/json"], limit: "1mb" }));
+
+// 5. NoSQL Injection Sanitizer (Strips any malicious $ and . keys from body, query, and params)
+app.use(noSqlSanitizer);
+
+// 6. Global API Rate Limiter (Protects against DDoS, brute force, and scraping bots)
+app.use("/api", generalApiLimiter);
+
+// =====================================================
+// ROUTES
+// =====================================================
+
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/shloks", shlokRoutes);
 app.use("/api/favorites", favoriteRoutes);
-
-app.use(
-  "/api/continue-reading",
-  continueReadingRoutes
-);
-
+app.use("/api/continue-reading", continueReadingRoutes);
 app.use("/api/quiz", quizRoutes);
 app.use("/api/reading-tracker", readingTrackerRoutes);
 app.use("/api/gita-ai", gitaAiRoutes);
@@ -46,6 +75,17 @@ app.use("/api/visitors", visitorRoutes);
 app.use("/api/feedback", feedbackRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/app-analytics", appAnalyticsRoutes);
+
+// Root health check endpoint
+app.get("/", (req, res) => {
+  res.json({
+    success: true,
+    message: "Bhagavad Gita Backend API is running securely 🚀",
+  });
+});
+
+// Centralized Secure Error Handler (Never leaks internal stack traces or DB errors to clients)
+app.use(secureErrorHandler);
 
 // =====================================================
 // PUSH NOTIFICATION CRON JOBS (EVERY 3 HOURS THROUGHOUT THE DAY)
@@ -82,19 +122,8 @@ cron.schedule(
   { timezone: "Asia/Kolkata" }
 );
 
-app.get("/", (req, res) => {
-  res.json({
-    success: true,
-    message:
-      "Bhagavad Gita Backend API is running 🚀",
-  });
-});
-
-const PORT =
-  process.env.PORT || 5000;
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-  console.log(
-    `Server running on http://localhost:${PORT}`
-  );
+  console.log(`Server running securely on http://localhost:${PORT}`);
 });

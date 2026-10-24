@@ -32,6 +32,11 @@ const {
   protect,
 } = require("../middleware/authMiddleware");
 
+const {
+  authLimiter,
+  otpLimiter,
+} = require("../middleware/securityMiddleware");
+
 // =====================================================
 // ROUTER
 // =====================================================
@@ -45,6 +50,7 @@ const router = express.Router();
 
 router.post(
   "/send-otp",
+  otpLimiter,
   sendOTP
 );
 
@@ -65,6 +71,7 @@ router.post(
 
 router.post(
   "/register",
+  authLimiter,
   registerUser
 );
 
@@ -75,6 +82,7 @@ router.post(
 
 router.post(
   "/login",
+  authLimiter,
   loginUser
 );
 
@@ -106,6 +114,7 @@ router.get(
 router.post(
   "/profile/send-otp",
   protect,
+  otpLimiter,
   sendProfileUpdateOTP
 );
 
@@ -153,6 +162,7 @@ router.put(
 
 router.post(
   "/forgot-password/send-otp",
+  otpLimiter,
   sendForgotPasswordOTP
 );
 
