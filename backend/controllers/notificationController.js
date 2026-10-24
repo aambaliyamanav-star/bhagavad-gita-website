@@ -159,8 +159,8 @@ module.exports = {
       if (isBrandNew) {
         const siteUrl = process.env.SITE_URL || "https://bhagavad-gita-website-rk1v.vercel.app";
         const welcomePayload = {
-          title: "શ્રીમદ્ ભગવદ્ ગીતા APP | સ્વાગત છે",
-          body: "ગીતા શ્લોક વાંચન અને દૈનિક ક્વિઝ રિમાઇન્ડર સક્રિય થઈ ગયા છે. દર ૩ કલાકે તમને પ્રેરણાદાયી રિમાઇન્ડર મળશે.",
+          title: "શ્રીમદ્ ભગવદ્ ગીતા APP",
+          body: "ગીતા અધ્યાય વાંચન અને ક્વિઝ માટે રિમાઇન્ડર સફળતાપૂર્વક સક્રિય થઈ ગયા છે. 🙏",
           icon: `${siteUrl}/icons/icon-192x192.png`,
           badge: `${siteUrl}/icons/icon-192x192.png`,
           url: `${siteUrl}/chapters`,
