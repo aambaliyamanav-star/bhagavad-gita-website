@@ -3,7 +3,7 @@
    AUTO-UPDATE • OFFLINE CAPABLE • FAST CACHE • ZERO LATENCY
    ========================================================= */
 
-const CACHE_NAME = "bhagavad-gita-cache-v2";
+const CACHE_NAME = "bhagavad-gita-cache-v3";
 
 // Essential core shell assets to pre-cache on install
 const PRECACHE_ASSETS = [
@@ -122,6 +122,11 @@ self.addEventListener("push", (event) => {
     } catch (e) {
       data = { title: "શ્રીમદ્ ભગવદ્ ગીતા APP", body: event.data.text() };
     }
+  }
+
+  // Strictly ignore silent pings or empty/null payloads
+  if (!data || data.type === "silent-ping" || (!data.title && !data.body)) {
+    return;
   }
 
   const title = data.title || "શ્રીમદ્ ભગવદ્ ગીતા APP";

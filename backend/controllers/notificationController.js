@@ -157,7 +157,10 @@ module.exports = {
 
       // Send initial welcome notification ONLY on first-time subscription
       if (isBrandNew) {
-        const siteUrl = process.env.SITE_URL || "https://gita-gyan-m.vercel.app";
+        const siteUrl =
+          process.env.SITE_URL && !process.env.SITE_URL.includes("rk1v")
+            ? process.env.SITE_URL
+            : "https://gita-gyan-m.vercel.app";
         const welcomePayload = {
           title: "શ્રીમદ્ ભગવદ્ ગીતા APP",
           body: "ગીતા અધ્યાય વાંચન અને ક્વિઝ માટે રિમાઇન્ડર સફળતાપૂર્વક સક્રિય થઈ ગયા છે. 🙏",
@@ -282,7 +285,10 @@ module.exports = {
         ) - 5.5 * 60 * 60 * 1000
       );
       const todayStringIST = istTime.toISOString().slice(0, 10);
-      const targetUrl = process.env.SITE_URL || "https://gita-gyan-m.vercel.app";
+      const targetUrl =
+        process.env.SITE_URL && !process.env.SITE_URL.includes("rk1v")
+          ? process.env.SITE_URL
+          : "https://gita-gyan-m.vercel.app";
 
       // 2. Identify 3-hour time slot
       // 06:00 AM, 09:00 AM, 12:00 PM, 03:00 PM, 06:00 PM, 09:00 PM IST
@@ -599,7 +605,10 @@ module.exports = {
       const sub = await Subscription.findOne({ endpoint });
       if (!sub) return res.status(404).json({ error: "Subscription not found" });
 
-      const siteUrl = process.env.SITE_URL || "https://gita-gyan-m.vercel.app";
+      const siteUrl =
+        process.env.SITE_URL && !process.env.SITE_URL.includes("rk1v")
+          ? process.env.SITE_URL
+          : "https://gita-gyan-m.vercel.app";
       const payload = {
         title: "શ્રીમદ્ ભગવદ્ ગીતા APP | ટેસ્ટ નોટિફિકેશન",
         body: "તમારા મોબાઈલમાં ગીતા એપ નોટિફિકેશન સફળતાપૂર્વક કામ કરી રહ્યું છે! 🙏",

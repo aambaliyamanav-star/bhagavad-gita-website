@@ -307,44 +307,7 @@ const getAppStats = async (req, res) => {
       console.warn("App subscription sync warning:", syncErr.message);
     }
 
-    // 3. Ping active push subscriptions to detect uninstalled devices via FCM 410/404
-    try {
-      initWebpushVapid();
-      const activeSubs = await Subscription.find().lean();
-      for (const sub of activeSubs) {
-        if (sub.endpoint && sub.keys) {
-          try {
-            await webpush.sendNotification(
-              { endpoint: sub.endpoint, keys: sub.keys },
-              JSON.stringify({ type: "silent-ping" }),
-              { TTL: 0 }
-            );
-          } catch (pingErr) {
-            if (pingErr.statusCode === 404 || pingErr.statusCode === 410) {
-              console.log("Device uninstalled via 410/404:", sub.deviceId || sub.endpoint);
-              await Subscription.deleteOne({ _id: sub._id });
-              await AppInstallation.updateMany(
-                {
-                  $or: [
-                    { notificationEndpoint: sub.endpoint },
-                    { deviceId: sub.deviceId },
-                  ],
-                },
-                {
-                  $set: {
-                    isInstalled: false,
-                    uninstalledAt: new Date(),
-                    hasNotificationEnabled: false,
-                  },
-                }
-              );
-            }
-          }
-        }
-      }
-    } catch (pingCheckErr) {
-      // non-blocking
-    }
+    // 3. Device sync complete - push notifications are strictly managed by notificationController
 
     const now = new Date();
     const istTime = new Date(now.getTime() + 5.5 * 60 * 60 * 1000);
