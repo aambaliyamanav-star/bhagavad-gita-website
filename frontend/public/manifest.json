@@ -1,12 +1,12 @@
 {
-  "name": "શ્રીમદ્ ભગવદ્ ગીતા",
+  "name": "શ્રીમદ્ ભગવદ્ ગીતા | Shrimad Bhagavad Gita",
   "short_name": "ભગવદ્ ગીતા",
-  "description": "શ્રીમદ્ ભગવદ્ ગીતા - 18 અધ્યાય, 700 શ્લોક, ગીતા AI આધ્યાત્મિક સહાયક અને ક્વિઝ સાથેનું સંપૂર્ણ ડિજિટલ મંચ",
+  "description": "શ્રીમદ્ ભગવદ્ ગીતા - 18 અધ્યાય, 700 શ્લોક ગુજરાતી, હિન્દી અને અંગ્રેજી અર્થ સાથે, ગીતા AI સહાયક, ક્વિઝ અને દૈનિક જીવન માર્ગદર્શન.",
   "start_url": "/?source=pwa",
   "id": "/?source=pwa",
   "scope": "/",
   "display": "standalone",
-  "display_override": ["standalone", "minimal-ui"],
+  "display_override": ["standalone", "minimal-ui", "browser"],
   "prefer_related_applications": false,
   "background_color": "#0d2238",
   "theme_color": "#1a73e8",
@@ -38,6 +38,44 @@
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "ગીતા અધ્યાયો",
+      "short_name": "અધ્યાયો",
+      "description": "૧૮ અધ્યાય અને ૭૦૦ પવિત્ર શ્લોકો વાંચો",
+      "url": "/chapters",
+      "icons": [
+        {
+          "src": "/icons/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "ગીતા ક્વિઝ રમો",
+      "short_name": "ક્વિઝ",
+      "description": "તમારું ગીતા જ્ઞાન ચકાસો અને ક્વિઝ રમો",
+      "url": "/quiz-category",
+      "icons": [
+        {
+          "src": "/icons/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "જીવન માર્ગદર્શન",
+      "short_name": "માર્ગદર્શન",
+      "description": "જીવનની વિવિધ પરિસ્થિતિઓ માટે ગીતા માર્ગદર્શન",
+      "url": "/life-guidance",
+      "icons": [
+        {
+          "src": "/icons/icon-192x192.png",
+          "sizes": "192x192"
+        }
+      ]
     }
   ]
 }

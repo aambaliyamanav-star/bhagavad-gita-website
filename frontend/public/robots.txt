@@ -1,4 +1,28 @@
+# =========================================================
+# BHAGAVAD GITA - SEARCH ENGINE ROBOTS CONFIGURATION
+# Optimized for Googlebot, Bingbot, and Major Search Engines
+# =========================================================
+
 User-agent: *
 Allow: /
+Allow: /chapters
+Allow: /chapter/
+Allow: /quiz-category
+Allow: /quiz/play
+Allow: /life-guidance
+Allow: /about
 
+# Disallow Private User & Admin Pages (Protects privacy and preserves crawl budget)
+Disallow: /admin
+Disallow: /admin/
+Disallow: /profile
+Disallow: /profile/
+Disallow: /shlok-management
+Disallow: /quiz-management
+Disallow: /forgot-password
+Disallow: /forgot-password/
+Disallow: /api/
+
+# Host & XML Sitemap
+Host: https://bhagavad-gita-website-rk1v.vercel.app
 Sitemap: https://bhagavad-gita-website-rk1v.vercel.app/sitemap.xml
