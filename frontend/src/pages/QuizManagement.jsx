@@ -588,6 +588,16 @@ function QuizManagement() {
         );
         return;
       }
+
+      if (
+        !formData.shlokaNumber ||
+        Number(formData.shlokaNumber) < 1
+      ) {
+        setError(
+          "શ્લોક નંબર (Shloka Number) દાખલ કરવો ફરજિયાત છે."
+        );
+        return;
+      }
     }
 
     // -------------------------------------------------
@@ -1402,111 +1412,82 @@ function QuizManagement() {
         >
 
           {/* =================================================
-              CATEGORY
+              CATEGORY, CHAPTER NUMBER & SHLOKA NUMBER (SINGLE ROW)
           ================================================= */}
+          <div
+            className={`quiz-category-row-grid ${
+              formData.category.startsWith("chapter-") ? "has-chapter" : ""
+            }`}
+          >
+            <div className="quiz-form-group" style={{ marginBottom: 0 }}>
+              <label>
+                Category
+              </label>
 
-          <div className="quiz-form-group">
+              <select
+                name="category"
+                value={formData.category}
+                onChange={handleCategoryChange}
+              >
+                <option value="all">
+                  All / General
+                </option>
 
-            <label>
-              Category
-            </label>
+                {Array.from(
+                  { length: 18 },
+                  (_, index) => (
+                    <option
+                      key={index + 1}
+                      value={`chapter-${index + 1}`}
+                    >
+                      અધ્યાય {index + 1}
+                    </option>
+                  )
+                )}
 
-            <select
-              name="category"
-              value={
-                formData.category
-              }
-              onChange={
-                handleCategoryChange
-              }
-            >
+                <option value="mahabharata">
+                  સમગ્ર મહાભારત
+                </option>
+              </select>
+            </div>
 
-              <option value="all">
-                All / General
-              </option>
+            {formData.category.startsWith("chapter-") && (
+              <>
+                <div className="quiz-form-group" style={{ marginBottom: 0 }}>
+                  <label>
+                    Chapter Number (અધ્યાય નંબર)
+                  </label>
 
-              {Array.from(
-                { length: 18 },
-                (_, index) => (
-                  <option
-                    key={index + 1}
-                    value={`chapter-${index + 1}`}
-                  >
-                    અધ્યાય {index + 1}
-                  </option>
-                )
-              )}
+                  <input
+                    type="number"
+                    name="chapterNumber"
+                    value={formData.chapterNumber}
+                    onChange={handleChange}
+                    min="1"
+                    max="18"
+                    placeholder="1 થી 18"
+                    required
+                  />
+                </div>
 
-              <option value="mahabharata">
-                સમગ્ર મહાભારત
-              </option>
+                <div className="quiz-form-group" style={{ marginBottom: 0 }}>
+                  <label>
+                    શ્લોક નંબર (Shloka Number) <span style={{ color: "#ef4444" }}>*</span>
+                  </label>
 
-            </select>
-
+                  <input
+                    type="number"
+                    name="shlokaNumber"
+                    value={formData.shlokaNumber || ""}
+                    onChange={handleChange}
+                    min="1"
+                    placeholder="દા.ત. 1, 5, 12..."
+                    required
+                  />
+                </div>
+              </>
+            )}
           </div>
-
-
-          {/* =================================================
-              CHAPTER & SHLOKA INFORMATION
-          ================================================= */}
-
-          {formData.category.startsWith(
-            "chapter-"
-          ) && (
-            <>
-              <div className="quiz-form-group">
-
-                <label>
-                  Chapter Number (અધ્યાય નંબર)
-                </label>
-
-                <input
-                  type="number"
-                  name="chapterNumber"
-                  value={
-                    formData.chapterNumber
-                  }
-                  onChange={
-                    handleChange
-                  }
-                  min="1"
-                  max="18"
-                  placeholder="1 થી 18"
-                />
-
-                <small>
-                  આ question આ અધ્યાયમાં
-                  અને "બધા અધ્યાય" quizમાં દેખાશે.
-                </small>
-
-              </div>
-
-              <div className="quiz-form-group">
-
-                <label>
-                  શ્લોક નંબર (Shloka Number - વૈકલ્પિક)
-                </label>
-
-                <input
-                  type="number"
-                  name="shlokaNumber"
-                  value={
-                    formData.shlokaNumber || ""
-                  }
-                  onChange={
-                    handleChange
-                  }
-                  min="1"
-                  placeholder="દા.ત. 1, 5, 12... (શ્લોક નંબર)"
-                />
-
-                <small>
-                  આ પ્રશ્ન કયા શ્લોકનો છે તે દર્શાવવા માટે (જેથી 1-5, 1-10 જેવી રેન્જમાં સિસ્ટમ આ પ્રશ્ન ફિલ્ટર કરી શકે).
-                </small>
-
-              </div>
-            </>
-          )}
 
 
           {/* =================================================
@@ -1520,30 +1501,30 @@ function QuizManagement() {
           )}
 
           {/* =================================================
-              LANGUAGE TABS & AI AUTO-TRANSLATE
+              LANGUAGE TABS & AI AUTO-TRANSLATE (SINGLE LINE: TABS LEFT, AI RIGHT)
           ================================================= */}
           <div className="admin-lang-tabs-bar" style={{ marginBottom: "20px" }}>
-            <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+            <div className="admin-lang-tabs-left">
               <button
                 type="button"
                 className={`admin-lang-tab ${activeLangTab === "gu" ? "active" : ""}`}
                 onClick={() => setActiveLangTab("gu")}
               >
-                ગુજરાતી પ્રશ્ન & વિકલ્પો
+                ગુજરાતી વિગત
               </button>
               <button
                 type="button"
                 className={`admin-lang-tab ${activeLangTab === "hi" ? "active" : ""}`}
                 onClick={() => setActiveLangTab("hi")}
               >
-                हिन्दी प्रश्न एवं विकल्प (Auto)
+                હિન્દી વિગત
               </button>
               <button
                 type="button"
                 className={`admin-lang-tab ${activeLangTab === "en" ? "active" : ""}`}
                 onClick={() => setActiveLangTab("en")}
               >
-                English Question & Options (Auto)
+                અંગ્રેજી વિગત
               </button>
             </div>
 
@@ -1556,9 +1537,9 @@ function QuizManagement() {
                 disabled={translating}
                 title="ગુજરાતી પ્રશ્ન અને વિકલ્પો પરથી AI દ્વારા આપોઆપ હિન્દી અનુવાદ કરો"
               >
-                <Sparkles className={`btn-icon ${translatingLang === "hi" ? "spinning" : ""}`} size={16} />
+                <Sparkles className={`btn-icon ${translatingLang === "hi" ? "spinning" : ""}`} size={14} />
                 {translatingLang === "hi"
-                  ? txt("AI હિન્દી અનુવાદ થઈ રહ્યું છે...", "AI हिन्दी अनुवाद हो रहा है...", "AI translating Hindi...")
+                  ? txt("AI હિન્દી અનુવાદ...", "AI अनुवाद...", "Translating...")
                   : txt("✨ AI હિન્દી ઓટો-અનુવાદ", "✨ AI हिन्दी ऑटो-अनुवाद", "✨ AI Hindi Auto-Translate")}
               </button>
 
@@ -1570,9 +1551,9 @@ function QuizManagement() {
                 disabled={translating}
                 title="ગુજરાતી પ્રશ્ન અને વિકલ્પો પરથી AI દ્વારા આપોઆપ અંગ્રેજી અનુવાદ કરો"
               >
-                <Sparkles className={`btn-icon ${translatingLang === "en" ? "spinning" : ""}`} size={16} />
+                <Sparkles className={`btn-icon ${translatingLang === "en" ? "spinning" : ""}`} size={14} />
                 {translatingLang === "en"
-                  ? txt("AI અંગ્રેજી અનુવાદ થઈ રહ્યું છે...", "AI अंग्रेज़ी अनुवाद हो रहा है...", "AI translating English...")
+                  ? txt("AI અંગ્રેજી અનુવાદ...", "AI अनुवाद...", "Translating...")
                   : txt("✨ AI અંગ્રેજી ઓટો-અનુવાદ", "✨ AI अंग्रेज़ी ऑटो-अनुवाद", "✨ AI English Auto-Translate")}
               </button>
             </div>
