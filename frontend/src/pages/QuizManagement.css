@@ -3949,6 +3949,22 @@ html[data-theme='dark'] .quiz-list-header h2,
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.quiz-form-group input.read-only-chapter-input {
+  background: #f1f5f9 !important;
+  color: #475569 !important;
+  cursor: not-allowed !important;
+  border-color: #cbd5e1 !important;
+  user-select: none;
+}
+
+html[data-theme='dark'] .quiz-form-group input.read-only-chapter-input,
+.dark .quiz-form-group input.read-only-chapter-input {
+  background: rgba(30, 41, 59, 0.7) !important;
+  color: #94a3b8 !important;
+  border-color: #334155 !important;
+  cursor: not-allowed !important;
+}
+
 @media (max-width: 768px) {
   .quiz-category-row-grid.has-chapter {
     grid-template-columns: 1fr;

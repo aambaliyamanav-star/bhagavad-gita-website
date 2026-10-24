@@ -1462,10 +1462,11 @@ function QuizManagement() {
                     type="number"
                     name="chapterNumber"
                     value={formData.chapterNumber}
-                    onChange={handleChange}
-                    min="1"
-                    max="18"
+                    readOnly
+                    tabIndex="-1"
+                    className="read-only-chapter-input"
                     placeholder="1 થી 18"
+                    title="Category પસંદ કરવાથી અધ્યાય નંબર આપોઆપ આવી જશે (બદલી શકાતો નથી)"
                     required
                   />
                 </div>
