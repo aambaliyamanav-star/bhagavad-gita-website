@@ -114,9 +114,12 @@
   </head>
 
   <body>
-    <div id="root">
-      <!-- SEO Pre-rendered Semantic Fallback for Search Engine Crawlers (Googlebot) -->
-      <!-- When React loads, it seamlessly replaces this shell with the interactive UI -->
+    <!-- React Root Mount Point -->
+    <div id="root"></div>
+
+    <!-- Search Engine & Crawler Semantic Fallback (Invisible to human users with JavaScript enabled) -->
+    <!-- Ensures 100% indexability for Googlebot and web crawlers without any UI flashing for users -->
+    <noscript>
       <header style="padding: 24px 16px; text-align: center; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
         <h1 style="color: #b45309; font-size: 28px; margin: 0 0 8px 0; font-weight: 700;">શ્રીમદ્ ભગવદ્ ગીતા | Shrimad Bhagavad Gita</h1>
         <p style="color: #4b5563; font-size: 16px; max-width: 800px; margin: 0 auto 16px; line-height: 1.6;">
@@ -166,7 +169,7 @@
           </p>
         </section>
       </main>
-    </div>
+    </noscript>
 
     <script type="module" src="/src/main.jsx"></script>
   </body>
