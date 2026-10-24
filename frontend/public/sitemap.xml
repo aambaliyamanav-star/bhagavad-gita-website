@@ -6,7 +6,7 @@
 
   <!-- 1. Home Page (મુખ્ય પેજ) -->
   <url>
-    <loc>https://bhagavad-gita-website-rk1v.vercel.app/</loc>
+    <loc>https://gita-gyan-m.vercel.app/</loc>
     <lastmod>2026-10-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -14,7 +14,7 @@
 
   <!-- 2. All Chapters Hub (૧૮ અધ્યાયો) -->
   <url>
-    <loc>https://bhagavad-gita-website-rk1v.vercel.app/chapters</loc>
+    <loc>https://gita-gyan-m.vercel.app/chapters</loc>
     <lastmod>2026-10-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
@@ -22,7 +22,7 @@
 
   <!-- 3. Gita Quiz Hub (ગીતા ક્વિઝ) -->
   <url>
-    <loc>https://bhagavad-gita-website-rk1v.vercel.app/quiz-category</loc>
+    <loc>https://gita-gyan-m.vercel.app/quiz-category</loc>
     <lastmod>2026-10-24</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.90</priority>
@@ -30,7 +30,7 @@
 
   <!-- 4. Life Guidance Hub (જીવન માર્ગદર્શન) -->
   <url>
-    <loc>https://bhagavad-gita-website-rk1v.vercel.app/life-guidance</loc>
+    <loc>https://gita-gyan-m.vercel.app/life-guidance</loc>
     <lastmod>2026-10-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
@@ -38,7 +38,7 @@
 
   <!-- 5. About Us (અમારા વિશે) -->
   <url>
-    <loc>https://bhagavad-gita-website-rk1v.vercel.app/about</loc>
+    <loc>https://gita-gyan-m.vercel.app/about</loc>
     <lastmod>2026-10-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.70</priority>
@@ -46,14 +46,14 @@
 
   <!-- 6. Authentication Pages -->
   <url>
-    <loc>https://bhagavad-gita-website-rk1v.vercel.app/login</loc>
+    <loc>https://gita-gyan-m.vercel.app/login</loc>
     <lastmod>2026-10-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.50</priority>
   </url>
 
   <url>
-    <loc>https://bhagavad-gita-website-rk1v.vercel.app/register</loc>
+    <loc>https://gita-gyan-m.vercel.app/register</loc>
     <lastmod>2026-10-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.50</priority>
@@ -61,126 +61,126 @@
 
   <!-- 7. All 18 Bhagavad Gita Chapters (અધ્યાય ૧ થી ૧૮) -->
   <url>
-    <loc>https://bhagavad-gita-website-rk1v.vercel.app/chapter/1</loc>
+    <loc>https://gita-gyan-m.vercel.app/chapter/1</loc>
     <lastmod>2026-10-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
 
   <url>
-    <loc>https://bhagavad-gita-website-rk1v.vercel.app/chapter/2</loc>
+    <loc>https://gita-gyan-m.vercel.app/chapter/2</loc>
     <lastmod>2026-10-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
 
   <url>
-    <loc>https://bhagavad-gita-website-rk1v.vercel.app/chapter/3</loc>
+    <loc>https://gita-gyan-m.vercel.app/chapter/3</loc>
     <lastmod>2026-10-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
 
   <url>
-    <loc>https://bhagavad-gita-website-rk1v.vercel.app/chapter/4</loc>
+    <loc>https://gita-gyan-m.vercel.app/chapter/4</loc>
     <lastmod>2026-10-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
 
   <url>
-    <loc>https://bhagavad-gita-website-rk1v.vercel.app/chapter/5</loc>
+    <loc>https://gita-gyan-m.vercel.app/chapter/5</loc>
     <lastmod>2026-10-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
 
   <url>
-    <loc>https://bhagavad-gita-website-rk1v.vercel.app/chapter/6</loc>
+    <loc>https://gita-gyan-m.vercel.app/chapter/6</loc>
     <lastmod>2026-10-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
 
   <url>
-    <loc>https://bhagavad-gita-website-rk1v.vercel.app/chapter/7</loc>
+    <loc>https://gita-gyan-m.vercel.app/chapter/7</loc>
     <lastmod>2026-10-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
 
   <url>
-    <loc>https://bhagavad-gita-website-rk1v.vercel.app/chapter/8</loc>
+    <loc>https://gita-gyan-m.vercel.app/chapter/8</loc>
     <lastmod>2026-10-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
 
   <url>
-    <loc>https://bhagavad-gita-website-rk1v.vercel.app/chapter/9</loc>
+    <loc>https://gita-gyan-m.vercel.app/chapter/9</loc>
     <lastmod>2026-10-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
 
   <url>
-    <loc>https://bhagavad-gita-website-rk1v.vercel.app/chapter/10</loc>
+    <loc>https://gita-gyan-m.vercel.app/chapter/10</loc>
     <lastmod>2026-10-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
 
   <url>
-    <loc>https://bhagavad-gita-website-rk1v.vercel.app/chapter/11</loc>
+    <loc>https://gita-gyan-m.vercel.app/chapter/11</loc>
     <lastmod>2026-10-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
 
   <url>
-    <loc>https://bhagavad-gita-website-rk1v.vercel.app/chapter/12</loc>
+    <loc>https://gita-gyan-m.vercel.app/chapter/12</loc>
     <lastmod>2026-10-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
 
   <url>
-    <loc>https://bhagavad-gita-website-rk1v.vercel.app/chapter/13</loc>
+    <loc>https://gita-gyan-m.vercel.app/chapter/13</loc>
     <lastmod>2026-10-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
 
   <url>
-    <loc>https://bhagavad-gita-website-rk1v.vercel.app/chapter/14</loc>
+    <loc>https://gita-gyan-m.vercel.app/chapter/14</loc>
     <lastmod>2026-10-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
 
   <url>
-    <loc>https://bhagavad-gita-website-rk1v.vercel.app/chapter/15</loc>
+    <loc>https://gita-gyan-m.vercel.app/chapter/15</loc>
     <lastmod>2026-10-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
 
   <url>
-    <loc>https://bhagavad-gita-website-rk1v.vercel.app/chapter/16</loc>
+    <loc>https://gita-gyan-m.vercel.app/chapter/16</loc>
     <lastmod>2026-10-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
 
   <url>
-    <loc>https://bhagavad-gita-website-rk1v.vercel.app/chapter/17</loc>
+    <loc>https://gita-gyan-m.vercel.app/chapter/17</loc>
     <lastmod>2026-10-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
 
   <url>
-    <loc>https://bhagavad-gita-website-rk1v.vercel.app/chapter/18</loc>
+    <loc>https://gita-gyan-m.vercel.app/chapter/18</loc>
     <lastmod>2026-10-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>

@@ -737,7 +737,7 @@ export default function ShareShlokaModal({
     drawDivider(footerDividerY, 480);
 
     // Sleek Website Link Pill (Professional & Prominent)
-    const siteUrl = "bhagavad-gita-website-rk1v.vercel.app";
+    const siteUrl = "gita-gyan-m.vercel.app";
     const pillText = `🔗 ${siteUrl}`;
     ctx.font = '600 18px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
     const pillMetrics = ctx.measureText(pillText);
@@ -782,7 +782,7 @@ export default function ShareShlokaModal({
 
   const handleShareWhatsApp = async () => {
     const canvas = canvasRef.current;
-    const websiteUrl = "https://bhagavad-gita-website-rk1v.vercel.app";
+    const websiteUrl = "https://gita-gyan-m.vercel.app";
     const shareTitle = txt("શ્રીમદ્ભગવદ્ગીતા", "श्रीमद्भगवद्गीता", "Shrimad Bhagavad Gita");
     const shareText = websiteUrl;
 
@@ -869,7 +869,7 @@ export default function ShareShlokaModal({
       });
       copyText += `\n`;
     }
-    copyText += `🔗 https://bhagavad-gita-website-rk1v.vercel.app`;
+    copyText += `🔗 https://gita-gyan-m.vercel.app`;
 
     navigator.clipboard.writeText(copyText);
     setCopied(true);
@@ -953,7 +953,7 @@ export default function ShareShlokaModal({
           <div className="share-card-preview-wrapper">
             {previewUrl ? (
               <a
-                href="https://bhagavad-gita-website-rk1v.vercel.app"
+                href="https://gita-gyan-m.vercel.app"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="share-card-preview-link"
@@ -975,13 +975,13 @@ export default function ShareShlokaModal({
           {/* CLICKABLE LINK BAR */}
           <div className="share-preview-link-bar">
             <a
-              href="https://bhagavad-gita-website-rk1v.vercel.app"
+              href="https://gita-gyan-m.vercel.app"
               target="_blank"
               rel="noopener noreferrer"
               className="share-preview-clickable-link"
               title={txt("વેબસાઇટ પર સીધા જવા અહીં ક્લિક કરો", "वेबसाइट खोलने के लिए क्लिक करें", "Click to visit website")}
             >
-              <span>🔗 bhagavad-gita-website-rk1v.vercel.app</span>
+              <span>🔗 gita-gyan-m.vercel.app</span>
             </a>
           </div>
 
