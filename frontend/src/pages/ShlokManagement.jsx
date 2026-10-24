@@ -1,4 +1,4 @@
-import { getValidToken, handleAuth401, clearAuthSession } from "../utils/authHelper.js";
+import { getValidToken, handleAuth401 } from "../utils/authHelper.js";
 import {
   useEffect,
   useRef,

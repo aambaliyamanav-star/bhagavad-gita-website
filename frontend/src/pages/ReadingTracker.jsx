@@ -1,4 +1,4 @@
-import { getValidToken, handleAuth401 } from "../utils/authHelper.js";
+import { getValidToken } from "../utils/authHelper.js";
 import React, { useState, useEffect, useMemo } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate } from "react-router-dom";

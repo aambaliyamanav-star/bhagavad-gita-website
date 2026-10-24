@@ -1,7 +1,7 @@
-import { getValidToken, handleAuth401, clearAuthSession } from "../utils/authHelper.js";
+import { getValidToken, clearAuthSession } from "../utils/authHelper.js";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Heart, Lock, Loader2, AlertCircle, RefreshCw, BookOpen, Trash2 } from "lucide-react";
+import { Heart, Lock, AlertCircle, RefreshCw, BookOpen, Trash2 } from "lucide-react";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useLanguage } from "../context/LanguageContext.jsx";
 import SudarshanShimmerLoader from "../components/SudarshanShimmerLoader.jsx";

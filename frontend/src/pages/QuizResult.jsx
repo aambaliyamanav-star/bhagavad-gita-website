@@ -1,7 +1,7 @@
-import { getValidToken, handleAuth401, clearAuthSession } from "../utils/authHelper.js";
+import { getValidToken, handleAuth401 } from "../utils/authHelper.js";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Loader2, AlertCircle, RefreshCw, ArrowLeft, BookOpen, ChevronRight, ClipboardList, CheckCircle2, XCircle, SkipForward, Clock, PlayCircle, Award } from "lucide-react";
+import { AlertCircle, RefreshCw, ArrowLeft, BookOpen, ChevronRight, ClipboardList, CheckCircle2, XCircle, SkipForward, Clock, PlayCircle, Award } from "lucide-react";
 import SudarshanShimmerLoader from "../components/SudarshanShimmerLoader.jsx";
 import { useLanguage } from "../context/LanguageContext.jsx";
 import "./QuizResult.css";

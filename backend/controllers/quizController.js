@@ -214,9 +214,20 @@ const getQuizQuestions = async (req, res) => {
         });
       }
 
-      const seenSet = new Set(
-        (progress.seenQuestionIds || []).map((id) => String(id))
+      // Clean seenQuestionIds to remove duplicates and deleted questions
+      const validEligibleIdSet = new Set(
+        eligibleQuestions.map((q) => String(q._id))
       );
+      const cleanSeenIds = [];
+      const seenSet = new Set();
+      (progress.seenQuestionIds || []).forEach((id) => {
+        const strId = String(id);
+        if (validEligibleIdSet.has(strId) && !seenSet.has(strId)) {
+          seenSet.add(strId);
+          cleanSeenIds.push(id);
+        }
+      });
+      progress.seenQuestionIds = cleanSeenIds;
 
       let unseen = eligibleQuestions.filter(
         (q) => !seenSet.has(String(q._id))
