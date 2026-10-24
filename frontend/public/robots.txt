@@ -24,5 +24,5 @@ Disallow: /forgot-password/
 Disallow: /api/
 
 # Host & XML Sitemap
-Host: https://bhagavad-gita-website-rk1v.vercel.app
-Sitemap: https://bhagavad-gita-website-rk1v.vercel.app/sitemap.xml
+Host: https://gita-gyan-m.vercel.app
+Sitemap: https://gita-gyan-m.vercel.app/sitemap.xml
