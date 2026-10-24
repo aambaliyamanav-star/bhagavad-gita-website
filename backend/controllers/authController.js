@@ -928,7 +928,9 @@ const loginUser = async (
 
     if (
       !email ||
-      !password
+      !password ||
+      typeof email !== "string" ||
+      typeof password !== "string"
     ) {
       return res.status(400).json({
         message:
@@ -945,7 +947,7 @@ const loginUser = async (
       await User.findOne({
         email:
           cleanEmail,
-      });
+      }).select("+password");
 
     if (!user) {
       return res.status(401).json({
@@ -1492,7 +1494,7 @@ const updateProfile = async (
     const user =
       await User.findById(
         userId
-      );
+      ).select("+password");
 
     if (!user) {
       return res.status(404).json({
@@ -1973,7 +1975,7 @@ const sendForgotPasswordOTP = async (
       await User.findOne({
         email:
           cleanEmail,
-      });
+      }).select("+password");
 
     // =================================================
     // USER NOT FOUND
@@ -2526,7 +2528,7 @@ const resetPassword = async (
       await User.findOne({
         email:
           cleanEmail,
-      });
+      }).select("+password");
 
     if (!user) {
       return res.status(404).json({
