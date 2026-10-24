@@ -1,6 +1,6 @@
-import { getValidToken, clearAuthSession } from "../utils/authHelper.js";
+import { getValidToken } from "../utils/authHelper.js";
 import { useEffect, useRef, useState } from "react";
-import { BookOpen, Heart, Mic, Loader2, Sparkles, AlertCircle, ChevronLeft, ChevronRight, Share2 } from "lucide-react";
+import { BookOpen, Heart, Mic, Sparkles, AlertCircle, ChevronLeft, ChevronRight, Share2 } from "lucide-react";
 import "./ChapterReader.css";
 import ShareShlokaModal from "../components/ShareShlokaModal.jsx";
 import SudarshanShimmerLoader from "../components/SudarshanShimmerLoader.jsx";

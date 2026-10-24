@@ -1,7 +1,7 @@
 import { getValidToken, handleAuth401 } from "../utils/authHelper.js";
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Brain, Target, BookOpen, Sword, History, BookMarked, Hash, PlayCircle, Loader2 } from "lucide-react";
+import { Brain, Target, BookOpen, Sword, History, BookMarked, Hash, PlayCircle } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext.jsx";
 import "./QuizCategory.css";
 

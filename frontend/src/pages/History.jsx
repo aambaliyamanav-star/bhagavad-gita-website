@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { History as HistoryIcon, ClipboardList, ChevronRight, BookMarked, Award, Sparkles } from "lucide-react";
+import { History as HistoryIcon, ClipboardList, ChevronRight, BookMarked, Award } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext.jsx";
 
 import "./History.css";

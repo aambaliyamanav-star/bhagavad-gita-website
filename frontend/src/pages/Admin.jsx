@@ -1,4 +1,4 @@
-import { getValidToken, handleAuth401, clearAuthSession } from "../utils/authHelper.js";
+import { getValidToken } from "../utils/authHelper.js";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate, Link } from "react-router-dom";

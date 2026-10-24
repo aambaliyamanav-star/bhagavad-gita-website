@@ -2,7 +2,6 @@ import { getValidToken, clearAuthSession } from "../utils/authHelper.js";
 import { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
-  Sparkles,
   User,
   Send,
   RotateCcw,
@@ -25,11 +24,9 @@ import {
   Pin,
   PinOff,
   Archive,
-  ArchiveRestore,
   ChevronDown,
   ChevronRight,
   Plus,
-  BookOpen,
 } from "lucide-react";
 
 import { useTheme } from "../context/ThemeContext";
@@ -38,7 +35,6 @@ import { useLanguage } from "../context/LanguageContext.jsx";
 import {
   getAllConversations,
   saveConversation,
-  getActiveConversationId,
   setActiveConversationId,
   getConversationById,
   syncHistoryWithServer,
