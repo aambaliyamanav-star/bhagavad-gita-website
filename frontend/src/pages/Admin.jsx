@@ -1212,7 +1212,7 @@ function Admin() {
                   <div className="v-stat-content">
                     <h3>{appStats?.notificationSubscribers || 0}</h3>
                     <p className="v-stat-label">નોટિફિકેશન સક્રિય</p>
-                    <span className="v-stat-hint">દરરોજ ૫ શ્લોક મેળવનાર</span>
+                    <span className="v-stat-hint">એપ નોટિફિકેશન સબ્સ્ક્રાઇબર્સ</span>
                   </div>
                 </div>
 

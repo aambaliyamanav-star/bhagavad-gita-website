@@ -167,13 +167,13 @@ function AppNotificationPrompt() {
               <Check size={22} strokeWidth={3} />
             </div>
             <h3>{txt("નોટિફિકેશન સક્રિય થઈ ગયા છે!", "नोटिफिकेशन सक्रिय हो गए हैं!", "Notifications are activated!")}</h3>
-            <p>{txt("હવે તમને પવિત્ર ગીતા પ્રેરણા મળશે. 🙏", "अब आपको पवित्र गीता प्रेरणा मिलेगी। 🙏", "You will now receive divine Gita inspiration. 🙏")}</p>
+            <p>{txt("ગીતા અધ્યાય વાંચન અને ક્વિઝ માટે રિમાઇન્ડર મળતા રહેશે. 🙏", "गीता अध्याय पठन और क्विज़ के लिए स्मरण मिलते रहेंगे। 🙏", "You will receive reminders for Gita reading and quizzes. 🙏")}</p>
           </div>
         ) : (
           <>
             <div className="app-notif-header">
               <h3 className="app-notif-title">
-                {txt("દૈનિક ગીતા નોટિફિકેશન", "दैनिक गीता नोटिफिकेशन", "Daily Gita Notifications")}
+                {txt("ગીતા નોટિફિકેશન", "गीता नोटिफिकेशन", "Gita Notifications")}
               </h3>
               <p className="app-notif-sub">
                 {txt("ગીતા અધ્યાય વાંચન અને ક્વિઝ માટે સમયસર રિમાઇન્ડર મેળવો.", "गीता अध्याय पठन और क्विज़ के लिए समय पर स्मरण प्राप्त करें।", "Receive timely reminders to read Gita chapters and play quizzes.")}
