@@ -118,7 +118,7 @@ export async function enableAppNotifications(user = null) {
         new CustomEvent("app-notification-status-changed", { detail: { enabled: true } })
       );
     }
-    console.log("🔔 Bhagavad Gita App Push Notifications registered (5/day)!");
+    console.log("🔔 Bhagavad Gita App Push Notifications registered (Every 3 Hours)!");
     return { success: true };
   } catch (err) {
     console.error("Failed to enable app notifications:", err);

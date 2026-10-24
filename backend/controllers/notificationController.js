@@ -51,7 +51,7 @@ async function sendPush(subscription, payload) {
     return true;
   } catch (err) {
     if (err.statusCode === 404 || err.statusCode === 410) {
-      console.log(`Expired/Uninstalled subscription ${subscription._id}, removing from DB and updating app analytics...`);
+      console.log(`Expired/Uninstalled subscription ${subscription._id}, removing from DB...`);
       await Subscription.deleteOne({ _id: subscription._id });
       try {
         await AppInstallation.updateMany(
@@ -83,6 +83,11 @@ module.exports = {
         return res.status(400).json({ error: "અમાન્ય સબસ્ક્રિપ્શન વિગતો." });
       }
 
+      // STRICT: App Only!
+      if (!isApp) {
+        return res.status(403).json({ error: "નોટિફિકેશન માત્ર એપ માટે જ ઉપલબ્ધ છે." });
+      }
+
       const userRole = role === "admin" ? "admin" : "user";
       const validUserId = userId || null;
 
@@ -102,7 +107,7 @@ module.exports = {
           role: userRole,
           userId: validUserId,
           deviceId: targetDeviceId,
-          isApp: Boolean(isApp),
+          isApp: true,
           lastOpenedDate: new Date(),
           reminderCount: 0,
         },
@@ -155,10 +160,10 @@ module.exports = {
         const siteUrl = process.env.SITE_URL || "https://bhagavad-gita-website-rk1v.vercel.app";
         const welcomePayload = {
           title: "શ્રીમદ્ ભગવદ્ ગીતા APP | સ્વાગત છે",
-          body: "દૈનિક ૫ પવિત્ર ગીતા શ્લોક અને પ્રેરણાદાયી નોટિફિકેશન સફળતાપૂર્વક સક્રિય થઈ ગયા છે.",
+          body: "ગીતા શ્લોક વાંચન અને દૈનિક ક્વિઝ રિમાઇન્ડર સક્રિય થઈ ગયા છે. દર ૩ કલાકે તમને પ્રેરણાદાયી રિમાઇન્ડર મળશે.",
           icon: `${siteUrl}/icons/icon-192x192.png`,
           badge: `${siteUrl}/icons/icon-192x192.png`,
-          url: siteUrl,
+          url: `${siteUrl}/chapters`,
           tag: "welcome-notification",
         };
 
@@ -243,19 +248,28 @@ module.exports = {
     }
   },
 
-  // Send Daily Reminder (5 times a day: Morning 8 AM, Noon 12 PM, Afternoon 4 PM, Evening 7 PM, Night 10 PM IST)
+  // =========================================================================
+  // SEND DAILY REMINDER (EVERY 3 HOURS THROUGHOUT THE DAY: 6 AM, 9 AM, 12 PM, 3 PM, 6 PM, 9 PM IST)
+  // Reminders ONLY encourage:
+  // 1) Shloka / Chapter reading (URL: /chapters)
+  // 2) Playing the Quiz (URL: /quiz-category)
+  // NO actual shlokas or verses are inside notifications!
+  // App Only! Web subscriptions are strictly excluded.
+  // =========================================================================
   sendDailyReminder: async (customMsg = null, force = false) => {
     try {
-      const subscribers = await Subscription.find({});
+      // 1. STRICT: Only subscribers from installed App!
+      const subscribers = await Subscription.find({ isApp: true });
       if (!subscribers || subscribers.length === 0) {
-        console.log("No push notification subscribers registered yet.");
-        return { success: true, message: "No subscribers found", sent: 0 };
+        console.log("No installed app push notification subscribers found.");
+        return { success: true, message: "No app subscribers found", sent: 0 };
       }
 
       const now = new Date();
-      // Calculate current IST time
+      // Calculate current IST time (UTC + 5:30)
       const istTime = new Date(now.getTime() + 5.5 * 60 * 60 * 1000);
       const istHours = istTime.getUTCHours();
+      const istMinutes = istTime.getUTCMinutes();
 
       const startOfTodayIST = new Date(
         Date.UTC(
@@ -268,171 +282,209 @@ module.exports = {
         ) - 5.5 * 60 * 60 * 1000
       );
       const todayStringIST = istTime.toISOString().slice(0, 10);
-
       const targetUrl = process.env.SITE_URL || "https://bhagavad-gita-website-rk1v.vercel.app";
 
-      // 5-Slot Inspiration Templates (Morning, Noon, Afternoon, Evening, Night)
+      // 2. Identify 3-hour time slot
+      // 06:00 AM, 09:00 AM, 12:00 PM, 03:00 PM, 06:00 PM, 09:00 PM IST
+      let slotKey = "slot_6am";
+      let primaryType = "shlokReading"; // alternates between reading and quiz
+
+      if (istHours >= 5 && istHours < 8) {
+        slotKey = "slot_6am";  // 6:00 AM IST
+        primaryType = "shlokReading";
+      } else if (istHours >= 8 && istHours < 11) {
+        slotKey = "slot_9am";  // 9:00 AM IST
+        primaryType = "quizPlaying";
+      } else if (istHours >= 11 && istHours < 14) {
+        slotKey = "slot_12pm"; // 12:00 PM IST
+        primaryType = "shlokReading";
+      } else if (istHours >= 14 && istHours < 17) {
+        slotKey = "slot_3pm";  // 3:00 PM IST
+        primaryType = "quizPlaying";
+      } else if (istHours >= 17 && istHours < 20) {
+        slotKey = "slot_6pm";  // 6:00 PM IST
+        primaryType = "shlokReading";
+      } else if (istHours >= 20 && istHours < 23) {
+        slotKey = "slot_9pm";  // 9:00 PM IST
+        primaryType = "quizPlaying";
+      } else {
+        // Deep sleep hours (11:00 PM - 5:00 AM IST) - Do not disturb!
+        if (!force && !customMsg) {
+          console.log(`🌙 [IST ${istHours}:${istMinutes}] Night sleep hours (11 PM - 5 AM). Skipping notifications.`);
+          return { success: true, message: "Night sleep hours - skipped", sent: 0 };
+        }
+        slotKey = "slot_9pm";
+        primaryType = "quizPlaying";
+      }
+
+      // 3. Message Templates: Focused strictly on Reading Shlokas & Playing Quiz (NO raw shlokas)
       const messageTemplates = {
-        neither: {
-          morning: [
+        // SHLOKA & CHAPTER READING REMINDERS
+        shlokReading: {
+          slot_6am: [
             {
-              title: "🌅 શ્રીમદ્ ભગવદ્ ગીતા | પ્રભાત ચિંતન",
-              body: "કર્મણ્યેવાધિકારસ્તે મા ફલેષુ કદાચન। આજના શુભ દિવસની શરૂઆત દિવ્ય શ્લોક વાંચનથી કરો.",
+              title: "🌅 શ્રીમદ્ ભગવદ્ ગીતા | પ્રભાત વાંચન",
+              body: "આજના પવિત્ર દિવસની શુભ શરૂઆત ગીતાજીના અધ્યાય વાંચનથી કરો. મનને શાંતિ મળશે.",
               url: `${targetUrl}/chapters`,
             },
             {
-              title: "☀️ પ્રભાત વંદના | ભગવદ્ ગીતા",
-              body: "આજના દિવસનું મંગલ ગીતા વાંચન બાકી છે. મનની શાંતિ અને સદ્બુદ્ધિ માટે એક શ્લોક વાંચો.",
-              url: `${targetUrl}/chapters`,
-            },
-          ],
-          noon: [
-            {
-              title: "🌞 મધ્યાહ્ન પ્રેરણા | શ્રીમદ્ ભગવદ્ ગીતા",
-              body: "દોડધામ ભરેલા દિવસ વચ્ચે મનને સ્થિર કરો. ભગવાન શ્રીકૃષ્ણનો આજનો દિવ્ય સંદેશ વાંચો.",
-              url: `${targetUrl}/chapters`,
-            },
-            {
-              title: "📖 ગીતા જ્ઞાન યોગ | મધ્યાહ્ન ચિંતન",
-              body: "શ્રદ્ધાવાન લભતે જ્ઞાનમ્। આજના દિવસનું ગીતા વાંચન કરી તમારું દૈનિક લક્ષ્ય પૂર્ણ કરો.",
+              title: "☀️ શુભ સવાર | દૈનિક ગીતા વાંચન",
+              body: "આજનો ગીતા અધ્યાય વાંચવાનો સમય થઈ ગયો છે. એપ ખોલીને અધ્યાય વાંચો.",
               url: `${targetUrl}/chapters`,
             },
           ],
-          afternoon: [
+          slot_9am: [
+            {
+              title: "📖 સવારનું ગીતા વાંચન | ભગવદ્ ગીતા",
+              body: "દિવસના કાર્યો શરૂ કરતાં પહેલાં ગીતાજીનો એક અધ્યાય વાંચી સકારાત્મક ઉર્જા મેળવો.",
+              url: `${targetUrl}/chapters`,
+            },
+            {
+              title: "🌸 ગીતા અધ્યાય વાંચન સ્મરણ",
+              body: "મનની એકાગ્રતા અને સદ્બુદ્ધિ માટે આજનો પવિત્ર ગીતા અધ્યાય વાંચો.",
+              url: `${targetUrl}/chapters`,
+            },
+          ],
+          slot_12pm: [
+            {
+              title: "🌞 મધ્યાહ્ન શાંતિ | શ્રીમદ્ ભગવદ્ ગીતા",
+              body: "દોડધામ ભરેલા દિવસ વચ્ચે થોડો સમય કાઢીને ગીતાજીનો અધ્યાય વાંચો અને શાંતિ અનુભવો.",
+              url: `${targetUrl}/chapters`,
+            },
+            {
+              title: "📖 બપોરનું ગીતા અધ્યાય વાંચન",
+              body: "આજનો ગીતા અધ્યાય વાંચી તમારા મનને સ્થિર અને તણાવમુક્ત બનાવો.",
+              url: `${targetUrl}/chapters`,
+            },
+          ],
+          slot_3pm: [
             {
               title: "🌿 અપરાહ્ન માર્ગદર્શન | ભગવદ્ ગીતા",
-              body: "જ્યારે પણ મન અશાંત થાય, ગીતાના શબ્દો જીવનનો સાચો માર્ગ બતાવે છે. વાંચો આજનો શ્લોક.",
+              body: "જીવનમાં સાચો માર્ગ અને પ્રેરણા મેળવવા માટે ગીતાજીના અધ્યાયનું વાંચન કરો.",
+              url: `${targetUrl}/chapters`,
+            },
+            {
+              title: "✨ ગીતા વાંચન પ્રેરણા",
+              body: "થોડી ક્ષણો ફાળવીને ગીતાજીનો અધ્યાય વાંચો અને આધ્યાત્મિક જ્ઞાન પ્રાપ્ત કરો.",
               url: `${targetUrl}/chapters`,
             },
           ],
-          evening: [
+          slot_6pm: [
             {
-              title: "🌆 સંધ્યા ધ્યાન | શ્રીમદ્ ભગવદ્ ગીતા",
-              body: "દિવસભરના પરિશ્રમ પછી મનને પરમ શાંતિ આપો. આજનો પવિત્ર શ્લોક અને તેનો અર્થ વાંચો.",
+              title: "🌆 સંધ્યા સમય | શ્રીમદ્ ભગવદ્ ગીતા વાંચન",
+              body: "દિવસભરના પરિશ્રમ પછી મનને પરમ શાંતિ આપવા ગીતાજીના પવિત્ર અધ્યાયનું વાંચન કરો.",
+              url: `${targetUrl}/chapters`,
+            },
+            {
+              title: "🕉️ સાંજનું ગીતા વાંચન સ્મરણ",
+              body: "સંધ્યાકાળે ગીતાજીનો અધ્યાય વાંચી દિવસને સાર્થક અને પવિત્ર બનાવો.",
               url: `${targetUrl}/chapters`,
             },
           ],
-          night: [
+          slot_9pm: [
             {
-              title: "🌙 રાત્રિ મનન | ભગવદ્ ગીતા",
-              body: "સુતા પહેલાં અંતરમનની શાંતિ માટે એક શ્લોક વાંચો અને આજની ગીતા ક્વિઝ પૂર્ણ કરો.",
+              title: "🌟 રાત્રિ મનન | ભગવદ્ ગીતા પાઠ",
+              body: "સુતા પહેલાં મનની પરમ શાંતિ માટે ગીતાજીનો એક અધ્યાય વાંચી આજના દિવસને પૂર્ણ કરો.",
               url: `${targetUrl}/chapters`,
             },
-          ],
-        },
-        shlokPending: {
-          morning: [
             {
-              title: "🌅 શ્રીમદ્ ભગવદ્ ગીતા | આજનો શ્લોક બાકી છે",
-              body: "આપનું ક્વિઝ લક્ષ્ય પૂરું થયું છે! હવે આજનો ૧ પવિત્ર શ્લોક વાંચીને દૈનિક ધ્યેય સિદ્ધ કરો.",
-              url: `${targetUrl}/chapters`,
-            },
-          ],
-          noon: [
-            {
-              title: "📖 ભગવદ્ ગીતા | શ્લોક વાંચન સ્મરણ",
-              body: "બપોરના સમયે ગીતાનો એક શ્લોક વાંચીને દિવસને સાર્થક બનાવો.",
-              url: `${targetUrl}/chapters`,
-            },
-          ],
-          afternoon: [
-            {
-              title: "🌿 દૈનિક ગીતા વાંચન | અપરાહ્ન સંદેશ",
-              body: "આજનું શ્લોક વાંચન હજી બાકી છે. થોડો સમય કાઢીને આધ્યાત્મિક જ્ઞાન મેળવો.",
-              url: `${targetUrl}/chapters`,
-            },
-          ],
-          evening: [
-            {
-              title: "🌆 સાંજનું ગીતા વાંચન",
-              body: "સંધ્યાકાળે મનની એકાગ્રતા માટે આજનો શ્લોક અર્થ સહિત વાંચો.",
-              url: `${targetUrl}/chapters`,
-            },
-          ],
-          night: [
-            {
-              title: "🌙 રાત્રિ ગીતા પાઠ",
-              body: "આજનું શ્લોક વાંચન પૂરું કરી શાંત ચિત્તે નિદ્રાધીન થાઓ.",
+              title: "🌙 શાંત નિદ્રા માટે ગીતા વાંચન",
+              body: "આજનું અધ્યાય વાંચન પૂરું કરી શાંત અને સકારાત્મક ચિત્તે નિદ્રાધીન થાઓ.",
               url: `${targetUrl}/chapters`,
             },
           ],
         },
-        quizPending: {
-          morning: [
+
+        // QUIZ PLAYING REMINDERS
+        quizPlaying: {
+          slot_6am: [
             {
-              title: "🧠 શ્રીમદ્ ભગવદ્ ગીતા | દૈનિક ક્વિઝ ચેલેન્જ",
-              body: "આજનું શ્લોક વાંચન પૂર્ણ થયું છે! હવે દૈનિક ક્વિઝ રમીને તમારા જ્ઞાનની કસોટી કરો.",
+              title: "🧠 પ્રભાત ગીતા ક્વિઝ ચેલેન્જ",
+              body: "આજના પવિત્ર દિવસની શરૂઆત ગીતા ક્વિઝ રમીને તમારા જ્ઞાનની કસોટી સાથે કરો!",
               url: `${targetUrl}/quiz-category`,
             },
           ],
-          noon: [
+          slot_9am: [
             {
-              title: "🎯 ભગવદ્ ગીતા | ક્વિઝ રમો",
-              body: "ગીતા ક્વિઝ રમીને નવા બેજ અને પોઈન્ટ્સ અનલૉક કરો.",
+              title: "🎯 ગીતા જ્ઞાન ક્વિઝ | નવી ચેલેન્જ",
+              body: "શું તમે આજના પ્રશ્નોના સાચા ઉત્તર આપી શકો છો? હમણાં જ ક્વિઝ રમીને સ્કોર વધારો!",
+              url: `${targetUrl}/quiz-category`,
+            },
+            {
+              title: "⚡ સવારની ગીતા ક્વિઝ સ્પર્ધા",
+              body: "આજે નવી ગીતા ક્વિઝ રમો અને તમારા આધ્યાત્મિક જ્ઞાનને ચકાસો.",
               url: `${targetUrl}/quiz-category`,
             },
           ],
-          afternoon: [
+          slot_12pm: [
             {
-              title: "🏆 અપરાહ્ન ક્વિઝ | ભગવદ્ ગીતા",
-              body: "આજના પ્રશ્નોના ઉત્તર આપીને ગીતા જ્ઞાન ચકાસો.",
+              title: "🏆 બપોરની ગીતા ક્વિઝ રમો",
+              body: "થોડો સમય ફાળવીને ગીતા ક્વિઝ રમો અને તમારા જ્ઞાનને વધુ સમૃદ્ધ બનાવો.",
               url: `${targetUrl}/quiz-category`,
             },
           ],
-          evening: [
+          slot_3pm: [
+            {
+              title: "⚡ ગીતા ક્વિઝ ચેલેન્જ | આજનો સ્કોર",
+              body: "ગીતા ક્વિઝ રમીને નવા બેજ અને પોઈન્ટ્સ મેળવો. હમણાં જ ક્વિઝ શરૂ કરો!",
+              url: `${targetUrl}/quiz-category`,
+            },
+            {
+              title: "🧠 અપરાહ્ન ગીતા ક્વિઝ",
+              body: "આજના ગીતા પ્રશ્નોના સાચા જવાબ આપીને તમારા સ્કોરને વધુ બહેતર બનાવો.",
+              url: `${targetUrl}/quiz-category`,
+            },
+          ],
+          slot_6pm: [
             {
               title: "🌆 સાંજની ક્વિઝ સ્પર્ધા | ગીતા જ્ઞાન",
-              body: "આજની દૈનિક ક્વિઝ હજુ બાકી છે! પ્રશ્નોના સાચા જવાબ આપી આગળ વધો.",
+              body: "સાંજનો સમય ગીતા ક્વિઝ રમવા માટે ઉત્તમ છે! પ્રશ્નોના સાચા જવાબ આપી જ્ઞાન ચકાસો.",
               url: `${targetUrl}/quiz-category`,
             },
           ],
-          night: [
+          slot_9pm: [
             {
-              title: "🌙 દિવસની અંતિમ ક્વિઝ | ભગવદ્ ગીતા",
-              body: "દિવસ પૂર્ણ કરતાં પહેલાં ગીતા ક્વિઝ રમો અને તમારો આજનો સ્કોર નોંધાવો.",
+              title: "🌙 આજની અંતિમ ગીતા ક્વિઝ",
+              body: "સુતા પહેલાં ગીતા ક્વિઝ રમો અને આજનું તમારું ક્વિઝ લક્ષ્ય પૂર્ણ કરો!",
+              url: `${targetUrl}/quiz-category`,
+            },
+            {
+              title: "🏆 રાત્રિ ગીતા ક્વિઝ ચેલેન્જ",
+              body: "દિવસ પૂર્ણ કરતાં પહેલાં ગીતા ક્વિઝ રમીને તમારા આજના સ્કોરને ટોપ પર લઈ જાઓ.",
               url: `${targetUrl}/quiz-category`,
             },
           ],
         },
       };
 
-      // Determine 5-slot time of day
-      let timeOfDay = "night";
-      if (istHours >= 5 && istHours < 11) timeOfDay = "morning";      // 5:00 - 11:00 AM
-      else if (istHours >= 11 && istHours < 15) timeOfDay = "noon";   // 11:00 AM - 3:00 PM
-      else if (istHours >= 15 && istHours < 18) timeOfDay = "afternoon"; // 3:00 - 6:00 PM
-      else if (istHours >= 18 && istHours < 21) timeOfDay = "evening";  // 6:00 - 9:00 PM
-      else timeOfDay = "night";                                         // 9:00 PM - 5:00 AM
-
       let sentCount = 0;
       let failedCount = 0;
       let skippedCount = 0;
       let lastSentPayload = null;
 
+      const TWO_AND_HALF_HOURS_MS = 2.5 * 60 * 60 * 1000;
+
       for (const sub of subscribers) {
-        // Prevent duplicate notifications within 35 minutes on the same device unless force
+        // STRICT: 2.5 hours cooldown prevents duplicate notifications on the same device
         if (
           !customMsg &&
           !force &&
           sub.lastReminderSentDate &&
-          Date.now() - new Date(sub.lastReminderSentDate).getTime() < 35 * 60 * 1000
+          Date.now() - new Date(sub.lastReminderSentDate).getTime() < TWO_AND_HALF_HOURS_MS
         ) {
           skippedCount++;
           continue;
         }
 
-        // 1. Check if subscriber has read a shloka today
+        // Check if user has read shlokas or played quiz today
         let hasReadShlokToday = false;
         if (sub.lastShlokReadDate && new Date(sub.lastShlokReadDate) >= startOfTodayIST) {
           hasReadShlokToday = true;
         }
 
-        let userDoc = null;
         if (sub.userId && !hasReadShlokToday) {
           try {
-            userDoc = await User.findById(sub.userId)
-              .select("readingProgress")
-              .lean();
+            const userDoc = await User.findById(sub.userId).select("readingProgress").lean();
             if (userDoc?.readingProgress) {
               if (userDoc.readingProgress.lastReadDate === todayStringIST) {
                 hasReadShlokToday = true;
@@ -445,12 +497,9 @@ module.exports = {
                 hasReadShlokToday = true;
               }
             }
-          } catch (e) {
-            // ignore
-          }
+          } catch (e) {}
         }
 
-        // 2. Check if subscriber has played a quiz today
         let hasPlayedQuizToday = false;
         if (sub.lastQuizPlayedDate && new Date(sub.lastQuizPlayedDate) >= startOfTodayIST) {
           hasPlayedQuizToday = true;
@@ -465,18 +514,20 @@ module.exports = {
             if (quizExists) {
               hasPlayedQuizToday = true;
             }
-          } catch (e) {
-            // ignore
-          }
+          } catch (e) {}
         }
 
-        // 3. If user completed BOTH tasks today: STOP reminders for today!
-        if (hasReadShlokToday && hasPlayedQuizToday && !customMsg && !force) {
-          skippedCount++;
-          continue;
+        // Choose message type intelligently:
+        // - If haven't read shloka today: prioritize shlokReading
+        // - If haven't played quiz today: prioritize quizPlaying
+        // - Otherwise: alternate based on primaryType of the 3-hour slot!
+        let chosenType = primaryType;
+        if (!hasReadShlokToday && hasPlayedQuizToday) {
+          chosenType = "shlokReading";
+        } else if (hasReadShlokToday && !hasPlayedQuizToday) {
+          chosenType = "quizPlaying";
         }
 
-        // 4. Select the appropriate message
         let payload;
         if (customMsg) {
           payload = {
@@ -488,20 +539,11 @@ module.exports = {
             tag: `custom-${Date.now()}`,
           };
         } else {
-          let poolKey = "neither";
-          if (!hasReadShlokToday && hasPlayedQuizToday) {
-            poolKey = "shlokPending";
-          } else if (hasReadShlokToday && !hasPlayedQuizToday) {
-            poolKey = "quizPending";
-          } else {
-            poolKey = "neither";
-          }
-
-          const slotOptions =
-            messageTemplates[poolKey][timeOfDay] ||
-            messageTemplates[poolKey]["morning"];
+          const typeOptions =
+            messageTemplates[chosenType][slotKey] ||
+            messageTemplates[chosenType]["slot_6am"];
           const selected =
-            slotOptions[Math.floor(Math.random() * slotOptions.length)];
+            typeOptions[Math.floor(Math.random() * typeOptions.length)];
 
           payload = {
             title: selected.title,
@@ -509,7 +551,7 @@ module.exports = {
             icon: `${targetUrl}/icons/icon-192x192.png`,
             badge: `${targetUrl}/icons/icon-192x192.png`,
             url: selected.url || targetUrl,
-            tag: `gita-${poolKey}-${Date.now()}`,
+            tag: `gita-${chosenType}-${Date.now()}`,
           };
         }
 
@@ -531,12 +573,12 @@ module.exports = {
       }
 
       console.log(
-        `Daily Gita Reminders (5/day): ${sentCount} sent, ${skippedCount} skipped, ${failedCount} failed.`
+        `🔔 [3-Hour Reminder IST ${istHours}:${istMinutes} - ${slotKey}] Sent: ${sentCount}, Skipped: ${skippedCount}, Failed: ${failedCount}`
       );
 
       return {
         success: true,
-        total: subscribers.length,
+        slot: slotKey,
         sent: sentCount,
         skipped: skippedCount,
         failed: failedCount,
@@ -563,7 +605,7 @@ module.exports = {
         body: "તમારા મોબાઈલમાં ગીતા એપ નોટિફિકેશન સફળતાપૂર્વક કામ કરી રહ્યું છે! 🙏",
         icon: `${siteUrl}/icons/icon-192x192.png`,
         badge: `${siteUrl}/icons/icon-192x192.png`,
-        url: siteUrl,
+        url: `${siteUrl}/chapters`,
         tag: `test-${Date.now()}`,
       };
 
@@ -579,6 +621,8 @@ module.exports = {
     try {
       console.log("Resetting daily notification counters at midnight...");
       await Subscription.updateMany({}, { $set: { reminderCount: 0 } });
+      // Clean up any non-app subscriptions
+      await Subscription.deleteMany({ isApp: false });
     } catch (err) {
       console.error("Reset daily counters error:", err);
     }

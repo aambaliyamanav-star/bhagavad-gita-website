@@ -59,3 +59,4 @@ const quizUserProgressSchema = new mongoose.Schema(
 quizUserProgressSchema.index({ user: 1, scopeKey: 1 }, { unique: true });
 
 module.exports = mongoose.model("QuizUserProgress", quizUserProgressSchema);
+
