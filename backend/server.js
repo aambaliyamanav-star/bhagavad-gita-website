@@ -48,23 +48,24 @@ app.use("/api/notifications", notificationRoutes);
 app.use("/api/app-analytics", appAnalyticsRoutes);
 
 // =====================================================
-// PUSH NOTIFICATION CRON JOBS (5 TIMES A DAY)
-// 08:00 AM, 12:00 PM, 04:00 PM, 07:00 PM, 10:00 PM IST
+// PUSH NOTIFICATION CRON JOBS (EVERY 3 HOURS THROUGHOUT THE DAY)
+// 06:00 AM, 09:00 AM, 12:00 PM, 03:00 PM, 06:00 PM, 09:00 PM IST
 // Sends to App subscribers only!
 // =====================================================
 const reminderTimes = [
-  "0 8 * * *",   // 08:00 AM IST - પ્રભાત
+  "0 6 * * *",   // 06:00 AM IST - પ્રભાત
+  "0 9 * * *",   // 09:00 AM IST - સવાર
   "0 12 * * *",  // 12:00 PM IST - બપોર
-  "0 16 * * *",  // 04:00 PM IST - સાંજ
-  "0 19 * * *",  // 07:00 PM IST - સંધ્યા
-  "0 22 * * *",  // 10:00 PM IST - રાત્રિ
+  "0 15 * * *",  // 03:00 PM IST - બપોર પછી
+  "0 18 * * *",  // 06:00 PM IST - સાંજ
+  "0 21 * * *",  // 09:00 PM IST - રાત્રિ
 ];
 
 reminderTimes.forEach((scheduleTime) => {
   cron.schedule(
     scheduleTime,
     async () => {
-      console.log(`⏰ [Cron ${scheduleTime}] Running 5x daily Gita reminder...`);
+      console.log(`⏰ [Cron ${scheduleTime}] Running 3-hour Gita reminder...`);
       await notificationController.sendDailyReminder();
     },
     { timezone: "Asia/Kolkata" }
@@ -80,7 +81,6 @@ cron.schedule(
   },
   { timezone: "Asia/Kolkata" }
 );
-
 
 app.get("/", (req, res) => {
   res.json({

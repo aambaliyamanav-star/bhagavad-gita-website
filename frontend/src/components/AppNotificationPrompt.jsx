@@ -176,7 +176,7 @@ function AppNotificationPrompt() {
                 {txt("દૈનિક ગીતા નોટિફિકેશન", "दैनिक गीता नोटिफिकेशन", "Daily Gita Notifications")}
               </h3>
               <p className="app-notif-sub">
-                {txt("દરરોજ પવિત્ર શ્લોક અને પ્રેરણા મેળવો.", "प्रतिदिन पवित्र श्लोक और प्रेरणा प्राप्त करें।", "Receive sacred shlokas and daily inspiration.")}
+                {txt("ગીતા અધ્યાય વાંચન અને ક્વિઝ માટે સમયસર રિમાઇન્ડર મેળવો.", "गीता अध्याय पठन और क्विज़ के लिए समय पर स्मरण प्राप्त करें।", "Receive timely reminders to read Gita chapters and play quizzes.")}
               </p>
             </div>
 
