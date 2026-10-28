@@ -83,6 +83,57 @@ function cleanHtml(text) {
 }
 
 /**
+ * Preserves Sanskrit sub-words when meanings contain '=' breakdowns (e.g. "विराटः = રાજા વિરાટ , च = અને")
+ * Ensures the left side before '=' stays exactly as original Sanskrit, while translated meaning stays on right.
+ */
+function preserveSanskritSubWords(origMeaning, translatedMeaning) {
+  if (!origMeaning || !translatedMeaning || typeof origMeaning !== "string" || typeof translatedMeaning !== "string") {
+    return translatedMeaning || "";
+  }
+
+  // If original does not contain '=', nothing to preserve
+  if (!origMeaning.includes("=")) {
+    return translatedMeaning;
+  }
+
+  // Extract all sub-words from original: e.g. "विराटः = રાજા વિરાટ , च = અને"
+  const origParts = origMeaning.split(/[,;\n]/).map((p) => p.trim()).filter(Boolean);
+  if (origParts.length === 0 || !origParts.every((p) => p.includes("="))) {
+    return translatedMeaning;
+  }
+
+  // Extract the original Sanskrit left sides: ["विराटः", "च"]
+  const origLeftSides = origParts.map((p) => p.split("=")[0].trim());
+
+  // Check if translatedMeaning contains '='
+  if (translatedMeaning.includes("=")) {
+    const transParts = translatedMeaning.split(/[,;\n]/).map((p) => p.trim()).filter(Boolean);
+
+    if (transParts.length === origLeftSides.length && transParts.every((p) => p.includes("="))) {
+      const fixed = transParts.map((transPart, idx) => {
+        const transSplit = transPart.split("=");
+        const transRight = transSplit.slice(1).join("=").trim().replace(/[.]+$/, "");
+        return `${origLeftSides[idx]} = ${transRight}`;
+      });
+      return fixed.join(", ");
+    }
+
+    // Fallback: match by regex "left = right"
+    const regex = /([^=,;]+)\s*=\s*([^=,;]+)/g;
+    const matches = [...translatedMeaning.matchAll(regex)];
+    if (matches.length === origLeftSides.length) {
+      const fixed = matches.map((m, idx) => {
+        const transRight = m[2].trim().replace(/[.]+$/, "");
+        return `${origLeftSides[idx]} = ${transRight}`;
+      });
+      return fixed.join(", ");
+    }
+  }
+
+  return translatedMeaning;
+}
+
+/**
  * Translates Gujarati Shlok content into devotional Hindi via Gemini AI
  */
 async function translateShlokToHindi({
