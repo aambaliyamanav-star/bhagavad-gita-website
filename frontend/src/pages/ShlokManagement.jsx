@@ -418,6 +418,8 @@ function ShlokManagement() {
     useState(false);
   const [translatingLang, setTranslatingLang] =
     useState(null);
+  const [translatingField, setTranslatingField] =
+    useState(null);
 
   const [autoTranslateSuccess, setAutoTranslateSuccess] =
     useState("");
@@ -646,10 +648,20 @@ function ShlokManagement() {
     } = event.target;
 
     setFormData(
-      (current) => ({
-        ...current,
-        [name]: value,
-      })
+      (current) => {
+        if (name === "speaker") {
+          return {
+            ...current,
+            speaker: value,
+            speakerHi: value,
+            speakerEn: value,
+          };
+        }
+        return {
+          ...current,
+          [name]: value,
+        };
+      }
     );
   };
 
@@ -1108,9 +1120,9 @@ function ShlokManagement() {
           chapterNamesEn[prev.chapterNumber] ||
           prev.chapterNameEn,
         speakerHi:
-          translated.speakerHi || prev.speakerHi,
+          prev.speaker || translated.speakerHi || prev.speakerHi,
         speakerEn:
-          translated.speakerEn || prev.speakerEn,
+          prev.speaker || translated.speakerEn || prev.speakerEn,
         translationHi:
           translated.translationHi || prev.translationHi,
         translationEn:
@@ -1168,6 +1180,148 @@ function ShlokManagement() {
       setTranslatingLang(null);
     }
   };
+
+  /* =====================================================
+     AUTO TRANSLATE SINGLE FIELD (WORDS / TRANSLATION / MESSAGE)
+  ===================================================== */
+
+  const handleTranslateField = async (targetLang = "hi", field = "translation") => {
+    const fieldKey = `${targetLang}-${field}`;
+    try {
+      setTranslatingField(fieldKey);
+      setError("");
+      setAutoTranslateSuccess("");
+
+      if (field === "words") {
+        const cleanedWords = wordMeanings.filter((w) => w.word && w.word.trim());
+        if (cleanedWords.length === 0) {
+          throw new Error("શબ્દાર્થ અનુવાદ માટે પહેલાં સંસ્કૃત શ્લોક દાખલ કરો જેથી શબ્દો દેખાય.");
+        }
+      } else if (field === "translation") {
+        const plainTranslation = htmlToPlainText(formData.translation);
+        if (!formData.translation?.trim() && !plainTranslation) {
+          throw new Error("પહેલાં ગુજરાતી અનુવાદ લખો જેથી તેનું AI દ્વારા અનુવાદ થઈ શકે.");
+        }
+      } else if (field === "message") {
+        const plainMessage = htmlToPlainText(formData.message);
+        if (!formData.message?.trim() && !plainMessage) {
+          throw new Error("પહેલાં ગુજરાતી સંદેશ લખો જેથી તેનું AI દ્વારા અનુવાદ થઈ શકે.");
+        }
+      }
+
+      const token = getValidToken();
+
+      const cleanedWords = wordMeanings
+        .map((item) => ({
+          word: item.word?.trim() || "",
+          meaning: item.meaning?.trim() || "",
+          meaningHi: item.meaningHi?.trim() || "",
+          meaningEn: item.meaningEn?.trim() || "",
+        }))
+        .filter((item) => item.word);
+
+      const response = await fetch(`${API_URL}/auto-translate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          chapterNumber: Number(formData.chapterNumber),
+          chapterName: formData.chapterName,
+          speaker: formData.speaker,
+          sanskrit: formData.sanskrit,
+          translation: formData.translation,
+          message: formData.message,
+          wordMeanings: cleanedWords,
+          targetLang: targetLang,
+          field: field,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "ઓટો-અનુવાદ થઈ શક્યો નથી.");
+      }
+
+      const translated = data?.data || data?.translated;
+
+      if (!translated) {
+        throw new Error(data?.message || "અનુવાદ પ્રાપ્ત થઈ શક્યો નથી.");
+      }
+
+      if (field === "words" && Array.isArray(translated.wordMeanings)) {
+        setWordMeanings((prev) =>
+          prev.map((item, idx) => {
+            const matched = translated.wordMeanings.find(
+              (m) =>
+                cleanSanskritWord(m.word) ===
+                cleanSanskritWord(item.word)
+            ) || translated.wordMeanings[idx];
+
+            if (targetLang === "hi") {
+              return {
+                ...item,
+                meaningHi:
+                  matched?.meaningHi || item.meaningHi || "",
+              };
+            } else {
+              return {
+                ...item,
+                meaningEn:
+                  matched?.meaningEn || item.meaningEn || "",
+              };
+            }
+          })
+        );
+
+        setAutoTranslateSuccess(
+          targetLang === "hi"
+            ? "✨ સંસ્કૃત-હિન્દી શબ્દાર્થ સફળતાપૂર્વક AI દ્વારા અનુવાદિત થયા!"
+            : "✨ સંસ્કૃત-અંગ્રેજી શબ્દાર્થ (Word Meanings) સફળતાપૂર્વક AI દ્વારા અનુવાદિત થયા!"
+        );
+      } else if (field === "translation") {
+        if (targetLang === "hi") {
+          setFormData((prev) => ({
+            ...prev,
+            translationHi:
+              translated.translationHi || prev.translationHi,
+          }));
+          setAutoTranslateSuccess("✨ શ્લોકાર્થ (અનુવાદ) સફળતાપૂર્વક હિન્દીમાં AI દ્વારા અનુવાદિત થયો!");
+        } else {
+          setFormData((prev) => ({
+            ...prev,
+            translationEn:
+              translated.translationEn || prev.translationEn,
+          }));
+          setAutoTranslateSuccess("✨ શ્લોકાર્થ (અનુવાદ) સફળતાપૂર્વક અંગ્રેજીમાં AI દ્વારા અનુવાદિત થયો!");
+        }
+      } else if (field === "message") {
+        if (targetLang === "hi") {
+          setFormData((prev) => ({
+            ...prev,
+            messageHi:
+              translated.messageHi || prev.messageHi,
+          }));
+          setAutoTranslateSuccess("✨ ગીતા સંદેશ / વ્યાખ્યા સફળતાપૂર્વક હિન્દીમાં AI દ્વારા અનુવાદિત થઈ!");
+        } else {
+          setFormData((prev) => ({
+            ...prev,
+            messageEn:
+              translated.messageEn || prev.messageEn,
+          }));
+          setAutoTranslateSuccess("✨ ગીતા સંદેશ / વ્યાખ્યા સફળતાપૂર્વક અંગ્રેજીમાં AI દ્વારા અનુવાદિત થઈ!");
+        }
+      }
+    } catch (err) {
+      console.error("Field translate error:", err);
+      setError(err.message || "અનુવાદ કરવામાં error આવ્યો.");
+    } finally {
+      setTranslatingField(null);
+    }
+  };
+
 
   /* =====================================================
      ADD / UPDATE SHLOK
@@ -1281,13 +1435,10 @@ function ShlokManagement() {
             formData.speaker.trim(),
 
           speakerHi:
-            formData.speakerHi?.trim() ||
-            "",
+            formData.speaker.trim(),
 
           speakerEn:
-            formData.speakerEn && formData.speakerEn.trim() !== "undefined"
-              ? formData.speakerEn.trim()
-              : "",
+            formData.speaker.trim(),
 
           sanskrit:
             formData.sanskrit,
@@ -1471,12 +1622,12 @@ function ShlokManagement() {
         shlok.speaker || "",
 
       speakerHi:
-        shlok.speakerHi || "",
+        shlok.speaker || shlok.speakerHi || "",
 
       speakerEn:
-        shlok.speakerEn && shlok.speakerEn !== "undefined"
+        shlok.speaker || (shlok.speakerEn && shlok.speakerEn !== "undefined"
           ? shlok.speakerEn
-          : "",
+          : ""),
 
       sanskrit:
         shlok.sanskrit || "",
@@ -1831,7 +1982,7 @@ function ShlokManagement() {
                   type="button"
                   className="auto-translate-ai-btn hi-btn"
                   onClick={() => handleAutoTranslate("hi")}
-                  disabled={translating}
+                  disabled={translating || translatingField !== null}
                   title="ગુજરાતી અનુવાદ અને સંદેશ પરથી AI દ્વારા આપોઆપ હિન્દી અનુવાદ કરો"
                 >
                   <Sparkles className={`btn-icon ${translatingLang === "hi" ? "spinning" : ""}`} size={16} />
@@ -1845,7 +1996,7 @@ function ShlokManagement() {
                   type="button"
                   className="auto-translate-ai-btn en-btn"
                   onClick={() => handleAutoTranslate("en")}
-                  disabled={translating}
+                  disabled={translating || translatingField !== null}
                   title="ગુજરાતી અનુવાદ અને સંદેશ પરથી AI દ્વારા આપોઆપ અંગ્રેજી અનુવાદ કરો"
                 >
                   <Sparkles className={`btn-icon ${translatingLang === "en" ? "spinning" : ""}`} size={16} />
@@ -2121,18 +2272,21 @@ function ShlokManagement() {
                 <div className="form-group">
                   <label>
                     Speaker (वक्ता - हिन्दी)
+                    <span style={{ fontSize: "12px", color: "#64748b", marginLeft: "8px", fontWeight: "normal" }}>
+                      (ગુજરાતી મુજબ રહેશે - બદલાશે નહીં)
+                    </span>
                   </label>
 
                   <input
                     type="text"
                     name="speakerHi"
                     value={
-                      formData.speakerHi
+                      formData.speaker || formData.speakerHi || ""
                     }
-                    onChange={
-                      handleChange
-                    }
-                    placeholder="Example: धृतराष्ट्र उवाच"
+                    readOnly
+                    disabled
+                    style={{ backgroundColor: "#f8fafc", cursor: "not-allowed", color: "#334155" }}
+                    placeholder="ગુજરાતી ટેબમાં સ્પીકર લખો..."
                   />
                 </div>
 
@@ -2150,10 +2304,23 @@ function ShlokManagement() {
                         </h3>
 
                         <p>
-                          સંસ્કૃત શબ્દ સમાન રહે છે, અહીં તેનો હિન્દી અર્થ AI દ્વારા આપોઆપ આવે છે અથવા તમે સુધારી શકો છો.
+                          સંસ્કૃત શબ્દ સમાન રહે છે, અહીં તેનો હિન્દી અર્થ AI દ્વારા મેળવી શકો છો અથવા તમે સુધારી શકો છો.
                         </p>
                       </div>
                     </div>
+
+                    <button
+                      type="button"
+                      className="field-ai-translate-btn hi-btn"
+                      onClick={() => handleTranslateField("hi", "words")}
+                      disabled={translating || translatingField !== null}
+                      title="માત્ર શબ્દાર્થને AI દ્વારા હિન્દીમાં અનુવાદ કરો"
+                    >
+                      <Sparkles className={`btn-icon ${translatingField === "hi-words" ? "spinning" : ""}`} size={15} />
+                      {translatingField === "hi-words"
+                        ? "શબ્દાર્થ અનુવાદ થઈ રહ્યો છે..."
+                        : "✨ શબ્દાર્થ AI અનુવાદ"}
+                    </button>
                   </div>
 
                   {wordMeanings.length === 0 ? (
@@ -2236,9 +2403,24 @@ function ShlokManagement() {
 
                 {/* HINDI TRANSLATION */}
                 <div className="form-group">
-                  <label>
-                    <BookOpen className="btn-icon" size={16} /> Hindi Translation (हिन्दी अनुवाद)
-                  </label>
+                  <div className="form-group-header-with-btn">
+                    <label style={{ margin: 0 }}>
+                      <BookOpen className="btn-icon" size={16} /> Hindi Translation (हिन्दी अनुवाद)
+                    </label>
+
+                    <button
+                      type="button"
+                      className="field-ai-translate-btn hi-btn"
+                      onClick={() => handleTranslateField("hi", "translation")}
+                      disabled={translating || translatingField !== null}
+                      title="માત્ર શ્લોકના અનુવાદને AI દ્વારા હિન્દીમાં અનુવાદ કરો"
+                    >
+                      <Sparkles className={`btn-icon ${translatingField === "hi-translation" ? "spinning" : ""}`} size={15} />
+                      {translatingField === "hi-translation"
+                        ? "અનુવાદ થઈ રહ્યો છે..."
+                        : "✨ અનુવાદ AI અનુવાદ"}
+                    </button>
+                  </div>
 
                   <RichTextEditor
                     value={
@@ -2259,9 +2441,24 @@ function ShlokManagement() {
 
                 {/* HINDI MESSAGE */}
                 <div className="form-group">
-                  <label>
-                    <Sparkles className="btn-icon" size={16} /> Hindi Message / Explanation (हिन्दी संदेश)
-                  </label>
+                  <div className="form-group-header-with-btn">
+                    <label style={{ margin: 0 }}>
+                      <Sparkles className="btn-icon" size={16} /> Hindi Message / Explanation (हिन्दी संदेश)
+                    </label>
+
+                    <button
+                      type="button"
+                      className="field-ai-translate-btn hi-btn"
+                      onClick={() => handleTranslateField("hi", "message")}
+                      disabled={translating || translatingField !== null}
+                      title="માત્ર સંદેશ/વ્યાખ્યાને AI દ્વારા હિન્દીમાં અનુવાદ કરો"
+                    >
+                      <Sparkles className={`btn-icon ${translatingField === "hi-message" ? "spinning" : ""}`} size={15} />
+                      {translatingField === "hi-message"
+                        ? "સંદેશ અનુવાદ થઈ રહ્યો છે..."
+                        : "✨ સંદેશ AI અનુવાદ"}
+                    </button>
+                  </div>
 
                   <RichTextEditor
                     value={
@@ -2288,18 +2485,21 @@ function ShlokManagement() {
                 <div className="form-group">
                   <label>
                     Speaker (વક્તા - English)
+                    <span style={{ fontSize: "12px", color: "#64748b", marginLeft: "8px", fontWeight: "normal" }}>
+                      (ગુજરાતી મુજબ રહેશે - બદલાશે નહીં)
+                    </span>
                   </label>
 
                   <input
                     type="text"
                     name="speakerEn"
                     value={
-                      formData.speakerEn
+                      formData.speaker || formData.speakerEn || ""
                     }
-                    onChange={
-                      handleChange
-                    }
-                    placeholder="Example: The Blessed Lord said / Dhritarashtra said"
+                    readOnly
+                    disabled
+                    style={{ backgroundColor: "#f8fafc", cursor: "not-allowed", color: "#334155" }}
+                    placeholder="ગુજરાતી ટેબમાં સ્પીકર લખો..."
                   />
                 </div>
 
@@ -2317,10 +2517,23 @@ function ShlokManagement() {
                         </h3>
 
                         <p>
-                          સંસ્કૃત શબ્દ સમાન રહે છે, અહીં તેનો અંગ્રેજી અર્થ AI દ્વારા આપોઆપ આવે છે અથવા તમે સુધારી શકો છો.
+                          સંસ્કૃત શબ્દ સમાન રહે છે, અહીં તેનો અંગ્રેજી અર્થ AI દ્વારા મેળવી શકો છો અથવા તમે સુધારી શકો છો.
                         </p>
                       </div>
                     </div>
+
+                    <button
+                      type="button"
+                      className="field-ai-translate-btn en-btn"
+                      onClick={() => handleTranslateField("en", "words")}
+                      disabled={translating || translatingField !== null}
+                      title="Translate only word meanings to English using AI"
+                    >
+                      <Sparkles className={`btn-icon ${translatingField === "en-words" ? "spinning" : ""}`} size={15} />
+                      {translatingField === "en-words"
+                        ? "શબ્દાર્થ અનુવાદ થઈ રહ્યો છે..."
+                        : "✨ શબ્દાર્થ AI અનુવાદ"}
+                    </button>
                   </div>
 
                   {wordMeanings.length === 0 ? (
@@ -2403,9 +2616,24 @@ function ShlokManagement() {
 
                 {/* ENGLISH TRANSLATION */}
                 <div className="form-group">
-                  <label>
-                    <BookOpen className="btn-icon" size={16} /> English Translation (અંગ્રેજી અનુવાદ)
-                  </label>
+                  <div className="form-group-header-with-btn">
+                    <label style={{ margin: 0 }}>
+                      <BookOpen className="btn-icon" size={16} /> English Translation (અંગ્રેજી અનુવાદ)
+                    </label>
+
+                    <button
+                      type="button"
+                      className="field-ai-translate-btn en-btn"
+                      onClick={() => handleTranslateField("en", "translation")}
+                      disabled={translating || translatingField !== null}
+                      title="Translate only verse translation to English using AI"
+                    >
+                      <Sparkles className={`btn-icon ${translatingField === "en-translation" ? "spinning" : ""}`} size={15} />
+                      {translatingField === "en-translation"
+                        ? "અનુવાદ થઈ રહ્યો છે..."
+                        : "✨ અનુવાદ AI અનુવાદ"}
+                    </button>
+                  </div>
 
                   <RichTextEditor
                     value={
@@ -2426,9 +2654,24 @@ function ShlokManagement() {
 
                 {/* ENGLISH MESSAGE */}
                 <div className="form-group">
-                  <label>
-                    <Sparkles className="btn-icon" size={16} /> English Divine Message / Commentary (અંગ્રેજી સંદેશ)
-                  </label>
+                  <div className="form-group-header-with-btn">
+                    <label style={{ margin: 0 }}>
+                      <Sparkles className="btn-icon" size={16} /> English Divine Message / Commentary (અંગ્રેજી સંદેશ)
+                    </label>
+
+                    <button
+                      type="button"
+                      className="field-ai-translate-btn en-btn"
+                      onClick={() => handleTranslateField("en", "message")}
+                      disabled={translating || translatingField !== null}
+                      title="Translate only spiritual message to English using AI"
+                    >
+                      <Sparkles className={`btn-icon ${translatingField === "en-message" ? "spinning" : ""}`} size={15} />
+                      {translatingField === "en-message"
+                        ? "સંદેશ અનુવાદ થઈ રહ્યો છે..."
+                        : "✨ સંદેશ AI અનુવાદ"}
+                    </button>
+                  </div>
 
                   <RichTextEditor
                     value={

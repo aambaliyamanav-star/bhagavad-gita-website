@@ -2,6 +2,8 @@ const Shlok = require("../models/Shlok");
 const {
   translateShlokToHindi,
   translateShlokToEnglish,
+  translateSingleFieldToHindi,
+  translateSingleFieldToEnglish,
 } = require("../services/translationService");
 
 // =====================================================
@@ -968,8 +970,69 @@ const autoTranslateShlok = async (req, res) => {
       translation,
       message,
       targetLang,
+      field, // "words" | "translation" | "message" | "all"
     } = req.body;
 
+    // =========================================================
+    // 1. SINGLE FIELD TRANSLATION (Words, Translation, Message)
+    // =========================================================
+    if (field && field !== "all") {
+      if (field === "words" && (!wordMeanings || wordMeanings.length === 0)) {
+        return res.status(400).json({
+          success: false,
+          message: "શબ્દાર્થ અનુવાદ માટે સંસ્કૃત શબ્દો હોવા જરૂરી છે.",
+        });
+      }
+
+      if (field === "translation" && !translation) {
+        return res.status(400).json({
+          success: false,
+          message: "પહેલાં ગુજરાતી અનુવાદ લખો.",
+        });
+      }
+
+      if (field === "message" && !message) {
+        return res.status(400).json({
+          success: false,
+          message: "પહેલાં ગુજરાતી સંદેશ લખો.",
+        });
+      }
+
+      if (targetLang === "en") {
+        const result = await translateSingleFieldToEnglish({
+          field,
+          sanskrit,
+          translation,
+          message,
+          wordMeanings: wordMeanings || [],
+        });
+
+        return res.status(200).json({
+          success: true,
+          data: result,
+          translated: result,
+        });
+      }
+
+      // Default to Hindi
+      const result = await translateSingleFieldToHindi({
+        field,
+        sanskrit,
+        translation,
+        message,
+        wordMeanings: wordMeanings || [],
+      });
+
+      return res.status(200).json({
+        success: true,
+        data: result,
+        translated: result,
+      });
+    }
+
+    // =========================================================
+    // 2. FULL TRANSLATION (field === "all" or omitted)
+    // =========================================================
     if (!translation || !sanskrit) {
       return res.status(400).json({
         success: false,
@@ -987,6 +1050,9 @@ const autoTranslateShlok = async (req, res) => {
         message,
         wordMeanings: wordMeanings || [],
       });
+
+      // Speaker remains strictly as Gujarati speaker as requested
+      translated.speakerEn = speaker || "";
 
       return res.status(200).json({
         success: true,
@@ -1031,6 +1097,8 @@ const autoTranslateShlok = async (req, res) => {
       const mergedResult = {
         ...hiResult,
         ...enResult,
+        speakerHi: speaker || "",
+        speakerEn: speaker || "",
         wordMeanings: combinedWordMeanings,
       };
 
@@ -1050,6 +1118,9 @@ const autoTranslateShlok = async (req, res) => {
       message,
       wordMeanings: wordMeanings || [],
     });
+
+    // Speaker remains strictly as Gujarati speaker as requested
+    translated.speakerHi = speaker || "";
 
     res.status(200).json({
       success: true,

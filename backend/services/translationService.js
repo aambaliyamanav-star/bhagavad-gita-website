@@ -673,9 +673,245 @@ Explanation: ${cleanHtml(explanation)}`;
   return fallback;
 }
 
+/**
+ * Generic caller for Gemini models returning parsed JSON
+ */
+async function callGeminiJson(prompt) {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) return null;
+  const modelsToTry = [
+    "gemini-2.5-flash",
+    "gemini-2.0-flash",
+    "gemini-1.5-flash",
+    "gemini-flash-lite-latest",
+    "gemini-flash-latest",
+  ];
+  const cleanKey = String(apiKey).trim();
+
+  for (const modelName of modelsToTry) {
+    try {
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(
+          cleanKey
+        )}`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "x-goog-api-key": cleanKey,
+          },
+          body: JSON.stringify({
+            contents: [{ role: "user", parts: [{ text: prompt }] }],
+            generationConfig: {
+              temperature: 0.2,
+              response_mime_type: "application/json",
+            },
+          }),
+        }
+      );
+
+      if (response.ok) {
+        const data = await response.json();
+        const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+        if (rawText) {
+          const jsonStr = rawText
+            .replace(/^```json/i, "")
+            .replace(/^```/, "")
+            .replace(/```$/, "")
+            .trim();
+          return JSON.parse(jsonStr);
+        }
+      }
+    } catch (err) {
+      console.warn(`Gemini call failed with ${modelName}:`, err.message);
+    }
+  }
+  return null;
+}
+
+/**
+ * Translates only a specific field (words, translation, or message) into Hindi
+ */
+async function translateSingleFieldToHindi({
+  field,
+  sanskrit,
+  translation,
+  message,
+  wordMeanings = [],
+}) {
+  if (field === "words") {
+    const prompt = `You are a Vedic and Sanskrit scholar of Srimad Bhagavad Gita.
+Translate the following Sanskrit word meanings from Gujarati into pure, authentic, devotional Hindi (Devanagari script).
+RULES:
+1. Sanskrit 'word' MUST NOT be altered. Keep it 100% pure Sanskrit.
+2. Translate the Gujarati 'meaning' into an accurate Hindi 'meaningHi'.
+3. Output format: Return ONLY valid JSON:
+{
+  "wordMeanings": [
+    { "word": "Sanskrit word", "meaningHi": "Hindi meaning" }
+  ]
+}
+
+DATA TO TRANSLATE:
+${JSON.stringify((wordMeanings || []).map((w) => ({ word: w.word, meaning: cleanHtml(w.meaning) })))}`;
+
+    const parsed = await callGeminiJson(prompt);
+    if (parsed && Array.isArray(parsed.wordMeanings)) {
+      const map = new Map();
+      parsed.wordMeanings.forEach((item) => {
+        if (item && item.word) map.set(String(item.word).trim(), item.meaningHi || "");
+      });
+
+      return {
+        wordMeanings: (wordMeanings || []).map((orig, idx) => ({
+          ...orig,
+          meaningHi:
+            map.get(String(orig.word).trim()) ||
+            parsed.wordMeanings[idx]?.meaningHi ||
+            orig.meaningHi ||
+            "",
+        })),
+      };
+    }
+    return {
+      wordMeanings: (wordMeanings || []).map((orig) => ({
+        ...orig,
+        meaningHi: orig.meaningHi || "",
+      })),
+    };
+  }
+
+  if (field === "translation") {
+    const prompt = `You are a Sanskrit and Vedic scholar of Srimad Bhagavad Gita.
+Translate the following Bhagavad Gita verse translation from Gujarati into sacred, fluid Hindi (अनुवाद).
+Preserve any HTML formatting (e.g. <b>, <i>) if present in the text.
+Sanskrit Verse: ${cleanHtml(sanskrit || "")}
+Gujarati Translation: ${translation}
+Return ONLY valid JSON:
+{
+  "translationHi": "Hindi translation..."
+}`;
+
+    const parsed = await callGeminiJson(prompt);
+    return {
+      translationHi: parsed?.translationHi || cleanHtml(translation),
+    };
+  }
+
+  if (field === "message") {
+    const prompt = `You are a Sanskrit and Vedic scholar of Srimad Bhagavad Gita.
+Translate the following Bhagavad Gita divine message / spiritual explanation (ગીતા સંદેશ) from Gujarati into deep, inspiring Hindi (गीता संदेश).
+Preserve any HTML formatting (e.g. <ul>, <li>, <b>, <p>) if present in the text.
+Sanskrit Verse: ${cleanHtml(sanskrit || "")}
+Gujarati Message: ${message}
+Return ONLY valid JSON:
+{
+  "messageHi": "Hindi message..."
+}`;
+
+    const parsed = await callGeminiJson(prompt);
+    return {
+      messageHi: parsed?.messageHi || cleanHtml(message),
+    };
+  }
+
+  return {};
+}
+
+/**
+ * Translates only a specific field (words, translation, or message) into English
+ */
+async function translateSingleFieldToEnglish({
+  field,
+  sanskrit,
+  translation,
+  message,
+  wordMeanings = [],
+}) {
+  if (field === "words") {
+    const prompt = `You are a Vedic and Sanskrit scholar of Srimad Bhagavad Gita.
+Translate the following Sanskrit word meanings from Gujarati into clear, authentic, devotional English.
+RULES:
+1. Sanskrit 'word' MUST NOT be altered. Keep it 100% pure Sanskrit.
+2. Translate the Gujarati 'meaning' into an accurate English 'meaningEn'.
+3. Output format: Return ONLY valid JSON:
+{
+  "wordMeanings": [
+    { "word": "Sanskrit word", "meaningEn": "English meaning" }
+  ]
+}
+
+DATA TO TRANSLATE:
+${JSON.stringify((wordMeanings || []).map((w) => ({ word: w.word, meaning: cleanHtml(w.meaning) })))}`;
+
+    const parsed = await callGeminiJson(prompt);
+    if (parsed && Array.isArray(parsed.wordMeanings)) {
+      const map = new Map();
+      parsed.wordMeanings.forEach((item) => {
+        if (item && item.word) map.set(String(item.word).trim(), item.meaningEn || "");
+      });
+
+      return {
+        wordMeanings: (wordMeanings || []).map((orig, idx) => ({
+          ...orig,
+          meaningEn:
+            map.get(String(orig.word).trim()) ||
+            parsed.wordMeanings[idx]?.meaningEn ||
+            orig.meaningEn ||
+            "",
+        })),
+      };
+    }
+    return {
+      wordMeanings: (wordMeanings || []).map((orig) => ({
+        ...orig,
+        meaningEn: orig.meaningEn || "",
+      })),
+    };
+  }
+
+  if (field === "translation") {
+    const prompt = `You are a Vedic and Sanskrit scholar of Srimad Bhagavad Gita.
+Translate the following Bhagavad Gita verse translation from Gujarati into dignified, poetic, and devotional English.
+Preserve any HTML formatting (e.g. <b>, <i>) if present in the text.
+Sanskrit Verse: ${cleanHtml(sanskrit || "")}
+Gujarati Translation: ${translation}
+Return ONLY valid JSON:
+{
+  "translationEn": "English translation..."
+}`;
+
+    const parsed = await callGeminiJson(prompt);
+    return {
+      translationEn: parsed?.translationEn || cleanHtml(translation),
+    };
+  }
+
+  if (field === "message") {
+    const prompt = `You are a Vedic and Sanskrit scholar of Srimad Bhagavad Gita.
+Translate the following Bhagavad Gita divine message / spiritual commentary (ગીતા સંદેશ) from Gujarati into inspiring, practical English commentary.
+Preserve any HTML formatting (e.g. <ul>, <li>, <b>, <p>) if present in the text.
+Sanskrit Verse: ${cleanHtml(sanskrit || "")}
+Gujarati Message: ${message}
+Return ONLY valid JSON:
+{
+  "messageEn": "English message commentary..."
+}`;
+
+    const parsed = await callGeminiJson(prompt);
+    return {
+      messageEn: parsed?.messageEn || cleanHtml(message),
+    };
+  }
+
+  return {};
+}
+
 module.exports = {
   translateShlokToHindi,
   translateShlokToEnglish,
+  translateSingleFieldToHindi,
+  translateSingleFieldToEnglish,
   translateQuizToHindi,
   translateQuizToEnglish,
   SPEAKER_MAP_HI,
