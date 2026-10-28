@@ -790,6 +790,20 @@ function ShlokManagement() {
 
     setWordMeanings(
       (currentWords) => {
+        // Do not overwrite if user has already entered custom meanings or split words
+        const hasCustomizedWords =
+          currentWords.some(
+            (w) =>
+              (w.meaning && w.meaning.trim()) ||
+              (w.meaningHi && w.meaningHi.trim()) ||
+              (w.meaningEn && w.meaningEn.trim())
+          ) ||
+          (currentWords.length > 0 && currentWords.length !== words.length);
+
+        if (hasCustomizedWords && previousSanskritRef.current) {
+          return currentWords;
+        }
+
         const usedOldIndexes =
           new Set();
 
@@ -1136,22 +1150,19 @@ function ShlokManagement() {
       if (Array.isArray(translated.wordMeanings)) {
         setWordMeanings((prev) =>
           prev.map((item, idx) => {
-            const matched = translated.wordMeanings.find(
-              (m) =>
-                cleanSanskritWord(m.word) ===
-                cleanSanskritWord(item.word)
-            ) || translated.wordMeanings[idx];
+            const translatedItem = translated.wordMeanings[idx];
 
             return {
               ...item,
+              word: item.word, // Keep user's exact Sanskrit word (including split words) strictly untouched
               meaningHi:
-                matched?.meaningHi ||
-                item.meaningHi ||
-                "",
+                translatedItem?.meaningHi !== undefined
+                  ? translatedItem.meaningHi
+                  : item.meaningHi || "",
               meaningEn:
-                matched?.meaningEn ||
-                item.meaningEn ||
-                "",
+                translatedItem?.meaningEn !== undefined
+                  ? translatedItem.meaningEn
+                  : item.meaningEn || "",
             };
           })
         );
@@ -1254,23 +1265,25 @@ function ShlokManagement() {
       if (field === "words" && Array.isArray(translated.wordMeanings)) {
         setWordMeanings((prev) =>
           prev.map((item, idx) => {
-            const matched = translated.wordMeanings.find(
-              (m) =>
-                cleanSanskritWord(m.word) ===
-                cleanSanskritWord(item.word)
-            ) || translated.wordMeanings[idx];
+            const translatedItem = translated.wordMeanings[idx];
 
             if (targetLang === "hi") {
               return {
                 ...item,
+                word: item.word, // Keep user's exact Sanskrit word (including split words) strictly untouched
                 meaningHi:
-                  matched?.meaningHi || item.meaningHi || "",
+                  translatedItem?.meaningHi !== undefined
+                    ? translatedItem.meaningHi
+                    : item.meaningHi || "",
               };
             } else {
               return {
                 ...item,
+                word: item.word, // Keep user's exact Sanskrit word (including split words) strictly untouched
                 meaningEn:
-                  matched?.meaningEn || item.meaningEn || "",
+                  translatedItem?.meaningEn !== undefined
+                    ? translatedItem.meaningEn
+                    : item.meaningEn || "",
               };
             }
           })
