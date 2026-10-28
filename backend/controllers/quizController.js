@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const QuizQuestion = require("../models/QuizQuestion");
 const QuizResult = require("../models/QuizResult");
 const QuizUserProgress = require("../models/QuizUserProgress");
@@ -490,16 +491,14 @@ const submitQuiz = async (
     }
 
     // =================================================
-    // QUESTION IDS
+    // QUESTION IDS (VALIDATED OBJECTIDS)
     // =================================================
 
-    const questionIds =
-      answers
-        .map(
-          (item) =>
-            item.questionId
-        )
-        .filter(Boolean);
+    const validAnswers = answers.filter(
+      (item) => item && item.questionId && mongoose.Types.ObjectId.isValid(item.questionId)
+    );
+
+    const questionIds = validAnswers.map((item) => item.questionId);
 
     if (
       questionIds.length === 0
@@ -538,7 +537,7 @@ const submitQuiz = async (
     // =================================================
 
     const checkedAnswers =
-      answers.map(
+      validAnswers.map(
         (userAnswer) => {
 
           // -------------------------------------------
@@ -621,10 +620,11 @@ const submitQuiz = async (
           const normCorrectHi = String(question.correctAnswerHi || "").trim().toLowerCase();
           const normCorrectEn = String(question.correctAnswerEn || "").trim().toLowerCase();
 
-          let isCorrect =
-            (normSelected && normSelected === normCorrectGu) ||
+          let isCorrect = Boolean(
+            (normSelected && normCorrectGu && normSelected === normCorrectGu) ||
             (normSelected && normCorrectHi && normSelected === normCorrectHi) ||
-            (normSelected && normCorrectEn && normSelected === normCorrectEn);
+            (normSelected && normCorrectEn && normSelected === normCorrectEn)
+          );
 
           // Position-based index check if language strings differ
           if (
@@ -667,7 +667,7 @@ const submitQuiz = async (
 
             correctAnswer,
 
-            isCorrect,
+            isCorrect: Boolean(isCorrect),
           };
         }
       );

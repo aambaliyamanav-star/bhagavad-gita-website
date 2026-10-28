@@ -163,6 +163,49 @@ body {
 
 
 /* =========================================================
+   HOME PAGE CELESTIAL NAVBAR (PERFECTLY SUITED TO ARTWORK)
+   ========================================================= */
+
+.navbar.navbar-home,
+[data-theme="dark"] .navbar.navbar-home {
+  background: rgba(4, 11, 26, 0.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(245, 158, 11, 0.35);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.55),
+    inset 0 -1px 0 rgba(245, 158, 11, 0.15);
+}
+
+.navbar.navbar-home.scrolled,
+[data-theme="dark"] .navbar.navbar-home.scrolled {
+  background: rgba(3, 9, 22, 0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(245, 158, 11, 0.45);
+  box-shadow:
+    0 10px 32px rgba(0, 0, 0, 0.75),
+    0 1px 0 rgba(245, 158, 11, 0.20) inset;
+}
+
+.navbar.navbar-home .logo {
+  color: #fbbf24;
+  text-shadow: 0 0 12px rgba(245, 158, 11, 0.45);
+}
+
+.navbar.navbar-home .nav-lang-btn,
+.navbar.navbar-home .page-name-badge,
+.navbar.navbar-home .menu-toggle {
+  border-color: rgba(245, 158, 11, 0.35);
+}
+
+.navbar.navbar-home .nav-lang-btn:hover,
+.navbar.navbar-home .menu-toggle:hover {
+  border-color: #fbbf24;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.35);
+}
+
+/* =========================================================
    NAVBAR SPACER
    ========================================================= */
 

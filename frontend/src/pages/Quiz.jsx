@@ -4,7 +4,7 @@ import {
   useNavigate,
   useSearchParams,
 } from "react-router-dom";
-import { ArrowLeft, Star, Loader2, BookOpen, AlertCircle, RefreshCw, Trophy, Check, X, Lightbulb, ChevronLeft, ChevronRight, Award } from "lucide-react";
+import { ArrowLeft, Star, Loader2, BookOpen, AlertCircle, RefreshCw, Trophy, Lightbulb, ChevronLeft, ChevronRight, Award } from "lucide-react";
 import SudarshanShimmerLoader from "../components/SudarshanShimmerLoader.jsx";
 import { useLanguage } from "../context/LanguageContext.jsx";
 import "./Quiz.css";
@@ -597,6 +597,74 @@ function Quiz() {
   };
 
   // =====================================================
+  // CHECK IF OPTION IS CORRECT
+  // =====================================================
+
+  const checkIfOptionIsCorrect = (optText, optIndex = -1) => {
+    if (!question) return false;
+
+    const activeCorrectAnswer =
+      (isEnglish && question.correctAnswerEn) ||
+      (isHindi && question.correctAnswerHi) ||
+      question.correctAnswer ||
+      "";
+
+    if (
+      normalizeAnswer(optText) === normalizeAnswer(activeCorrectAnswer) ||
+      normalizeAnswer(optText) === normalizeAnswer(question.correctAnswer) ||
+      (question.correctAnswerHi &&
+        normalizeAnswer(optText) === normalizeAnswer(question.correctAnswerHi)) ||
+      (question.correctAnswerEn &&
+        normalizeAnswer(optText) === normalizeAnswer(question.correctAnswerEn))
+    ) {
+      return true;
+    }
+
+    // Index check if options are translated
+    if (
+      isEnglish &&
+      Array.isArray(question.optionsEn) &&
+      question.optionsEn.length === 4 &&
+      Array.isArray(question.options) &&
+      question.options.length === 4
+    ) {
+      const selectedIdx =
+        optIndex !== -1
+          ? optIndex
+          : question.optionsEn.findIndex(
+              (opt) => normalizeAnswer(opt) === normalizeAnswer(optText)
+            );
+      const correctIdx = question.options.findIndex(
+        (opt) => normalizeAnswer(opt) === normalizeAnswer(question.correctAnswer)
+      );
+      if (selectedIdx !== -1 && selectedIdx === correctIdx) {
+        return true;
+      }
+    } else if (
+      isHindi &&
+      Array.isArray(question.optionsHi) &&
+      question.optionsHi.length === 4 &&
+      Array.isArray(question.options) &&
+      question.options.length === 4
+    ) {
+      const selectedIdx =
+        optIndex !== -1
+          ? optIndex
+          : question.optionsHi.findIndex(
+              (opt) => normalizeAnswer(opt) === normalizeAnswer(optText)
+            );
+      const correctIdx = question.options.findIndex(
+        (opt) => normalizeAnswer(opt) === normalizeAnswer(question.correctAnswer)
+      );
+      if (selectedIdx !== -1 && selectedIdx === correctIdx) {
+        return true;
+      }
+    }
+
+    return false;
+  };
+
+  // =====================================================
   // ANSWER
   // =====================================================
 
@@ -617,70 +685,10 @@ function Quiz() {
       question.correctAnswer ||
       "";
 
-    let isCorrect =
-      normalizeAnswer(
-        answer
-      ) ===
-      normalizeAnswer(
-        activeCorrectAnswer
-      ) ||
-      normalizeAnswer(
-        answer
-      ) ===
-      normalizeAnswer(
-        question.correctAnswer
-      ) ||
-      (question.correctAnswerHi &&
-        normalizeAnswer(
-          answer
-        ) ===
-        normalizeAnswer(
-          question.correctAnswerHi
-        )) ||
-      (question.correctAnswerEn &&
-        normalizeAnswer(
-          answer
-        ) ===
-        normalizeAnswer(
-          question.correctAnswerEn
-        ));
+    const correctAnswer =
+      String(question.correctAnswer || activeCorrectAnswer || "").trim();
 
-    // Index check if options are translated
-    if (
-      !isCorrect &&
-      isEnglish &&
-      Array.isArray(question.optionsEn) &&
-      question.optionsEn.length === 4 &&
-      Array.isArray(question.options) &&
-      question.options.length === 4
-    ) {
-      const selectedIdx = question.optionsEn.findIndex(
-        (opt) => normalizeAnswer(opt) === normalizeAnswer(answer)
-      );
-      const correctIdx = question.options.findIndex(
-        (opt) => normalizeAnswer(opt) === normalizeAnswer(question.correctAnswer)
-      );
-      if (selectedIdx !== -1 && selectedIdx === correctIdx) {
-        isCorrect = true;
-      }
-    } else if (
-      !isCorrect &&
-      isHindi &&
-      Array.isArray(question.optionsHi) &&
-      question.optionsHi.length === 4 &&
-      Array.isArray(question.options) &&
-      question.options.length === 4
-    ) {
-      const selectedIdx = question.optionsHi.findIndex(
-        (opt) => normalizeAnswer(opt) === normalizeAnswer(answer)
-      );
-      const correctIdx = question.options.findIndex(
-        (opt) => normalizeAnswer(opt) === normalizeAnswer(question.correctAnswer)
-      );
-      if (selectedIdx !== -1 && selectedIdx === correctIdx) {
-        isCorrect = true;
-      }
-    }
+    const isCorrect = checkIfOptionIsCorrect(answer);
 
     // =================================================
     // SELECT ANSWER
@@ -830,13 +838,7 @@ function Quiz() {
       setSubmitting(true);
       setError("");
 
-      const token =
-        getToken();
-
-      if (!token) {
-        navigate("/login");
-        return;
-      }
+      const token = getToken();
 
       // =================================================
       // COPY EXISTING ANSWERS
@@ -858,25 +860,11 @@ function Quiz() {
           finalAnswers.findIndex(
             (item) =>
               String(
-                item.questionId
+                item.questionId || item._id
               ) ===
               String(
                 question._id
               )
-          );
-
-        const correctAnswer =
-          String(
-            question.correctAnswer ||
-              ""
-          ).trim();
-
-        const isCorrect =
-          normalizeAnswer(
-            selectedAnswer
-          ) ===
-          normalizeAnswer(
-            correctAnswer
           );
 
         const currentAnswer = {
@@ -887,23 +875,17 @@ function Quiz() {
             selectedAnswer,
 
           correctAnswer:
-            correctAnswer,
+            String(question.correctAnswer || "").trim(),
 
-          isCorrect,
+          isCorrect: checkIfOptionIsCorrect(selectedAnswer),
         };
 
         if (
-          existingIndex ===
-          -1
+          existingIndex === -1
         ) {
-          finalAnswers = [
-            ...finalAnswers,
-            currentAnswer,
-          ];
+          finalAnswers.push(currentAnswer);
         } else {
-          finalAnswers[
-            existingIndex
-          ] = currentAnswer;
+          finalAnswers[existingIndex] = currentAnswer;
         }
       }
 
@@ -911,103 +893,40 @@ function Quiz() {
       // REMOVE DUPLICATES
       // =================================================
 
-      const uniqueAnswers =
-        [];
-
-      finalAnswers.forEach(
-        (item) => {
-          const exists =
-            uniqueAnswers.some(
-              (existing) =>
-                String(
-                  existing.questionId
-                ) ===
-                String(
-                  item.questionId
-                )
-            );
-
-          if (!exists) {
-            uniqueAnswers.push(
-              item
-            );
-          }
+      const uniqueAnswersMap = new Map();
+      finalAnswers.forEach((item) => {
+        const qId = item.questionId || item._id;
+        if (qId) {
+          uniqueAnswersMap.set(String(qId), item);
         }
-      );
+      });
 
-      finalAnswers =
-        uniqueAnswers;
-
-      // =================================================
-      // FINAL SCORE
-      // =================================================
-
-      const finalScore =
-        finalAnswers.filter(
-          (item) =>
-            item.isCorrect ===
-            true
-        ).length;
+      finalAnswers = Array.from(uniqueAnswersMap.values());
 
       // =================================================
-      // WRONG ANSWERS
+      // FINAL SCORE (LOCAL CALCULATION)
       // =================================================
 
-      const wrongAnswers =
-        finalAnswers.filter(
-          (item) =>
-            item.isCorrect ===
-              false &&
-            item.selectedAnswer
-        ).length;
-
-      // =================================================
-      // UNANSWERED
-      // =================================================
-
-      const unanswered =
-        Math.max(
-          0,
-          questions.length -
-            finalAnswers.length
-        );
-
-      console.log(
-        "Final Score:",
-        finalScore
-      );
-
-      console.log(
-        "Wrong:",
-        wrongAnswers
-      );
-
-      console.log(
-        "Unanswered:",
-        unanswered
-      );
+      const finalScore = finalAnswers.filter(
+        (item) => item.isCorrect === true
+      ).length;
 
       // =================================================
       // CATEGORY
       // =================================================
 
-      let resultCategory =
-        "all";
+      let resultCategory = "all";
+      let resultChapter = null;
 
       if (
-        categoryParam ===
-        "chapter"
+        categoryParam === "chapter" ||
+        (categoryParam && categoryParam.startsWith("chapter-"))
       ) {
-        resultCategory =
-          `chapter-${chapterParam}`;
-      }
-
-      else if (
-        categoryParam ===
-        "mahabharata"
-      ) {
-        resultCategory =
-          "mahabharata";
+        const ch = chapterParam || (categoryParam.startsWith("chapter-") ? categoryParam.replace("chapter-", "") : "1");
+        resultCategory = `chapter-${ch}`;
+        resultChapter = Number(ch) || 1;
+      } else if (categoryParam === "mahabharata") {
+        resultCategory = "mahabharata";
       }
 
       // =================================================
@@ -1020,115 +939,64 @@ function Quiz() {
       );
 
       const submitData = {
-        category:
-          resultCategory,
-
-        chapter:
-          categoryParam ===
-          "chapter"
-            ? Number(
-                chapterParam
-              )
-            : null,
-
+        category: resultCategory,
+        chapter: resultChapter,
         shlokaRange:
           categoryParam === "chapter" && shlokaRangeParam
             ? shlokaRangeParam
             : "",
-
-        answers:
-          finalAnswers.map(
-            (item) => ({
-              questionId:
-                item.questionId,
-
-              selectedAnswer:
-                item.selectedAnswer,
-            })
-          ),
-
+        answers: finalAnswers
+          .filter((item) => item && (item.questionId || item._id))
+          .map((item) => ({
+            questionId: item.questionId || item._id,
+            selectedAnswer: String(item.selectedAnswer || "").trim(),
+          })),
         timeTaken: durationSeconds,
       };
 
-      console.log(
-        "Quiz Submit Data:",
-        submitData
-      );
+      console.log("Quiz Submit Data:", submitData);
 
       // =================================================
-      // SUBMIT TO BACKEND
+      // SUBMIT TO BACKEND (RESILIENT)
       // =================================================
 
-      const response =
-        await fetch(
-          `${API_URL}/submit`,
-          {
+      let finalResultScore = finalScore;
+
+      if (token) {
+        try {
+          const response = await fetch(`${API_URL}/submit`, {
             method: "POST",
-
             headers: {
-              Authorization:
-                `Bearer ${token}`,
-
-              "Content-Type":
-                "application/json",
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
             },
+            body: JSON.stringify(submitData),
+          });
 
-            body:
-              JSON.stringify(
-                submitData
-              ),
+          if (response.ok) {
+            const data = await response.json();
+            console.log("Quiz Submit Success:", data);
+            const backendScore = Number(data.result?.score);
+            if (Number.isFinite(backendScore)) {
+              finalResultScore = backendScore;
+            }
+          } else {
+            console.warn("Quiz submit returned non-OK status:", response.status);
+            if (response.status === 401) {
+              clearAuthSession();
+            }
           }
-        );
-
-      const data =
-        await response.json();
-
-      console.log(
-        "Quiz Submit Response:",
-        data
-      );
-
-      if (!response.ok) {
-        if (response.status === 401) {
-          clearAuthSession();
+        } catch (apiErr) {
+          console.warn("Quiz submit network/API error (using local scoring):", apiErr);
         }
-        throw new Error(
-          data.message ||
-            txt("Quiz result save થઈ શક્યું નથી.", "Quiz परिणाम सहेजा नहीं जा सका।", "Could not save quiz result.")
-        );
       }
 
       // =================================================
-      // BACKEND SCORE
+      // SET FINAL DATA & BADGES
       // =================================================
 
-      const backendScore =
-        Number(
-          data.result?.score
-        );
-
-      const finalResultScore =
-        Number.isFinite(
-          backendScore
-        )
-          ? backendScore
-          : finalScore;
-
-      // =================================================
-      // SET FINAL DATA
-      // =================================================
-
-      setScore(
-        finalResultScore
-      );
-
-      setAnswers(
-        finalAnswers
-      );
-
-      // =================================================
-      // EVALUATE EARNED BADGES FOR CELEBRATION
-      // =================================================
+      setScore(finalResultScore);
+      setAnswers(finalAnswers);
 
       const finalPercentage = Math.round(
         (finalResultScore / (questions.length || 1)) * 100
@@ -1181,21 +1049,12 @@ function Quiz() {
       // COMPLETE QUIZ
       // =================================================
 
-      setQuizCompleted(
-        true
-      );
+      setQuizCompleted(true);
 
     } catch (err) {
-      console.error(
-        "Submit Quiz Error:",
-        err
-      );
-
-      setError(
-        err.message ||
-          txt("Quiz result save કરવામાં error આવ્યો.", "Quiz परिणाम सहेजने में त्रुटि आई।", "Error occurred while saving quiz result.")
-      );
-
+      console.error("Submit Quiz Error:", err);
+      // Fallback: still show quiz results rather than locking user out
+      setQuizCompleted(true);
     } finally {
       setSubmitting(false);
     }
@@ -1547,18 +1406,6 @@ function Quiz() {
       questions.length) *
     100;
 
-  // =====================================================
-  // CURRENT ANSWER CORRECT
-  // =====================================================
-
-  const isAnswerCorrect =
-    selectedAnswer &&
-    normalizeAnswer(
-      selectedAnswer
-    ) ===
-      normalizeAnswer(
-        question?.correctAnswer
-      );
 
   // =====================================================
   // QUIZ TITLE
@@ -1690,178 +1537,97 @@ function Quiz() {
             OPTIONS
         ================================================= */}
 
-        <div className="quiz-options">
+        {(() => {
+          const currentOptions = getOptions();
+          const hasLongOption = currentOptions.some((opt) => {
+            const optText =
+              typeof opt === "string"
+                ? opt
+                : opt?.text || opt?.label || opt?.value || "";
+            return optText.length > 35;
+          });
 
-          {getOptions().map(
-            (
-              option,
-              index
-            ) => {
+          return (
+            <div
+              className={`quiz-options ${
+                hasLongOption ? "single-column" : "two-column"
+              }`}
+            >
+              {currentOptions.map((option, index) => {
+                const optionText =
+                  typeof option === "string"
+                    ? option
+                    : option?.text ||
+                      option?.label ||
+                      option?.value ||
+                      "";
 
-              const optionText =
-                typeof option ===
-                "string"
-                  ? option
-                  : option?.text ||
-                    option?.label ||
-                    option?.value ||
-                    "";
+                const isSelected =
+                  normalizeAnswer(selectedAnswer) ===
+                  normalizeAnswer(optionText);
 
-              const isSelected =
-                normalizeAnswer(
-                  selectedAnswer
-                ) ===
-                normalizeAnswer(
-                  optionText
+                const isCorrect = checkIfOptionIsCorrect(
+                  optionText,
+                  index
                 );
 
-              const activeCorrectAnswer =
-                (isEnglish && question.correctAnswerEn) ||
-                (isHindi && question.correctAnswerHi) ||
-                question.correctAnswer ||
-                "";
+                let optionClass = "quiz-option";
 
-              const isCorrect =
-                normalizeAnswer(optionText) === normalizeAnswer(activeCorrectAnswer) ||
-                normalizeAnswer(optionText) === normalizeAnswer(question.correctAnswer) ||
-                (question.correctAnswerHi &&
-                  normalizeAnswer(optionText) === normalizeAnswer(question.correctAnswerHi)) ||
-                (question.correctAnswerEn &&
-                  normalizeAnswer(optionText) === normalizeAnswer(question.correctAnswerEn));
+                // =================================================
+                // AFTER ANSWER
+                // =================================================
 
-              let optionClass =
-                "quiz-option";
+                if (selectedAnswer) {
+                  if (isCorrect) {
+                    optionClass += " correct";
+                  }
 
-              // =================================================
-              // AFTER ANSWER
-              // =================================================
+                  if (isSelected && !isCorrect) {
+                    optionClass += " wrong";
+                  }
 
-              if (
-                selectedAnswer
-              ) {
-
-                if (
-                  isCorrect
-                ) {
-                  optionClass +=
-                    " correct";
+                  if (isSelected) {
+                    optionClass += " selected";
+                  }
                 }
 
-                if (
-                  isSelected &&
-                  !isCorrect
-                ) {
-                  optionClass +=
-                    " wrong";
-                }
+                return (
+                  <button
+                    key={index}
+                    type="button"
+                    className={optionClass}
+                    onClick={() => handleAnswer(optionText)}
+                    disabled={
+                      Boolean(selectedAnswer) || submitting
+                    }
+                  >
+                    <span className="quiz-option-letter">
+                      {String.fromCharCode(65 + index)}
+                    </span>
 
-                if (
-                  isSelected
-                ) {
-                  optionClass +=
-                    " selected";
-                }
-              }
+                    <span className="quiz-option-text">
+                      {optionText}
+                    </span>
 
-              return (
-                <button
-                  key={index}
-                  type="button"
-                  className={
-                    optionClass
-                  }
-                  onClick={() =>
-                    handleAnswer(
-                      optionText
-                    )
-                  }
-                  disabled={
-                    Boolean(
-                      selectedAnswer
-                    ) ||
-                    submitting
-                  }
-                >
-
-                  <span className="quiz-option-letter">
-                    {String.fromCharCode(
-                      65 + index
-                    )}
-                  </span>
-
-                  <span className="quiz-option-text">
-                    {optionText}
-                  </span>
-
-                  {selectedAnswer &&
-                    isCorrect && (
+                    {selectedAnswer && isCorrect && (
                       <span className="quiz-option-icon">
                         ✓
                       </span>
                     )}
 
-                  {selectedAnswer &&
-                    isSelected &&
-                    !isCorrect && (
-                      <span className="quiz-option-icon">
-                        ✕
-                      </span>
-                    )}
-
-                </button>
-              );
-            }
-          )}
-
-        </div>
-
-        {/* =================================================
-            ANSWER FEEDBACK
-        ================================================= */}
-
-        {selectedAnswer && (
-
-          <div
-            className={
-              isAnswerCorrect
-                ? "quiz-answer-feedback correct"
-                : "quiz-answer-feedback wrong"
-            }
-          >
-
-            {isAnswerCorrect ? (
-
-              <>
-                <strong>
-                  <Check size={15} className="btn-icon" /> {txt("સાચો જવાબ!", "सही उत्तर!", "Correct Answer!")}
-                </strong>
-
-                <span>{txt("ખૂબ સરસ!", "बहुत बढ़िया!", "Well done!")}</span>
-              </>
-
-            ) : (
-
-              <>
-                <strong>
-                  <X size={15} className="btn-icon" /> {txt("ખોટો જવાબ", "गलत उत्तर", "Wrong Answer")}
-                </strong>
-
-                <span>{txt("સાચો જવાબ: ", "सही उत्तर: ", "Correct Answer: ")}
-                  <b>
-                    {
-                      (isEnglish && question.correctAnswerEn) ||
-                      (isHindi && question.correctAnswerHi) ||
-                      question.correctAnswer
-                    }
-                  </b>
-                </span>
-              </>
-
-            )}
-
-          </div>
-
-        )}
+                    {selectedAnswer &&
+                      isSelected &&
+                      !isCorrect && (
+                        <span className="quiz-option-icon">
+                          ✕
+                        </span>
+                      )}
+                  </button>
+                );
+              })}
+            </div>
+          );
+        })()}
 
         {/* =================================================
             EXPLANATION

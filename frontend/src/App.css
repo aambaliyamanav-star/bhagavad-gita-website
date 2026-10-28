@@ -38,16 +38,18 @@
   height: calc(100dvh - 50px);
   z-index: 0;
   pointer-events: none;
+  background-color: #06101e;
   background-image:
     linear-gradient(
-      135deg,
-      rgba(239, 249, 255, 0.20) 0%,
-      rgba(220, 239, 255, 0.24) 50%,
-      rgba(201, 231, 255, 0.30) 100%
+      180deg,
+      rgba(4, 10, 24, 0.40) 0%,
+      rgba(4, 10, 24, 0.10) 30%,
+      rgba(4, 10, 24, 0.22) 65%,
+      rgba(12, 7, 3, 0.50) 100%
     ),
-    url("/images/gita-background.png");
+    url("/images/gita-background-desktop.jpg");
   background-size: 100% 100%;
-  background-position: center top;
+  background-position: center center;
   background-repeat: no-repeat;
 }
 
@@ -55,17 +57,32 @@ html.dark .home-fixed-bg,
 body.dark .home-fixed-bg,
 html[data-theme="dark"] .home-fixed-bg,
 body[data-theme="dark"] .home-fixed-bg {
+  background-color: #050d18;
   background-image:
     linear-gradient(
-      135deg,
-      rgba(4, 18, 35, 0.72) 0%,
-      rgba(7, 29, 50, 0.68) 50%,
-      rgba(8, 42, 70, 0.72) 100%
+      180deg,
+      rgba(4, 10, 24, 0.42) 0%,
+      rgba(4, 10, 24, 0.12) 30%,
+      rgba(4, 10, 24, 0.25) 65%,
+      rgba(12, 7, 3, 0.55) 100%
     ),
-    url("/images/gita-background.png");
+    url("/images/gita-background-desktop.jpg");
   background-size: 100% 100%;
-  background-position: center top;
+  background-position: center center;
   background-repeat: no-repeat;
+}
+
+@media (max-width: 1024px) {
+  .home-fixed-bg {
+    background-position: center center;
+  }
+
+  html.dark .home-fixed-bg,
+  body.dark .home-fixed-bg,
+  html[data-theme="dark"] .home-fixed-bg,
+  body[data-theme="dark"] .home-fixed-bg {
+    background-position: center center;
+  }
 }
 
 @media (max-width: 768px) {
@@ -75,14 +92,15 @@ body[data-theme="dark"] .home-fixed-bg {
     height: calc(100dvh - 44px);
     background-image:
       linear-gradient(
-        135deg,
-        rgba(239, 249, 255, 0.18) 0%,
-        rgba(220, 239, 255, 0.20) 50%,
-        rgba(201, 231, 255, 0.24) 100%
+        180deg,
+        rgba(4, 10, 24, 0.38) 0%,
+        rgba(4, 10, 24, 0.10) 30%,
+        rgba(4, 10, 24, 0.20) 65%,
+        rgba(10, 6, 2, 0.48) 100%
       ),
-      url("/images/gita-background-mobile.png");
+      url("/images/gita-background-mobile.jpg");
     background-size: 100% 100%;
-    background-position: center top;
+    background-position: center center;
     background-repeat: no-repeat;
   }
 
@@ -92,14 +110,15 @@ body[data-theme="dark"] .home-fixed-bg {
   body[data-theme="dark"] .home-fixed-bg {
     background-image:
       linear-gradient(
-        135deg,
-        rgba(3, 13, 25, 0.58) 0%,
-        rgba(5, 22, 39, 0.52) 50%,
-        rgba(5, 31, 53, 0.58) 100%
+        180deg,
+        rgba(4, 10, 24, 0.40) 0%,
+        rgba(4, 10, 24, 0.12) 30%,
+        rgba(4, 10, 24, 0.22) 65%,
+        rgba(10, 6, 2, 0.52) 100%
       ),
-      url("/images/gita-background-mobile.png");
+      url("/images/gita-background-mobile.jpg");
     background-size: 100% 100%;
-    background-position: center top;
+    background-position: center center;
     background-repeat: no-repeat;
   }
 }

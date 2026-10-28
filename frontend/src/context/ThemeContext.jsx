@@ -6,7 +6,7 @@ export function ThemeProvider({ children }) {
   const [theme, setTheme] = useState(() => {
     const savedTheme = localStorage.getItem("theme");
 
-    if (savedTheme === "dark" || savedTheme === "light") {
+    if (savedTheme === "light" || savedTheme === "dark") {
       return savedTheme;
     }
 
