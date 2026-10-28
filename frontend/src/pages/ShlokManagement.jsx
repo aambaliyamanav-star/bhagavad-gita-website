@@ -344,20 +344,29 @@ const preserveSanskritSubWords = (origMeaning, translatedMeaning) => {
     return translatedMeaning;
   }
 
-  const transParts = translatedMeaning.split(/[,;\n]/).map((p) => p.trim()).filter(Boolean);
+  const origLeftSides = origParts.map((p) => p.split("=")[0].trim());
 
-  if (transParts.length === origParts.length && transParts.every((p) => p.includes("="))) {
-    const fixedParts = origParts.map((origPart, idx) => {
-      const origSplit = origPart.split("=");
-      const origLeft = origSplit[0].trim();
+  if (translatedMeaning.includes("=")) {
+    const transParts = translatedMeaning.split(/[,;\n]/).map((p) => p.trim()).filter(Boolean);
 
-      const transSplit = transParts[idx].split("=");
-      const transRight = transSplit.slice(1).join("=").trim();
+    if (transParts.length === origLeftSides.length && transParts.every((p) => p.includes("="))) {
+      const fixedParts = transParts.map((transPart, idx) => {
+        const transSplit = transPart.split("=");
+        const transRight = transSplit.slice(1).join("=").trim().replace(/[.]+$/, "");
+        return `${origLeftSides[idx]} = ${transRight}`;
+      });
+      return fixedParts.join(", ");
+    }
 
-      return `${origLeft} = ${transRight}`;
-    });
-
-    return fixedParts.join(", ");
+    const regex = /([^=,;]+)\s*=\s*([^=,;]+)/g;
+    const matches = [...translatedMeaning.matchAll(regex)];
+    if (matches.length === origLeftSides.length) {
+      const fixed = matches.map((m, idx) => {
+        const transRight = m[2].trim().replace(/[.]+$/, "");
+        return `${origLeftSides[idx]} = ${transRight}`;
+      });
+      return fixed.join(", ");
+    }
   }
 
   return translatedMeaning;
