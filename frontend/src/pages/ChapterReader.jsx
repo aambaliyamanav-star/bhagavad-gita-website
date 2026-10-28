@@ -14,7 +14,6 @@ import {
 import { useAuth } from "../context/AuthContext.jsx";
 import { useLanguage } from "../context/LanguageContext.jsx";
 import { trackShlokaRead } from "../utils/readingTracker.js";
-import { getEnglishWordMeaning } from "../utils/englishGitaHelper.js";
 
 function ChapterReader() {
   const { chapterNumber } = useParams();
@@ -1381,7 +1380,11 @@ const prepareSanskritLines = () => {
                           }}
                           title={
                             meaning
-                              ? txt("ગુજરાતી અર્થ જોવા માટે click કરો", "हिन्दी अर्थ देखने के लिए क्लिक करें", "Click to view English meaning")
+                              ? (isEnglish && meaning.meaningEn && meaning.meaningEn.trim()
+                                  ? "Click to view English meaning"
+                                  : isHindi && meaning.meaningHi && meaning.meaningHi.trim()
+                                  ? "हिन्दी अर्थ देखने के लिए क्लिक करें"
+                                  : "ગુજરાતી અર્થ જોવા માટે click કરો")
                               : undefined
                           }
                         >
@@ -1408,11 +1411,11 @@ const prepareSanskritLines = () => {
                             </span>
 
                             <span className="word-meaning-gujarati">
-                              {isEnglish
-                                ? (meaning.meaningEn?.trim() || getEnglishWordMeaning(meaning.word || word, "") || meaning.meaning)
-                                : (isHindi && meaning.meaningHi?.trim()
-                                    ? meaning.meaningHi
-                                    : meaning.meaning)}
+                              {isEnglish && meaning.meaningEn && meaning.meaningEn.trim()
+                                ? meaning.meaningEn.trim()
+                                : isHindi && meaning.meaningHi && meaning.meaningHi.trim()
+                                ? meaning.meaningHi.trim()
+                                : meaning.meaning}
                             </span>
                           </span>
                         )}

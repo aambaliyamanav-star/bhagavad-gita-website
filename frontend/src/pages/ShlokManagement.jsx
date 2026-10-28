@@ -1,11 +1,5 @@
 import { getValidToken, handleAuth401 } from "../utils/authHelper.js";
 import {
-  getEnglishSpeaker,
-  getEnglishTranslationFallback,
-  getEnglishMessageFallback,
-  getEnglishWordMeaning,
-} from "../utils/englishGitaHelper.js";
-import {
   useEffect,
   useRef,
   useState,
@@ -1248,7 +1242,7 @@ function ShlokManagement() {
 
               meaningEn:
                 item.meaningEn?.trim() ||
-                (getEnglishWordMeaning(item.word, "") || ""),
+                "",
             }))
             .filter(
               (item) =>
@@ -1276,7 +1270,7 @@ function ShlokManagement() {
             chapterNamesEn[
               Number(formData.chapterNumber)
             ] ||
-            formData.chapterName.trim(),
+            "",
 
           shlokNumber:
             Number(
@@ -1288,12 +1282,12 @@ function ShlokManagement() {
 
           speakerHi:
             formData.speakerHi?.trim() ||
-            formData.speaker.trim(),
+            "",
 
           speakerEn:
             formData.speakerEn && formData.speakerEn.trim() !== "undefined"
               ? formData.speakerEn.trim()
-              : (getEnglishSpeaker(formData.speaker) || formData.speaker.trim()),
+              : "",
 
           sanskrit:
             formData.sanskrit,
@@ -1305,30 +1299,23 @@ function ShlokManagement() {
             formData.translation,
 
           translationHi:
-            formData.translationHi ||
+            formData.translationHi?.trim() ||
             "",
 
           translationEn:
             formData.translationEn?.trim() ||
-            (getEnglishTranslationFallback({
-              chapterNumber: formData.chapterNumber,
-              shlokNumber: formData.shlokNumber,
-              speaker: formData.speaker,
-            }) || ""),
+            "",
 
           message:
             formData.message,
 
           messageHi:
-            formData.messageHi ||
+            formData.messageHi?.trim() ||
             "",
 
           messageEn:
             formData.messageEn?.trim() ||
-            (getEnglishMessageFallback({
-              chapterNumber: formData.chapterNumber,
-              shlokNumber: formData.shlokNumber,
-            }) || ""),
+            "",
         };
 
         const url =
@@ -1489,7 +1476,7 @@ function ShlokManagement() {
       speakerEn:
         shlok.speakerEn && shlok.speakerEn !== "undefined"
           ? shlok.speakerEn
-          : (getEnglishSpeaker(shlok.speaker) || ""),
+          : "",
 
       sanskrit:
         shlok.sanskrit || "",
@@ -1501,8 +1488,7 @@ function ShlokManagement() {
         shlok.translationHi || "",
 
       translationEn:
-        shlok.translationEn ||
-        (getEnglishTranslationFallback(shlok) || ""),
+        shlok.translationEn || "",
 
       message:
         shlok.message || "",
@@ -1511,8 +1497,7 @@ function ShlokManagement() {
         shlok.messageHi || "",
 
       messageEn:
-        shlok.messageEn ||
-        (getEnglishMessageFallback(shlok) || ""),
+        shlok.messageEn || "",
     });
 
     const existingWords =
@@ -1540,9 +1525,7 @@ function ShlokManagement() {
               item.meaningHi || "",
 
             meaningEn:
-              item.meaningEn && item.meaningEn.trim()
-                ? item.meaningEn.trim()
-                : (getEnglishWordMeaning(item.word, "") || ""),
+              item.meaningEn || "",
           })
         )
       );
@@ -1836,35 +1819,7 @@ function ShlokManagement() {
                 <button
                   type="button"
                   className={`admin-lang-tab ${activeLangTab === "en" ? "active" : ""}`}
-                  onClick={() => {
-                    setActiveLangTab("en");
-                    setFormData((prev) => ({
-                      ...prev,
-                      chapterNameEn:
-                        prev.chapterNameEn ||
-                        chapterNamesEn[prev.chapterNumber] ||
-                        "",
-                      speakerEn:
-                        prev.speakerEn && prev.speakerEn !== "undefined"
-                          ? prev.speakerEn
-                          : (getEnglishSpeaker(prev.speaker) || ""),
-                      translationEn:
-                        prev.translationEn ||
-                        (getEnglishTranslationFallback(prev) || ""),
-                      messageEn:
-                        prev.messageEn ||
-                        (getEnglishMessageFallback(prev) || ""),
-                    }));
-                    setWordMeanings((prevWords) =>
-                      prevWords.map((item) => ({
-                        ...item,
-                        meaningEn:
-                          item.meaningEn && item.meaningEn.trim()
-                            ? item.meaningEn
-                            : (getEnglishWordMeaning(item.word, "") || ""),
-                      }))
-                    );
-                  }}
+                  onClick={() => setActiveLangTab("en")}
                 >
                   English Details (Auto)
                 </button>

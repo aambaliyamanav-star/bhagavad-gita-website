@@ -332,52 +332,6 @@ const addShlok = async (req, res) => {
         wordMeanings
       );
 
-    // If Hindi translation is missing, auto-translate automatically using Gemini AI
-    if (!translationHi || !messageHi) {
-      try {
-        const auto = await translateShlokToHindi({
-          chapterNumber,
-          chapterName,
-          speaker,
-          sanskrit,
-          translation,
-          message,
-          wordMeanings: preparedWordMeanings,
-        });
-
-        if (!chapterNameHi) chapterNameHi = auto.chapterNameHi;
-        if (!speakerHi) speakerHi = auto.speakerHi;
-        if (!translationHi) translationHi = auto.translationHi;
-        if (!messageHi) messageHi = auto.messageHi;
-        preparedWordMeanings = auto.wordMeanings;
-      } catch (err) {
-        console.warn("Auto-translate Hindi in addShlok failed:", err.message);
-      }
-    }
-
-    // If English translation is missing, auto-translate automatically using Gemini AI
-    if (!translationEn || !messageEn) {
-      try {
-        const autoEn = await translateShlokToEnglish({
-          chapterNumber,
-          chapterName,
-          speaker,
-          sanskrit,
-          translation,
-          message,
-          wordMeanings: preparedWordMeanings,
-        });
-
-        if (!chapterNameEn) chapterNameEn = autoEn.chapterNameEn;
-        if (!speakerEn) speakerEn = autoEn.speakerEn;
-        if (!translationEn) translationEn = autoEn.translationEn;
-        if (!messageEn) messageEn = autoEn.messageEn;
-        preparedWordMeanings = autoEn.wordMeanings;
-      } catch (err) {
-        console.warn("Auto-translate English in addShlok failed:", err.message);
-      }
-    }
-
     const shlok =
       new Shlok({
         chapterNumber:
@@ -883,52 +837,6 @@ const updateShlok = async (
           [],
         wordMeanings
       );
-
-    // Auto-translate if Hindi translation or message is missing
-    if (!translationHi || !messageHi) {
-      try {
-        const auto = await translateShlokToHindi({
-          chapterNumber,
-          chapterName,
-          speaker,
-          sanskrit,
-          translation,
-          message,
-          wordMeanings: preparedWordMeanings,
-        });
-
-        if (!chapterNameHi) chapterNameHi = auto.chapterNameHi;
-        if (!speakerHi) speakerHi = auto.speakerHi;
-        if (!translationHi) translationHi = auto.translationHi;
-        if (!messageHi) messageHi = auto.messageHi;
-        preparedWordMeanings = auto.wordMeanings;
-      } catch (err) {
-        console.warn("Auto-translate Hindi in updateShlok failed:", err.message);
-      }
-    }
-
-    // Auto-translate if English translation or message is missing
-    if (!translationEn || !messageEn) {
-      try {
-        const autoEn = await translateShlokToEnglish({
-          chapterNumber,
-          chapterName,
-          speaker,
-          sanskrit,
-          translation,
-          message,
-          wordMeanings: preparedWordMeanings,
-        });
-
-        if (!chapterNameEn) chapterNameEn = autoEn.chapterNameEn;
-        if (!speakerEn) speakerEn = autoEn.speakerEn;
-        if (!translationEn) translationEn = autoEn.translationEn;
-        if (!messageEn) messageEn = autoEn.messageEn;
-        preparedWordMeanings = autoEn.wordMeanings;
-      } catch (err) {
-        console.warn("Auto-translate English in updateShlok failed:", err.message);
-      }
-    }
 
     const updatedShlok =
       await Shlok.findByIdAndUpdate(

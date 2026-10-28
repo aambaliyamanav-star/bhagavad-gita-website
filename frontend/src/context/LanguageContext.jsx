@@ -1,11 +1,4 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import {
-  getEnglishSpeaker,
-  getHindiSpeaker,
-  getEnglishTranslationFallback,
-  getEnglishMessageFallback,
-  getEnglishWordMeaning,
-} from "../utils/englishGitaHelper.js";
 
 // =====================================================
 // CHAPTER NAMES (GUJARATI, HINDI & ENGLISH)
@@ -140,35 +133,43 @@ export function LanguageProvider({ children }) {
       // SANSKRIT ALWAYS STAYS IN PURE SANSKRIT
       sanskrit: shlok.sanskrit,
 
-      // Localized fields
+      // Localized fields: Only use Hindi/English if explicitly added and non-empty. Otherwise, Gujarati.
       chapterName:
-        (isEn && (shlok.chapterNameEn || CHAPTER_NAMES[shlok.chapterNumber]?.en)) ||
-        (isHi && (shlok.chapterNameHi || CHAPTER_NAMES[shlok.chapterNumber]?.hi)) ||
+        (isEn && shlok.chapterNameEn && shlok.chapterNameEn.trim()) ||
+        (isHi && shlok.chapterNameHi && shlok.chapterNameHi.trim()) ||
         shlok.chapterName,
 
       speaker:
-        (isEn && (shlok.speakerEn && shlok.speakerEn !== "undefined" ? shlok.speakerEn : getEnglishSpeaker(shlok.speaker))) ||
-        (isHi && (shlok.speakerHi || getHindiSpeaker(shlok.speaker))) ||
-        shlok.speaker,
+        isEn && shlok.speakerEn && shlok.speakerEn.trim() && shlok.speakerEn.trim() !== "undefined"
+          ? shlok.speakerEn.trim()
+          : isHi && shlok.speakerHi && shlok.speakerHi.trim()
+          ? shlok.speakerHi.trim()
+          : shlok.speaker,
 
       translation:
-        (isEn && (shlok.translationEn || getEnglishTranslationFallback(shlok))) ||
-        (isHi && (shlok.translationHi || shlok.translation)) ||
-        shlok.translation,
+        isEn && shlok.translationEn && shlok.translationEn.trim()
+          ? shlok.translationEn
+          : isHi && shlok.translationHi && shlok.translationHi.trim()
+          ? shlok.translationHi
+          : shlok.translation,
 
       message:
-        (isEn && (shlok.messageEn || getEnglishMessageFallback(shlok))) ||
-        (isHi && (shlok.messageHi || shlok.message)) ||
-        shlok.message,
+        isEn && shlok.messageEn && shlok.messageEn.trim()
+          ? shlok.messageEn
+          : isHi && shlok.messageHi && shlok.messageHi.trim()
+          ? shlok.messageHi
+          : shlok.message,
 
-      // Word meanings: Sanskrit 'word' stays untouched, 'meaning' switches to English/Hindi if available
+      // Word meanings: Sanskrit 'word' stays untouched. 'meaning' switches to English/Hindi ONLY if added, otherwise Gujarati.
       wordMeanings: (shlok.wordMeanings || []).map((w) => ({
         ...w,
         word: w.word, // Sanskrit stays untouched
         meaning:
-          (isEn && (w.meaningEn || getEnglishWordMeaning(w.word, w.meaning))) ||
-          (isHi && (w.meaningHi || w.meaning)) ||
-          w.meaning,
+          isEn && w.meaningEn && w.meaningEn.trim()
+            ? w.meaningEn.trim()
+            : isHi && w.meaningHi && w.meaningHi.trim()
+            ? w.meaningHi.trim()
+            : w.meaning,
       })),
     };
   };
