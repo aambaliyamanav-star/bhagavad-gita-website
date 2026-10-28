@@ -147,7 +147,7 @@ export function LanguageProvider({ children }) {
         shlok.chapterName,
 
       speaker:
-        (isEn && (shlok.speakerEn || getEnglishSpeaker(shlok.speaker))) ||
+        (isEn && (shlok.speakerEn && shlok.speakerEn !== "undefined" ? shlok.speakerEn : getEnglishSpeaker(shlok.speaker))) ||
         (isHi && (shlok.speakerHi || getHindiSpeaker(shlok.speaker))) ||
         shlok.speaker,
 

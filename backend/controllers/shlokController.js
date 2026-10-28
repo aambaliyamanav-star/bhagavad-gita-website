@@ -78,6 +78,9 @@ const cleanWordMeanings = (wordMeanings) => {
         meaningHi: String(
           item.meaningHi || ""
         ).trim(),
+        meaningEn: String(
+          item.meaningEn || ""
+        ).trim(),
       };
     })
     .filter((item) => item && item.word);
@@ -409,9 +412,9 @@ const addShlok = async (req, res) => {
           ).trim(),
 
         speakerEn:
-          String(
-            speakerEn || ""
-          ).trim(),
+          speakerEn && String(speakerEn).trim() !== "undefined"
+            ? String(speakerEn).trim()
+            : "",
 
         sanskrit:
           String(
@@ -969,9 +972,9 @@ const updateShlok = async (
               ).trim(),
 
             speakerEn:
-              String(
-                speakerEn || ""
-              ).trim(),
+              speakerEn && String(speakerEn).trim() !== "undefined"
+                ? String(speakerEn).trim()
+                : "",
 
             sanskrit:
               String(
