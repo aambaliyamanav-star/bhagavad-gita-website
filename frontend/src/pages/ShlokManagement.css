@@ -4573,20 +4573,6 @@ html[data-theme="dark"] .refresh-btn,
   animation: fadeIn 0.3s ease;
 }
 
-.sanskrit-shared-notice {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  margin-bottom: 16px;
-  background: rgba(254, 243, 199, 0.8);
-  border: 1px solid #fde68a;
-  border-radius: 10px;
-  color: #92400e;
-  font-size: 13px;
-  font-weight: 600;
-}
-
 .spinning {
   animation: spin 1s linear infinite;
 }
