@@ -1905,24 +1905,6 @@ function ShlokManagement() {
                     </div>
                   </div>
 
-                  {/* INFO */}
-                  <div className="word-wise-info">
-                    <Lightbulb className="btn-icon" size={16} /> Sanskrit Shlokના દરેક
-                    word અહીં automatically
-                    detect થશે. તમે Gujarati
-                    meaning manually લખી શકો છો.
-                  </div>
-
-                  {/* DETECTION MESSAGE */}
-                  {wordDetectionMessage && (
-                    <div className="word-detection-message">
-                      ✅{" "}
-                      {
-                        wordDetectionMessage
-                      }
-                    </div>
-                  )}
-
                   {/* WORD LIST */}
                   {wordMeanings.length ===
                   0 ? (
