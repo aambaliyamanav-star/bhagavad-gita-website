@@ -14,6 +14,7 @@ import {
 import { useAuth } from "../context/AuthContext.jsx";
 import { useLanguage } from "../context/LanguageContext.jsx";
 import { trackShlokaRead } from "../utils/readingTracker.js";
+import { getEnglishWordMeaning } from "../utils/englishGitaHelper.js";
 
 function ChapterReader() {
   const { chapterNumber } = useParams();
@@ -1216,9 +1217,9 @@ if (
 
   const getWordMeaning = (word) => {
     const wordMeanings =
-      Array.isArray(
-        shloka.wordMeanings
-      )
+      Array.isArray(localized?.wordMeanings) && localized.wordMeanings.length > 0
+        ? localized.wordMeanings
+        : Array.isArray(shloka.wordMeanings)
         ? shloka.wordMeanings
         : [];
 
@@ -1407,9 +1408,9 @@ const prepareSanskritLines = () => {
                             </span>
 
                             <span className="word-meaning-gujarati">
-                              {isEnglish && meaning.meaningEn
-                                ? meaning.meaningEn
-                                : (isHindi && meaning.meaningHi
+                              {isEnglish
+                                ? (meaning.meaningEn?.trim() || getEnglishWordMeaning(meaning.word || word, "") || meaning.meaning)
+                                : (isHindi && meaning.meaningHi?.trim()
                                     ? meaning.meaningHi
                                     : meaning.meaning)}
                             </span>

@@ -416,7 +416,7 @@ async function translateShlokToEnglish({
       messageEn: cleanHtml(message),
       wordMeanings: (wordMeanings || []).map((w) => ({
         word: w.word,
-        meaningEn: w.meaning,
+        meaningEn: w.meaningEn || "",
       })),
     };
   }
@@ -511,7 +511,8 @@ Word Meanings: ${JSON.stringify(
             const translatedMeaning =
               translatedMap.get(String(orig.word).trim()) ||
               parsed.wordMeanings?.[idx]?.meaningEn ||
-              orig.meaning;
+              orig.meaningEn ||
+              "";
             return {
               word: orig.word,
               meaning: orig.meaning,
@@ -543,7 +544,7 @@ Word Meanings: ${JSON.stringify(
       word: w.word,
       meaning: w.meaning,
       meaningHi: w.meaningHi || "",
-      meaningEn: w.meaning,
+      meaningEn: w.meaningEn || "",
     })),
   };
 }
