@@ -2272,9 +2272,6 @@ function ShlokManagement() {
                 <div className="form-group">
                   <label>
                     Speaker (वक्ता - हिन्दी)
-                    <span style={{ fontSize: "12px", color: "#64748b", marginLeft: "8px", fontWeight: "normal" }}>
-                      (ગુજરાતી મુજબ રહેશે - બદલાશે નહીં)
-                    </span>
                   </label>
 
                   <input
@@ -2485,9 +2482,6 @@ function ShlokManagement() {
                 <div className="form-group">
                   <label>
                     Speaker (વક્તા - English)
-                    <span style={{ fontSize: "12px", color: "#64748b", marginLeft: "8px", fontWeight: "normal" }}>
-                      (ગુજરાતી મુજબ રહેશે - બદલાશે નહીં)
-                    </span>
                   </label>
 
                   <input
