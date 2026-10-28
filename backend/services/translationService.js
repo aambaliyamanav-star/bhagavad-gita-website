@@ -141,6 +141,11 @@ STRICT RULES:
   ]
 }
 
+IMPORTANT FOR WORD MEANINGS:
+The user has intentionally split compound Sanskrit words into smaller individual root words (पदच्छेद).
+DO NOT re-join, merge, or re-segment them. For every item with 'id', translate ONLY its Gujarati meaning into Hindi 'meaningHi'.
+Return exactly one entry per 'id' in 'wordMeanings'.
+
 DATA TO TRANSLATE:
 Chapter Number: ${chapterNumber || 1}
 Chapter Name (Gujarati): ${chapterName || ""}
@@ -148,8 +153,8 @@ Speaker (Gujarati): ${speaker || ""}
 Sanskrit Shloka: ${cleanHtml(sanskrit)}
 Gujarati Translation: ${cleanHtml(translation)}
 Gujarati Message: ${cleanHtml(message)}
-Word Meanings: ${JSON.stringify(
-    (wordMeanings || []).map((w) => ({ word: w.word, meaning: cleanHtml(w.meaning) }))
+Word Meanings (Keep exact IDs and translate meaning into Hindi): ${JSON.stringify(
+    (wordMeanings || []).map((w, idx) => ({ id: idx, sanskritWord: String(w.word || '').trim(), gujaratiMeaning: cleanHtml(w.meaning || '') }))
   )}`;
 
   const modelsToTry = [
@@ -198,18 +203,21 @@ Word Meanings: ${JSON.stringify(
 
           const parsed = JSON.parse(jsonStr);
 
-          // Merge wordMeanings safely so no original Sanskrit word is lost
+          // Merge wordMeanings safely so no original Sanskrit word is lost, preserving user's split words
           const originalList = wordMeanings || [];
-          const translatedMap = new Map();
-          (parsed.wordMeanings || []).forEach((item) => {
-            if (item && item.word) {
-              translatedMap.set(String(item.word).trim(), item.meaningHi || "");
+          const hiMap = new Map();
+          (parsed.wordMeanings || []).forEach((item, idx) => {
+            if (item) {
+              const key = item.id !== undefined ? Number(item.id) : idx;
+              hiMap.set(key, item.meaningHi || "");
+              if (item.word) hiMap.set(String(item.word).trim(), item.meaningHi || "");
             }
           });
 
           const mergedWordMeanings = originalList.map((orig, idx) => {
             const translatedMeaning =
-              translatedMap.get(String(orig.word).trim()) ||
+              hiMap.get(idx) ||
+              hiMap.get(String(orig.word).trim()) ||
               parsed.wordMeanings?.[idx]?.meaningHi ||
               orig.meaning;
             return {
@@ -500,16 +508,19 @@ Word Meanings: ${JSON.stringify(
           const parsed = JSON.parse(jsonStr);
 
           const originalList = wordMeanings || [];
-          const translatedMap = new Map();
-          (parsed.wordMeanings || []).forEach((item) => {
-            if (item && item.word) {
-              translatedMap.set(String(item.word).trim(), item.meaningEn || "");
+          const enMap = new Map();
+          (parsed.wordMeanings || []).forEach((item, idx) => {
+            if (item) {
+              const key = item.id !== undefined ? Number(item.id) : idx;
+              enMap.set(key, item.meaningEn || "");
+              if (item.word) enMap.set(String(item.word).trim(), item.meaningEn || "");
             }
           });
 
           const mergedWordMeanings = originalList.map((orig, idx) => {
             const translatedMeaning =
-              translatedMap.get(String(orig.word).trim()) ||
+              enMap.get(idx) ||
+              enMap.get(String(orig.word).trim()) ||
               parsed.wordMeanings?.[idx]?.meaningEn ||
               orig.meaningEn ||
               "";
@@ -740,43 +751,57 @@ async function translateSingleFieldToHindi({
   wordMeanings = [],
 }) {
   if (field === "words") {
+    const itemsToSend = (wordMeanings || []).map((w, idx) => ({
+      id: idx,
+      sanskritWord: String(w.word || "").trim(),
+      gujaratiMeaning: cleanHtml(w.meaning || ""),
+    }));
+
     const prompt = `You are a Vedic and Sanskrit scholar of Srimad Bhagavad Gita.
-Translate the following Sanskrit word meanings from Gujarati into pure, authentic, devotional Hindi (Devanagari script).
-RULES:
-1. Sanskrit 'word' MUST NOT be altered. Keep it 100% pure Sanskrit.
-2. Translate the Gujarati 'meaning' into an accurate Hindi 'meaningHi'.
-3. Output format: Return ONLY valid JSON:
+Translate the following Sanskrit word meanings from Gujarati into sacred, authentic Hindi (Devanagari script).
+
+IMPORTANT CONTEXT:
+The user has intentionally analyzed the Sanskrit verse and SPLIT compound/sandhi words into individual smaller Sanskrit root words (पदच्छेद).
+DO NOT merge, re-join, or alter these words. You must translate each smaller Sanskrit word's Gujarati meaning into Hindi individually.
+
+STRICT RULES:
+1. You MUST return an entry for EVERY single 'id' from 0 to ${itemsToSend.length - 1}.
+2. DO NOT combine or skip any item. If there are ${itemsToSend.length} items, you must return exactly ${itemsToSend.length} items.
+3. For each item, translate ONLY the 'gujaratiMeaning' into accurate Hindi ('meaningHi') based on the context of the smaller Sanskrit word.
+4. Output format: Return ONLY a valid JSON object:
 {
   "wordMeanings": [
-    { "word": "Sanskrit word", "meaningHi": "Hindi meaning" }
+    { "id": 0, "meaningHi": "Hindi meaning" },
+    { "id": 1, "meaningHi": "Hindi meaning" }
   ]
 }
 
-DATA TO TRANSLATE:
-${JSON.stringify((wordMeanings || []).map((w) => ({ word: w.word, meaning: cleanHtml(w.meaning) })))}`;
+ITEMS TO TRANSLATE:
+${JSON.stringify(itemsToSend)}`;
 
     const parsed = await callGeminiJson(prompt);
+    const hiMap = new Map();
     if (parsed && Array.isArray(parsed.wordMeanings)) {
-      const map = new Map();
-      parsed.wordMeanings.forEach((item) => {
-        if (item && item.word) map.set(String(item.word).trim(), item.meaningHi || "");
+      parsed.wordMeanings.forEach((item, idx) => {
+        if (item) {
+          const key = item.id !== undefined ? Number(item.id) : idx;
+          hiMap.set(key, item.meaningHi || "");
+          if (item.sanskritWord) hiMap.set(String(item.sanskritWord).trim(), item.meaningHi || "");
+          if (item.word) hiMap.set(String(item.word).trim(), item.meaningHi || "");
+        }
       });
-
-      return {
-        wordMeanings: (wordMeanings || []).map((orig, idx) => ({
-          ...orig,
-          meaningHi:
-            map.get(String(orig.word).trim()) ||
-            parsed.wordMeanings[idx]?.meaningHi ||
-            orig.meaningHi ||
-            "",
-        })),
-      };
     }
+
     return {
-      wordMeanings: (wordMeanings || []).map((orig) => ({
+      wordMeanings: (wordMeanings || []).map((orig, idx) => ({
         ...orig,
-        meaningHi: orig.meaningHi || "",
+        word: orig.word, // 100% Guaranteed: The user's exact small Sanskrit word is preserved untouched!
+        meaningHi:
+          hiMap.get(idx) ||
+          hiMap.get(String(orig.word).trim()) ||
+          orig.meaningHi ||
+          orig.meaning ||
+          "",
       })),
     };
   }
@@ -829,43 +854,57 @@ async function translateSingleFieldToEnglish({
   wordMeanings = [],
 }) {
   if (field === "words") {
+    const itemsToSend = (wordMeanings || []).map((w, idx) => ({
+      id: idx,
+      sanskritWord: String(w.word || "").trim(),
+      gujaratiMeaning: cleanHtml(w.meaning || ""),
+    }));
+
     const prompt = `You are a Vedic and Sanskrit scholar of Srimad Bhagavad Gita.
 Translate the following Sanskrit word meanings from Gujarati into clear, authentic, devotional English.
-RULES:
-1. Sanskrit 'word' MUST NOT be altered. Keep it 100% pure Sanskrit.
-2. Translate the Gujarati 'meaning' into an accurate English 'meaningEn'.
-3. Output format: Return ONLY valid JSON:
+
+IMPORTANT CONTEXT:
+The user has intentionally analyzed the Sanskrit verse and SPLIT compound/sandhi words into individual smaller Sanskrit root words (पदच्छेद).
+DO NOT merge, re-join, or alter these words. You must translate each smaller Sanskrit word's Gujarati meaning into English individually.
+
+STRICT RULES:
+1. You MUST return an entry for EVERY single 'id' from 0 to ${itemsToSend.length - 1}.
+2. DO NOT combine or skip any item. If there are ${itemsToSend.length} items, you must return exactly ${itemsToSend.length} items.
+3. For each item, translate ONLY the 'gujaratiMeaning' into accurate English ('meaningEn') based on the context of the smaller Sanskrit word.
+4. Output format: Return ONLY a valid JSON object:
 {
   "wordMeanings": [
-    { "word": "Sanskrit word", "meaningEn": "English meaning" }
+    { "id": 0, "meaningEn": "English meaning" },
+    { "id": 1, "meaningEn": "English meaning" }
   ]
 }
 
-DATA TO TRANSLATE:
-${JSON.stringify((wordMeanings || []).map((w) => ({ word: w.word, meaning: cleanHtml(w.meaning) })))}`;
+ITEMS TO TRANSLATE:
+${JSON.stringify(itemsToSend)}`;
 
     const parsed = await callGeminiJson(prompt);
+    const enMap = new Map();
     if (parsed && Array.isArray(parsed.wordMeanings)) {
-      const map = new Map();
-      parsed.wordMeanings.forEach((item) => {
-        if (item && item.word) map.set(String(item.word).trim(), item.meaningEn || "");
+      parsed.wordMeanings.forEach((item, idx) => {
+        if (item) {
+          const key = item.id !== undefined ? Number(item.id) : idx;
+          enMap.set(key, item.meaningEn || "");
+          if (item.sanskritWord) enMap.set(String(item.sanskritWord).trim(), item.meaningEn || "");
+          if (item.word) enMap.set(String(item.word).trim(), item.meaningEn || "");
+        }
       });
-
-      return {
-        wordMeanings: (wordMeanings || []).map((orig, idx) => ({
-          ...orig,
-          meaningEn:
-            map.get(String(orig.word).trim()) ||
-            parsed.wordMeanings[idx]?.meaningEn ||
-            orig.meaningEn ||
-            "",
-        })),
-      };
     }
+
     return {
-      wordMeanings: (wordMeanings || []).map((orig) => ({
+      wordMeanings: (wordMeanings || []).map((orig, idx) => ({
         ...orig,
-        meaningEn: orig.meaningEn || "",
+        word: orig.word, // 100% Guaranteed: The user's exact small Sanskrit word is preserved untouched!
+        meaningEn:
+          enMap.get(idx) ||
+          enMap.get(String(orig.word).trim()) ||
+          orig.meaningEn ||
+          orig.meaning ||
+          "",
       })),
     };
   }
