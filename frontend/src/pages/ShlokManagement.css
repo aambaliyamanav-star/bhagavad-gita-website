@@ -996,46 +996,6 @@
 }
 
 
-.word-wise-info {
-  margin-bottom: 14px;
-
-  padding: 13px 15px;
-
-  border-radius: 12px;
-
-  color: #28517d;
-
-  background: #eaf4ff;
-
-  border:
-    1px solid #cfe5fb;
-
-  font-size: 13px;
-
-  line-height: 1.6;
-}
-
-
-.word-detection-message {
-  margin-bottom: 15px;
-
-  padding: 11px 14px;
-
-  border-radius: 10px;
-
-  color: #075e45;
-
-  background: #e8f8f2;
-
-  border:
-    1px solid #bce8da;
-
-  font-size: 13px;
-
-  font-weight: 650;
-}
-
-
 .word-empty-box {
   padding: 40px 25px;
 
@@ -3333,24 +3293,6 @@ html[data-theme="dark"] .word-wise-title-area h3 {
 
 html[data-theme="dark"] .word-wise-title-area p {
   color: #91a5bd;
-}
-
-
-html[data-theme="dark"] .word-wise-info {
-  color: #b7d5f2;
-
-  background: #102943;
-
-  border-color: #294b6d;
-}
-
-
-html[data-theme="dark"] .word-detection-message {
-  color: #78e1bd;
-
-  background: #102e28;
-
-  border-color: #245847;
 }
 
 
