@@ -723,7 +723,7 @@ function Navbar() {
           NAVBAR
       ================================================= */}
 
-      <nav className={`navbar${scrolled ? " scrolled" : ""}`}>
+      <nav className={`navbar${scrolled ? " scrolled" : ""}${location.pathname === "/" ? " navbar-home" : ""}`}>
 
         {/* =================================================
             BACK + FORWARD
