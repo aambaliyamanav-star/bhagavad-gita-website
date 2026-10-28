@@ -2132,11 +2132,6 @@ function ShlokManagement() {
             {/* TAB CONTENT: HINDI */}
             {activeLangTab === "hi" && (
               <>
-                <div className="sanskrit-shared-notice">
-                  ℹ️ <strong>સંસ્કૃત શ્લોક અને શબ્દો બંને ભાષા માટે એકસમાન (Pure Sanskrit) રહે છે.</strong><br/>
-                  તમારે ફરીથી સંસ્કૃત શ્લોક ઉમેરવાની જરૂર નથી. ઉપર આપેલા <strong>"✨ AI હિન્દી ઓટો-અનુવાદ"</strong> બટન પર ક્લિક કરવાથી બધા જ અર્થ, શબ્દાર્થ અને સંદેશ આપોઆપ હિન્દીમાં અનુવાદ થઈ જશે.
-                </div>
-
                 {/* HINDI SPEAKER */}
                 <div className="form-group">
                   <label>
@@ -2304,11 +2299,6 @@ function ShlokManagement() {
             {/* TAB CONTENT: ENGLISH */}
             {activeLangTab === "en" && (
               <>
-                <div className="sanskrit-shared-notice">
-                  ℹ️ <strong>સંસ્કૃત શ્લોક અને શબ્દો ત્રણેય ભાષા માટે એકસમાન (Pure Sanskrit) રહે છે.</strong><br/>
-                  તમારે ફરીથી સંસ્કૃત શ્લોક ઉમેરવાની જરૂર નથી. ઉપર આપેલા <strong>"✨ AI બધી ભાષા ઓટો-અનુવાદ"</strong> બટન પર ક્લિક કરવાથી બધા જ અર્થ, શબ્દાર્થ અને સંદેશ આપોઆપ English માં અનુવાદ થઈ જશે.
-                </div>
-
                 {/* ENGLISH SPEAKER */}
                 <div className="form-group">
                   <label>
