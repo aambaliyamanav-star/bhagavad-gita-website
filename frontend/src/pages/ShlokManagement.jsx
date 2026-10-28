@@ -329,6 +329,40 @@ const htmlToPlainText = (html) => {
     .trim();
 };
 
+
+const preserveSanskritSubWords = (origMeaning, translatedMeaning) => {
+  if (!origMeaning || !translatedMeaning || typeof origMeaning !== "string" || typeof translatedMeaning !== "string") {
+    return translatedMeaning || "";
+  }
+
+  if (!origMeaning.includes("=")) {
+    return translatedMeaning;
+  }
+
+  const origParts = origMeaning.split(/[,;\n]/).map((p) => p.trim()).filter(Boolean);
+  if (origParts.length === 0 || !origParts.every((p) => p.includes("="))) {
+    return translatedMeaning;
+  }
+
+  const transParts = translatedMeaning.split(/[,;\n]/).map((p) => p.trim()).filter(Boolean);
+
+  if (transParts.length === origParts.length && transParts.every((p) => p.includes("="))) {
+    const fixedParts = origParts.map((origPart, idx) => {
+      const origSplit = origPart.split("=");
+      const origLeft = origSplit[0].trim();
+
+      const transSplit = transParts[idx].split("=");
+      const transRight = transSplit.slice(1).join("=").trim();
+
+      return `${origLeft} = ${transRight}`;
+    });
+
+    return fixedParts.join(", ");
+  }
+
+  return translatedMeaning;
+};
+
 const cleanSanskritWord = (word) => {
   return String(word || "")
     .replace(
@@ -1152,17 +1186,20 @@ function ShlokManagement() {
           prev.map((item, idx) => {
             const translatedItem = translated.wordMeanings[idx];
 
+            const rawHi =
+              translatedItem?.meaningHi !== undefined
+                ? translatedItem.meaningHi
+                : item.meaningHi || "";
+            const rawEn =
+              translatedItem?.meaningEn !== undefined
+                ? translatedItem.meaningEn
+                : item.meaningEn || "";
+
             return {
               ...item,
               word: item.word, // Keep user's exact Sanskrit word (including split words) strictly untouched
-              meaningHi:
-                translatedItem?.meaningHi !== undefined
-                  ? translatedItem.meaningHi
-                  : item.meaningHi || "",
-              meaningEn:
-                translatedItem?.meaningEn !== undefined
-                  ? translatedItem.meaningEn
-                  : item.meaningEn || "",
+              meaningHi: preserveSanskritSubWords(item.meaning, rawHi),
+              meaningEn: preserveSanskritSubWords(item.meaning, rawEn),
             };
           })
         );
@@ -1268,22 +1305,24 @@ function ShlokManagement() {
             const translatedItem = translated.wordMeanings[idx];
 
             if (targetLang === "hi") {
+              const rawHi =
+                translatedItem?.meaningHi !== undefined
+                  ? translatedItem.meaningHi
+                  : item.meaningHi || "";
               return {
                 ...item,
                 word: item.word, // Keep user's exact Sanskrit word (including split words) strictly untouched
-                meaningHi:
-                  translatedItem?.meaningHi !== undefined
-                    ? translatedItem.meaningHi
-                    : item.meaningHi || "",
+                meaningHi: preserveSanskritSubWords(item.meaning, rawHi),
               };
             } else {
+              const rawEn =
+                translatedItem?.meaningEn !== undefined
+                  ? translatedItem.meaningEn
+                  : item.meaningEn || "";
               return {
                 ...item,
                 word: item.word, // Keep user's exact Sanskrit word (including split words) strictly untouched
-                meaningEn:
-                  translatedItem?.meaningEn !== undefined
-                    ? translatedItem.meaningEn
-                    : item.meaningEn || "",
+                meaningEn: preserveSanskritSubWords(item.meaning, rawEn),
               };
             }
           })

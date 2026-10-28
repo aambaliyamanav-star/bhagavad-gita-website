@@ -142,9 +142,14 @@ STRICT RULES:
 }
 
 IMPORTANT FOR WORD MEANINGS:
-The user has intentionally split compound Sanskrit words into smaller individual root words (पदच्छेद).
-DO NOT re-join, merge, or re-segment them. For every item with 'id', translate ONLY its Gujarati meaning into Hindi 'meaningHi'.
-Return exactly one entry per 'id' in 'wordMeanings'.
+The user has intentionally split compound Sanskrit words into smaller individual root words (पदच्छेद), or has written Sanskrit sub-words inside the meaning (e.g. "विराटः = રાજા વિરાટ , च = અને").
+CRITICAL RULES FOR WORD MEANINGS:
+1. DO NOT re-join, merge, or re-segment them. Return exactly one entry per 'id' in 'wordMeanings'.
+2. If a meaning contains Sanskrit sub-words broken down with '=' (e.g. "विराटः = રાજા વિરાટ , च = અને"):
+   - The Sanskrit words before '=' (like "विराटः", "च") MUST REMAIN EXACTLY IN SANSKRIT (Devanagari script). NEVER translate or alter them!
+   - Translate ONLY the Gujarati explanation after '=':
+     Example: "विराटः = રાજા વિરાટ , च = અને" -> "विराटः = राजा विराट, च = और"
+     Example: "पाण्डवाः = પાંડુપુત્રો , च = અને , एव = જ" -> "पाण्डवाः = पाण्डुपुत्र, च = और, एव = ही"
 
 DATA TO TRANSLATE:
 Chapter Number: ${chapterNumber || 1}
@@ -215,11 +220,12 @@ Word Meanings (Keep exact IDs and translate meaning into Hindi): ${JSON.stringif
           });
 
           const mergedWordMeanings = originalList.map((orig, idx) => {
-            const translatedMeaning =
+            const rawMeaning =
               hiMap.get(idx) ||
               hiMap.get(String(orig.word).trim()) ||
               parsed.wordMeanings?.[idx]?.meaningHi ||
               orig.meaning;
+            const translatedMeaning = preserveSanskritSubWords(orig.meaning, rawMeaning);
             return {
               word: orig.word,
               meaning: orig.meaning,
@@ -518,12 +524,13 @@ Word Meanings: ${JSON.stringify(
           });
 
           const mergedWordMeanings = originalList.map((orig, idx) => {
-            const translatedMeaning =
+            const rawMeaning =
               enMap.get(idx) ||
               enMap.get(String(orig.word).trim()) ||
               parsed.wordMeanings?.[idx]?.meaningEn ||
               orig.meaningEn ||
               "";
+            const translatedMeaning = preserveSanskritSubWords(orig.meaning, rawMeaning);
             return {
               word: orig.word,
               meaning: orig.meaning,
@@ -760,14 +767,15 @@ async function translateSingleFieldToHindi({
     const prompt = `You are a Vedic and Sanskrit scholar of Srimad Bhagavad Gita.
 Translate the following Sanskrit word meanings from Gujarati into sacred, authentic Hindi (Devanagari script).
 
-IMPORTANT CONTEXT:
-The user has intentionally analyzed the Sanskrit verse and SPLIT compound/sandhi words into individual smaller Sanskrit root words (पदच्छेद).
-DO NOT merge, re-join, or alter these words. You must translate each smaller Sanskrit word's Gujarati meaning into Hindi individually.
-
-STRICT RULES:
-1. You MUST return an entry for EVERY single 'id' from 0 to ${itemsToSend.length - 1}.
-2. DO NOT combine or skip any item. If there are ${itemsToSend.length} items, you must return exactly ${itemsToSend.length} items.
-3. For each item, translate ONLY the 'gujaratiMeaning' into accurate Hindi ('meaningHi') based on the context of the smaller Sanskrit word.
+IMPORTANT CONTEXT & RULES:
+1. The user has intentionally analyzed the Sanskrit verse and SPLIT compound words (पदच्छेद), or written Sanskrit sub-words inside the meaning using '=' (e.g. "विराटः = રાજા વિરાટ , च = અને").
+2. DO NOT merge, re-join, or alter items. Return exactly one entry for EVERY 'id' from 0 to ${itemsToSend.length - 1}.
+3. CRITICAL FOR EQUAL SIGN ('='):
+   When 'gujaratiMeaning' contains Sanskrit sub-words broken down with '=' (e.g. "विराटः = રાજા વિરાટ , च = અને"):
+   - The Sanskrit words before '=' (like "विराटः", "च") MUST REMAIN EXACTLY IN SANSKRIT (Devanagari script). NEVER translate or alter them!
+   - Translate ONLY the Gujarati explanation after '=':
+     Example: "विराटः = રાજા વિરાટ , च = અને" -> "विराटः = राजा विराट, च = और"
+     Example: "पाण्डवाः = પાંડુપુત્રો , च = અને , एव = જ" -> "पाण्डवाः = पाण्डुपुत्र, च = और, एव = ही"
 4. Output format: Return ONLY a valid JSON object:
 {
   "wordMeanings": [
@@ -793,16 +801,19 @@ ${JSON.stringify(itemsToSend)}`;
     }
 
     return {
-      wordMeanings: (wordMeanings || []).map((orig, idx) => ({
-        ...orig,
-        word: orig.word, // 100% Guaranteed: The user's exact small Sanskrit word is preserved untouched!
-        meaningHi:
+      wordMeanings: (wordMeanings || []).map((orig, idx) => {
+        const rawMeaning =
           hiMap.get(idx) ||
           hiMap.get(String(orig.word).trim()) ||
           orig.meaningHi ||
           orig.meaning ||
-          "",
-      })),
+          "";
+        return {
+          ...orig,
+          word: orig.word, // 100% Guaranteed: The user's exact small Sanskrit word is preserved untouched!
+          meaningHi: preserveSanskritSubWords(orig.meaning, rawMeaning),
+        };
+      }),
     };
   }
 
@@ -863,14 +874,15 @@ async function translateSingleFieldToEnglish({
     const prompt = `You are a Vedic and Sanskrit scholar of Srimad Bhagavad Gita.
 Translate the following Sanskrit word meanings from Gujarati into clear, authentic, devotional English.
 
-IMPORTANT CONTEXT:
-The user has intentionally analyzed the Sanskrit verse and SPLIT compound/sandhi words into individual smaller Sanskrit root words (पदच्छेद).
-DO NOT merge, re-join, or alter these words. You must translate each smaller Sanskrit word's Gujarati meaning into English individually.
-
-STRICT RULES:
-1. You MUST return an entry for EVERY single 'id' from 0 to ${itemsToSend.length - 1}.
-2. DO NOT combine or skip any item. If there are ${itemsToSend.length} items, you must return exactly ${itemsToSend.length} items.
-3. For each item, translate ONLY the 'gujaratiMeaning' into accurate English ('meaningEn') based on the context of the smaller Sanskrit word.
+IMPORTANT CONTEXT & RULES:
+1. The user has intentionally analyzed the Sanskrit verse and SPLIT compound words (पदच्छेद), or written Sanskrit sub-words inside the meaning using '=' (e.g. "विराटः = રાજા વિરાટ , च = અને").
+2. DO NOT merge, re-join, or alter items. Return exactly one entry for EVERY 'id' from 0 to ${itemsToSend.length - 1}.
+3. CRITICAL FOR EQUAL SIGN ('='):
+   When 'gujaratiMeaning' contains Sanskrit sub-words broken down with '=' (e.g. "विराटः = રાજા વિરાટ , च = અને"):
+   - The Sanskrit words before '=' (like "विराटः", "च") MUST REMAIN EXACTLY IN SANSKRIT (Devanagari script). NEVER translate or transliterate them into English! (DO NOT write "Virata = King Virata, and = and", IT MUST BE "विराटः = King Virata, च = and").
+   - Translate ONLY the Gujarati explanation after '=':
+     Example: "विराटः = રાજા વિરાટ , च = અને" -> "विराटः = King Virata, च = and"
+     Example: "पाण्डवाः = પાંડુપુત્રો , च = અને , एव = જ" -> "पाण्डवाः = sons of Pandu, च = and, एव = only/indeed"
 4. Output format: Return ONLY a valid JSON object:
 {
   "wordMeanings": [
@@ -896,16 +908,19 @@ ${JSON.stringify(itemsToSend)}`;
     }
 
     return {
-      wordMeanings: (wordMeanings || []).map((orig, idx) => ({
-        ...orig,
-        word: orig.word, // 100% Guaranteed: The user's exact small Sanskrit word is preserved untouched!
-        meaningEn:
+      wordMeanings: (wordMeanings || []).map((orig, idx) => {
+        const rawMeaning =
           enMap.get(idx) ||
           enMap.get(String(orig.word).trim()) ||
           orig.meaningEn ||
           orig.meaning ||
-          "",
-      })),
+          "";
+        return {
+          ...orig,
+          word: orig.word, // 100% Guaranteed: The user's exact small Sanskrit word is preserved untouched!
+          meaningEn: preserveSanskritSubWords(orig.meaning, rawMeaning),
+        };
+      }),
     };
   }
 
