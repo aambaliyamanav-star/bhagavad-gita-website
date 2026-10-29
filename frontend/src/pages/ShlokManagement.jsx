@@ -457,10 +457,6 @@ function ShlokManagement() {
   const [activeLangTab, setActiveLangTab] =
     useState("gu");
 
-  const [translating, setTranslating] =
-    useState(false);
-  const [translatingLang, setTranslatingLang] =
-    useState(null);
   const [translatingField, setTranslatingField] =
     useState(null);
 
@@ -1097,146 +1093,6 @@ function ShlokManagement() {
 
       return "";
     };
-
-  /* =====================================================
-     AUTO TRANSLATE VIA AI (GEMINI)
-  ===================================================== */
-
-  const handleAutoTranslate = async (targetLang = "hi") => {
-    try {
-      setTranslating(true);
-      setTranslatingLang(targetLang);
-      setError("");
-      setAutoTranslateSuccess("");
-
-      const plainTranslation = htmlToPlainText(formData.translation);
-
-      if (!formData.translation?.trim() && !plainTranslation) {
-        throw new Error(
-          targetLang === "hi"
-            ? "કૃપા કરીને પહેલાં ગુજરાતી અનુવાદ લખો જેથી AI તેનું હિન્દીમાં ઓટો-અનુવાદ કરી શકે."
-            : targetLang === "en"
-            ? "કૃપા કરીને પહેલાં ગુજરાતી અનુવાદ લખો જેથી AI તેનું અંગ્રેજીમાં ઓટો-અનુવાદ કરી શકે."
-            : "કૃપા કરીને પહેલાં ગુજરાતી અનુવાદ લખો જેથી AI તેનું હિન્દી અને અંગ્રેજીમાં ઓટો-અનુવાદ કરી શકે."
-        );
-      }
-
-      const token = getValidToken();
-
-      const cleanedWords = wordMeanings
-        .map((item) => ({
-          word: item.word?.trim() || "",
-          meaning: item.meaning?.trim() || "",
-          meaningHi: item.meaningHi?.trim() || "",
-          meaningEn: item.meaningEn?.trim() || "",
-        }))
-        .filter((item) => item.word);
-
-      const response = await fetch(`${API_URL}/auto-translate`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          chapterNumber: Number(formData.chapterNumber),
-          chapterName: formData.chapterName,
-          speaker: formData.speaker,
-          sanskrit: formData.sanskrit,
-          translation: formData.translation,
-          message: formData.message,
-          wordMeanings: cleanedWords,
-          targetLang: targetLang || "all",
-        }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(
-          data.message || "ઓટો-અનુવાદ થઈ શક્યો નથી."
-        );
-      }
-
-      const translated = data?.data || data?.translated;
-
-      if (!translated) {
-        throw new Error(
-          data?.message || "ઓટો-અનુવાદ માહિતી મળી શકી નથી."
-        );
-      }
-
-      setFormData((prev) => ({
-        ...prev,
-        chapterNameHi:
-          translated.chapterNameHi ||
-          chapterNamesHi[prev.chapterNumber] ||
-          prev.chapterNameHi,
-        chapterNameEn:
-          translated.chapterNameEn ||
-          chapterNamesEn[prev.chapterNumber] ||
-          prev.chapterNameEn,
-        speakerHi:
-          prev.speaker || translated.speakerHi || prev.speakerHi,
-        speakerEn:
-          prev.speaker || translated.speakerEn || prev.speakerEn,
-        translationHi:
-          translated.translationHi || prev.translationHi,
-        translationEn:
-          translated.translationEn || prev.translationEn,
-        messageHi:
-          translated.messageHi || prev.messageHi,
-        messageEn:
-          translated.messageEn || prev.messageEn,
-      }));
-
-      if (Array.isArray(translated.wordMeanings)) {
-        setWordMeanings((prev) =>
-          prev.map((item, idx) => {
-            const translatedItem = translated.wordMeanings[idx];
-
-            const rawHi =
-              translatedItem?.meaningHi !== undefined
-                ? translatedItem.meaningHi
-                : item.meaningHi || "";
-            const rawEn =
-              translatedItem?.meaningEn !== undefined
-                ? translatedItem.meaningEn
-                : item.meaningEn || "";
-
-            return {
-              ...item,
-              word: item.word, // Keep user's exact Sanskrit word (including split words) strictly untouched
-              meaningHi: preserveSanskritSubWords(item.meaning, rawHi),
-              meaningEn: preserveSanskritSubWords(item.meaning, rawEn),
-            };
-          })
-        );
-      }
-
-      setAutoTranslateSuccess(
-        targetLang === "hi"
-          ? "✨ ગુજરાતીમાંથી હિન્દીમાં સફળતાપૂર્વક AI ઓટો-અનુવાદ થઈ ગયું!"
-          : targetLang === "en"
-          ? "✨ ગુજરાતીમાંથી અંગ્રેજીમાં સફળતાપૂર્વક AI ઓટો-અનુવાદ થઈ ગયું!"
-          : "✨ ગુજરાતીમાંથી હિન્દી અને અંગ્રેજીમાં સફળતાપૂર્વક AI ઓટો-અનુવાદ થઈ ગયું! સંસ્કૃત શ્લોક સુરક્ષિત છે."
-      );
-      if (targetLang === "en") {
-        setActiveLangTab("en");
-      } else if (targetLang === "hi") {
-        setActiveLangTab("hi");
-      }
-    } catch (err) {
-      console.error("Auto translate error:", err);
-      setError(
-        err.message ||
-          "ઓટો-અનુવાદ કરવામાં error આવ્યો."
-      );
-    } finally {
-      setTranslating(false);
-      setTranslatingLang(null);
-    }
-  };
 
   /* =====================================================
      AUTO TRANSLATE SINGLE FIELD (WORDS / TRANSLATION / MESSAGE)
@@ -2036,36 +1892,6 @@ function ShlokManagement() {
                   English Details (Auto)
                 </button>
               </div>
-
-              <div className="auto-translate-btns-group">
-                {/* 1. HINDI AUTO-TRANSLATE */}
-                <button
-                  type="button"
-                  className="auto-translate-ai-btn hi-btn"
-                  onClick={() => handleAutoTranslate("hi")}
-                  disabled={translating || translatingField !== null}
-                  title="ગુજરાતી અનુવાદ અને સંદેશ પરથી AI દ્વારા આપોઆપ હિન્દી અનુવાદ કરો"
-                >
-                  <Sparkles className={`btn-icon ${translatingLang === "hi" ? "spinning" : ""}`} size={16} />
-                  {translatingLang === "hi"
-                    ? txt("AI હિન્દી અનુવાદ થઈ રહ્યું છે...", "AI हिन्दी अनुवाद हो रहा है...", "AI translating Hindi...")
-                    : txt("✨ AI હિન્દી ઓટો-અનુવાદ", "✨ AI हिन्दी ऑटो-अनुवाद", "✨ AI Hindi Auto-Translate")}
-                </button>
-
-                {/* 2. ENGLISH AUTO-TRANSLATE */}
-                <button
-                  type="button"
-                  className="auto-translate-ai-btn en-btn"
-                  onClick={() => handleAutoTranslate("en")}
-                  disabled={translating || translatingField !== null}
-                  title="ગુજરાતી અનુવાદ અને સંદેશ પરથી AI દ્વારા આપોઆપ અંગ્રેજી અનુવાદ કરો"
-                >
-                  <Sparkles className={`btn-icon ${translatingLang === "en" ? "spinning" : ""}`} size={16} />
-                  {translatingLang === "en"
-                    ? txt("AI અંગ્રેજી અનુવાદ થઈ રહ્યું છે...", "AI अंग्रेज़ी अनुवाद हो रहा है...", "AI translating English...")
-                    : txt("✨ AI અંગ્રેજી ઓટો-અનુવાદ", "✨ AI अंग्रेज़ी ऑटो-अनुवाद", "✨ AI English Auto-Translate")}
-                </button>
-              </div>
             </div>
 
             {/* AUTO TRANSLATE SUCCESS BANNER */}
@@ -2360,10 +2186,6 @@ function ShlokManagement() {
                         <h3>
                           Word-wise Hindi Meaning (हिन्दी शब्दार्थ)
                         </h3>
-
-                        <p>
-                          સંસ્કૃત શબ્દ સમાન રહે છે, અહીં તેનો હિન્દી અર્થ AI દ્વારા મેળવી શકો છો અથવા તમે સુધારી શકો છો.
-                        </p>
                       </div>
                     </div>
 
@@ -2371,7 +2193,7 @@ function ShlokManagement() {
                       type="button"
                       className="field-ai-translate-btn hi-btn"
                       onClick={() => handleTranslateField("hi", "words")}
-                      disabled={translating || translatingField !== null}
+                      disabled={translatingField !== null}
                       title="માત્ર શબ્દાર્થને AI દ્વારા હિન્દીમાં અનુવાદ કરો"
                     >
                       <Sparkles className={`btn-icon ${translatingField === "hi-words" ? "spinning" : ""}`} size={15} />
@@ -2470,7 +2292,7 @@ function ShlokManagement() {
                       type="button"
                       className="field-ai-translate-btn hi-btn"
                       onClick={() => handleTranslateField("hi", "translation")}
-                      disabled={translating || translatingField !== null}
+                      disabled={translatingField !== null}
                       title="માત્ર શ્લોકના અનુવાદને AI દ્વારા હિન્દીમાં અનુવાદ કરો"
                     >
                       <Sparkles className={`btn-icon ${translatingField === "hi-translation" ? "spinning" : ""}`} size={15} />
@@ -2508,7 +2330,7 @@ function ShlokManagement() {
                       type="button"
                       className="field-ai-translate-btn hi-btn"
                       onClick={() => handleTranslateField("hi", "message")}
-                      disabled={translating || translatingField !== null}
+                      disabled={translatingField !== null}
                       title="માત્ર સંદેશ/વ્યાખ્યાને AI દ્વારા હિન્દીમાં અનુવાદ કરો"
                     >
                       <Sparkles className={`btn-icon ${translatingField === "hi-message" ? "spinning" : ""}`} size={15} />
@@ -2570,10 +2392,6 @@ function ShlokManagement() {
                         <h3>
                           Word-wise English Meaning (Sanskrit to English)
                         </h3>
-
-                        <p>
-                          સંસ્કૃત શબ્દ સમાન રહે છે, અહીં તેનો અંગ્રેજી અર્થ AI દ્વારા મેળવી શકો છો અથવા તમે સુધારી શકો છો.
-                        </p>
                       </div>
                     </div>
 
@@ -2581,7 +2399,7 @@ function ShlokManagement() {
                       type="button"
                       className="field-ai-translate-btn en-btn"
                       onClick={() => handleTranslateField("en", "words")}
-                      disabled={translating || translatingField !== null}
+                      disabled={translatingField !== null}
                       title="Translate only word meanings to English using AI"
                     >
                       <Sparkles className={`btn-icon ${translatingField === "en-words" ? "spinning" : ""}`} size={15} />
@@ -2680,7 +2498,7 @@ function ShlokManagement() {
                       type="button"
                       className="field-ai-translate-btn en-btn"
                       onClick={() => handleTranslateField("en", "translation")}
-                      disabled={translating || translatingField !== null}
+                      disabled={translatingField !== null}
                       title="Translate only verse translation to English using AI"
                     >
                       <Sparkles className={`btn-icon ${translatingField === "en-translation" ? "spinning" : ""}`} size={15} />
@@ -2718,7 +2536,7 @@ function ShlokManagement() {
                       type="button"
                       className="field-ai-translate-btn en-btn"
                       onClick={() => handleTranslateField("en", "message")}
-                      disabled={translating || translatingField !== null}
+                      disabled={translatingField !== null}
                       title="Translate only spiritual message to English using AI"
                     >
                       <Sparkles className={`btn-icon ${translatingField === "en-message" ? "spinning" : ""}`} size={15} />
