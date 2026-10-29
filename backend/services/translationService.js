@@ -69,6 +69,30 @@ const CHAPTER_MAP_EN = {
   18: "Moksha Sanyasa Yoga",
 };
 
+// Current ultra-fast, live Gemini models prioritized by latency and reliability
+const TRANSLATION_MODELS = [
+  "gemini-3-flash-preview",
+  "gemini-3.1-flash-lite",
+  "gemini-flash-lite-latest",
+  "gemini-flash-latest",
+];
+
+/**
+ * Fetch wrapper with timeout to prevent hanging calls
+ */
+async function fetchWithTimeout(url, options, timeoutMs = 12000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    const res = await fetch(url, { ...options, signal: controller.signal });
+    clearTimeout(timer);
+    return res;
+  } catch (err) {
+    clearTimeout(timer);
+    throw err;
+  }
+}
+
 /**
  * Strips HTML tags for translation if needed
  */
@@ -213,19 +237,11 @@ Word Meanings (Keep exact IDs and translate meaning into Hindi): ${JSON.stringif
     (wordMeanings || []).map((w, idx) => ({ id: idx, sanskritWord: String(w.word || '').trim(), gujaratiMeaning: cleanHtml(w.meaning || '') }))
   )}`;
 
-  const modelsToTry = [
-    "gemini-2.5-flash",
-    "gemini-2.0-flash",
-    "gemini-1.5-flash",
-    "gemini-flash-lite-latest",
-    "gemini-flash-latest",
-  ];
-
   const cleanKey = String(apiKey).trim();
 
-  for (const modelName of modelsToTry) {
+  for (const modelName of TRANSLATION_MODELS) {
     try {
-      const response = await fetch(
+      const response = await fetchWithTimeout(
         `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(
           cleanKey
         )}`,
@@ -242,7 +258,8 @@ Word Meanings (Keep exact IDs and translate meaning into Hindi): ${JSON.stringif
               response_mime_type: "application/json",
             },
           }),
-        }
+        },
+        10000
       );
 
       if (response.ok) {
@@ -367,17 +384,9 @@ Gujarati Options: ${JSON.stringify((options || []).map((o) => cleanHtml(o)))}
 Gujarati Correct Answer: ${cleanHtml(correctAnswer)}
 Gujarati Explanation: ${cleanHtml(explanation)}`;
 
-  const modelsToTry = [
-    "gemini-2.5-flash",
-    "gemini-2.0-flash",
-    "gemini-1.5-flash",
-    "gemini-flash-lite-latest",
-    "gemini-flash-latest",
-  ];
-
-  for (const modelName of modelsToTry) {
+  for (const modelName of TRANSLATION_MODELS) {
     try {
-      const response = await fetch(
+      const response = await fetchWithTimeout(
         `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(
           cleanKey
         )}`,
@@ -394,7 +403,8 @@ Gujarati Explanation: ${cleanHtml(explanation)}`;
               response_mime_type: "application/json",
             },
           }),
-        }
+        },
+        10000
       );
 
       if (response.ok) {
@@ -519,19 +529,11 @@ Word Meanings: ${JSON.stringify(
     (wordMeanings || []).map((w) => ({ word: w.word, meaning: cleanHtml(w.meaning) }))
   )}`;
 
-  const modelsToTry = [
-    "gemini-2.5-flash",
-    "gemini-2.0-flash",
-    "gemini-1.5-flash",
-    "gemini-flash-lite-latest",
-    "gemini-flash-latest",
-  ];
-
   const cleanKey = String(apiKey).trim();
 
-  for (const modelName of modelsToTry) {
+  for (const modelName of TRANSLATION_MODELS) {
     try {
-      const response = await fetch(
+      const response = await fetchWithTimeout(
         `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(
           cleanKey
         )}`,
@@ -548,7 +550,8 @@ Word Meanings: ${JSON.stringify(
               response_mime_type: "application/json",
             },
           }),
-        }
+        },
+        10000
       );
 
       if (response.ok) {
@@ -666,16 +669,9 @@ Options: ${JSON.stringify((options || []).map((o) => cleanHtml(o)))}
 Correct Answer: ${cleanHtml(correctAnswer)}
 Explanation: ${cleanHtml(explanation)}`;
 
-  const modelsToTry = [
-    "gemini-2.5-flash",
-    "gemini-2.0-flash",
-    "gemini-1.5-flash",
-    "gemini-flash-lite-latest",
-  ];
-
-  for (const modelName of modelsToTry) {
+  for (const modelName of TRANSLATION_MODELS) {
     try {
-      const response = await fetch(
+      const response = await fetchWithTimeout(
         `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(
           cleanKey
         )}`,
@@ -692,7 +688,8 @@ Explanation: ${cleanHtml(explanation)}`;
               response_mime_type: "application/json",
             },
           }),
-        }
+        },
+        10000
       );
 
       if (response.ok) {
@@ -748,18 +745,11 @@ Explanation: ${cleanHtml(explanation)}`;
 async function callGeminiJson(prompt) {
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) return null;
-  const modelsToTry = [
-    "gemini-2.5-flash",
-    "gemini-2.0-flash",
-    "gemini-1.5-flash",
-    "gemini-flash-lite-latest",
-    "gemini-flash-latest",
-  ];
   const cleanKey = String(apiKey).trim();
 
-  for (const modelName of modelsToTry) {
+  for (const modelName of TRANSLATION_MODELS) {
     try {
-      const response = await fetch(
+      const response = await fetchWithTimeout(
         `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${encodeURIComponent(
           cleanKey
         )}`,
@@ -776,7 +766,8 @@ async function callGeminiJson(prompt) {
               response_mime_type: "application/json",
             },
           }),
-        }
+        },
+        10000
       );
 
       if (response.ok) {
@@ -790,6 +781,9 @@ async function callGeminiJson(prompt) {
             .trim();
           return JSON.parse(jsonStr);
         }
+      } else {
+        const err = await response.text();
+        console.warn(`Gemini call warning (${modelName}):`, err.slice(0, 150));
       }
     } catch (err) {
       console.warn(`Gemini call failed with ${modelName}:`, err.message);
@@ -839,17 +833,19 @@ ITEMS TO TRANSLATE:
 ${JSON.stringify(itemsToSend)}`;
 
     const parsed = await callGeminiJson(prompt);
-    const hiMap = new Map();
-    if (parsed && Array.isArray(parsed.wordMeanings)) {
-      parsed.wordMeanings.forEach((item, idx) => {
-        if (item) {
-          const key = item.id !== undefined ? Number(item.id) : idx;
-          hiMap.set(key, item.meaningHi || "");
-          if (item.sanskritWord) hiMap.set(String(item.sanskritWord).trim(), item.meaningHi || "");
-          if (item.word) hiMap.set(String(item.word).trim(), item.meaningHi || "");
-        }
-      });
+    if (!parsed || !Array.isArray(parsed.wordMeanings) || parsed.wordMeanings.length === 0) {
+      throw new Error("AI દ્વારા શબ્દાર્થનો હિન્દી અનુવાદ પ્રાપ્ત થઈ શક્યો નથી. કૃપા કરીને થોડી વાર પછી ફરી પ્રયાસ કરો.");
     }
+
+    const hiMap = new Map();
+    parsed.wordMeanings.forEach((item, idx) => {
+      if (item) {
+        const key = item.id !== undefined ? Number(item.id) : idx;
+        hiMap.set(key, item.meaningHi || "");
+        if (item.sanskritWord) hiMap.set(String(item.sanskritWord).trim(), item.meaningHi || "");
+        if (item.word) hiMap.set(String(item.word).trim(), item.meaningHi || "");
+      }
+    });
 
     return {
       wordMeanings: (wordMeanings || []).map((orig, idx) => {
@@ -857,7 +853,6 @@ ${JSON.stringify(itemsToSend)}`;
           hiMap.get(idx) ||
           hiMap.get(String(orig.word).trim()) ||
           orig.meaningHi ||
-          orig.meaning ||
           "";
         return {
           ...orig,
@@ -880,8 +875,11 @@ Return ONLY valid JSON:
 }`;
 
     const parsed = await callGeminiJson(prompt);
+    if (!parsed || !parsed.translationHi || !parsed.translationHi.trim()) {
+      throw new Error("AI દ્વારા શ્લોકાર્થનો હિન્દી અનુવાદ પ્રાપ્ત થઈ શક્યો નથી. કૃપા કરીને થોડી વાર પછી ફરી પ્રયાસ કરો.");
+    }
     return {
-      translationHi: parsed?.translationHi || cleanHtml(translation),
+      translationHi: parsed.translationHi.trim(),
     };
   }
 
@@ -897,8 +895,11 @@ Return ONLY valid JSON:
 }`;
 
     const parsed = await callGeminiJson(prompt);
+    if (!parsed || !parsed.messageHi || !parsed.messageHi.trim()) {
+      throw new Error("AI દ્વારા સંદેશનો હિન્દી અનુવાદ પ્રાપ્ત થઈ શક્યો નથી. કૃપા કરીને થોડી વાર પછી ફરી પ્રયાસ કરો.");
+    }
     return {
-      messageHi: parsed?.messageHi || cleanHtml(message),
+      messageHi: parsed.messageHi.trim(),
     };
   }
 
@@ -946,17 +947,19 @@ ITEMS TO TRANSLATE:
 ${JSON.stringify(itemsToSend)}`;
 
     const parsed = await callGeminiJson(prompt);
-    const enMap = new Map();
-    if (parsed && Array.isArray(parsed.wordMeanings)) {
-      parsed.wordMeanings.forEach((item, idx) => {
-        if (item) {
-          const key = item.id !== undefined ? Number(item.id) : idx;
-          enMap.set(key, item.meaningEn || "");
-          if (item.sanskritWord) enMap.set(String(item.sanskritWord).trim(), item.meaningEn || "");
-          if (item.word) enMap.set(String(item.word).trim(), item.meaningEn || "");
-        }
-      });
+    if (!parsed || !Array.isArray(parsed.wordMeanings) || parsed.wordMeanings.length === 0) {
+      throw new Error("AI દ્વારા શબ્દાર્થનો અંગ્રેજી અનુવાદ પ્રાપ્ત થઈ શક્યો નથી. કૃપા કરીને ફરી પ્રયાસ કરો.");
     }
+
+    const enMap = new Map();
+    parsed.wordMeanings.forEach((item, idx) => {
+      if (item) {
+        const key = item.id !== undefined ? Number(item.id) : idx;
+        enMap.set(key, item.meaningEn || "");
+        if (item.sanskritWord) enMap.set(String(item.sanskritWord).trim(), item.meaningEn || "");
+        if (item.word) enMap.set(String(item.word).trim(), item.meaningEn || "");
+      }
+    });
 
     return {
       wordMeanings: (wordMeanings || []).map((orig, idx) => {
@@ -964,7 +967,6 @@ ${JSON.stringify(itemsToSend)}`;
           enMap.get(idx) ||
           enMap.get(String(orig.word).trim()) ||
           orig.meaningEn ||
-          orig.meaning ||
           "";
         return {
           ...orig,
@@ -987,8 +989,11 @@ Return ONLY valid JSON:
 }`;
 
     const parsed = await callGeminiJson(prompt);
+    if (!parsed || !parsed.translationEn || !parsed.translationEn.trim()) {
+      throw new Error("AI દ્વારા શ્લોકાર્થનો અંગ્રેજી અનુવાદ પ્રાપ્ત થઈ શક્યો નથી. કૃપા કરીને ફરી પ્રયાસ કરો.");
+    }
     return {
-      translationEn: parsed?.translationEn || cleanHtml(translation),
+      translationEn: parsed.translationEn.trim(),
     };
   }
 
@@ -1004,8 +1009,11 @@ Return ONLY valid JSON:
 }`;
 
     const parsed = await callGeminiJson(prompt);
+    if (!parsed || !parsed.messageEn || !parsed.messageEn.trim()) {
+      throw new Error("AI દ્વારા સંદેશનો અંગ્રેજી અનુવાદ પ્રાપ્ત થઈ શક્યો નથી. કૃપા કરીને ફરી પ્રયાસ કરો.");
+    }
     return {
-      messageEn: parsed?.messageEn || cleanHtml(message),
+      messageEn: parsed.messageEn.trim(),
     };
   }
 
