@@ -1,6 +1,7 @@
 import { getValidToken, handleAuth401 } from "../utils/authHelper.js";
 import {
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
 } from "react";
@@ -1720,28 +1721,104 @@ function ShlokManagement() {
   };
 
   /* =====================================================
-     RENDER HELPERS
+     RENDER HELPERS & SCROLL-PRESERVING LANGUAGE SWITCH
   ===================================================== */
-  const renderLangTabs = () => (
+  const targetScrollInfoRef = useRef(null);
+
+  const handleLangTabSwitch = (newLang, sectionKey, e) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.currentTarget && typeof e.currentTarget.blur === "function") {
+        e.currentTarget.blur();
+      }
+    }
+    if (document.activeElement && typeof document.activeElement.blur === "function") {
+      document.activeElement.blur();
+    }
+
+    if (activeLangTab === newLang) return;
+
+    // Capture position before changing state
+    const savedScrollY =
+      window.scrollY ||
+      window.pageYOffset ||
+      document.documentElement.scrollTop ||
+      0;
+    let sectionOffsetFromViewport = null;
+
+    if (sectionKey) {
+      const sectionEl = document.getElementById(`section-${sectionKey}`);
+      if (sectionEl) {
+        sectionOffsetFromViewport = sectionEl.getBoundingClientRect().top;
+      }
+    }
+
+    targetScrollInfoRef.current = {
+      sectionKey,
+      sectionOffsetFromViewport,
+      savedScrollY,
+    };
+
+    setActiveLangTab(newLang);
+  };
+
+  useLayoutEffect(() => {
+    if (!targetScrollInfoRef.current) return;
+    const { sectionKey, sectionOffsetFromViewport, savedScrollY } =
+      targetScrollInfoRef.current;
+
+    const restoreScroll = () => {
+      if (sectionKey && sectionOffsetFromViewport !== null) {
+        const newSectionEl = document.getElementById(`section-${sectionKey}`);
+        if (newSectionEl) {
+          const currentTop = newSectionEl.getBoundingClientRect().top;
+          const delta = currentTop - sectionOffsetFromViewport;
+          if (Math.abs(delta) > 0.5) {
+            window.scrollBy({ top: delta, behavior: "instant" });
+          }
+          return;
+        }
+      }
+      if (savedScrollY !== null && savedScrollY !== undefined) {
+        window.scrollTo({ top: savedScrollY, behavior: "instant" });
+      }
+    };
+
+    restoreScroll();
+    const rafId = requestAnimationFrame(restoreScroll);
+    const t1 = setTimeout(restoreScroll, 25);
+    const t2 = setTimeout(restoreScroll, 75);
+    const t3 = setTimeout(restoreScroll, 150);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+    };
+  }, [activeLangTab]);
+
+  const renderLangTabs = (sectionKey = "words") => (
     <div className="section-lang-tabs">
       <button
         type="button"
         className={`section-lang-tab ${activeLangTab === "gu" ? "active" : ""}`}
-        onClick={() => setActiveLangTab("gu")}
+        onClick={(e) => handleLangTabSwitch("gu", sectionKey, e)}
       >
         ગુજરાતી વિગત
       </button>
       <button
         type="button"
         className={`section-lang-tab ${activeLangTab === "hi" ? "active" : ""}`}
-        onClick={() => setActiveLangTab("hi")}
+        onClick={(e) => handleLangTabSwitch("hi", sectionKey, e)}
       >
         हिन्दी विवरण (Auto)
       </button>
       <button
         type="button"
         className={`section-lang-tab ${activeLangTab === "en" ? "active" : ""}`}
-        onClick={() => setActiveLangTab("en")}
+        onClick={(e) => handleLangTabSwitch("en", sectionKey, e)}
       >
         English Details (Auto)
       </button>
@@ -1927,7 +2004,7 @@ function ShlokManagement() {
             {activeLangTab === "gu" && (
               <>
                 {/* WORD-WISE GUJARATI MEANING */}
-                <div className="word-wise-section">
+                <div className="word-wise-section" id="section-words">
                   <div className="word-wise-section-header">
                     <div className="word-wise-title-area">
                       <div className="word-wise-icon">
@@ -1942,7 +2019,7 @@ function ShlokManagement() {
                     </div>
 
                     <div className="section-header-actions">
-                      {renderLangTabs()}
+                      {renderLangTabs("words")}
                     </div>
                   </div>
 
@@ -2098,14 +2175,14 @@ function ShlokManagement() {
                 </div>
 
                 {/* TRANSLATION */}
-                <div className="form-group">
+                <div className="form-group" id="section-translation">
                   <div className="form-group-header-with-btn">
                     <label style={{ margin: 0 }}>
                       <BookOpen className="btn-icon" size={16} /> Gujarati Translation (ગુજરાતી અનુવાદ)
                     </label>
 
                     <div className="section-header-actions">
-                      {renderLangTabs()}
+                      {renderLangTabs("translation")}
                     </div>
                   </div>
 
@@ -2127,14 +2204,14 @@ function ShlokManagement() {
                 </div>
 
                 {/* MESSAGE */}
-                <div className="form-group">
+                <div className="form-group" id="section-message">
                   <div className="form-group-header-with-btn">
                     <label style={{ margin: 0 }}>
                       <Sparkles className="btn-icon" size={16} /> Message / Explanation (ગુજરાતી સંદેશ)
                     </label>
 
                     <div className="section-header-actions">
-                      {renderLangTabs()}
+                      {renderLangTabs("message")}
                     </div>
                   </div>
 
@@ -2160,7 +2237,7 @@ function ShlokManagement() {
             {activeLangTab === "hi" && (
               <>
                 {/* WORD-WISE HINDI MEANING */}
-                <div className="word-wise-section">
+                <div className="word-wise-section" id="section-words">
                   <div className="word-wise-section-header">
                     <div className="word-wise-title-area">
                       <div className="word-wise-icon">
@@ -2175,7 +2252,7 @@ function ShlokManagement() {
                     </div>
 
                     <div className="section-header-actions">
-                      {renderLangTabs()}
+                      {renderLangTabs("words")}
                       <button
                         type="button"
                         className="field-ai-translate-btn hi-btn"
@@ -2270,14 +2347,14 @@ function ShlokManagement() {
                 </div>
 
                 {/* HINDI TRANSLATION */}
-                <div className="form-group">
+                <div className="form-group" id="section-translation">
                   <div className="form-group-header-with-btn">
                     <label style={{ margin: 0 }}>
                       <BookOpen className="btn-icon" size={16} /> Hindi Translation (हिन्दी अनुवाद)
                     </label>
 
                     <div className="section-header-actions">
-                      {renderLangTabs()}
+                      {renderLangTabs("translation")}
                       <button
                         type="button"
                         className="field-ai-translate-btn hi-btn"
@@ -2311,14 +2388,14 @@ function ShlokManagement() {
                 </div>
 
                 {/* HINDI MESSAGE */}
-                <div className="form-group">
+                <div className="form-group" id="section-message">
                   <div className="form-group-header-with-btn">
                     <label style={{ margin: 0 }}>
                       <Sparkles className="btn-icon" size={16} /> Hindi Message / Explanation (हिन्दी संदेश)
                     </label>
 
                     <div className="section-header-actions">
-                      {renderLangTabs()}
+                      {renderLangTabs("message")}
                       <button
                         type="button"
                         className="field-ai-translate-btn hi-btn"
@@ -2356,7 +2433,7 @@ function ShlokManagement() {
             {activeLangTab === "en" && (
               <>
                 {/* WORD-WISE ENGLISH MEANING */}
-                <div className="word-wise-section">
+                <div className="word-wise-section" id="section-words">
                   <div className="word-wise-section-header">
                     <div className="word-wise-title-area">
                       <div className="word-wise-icon">
@@ -2371,7 +2448,7 @@ function ShlokManagement() {
                     </div>
 
                     <div className="section-header-actions">
-                      {renderLangTabs()}
+                      {renderLangTabs("words")}
                       <button
                         type="button"
                         className="field-ai-translate-btn en-btn"
@@ -2466,14 +2543,14 @@ function ShlokManagement() {
                 </div>
 
                 {/* ENGLISH TRANSLATION */}
-                <div className="form-group">
+                <div className="form-group" id="section-translation">
                   <div className="form-group-header-with-btn">
                     <label style={{ margin: 0 }}>
                       <BookOpen className="btn-icon" size={16} /> English Translation (અંગ્રેજી અનુવાદ)
                     </label>
 
                     <div className="section-header-actions">
-                      {renderLangTabs()}
+                      {renderLangTabs("translation")}
                       <button
                         type="button"
                         className="field-ai-translate-btn en-btn"
@@ -2507,14 +2584,14 @@ function ShlokManagement() {
                 </div>
 
                 {/* ENGLISH MESSAGE */}
-                <div className="form-group">
+                <div className="form-group" id="section-message">
                   <div className="form-group-header-with-btn">
                     <label style={{ margin: 0 }}>
                       <Sparkles className="btn-icon" size={16} /> English Divine Message / Commentary (અંગ્રેજી સંદેશ)
                     </label>
 
                     <div className="section-header-actions">
-                      {renderLangTabs()}
+                      {renderLangTabs("message")}
                       <button
                         type="button"
                         className="field-ai-translate-btn en-btn"
