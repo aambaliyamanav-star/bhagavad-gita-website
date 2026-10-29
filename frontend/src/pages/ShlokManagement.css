@@ -1465,18 +1465,6 @@
 }
 
 
-.word-translation-help {
-  display: block;
-
-  margin-top: 12px;
-
-  color: #8292a7;
-
-  font-size: 11px;
-
-  line-height: 1.6;
-}
-
 
 /* =========================================================
    FORM ACTIONS
@@ -3490,10 +3478,6 @@ html[data-theme="dark"] .add-word-bottom-btn:hover {
     );
 }
 
-
-html[data-theme="dark"] .word-translation-help {
-  color: #71859d;
-}
 
 
 /* =========================================================

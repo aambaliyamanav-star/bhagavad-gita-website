@@ -1936,12 +1936,6 @@ function ShlokManagement() {
                         <h3>
                           Word-wise Gujarati Meaning
                         </h3>
-
-                        <p>
-                          Sanskrit Shlokમાં word
-                          લખતા જ અહીં automatically
-                          words detect થશે.
-                        </p>
                       </div>
                     </div>
                   </div>
@@ -2095,14 +2089,6 @@ function ShlokManagement() {
                       ➕ Add Another Sanskrit Word
                     </button>
                   )}
-
-                  <small className="word-translation-help">
-                    <Lightbulb className="btn-icon" size={16} /> Sanskrit word તમે
-                    manually edit કરી શકો છો.
-                    કોઈ word delete કરી શકો છો
-                    અને "Add Word" દ્વારા નવો
-                    word પણ ઉમેરી શકો છો.
-                  </small>
                 </div>
 
                 {/* TRANSLATION */}
