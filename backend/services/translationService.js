@@ -254,7 +254,9 @@ Word Meanings (Keep exact IDs and translate meaning into Hindi): ${JSON.stringif
           body: JSON.stringify({
             contents: [{ role: "user", parts: [{ text: prompt }] }],
             generationConfig: {
-              temperature: 0.2,
+              temperature: 0.0,
+              topK: 1,
+              topP: 0.95,
               response_mime_type: "application/json",
             },
           }),
@@ -399,7 +401,9 @@ Gujarati Explanation: ${cleanHtml(explanation)}`;
           body: JSON.stringify({
             contents: [{ role: "user", parts: [{ text: prompt }] }],
             generationConfig: {
-              temperature: 0.2,
+              temperature: 0.0,
+              topK: 1,
+              topP: 0.95,
               response_mime_type: "application/json",
             },
           }),
@@ -546,7 +550,9 @@ Word Meanings: ${JSON.stringify(
           body: JSON.stringify({
             contents: [{ role: "user", parts: [{ text: prompt }] }],
             generationConfig: {
-              temperature: 0.2,
+              temperature: 0.0,
+              topK: 1,
+              topP: 0.95,
               response_mime_type: "application/json",
             },
           }),
@@ -684,7 +690,9 @@ Explanation: ${cleanHtml(explanation)}`;
           body: JSON.stringify({
             contents: [{ role: "user", parts: [{ text: prompt }] }],
             generationConfig: {
-              temperature: 0.2,
+              temperature: 0.0,
+              topK: 1,
+              topP: 0.95,
               response_mime_type: "application/json",
             },
           }),
@@ -762,7 +770,9 @@ async function callGeminiJson(prompt) {
           body: JSON.stringify({
             contents: [{ role: "user", parts: [{ text: prompt }] }],
             generationConfig: {
-              temperature: 0.2,
+              temperature: 0.0,
+              topK: 1,
+              topP: 0.95,
               response_mime_type: "application/json",
             },
           }),
@@ -802,6 +812,9 @@ async function translateSingleFieldToHindi({
   message,
   wordMeanings = [],
 }) {
+  const cleanSanskrit = cleanHtml(sanskrit || "");
+  const cleanTranslation = cleanHtml(translation || "");
+
   if (field === "words") {
     const itemsToSend = (wordMeanings || []).map((w, idx) => ({
       id: idx,
@@ -809,23 +822,27 @@ async function translateSingleFieldToHindi({
       gujaratiMeaning: cleanHtml(w.meaning || ""),
     }));
 
-    const prompt = `You are a Vedic and Sanskrit scholar of Srimad Bhagavad Gita.
-Translate the following Sanskrit word meanings from Gujarati into sacred, authentic Hindi (Devanagari script).
+    const prompt = `You are a revered Vedic and Sanskrit scholar of Srimad Bhagavad Gita, adhering strictly to the sacred, devotional standard of Gita Press Gorakhpur (श्रीमद्भगवद्गीता - गीताप्रेस गोरखपुर शैली).
+Translate the following Sanskrit word meanings (પદચ્છેદ અને શબ્દાર્થ) from Gujarati into pure, authentic, grammatically precise Hindi (Devanagari script).
 
-IMPORTANT CONTEXT & RULES:
-1. The user has intentionally analyzed the Sanskrit verse and SPLIT compound words (पदच्छेद), or written Sanskrit sub-words inside the meaning using '=' (e.g. "विराटः = રાજા વિરાટ , च = અને").
-2. DO NOT merge, re-join, or alter items. Return exactly one entry for EVERY 'id' from 0 to ${itemsToSend.length - 1}.
-3. CRITICAL FOR EQUAL SIGN ('='):
+CONTEXT OF THE SACRED VERSE:
+${cleanSanskrit ? `Sanskrit Shloka: ${cleanSanskrit}` : ""}
+${cleanTranslation ? `Full Gujarati Translation of Shloka: ${cleanTranslation}` : ""}
+
+STRICT SCHOLARLY RULES:
+1. CONTEXTUAL ACCURACY ON FIRST TRY: Use the full Sanskrit Shloka and Gujarati translation context above to translate each word's Gujarati meaning into its exact, classical Hindi devotional equivalent. Produce a definitive, high-precision translation.
+2. 1:1 DIRECT MAPPING: Return exactly one entry for EVERY 'id' from 0 to ${itemsToSend.length - 1} in the exact same sequence.
+3. SANSKRIT WORD INTEGRITY: The Sanskrit words in 'sanskritWord' must never be changed.
+4. CRITICAL RULE FOR EQUAL SIGN ('='):
    When 'gujaratiMeaning' contains Sanskrit sub-words broken down with '=' (e.g. "विराटः = રાજા વિરાટ , च = અને"):
-   - The Sanskrit words before '=' (like "विराटः", "च") MUST REMAIN EXACTLY IN SANSKRIT (Devanagari script). NEVER translate or alter them!
-   - Translate ONLY the Gujarati explanation after '=':
+   - The Sanskrit words BEFORE '=' (such as "विराटः", "च") MUST REMAIN 100% PURE SANSKRIT IN DEVANAGARI SCRIPT. NEVER translate, transliterate, or alter them!
+   - Translate ONLY the Gujarati explanation AFTER '=':
      Example: "विराटः = રાજા વિરાટ , च = અને" -> "विराटः = राजा विराट, च = और"
      Example: "पाण्डवाः = પાંડુપુત્રો , च = અને , एव = જ" -> "पाण्डवाः = पाण्डुपुत्र, च = और, एव = ही"
-4. Output format: Return ONLY a valid JSON object:
+5. OUTPUT FORMAT: Return ONLY a valid JSON object:
 {
   "wordMeanings": [
-    { "id": 0, "meaningHi": "Hindi meaning" },
-    { "id": 1, "meaningHi": "Hindi meaning" }
+    { "id": 0, "meaningHi": "Hindi meaning" }
   ]
 }
 
@@ -864,11 +881,26 @@ ${JSON.stringify(itemsToSend)}`;
   }
 
   if (field === "translation") {
-    const prompt = `You are a Sanskrit and Vedic scholar of Srimad Bhagavad Gita.
-Translate the following Bhagavad Gita verse translation from Gujarati into sacred, fluid Hindi (अनुवाद).
-Preserve any HTML formatting (e.g. <b>, <i>) if present in the text.
-Sanskrit Verse: ${cleanHtml(sanskrit || "")}
+    const wordContext = (wordMeanings || [])
+      .filter((w) => w.word && w.meaning)
+      .map((w) => `${w.word} = ${cleanHtml(w.meaning)}`)
+      .join(", ");
+
+    const prompt = `You are a revered Vedic and Sanskrit scholar of Srimad Bhagavad Gita, adhering to the devotional standard of Gita Press Gorakhpur (गीताप्रेस गोरखपुर).
+Translate the following Bhagavad Gita verse translation (શ્લોકાર્થ / અનુવાદ) from Gujarati into pure, sacred, fluid, and grammatically impeccable Hindi (अनुवाद).
+
+CONTEXT OF THE SHLOKA:
+${cleanSanskrit ? `Sanskrit Verse: ${cleanSanskrit}` : ""}
+${wordContext ? `Word-by-word Breakdown (शब्दार्थ): ${wordContext}` : ""}
+
+INPUT TO TRANSLATE:
 Gujarati Translation: ${translation}
+
+STRICT INSTRUCTIONS:
+- Faithfully reflect the sacred meaning of the Shloka in dignified, reverent Hindi (गीताप्रेस गोरखपुर शैली).
+- Preserve any HTML formatting (e.g. <b>, <i>, <p>, <br>) exactly as provided.
+- Deliver an authoritative, definitive, and accurate translation on the first try.
+
 Return ONLY valid JSON:
 {
   "translationHi": "Hindi translation..."
@@ -884,11 +916,21 @@ Return ONLY valid JSON:
   }
 
   if (field === "message") {
-    const prompt = `You are a Sanskrit and Vedic scholar of Srimad Bhagavad Gita.
-Translate the following Bhagavad Gita divine message / spiritual explanation (ગીતા સંદેશ) from Gujarati into deep, inspiring Hindi (गीता संदेश).
-Preserve any HTML formatting (e.g. <ul>, <li>, <b>, <p>) if present in the text.
-Sanskrit Verse: ${cleanHtml(sanskrit || "")}
+    const prompt = `You are a revered spiritual master and scholar of Srimad Bhagavad Gita.
+Translate the following Bhagavad Gita divine message / spiritual commentary (ગીતા સંદેશ) from Gujarati into profound, inspiring, philosophically accurate, and practical Hindi (गीता संदेश).
+
+CONTEXT OF THE SHLOKA:
+${cleanSanskrit ? `Sanskrit Verse: ${cleanSanskrit}` : ""}
+${cleanTranslation ? `Verse Translation: ${cleanTranslation}` : ""}
+
+INPUT TO TRANSLATE:
 Gujarati Message: ${message}
+
+STRICT INSTRUCTIONS:
+- Translate into deep, uplifting, devotional Hindi that provides spiritual wisdom and practical life clarity.
+- Preserve any HTML formatting (e.g. <ul>, <li>, <b>, <i>, <p>, <br>) exactly as provided.
+- Ensure the translation is authoritative and complete on the first try.
+
 Return ONLY valid JSON:
 {
   "messageHi": "Hindi message..."
@@ -916,6 +958,9 @@ async function translateSingleFieldToEnglish({
   message,
   wordMeanings = [],
 }) {
+  const cleanSanskrit = cleanHtml(sanskrit || "");
+  const cleanTranslation = cleanHtml(translation || "");
+
   if (field === "words") {
     const itemsToSend = (wordMeanings || []).map((w, idx) => ({
       id: idx,
@@ -923,13 +968,17 @@ async function translateSingleFieldToEnglish({
       gujaratiMeaning: cleanHtml(w.meaning || ""),
     }));
 
-    const prompt = `You are a Vedic and Sanskrit scholar of Srimad Bhagavad Gita.
-Translate the following Sanskrit word meanings from Gujarati into clear, authentic, devotional English.
+    const prompt = `You are a revered Vedic and Sanskrit scholar of Srimad Bhagavad Gita (standard of Swami Sivananda / Eknath Easwaran).
+Translate the following Sanskrit word meanings (પદચ્છેદ અને શબ્દાર્થ) from Gujarati into authentic, precise, and clear English.
 
-IMPORTANT CONTEXT & RULES:
-1. The user has intentionally analyzed the Sanskrit verse and SPLIT compound words (पदच्छेद), or written Sanskrit sub-words inside the meaning using '=' (e.g. "विराटः = રાજા વિરાટ , च = અને").
-2. DO NOT merge, re-join, or alter items. Return exactly one entry for EVERY 'id' from 0 to ${itemsToSend.length - 1}.
-3. CRITICAL FOR EQUAL SIGN ('='):
+CONTEXT OF THE SACRED VERSE:
+${cleanSanskrit ? `Sanskrit Shloka: ${cleanSanskrit}` : ""}
+${cleanTranslation ? `Full Gujarati Translation of Shloka: ${cleanTranslation}` : ""}
+
+STRICT SCHOLARLY RULES:
+1. CONTEXTUAL ACCURACY ON FIRST TRY: Use the full Sanskrit Shloka and Gujarati translation context above to translate each word's Gujarati meaning into its exact, classical English equivalent.
+2. 1:1 DIRECT MAPPING: Return exactly one entry for EVERY 'id' from 0 to ${itemsToSend.length - 1} in the exact same sequence.
+3. SANSKRIT WORD INTEGRITY: Never translate or alter the Sanskrit words in 'sanskritWord'.
    When 'gujaratiMeaning' contains Sanskrit sub-words broken down with '=' (e.g. "विराटः = રાજા વિરાટ , च = અને"):
    - The Sanskrit words before '=' (like "विराटः", "च") MUST REMAIN EXACTLY IN SANSKRIT (Devanagari script). NEVER translate or transliterate them into English! (DO NOT write "Virata = King Virata, and = and", IT MUST BE "विराटः = King Virata, च = and").
    - Translate ONLY the Gujarati explanation after '=':
@@ -978,11 +1027,25 @@ ${JSON.stringify(itemsToSend)}`;
   }
 
   if (field === "translation") {
-    const prompt = `You are a Vedic and Sanskrit scholar of Srimad Bhagavad Gita.
-Translate the following Bhagavad Gita verse translation from Gujarati into dignified, poetic, and devotional English.
-Preserve any HTML formatting (e.g. <b>, <i>) if present in the text.
-Sanskrit Verse: ${cleanHtml(sanskrit || "")}
+    const wordContext = (wordMeanings || [])
+      .filter((w) => w.word && w.meaning)
+      .map((w) => `${w.word} = ${cleanHtml(w.meaning)}`)
+      .join(", ");
+
+    const prompt = `You are a revered Vedic scholar of Srimad Bhagavad Gita (standard of Swami Sivananda / Eknath Easwaran).
+Translate the following Bhagavad Gita verse translation from Gujarati into dignified, poetic, devotional, and clear English.
+
+CONTEXT OF THE SHLOKA:
+${cleanSanskrit ? `Sanskrit Verse: ${cleanSanskrit}` : ""}
+${wordContext ? `Word-by-word Breakdown (शब्दार्थ): ${wordContext}` : ""}
+
+INPUT TO TRANSLATE:
 Gujarati Translation: ${translation}
+
+STRICT INSTRUCTIONS:
+- Deliver an authoritative, devotional, and authentic English translation of the holy verse on the first try.
+- Preserve any HTML formatting (e.g. <b>, <i>, <p>, <br>) exactly as provided.
+
 Return ONLY valid JSON:
 {
   "translationEn": "English translation..."
@@ -998,11 +1061,20 @@ Return ONLY valid JSON:
   }
 
   if (field === "message") {
-    const prompt = `You are a Vedic and Sanskrit scholar of Srimad Bhagavad Gita.
-Translate the following Bhagavad Gita divine message / spiritual commentary (ગીતા સંદેશ) from Gujarati into inspiring, practical English commentary.
-Preserve any HTML formatting (e.g. <ul>, <li>, <b>, <p>) if present in the text.
-Sanskrit Verse: ${cleanHtml(sanskrit || "")}
+    const prompt = `You are a revered spiritual teacher and scholar of Srimad Bhagavad Gita.
+Translate the following Bhagavad Gita divine message / spiritual commentary (ગીતા સંદેશ) from Gujarati into inspiring, practical, and profound English commentary.
+
+CONTEXT OF THE SHLOKA:
+${cleanSanskrit ? `Sanskrit Verse: ${cleanSanskrit}` : ""}
+${cleanTranslation ? `Verse Translation: ${cleanTranslation}` : ""}
+
+INPUT TO TRANSLATE:
 Gujarati Message: ${message}
+
+STRICT INSTRUCTIONS:
+- Deliver an insightful, uplifting English spiritual commentary providing practical life guidance and eternal wisdom on the first try.
+- Preserve any HTML formatting (e.g. <ul>, <li>, <b>, <i>, <p>, <br>) exactly as provided.
+
 Return ONLY valid JSON:
 {
   "messageEn": "English message commentary..."
