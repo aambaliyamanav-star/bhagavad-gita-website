@@ -1720,6 +1720,35 @@ function ShlokManagement() {
   };
 
   /* =====================================================
+     RENDER HELPERS
+  ===================================================== */
+  const renderLangTabs = () => (
+    <div className="section-lang-tabs">
+      <button
+        type="button"
+        className={`section-lang-tab ${activeLangTab === "gu" ? "active" : ""}`}
+        onClick={() => setActiveLangTab("gu")}
+      >
+        ગુજરાતી વિગત
+      </button>
+      <button
+        type="button"
+        className={`section-lang-tab ${activeLangTab === "hi" ? "active" : ""}`}
+        onClick={() => setActiveLangTab("hi")}
+      >
+        हिन्दी विवरण (Auto)
+      </button>
+      <button
+        type="button"
+        className={`section-lang-tab ${activeLangTab === "en" ? "active" : ""}`}
+        onClick={() => setActiveLangTab("en")}
+      >
+        English Details (Auto)
+      </button>
+    </div>
+  );
+
+  /* =====================================================
      RENDER
   ===================================================== */
 
@@ -1867,31 +1896,24 @@ function ShlokManagement() {
               />
             </div>
 
-            {/* LANGUAGE TABS & AI AUTO-TRANSLATE */}
-            <div className="admin-lang-tabs-bar">
-              <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-                <button
-                  type="button"
-                  className={`admin-lang-tab ${activeLangTab === "gu" ? "active" : ""}`}
-                  onClick={() => setActiveLangTab("gu")}
-                >
-                  ગુજરાતી વિગત
-                </button>
-                <button
-                  type="button"
-                  className={`admin-lang-tab ${activeLangTab === "hi" ? "active" : ""}`}
-                  onClick={() => setActiveLangTab("hi")}
-                >
-                  हिन्दी विवरण (Auto)
-                </button>
-                <button
-                  type="button"
-                  className={`admin-lang-tab ${activeLangTab === "en" ? "active" : ""}`}
-                  onClick={() => setActiveLangTab("en")}
-                >
-                  English Details (Auto)
-                </button>
-              </div>
+            {/* SPEAKER */}
+            <div className="form-group">
+              <label>
+                Speaker (વક્તા - સંસ્કૃત / ગુજરાતી)
+              </label>
+
+              <input
+                type="text"
+                name="speaker"
+                value={
+                  formData.speaker
+                }
+                onChange={
+                  handleChange
+                }
+                placeholder="Example: धृतराष्ट्र उवाच"
+                required
+              />
             </div>
 
             {/* AUTO TRANSLATE SUCCESS BANNER */}
@@ -1904,26 +1926,6 @@ function ShlokManagement() {
             {/* TAB CONTENT: GUJARATI */}
             {activeLangTab === "gu" && (
               <>
-                {/* SPEAKER */}
-                <div className="form-group">
-                  <label>
-                    Speaker (વક્તા - ગુજરાતી)
-                  </label>
-
-                  <input
-                    type="text"
-                    name="speaker"
-                    value={
-                      formData.speaker
-                    }
-                    onChange={
-                      handleChange
-                    }
-                    placeholder="Example: धृतराष्ट्र उवाच"
-                    required
-                  />
-                </div>
-
                 {/* WORD-WISE GUJARATI MEANING */}
                 <div className="word-wise-section">
                   <div className="word-wise-section-header">
@@ -1937,6 +1939,10 @@ function ShlokManagement() {
                           Word-wise Gujarati Meaning
                         </h3>
                       </div>
+                    </div>
+
+                    <div className="section-header-actions">
+                      {renderLangTabs()}
                     </div>
                   </div>
 
@@ -2093,9 +2099,15 @@ function ShlokManagement() {
 
                 {/* TRANSLATION */}
                 <div className="form-group">
-                  <label>
-                    <BookOpen className="btn-icon" size={16} /> Gujarati Translation (ગુજરાતી અનુવાદ)
-                  </label>
+                  <div className="form-group-header-with-btn">
+                    <label style={{ margin: 0 }}>
+                      <BookOpen className="btn-icon" size={16} /> Gujarati Translation (ગુજરાતી અનુવાદ)
+                    </label>
+
+                    <div className="section-header-actions">
+                      {renderLangTabs()}
+                    </div>
+                  </div>
 
                   <RichTextEditor
                     value={
@@ -2116,9 +2128,15 @@ function ShlokManagement() {
 
                 {/* MESSAGE */}
                 <div className="form-group">
-                  <label>
-                    <Sparkles className="btn-icon" size={16} /> Message / Explanation (ગુજરાતી સંદેશ)
-                  </label>
+                  <div className="form-group-header-with-btn">
+                    <label style={{ margin: 0 }}>
+                      <Sparkles className="btn-icon" size={16} /> Message / Explanation (ગુજરાતી સંદેશ)
+                    </label>
+
+                    <div className="section-header-actions">
+                      {renderLangTabs()}
+                    </div>
+                  </div>
 
                   <RichTextEditor
                     value={
@@ -2141,25 +2159,6 @@ function ShlokManagement() {
             {/* TAB CONTENT: HINDI */}
             {activeLangTab === "hi" && (
               <>
-                {/* HINDI SPEAKER */}
-                <div className="form-group">
-                  <label>
-                    Speaker (वक्ता - हिन्दी)
-                  </label>
-
-                  <input
-                    type="text"
-                    name="speakerHi"
-                    value={
-                      formData.speaker || formData.speakerHi || ""
-                    }
-                    readOnly
-                    disabled
-                    style={{ backgroundColor: "#f8fafc", cursor: "not-allowed", color: "#334155" }}
-                    placeholder="ગુજરાતી ટેબમાં સ્પીકર લખો..."
-                  />
-                </div>
-
                 {/* WORD-WISE HINDI MEANING */}
                 <div className="word-wise-section">
                   <div className="word-wise-section-header">
@@ -2175,18 +2174,21 @@ function ShlokManagement() {
                       </div>
                     </div>
 
-                    <button
-                      type="button"
-                      className="field-ai-translate-btn hi-btn"
-                      onClick={() => handleTranslateField("hi", "words")}
-                      disabled={translatingField !== null}
-                      title="માત્ર શબ્દાર્થને AI દ્વારા હિન્દીમાં અનુવાદ કરો"
-                    >
-                      <Sparkles className={`btn-icon ${translatingField === "hi-words" ? "spinning" : ""}`} size={15} />
-                      {translatingField === "hi-words"
-                        ? "શબ્દાર્થ અનુવાદ થઈ રહ્યો છે..."
-                        : "✨ શબ્દાર્થ AI અનુવાદ"}
-                    </button>
+                    <div className="section-header-actions">
+                      {renderLangTabs()}
+                      <button
+                        type="button"
+                        className="field-ai-translate-btn hi-btn"
+                        onClick={() => handleTranslateField("hi", "words")}
+                        disabled={translatingField !== null}
+                        title="માત્ર શબ્દાર્થને AI દ્વારા હિન્દીમાં અનુવાદ કરો"
+                      >
+                        <Sparkles className={`btn-icon ${translatingField === "hi-words" ? "spinning" : ""}`} size={15} />
+                        {translatingField === "hi-words"
+                          ? "શબ્દાર્થ અનુવાદ થઈ રહ્યો છે..."
+                          : "✨ શબ્દાર્થ AI અનુવાદ"}
+                      </button>
+                    </div>
                   </div>
 
                   {wordMeanings.length === 0 ? (
@@ -2274,18 +2276,21 @@ function ShlokManagement() {
                       <BookOpen className="btn-icon" size={16} /> Hindi Translation (हिन्दी अनुवाद)
                     </label>
 
-                    <button
-                      type="button"
-                      className="field-ai-translate-btn hi-btn"
-                      onClick={() => handleTranslateField("hi", "translation")}
-                      disabled={translatingField !== null}
-                      title="માત્ર શ્લોકના અનુવાદને AI દ્વારા હિન્દીમાં અનુવાદ કરો"
-                    >
-                      <Sparkles className={`btn-icon ${translatingField === "hi-translation" ? "spinning" : ""}`} size={15} />
-                      {translatingField === "hi-translation"
-                        ? "અનુવાદ થઈ રહ્યો છે..."
-                        : "✨ અનુવાદ AI અનુવાદ"}
-                    </button>
+                    <div className="section-header-actions">
+                      {renderLangTabs()}
+                      <button
+                        type="button"
+                        className="field-ai-translate-btn hi-btn"
+                        onClick={() => handleTranslateField("hi", "translation")}
+                        disabled={translatingField !== null}
+                        title="માત્ર શ્લોકના અનુવાદને AI દ્વારા હિન્દીમાં અનુવાદ કરો"
+                      >
+                        <Sparkles className={`btn-icon ${translatingField === "hi-translation" ? "spinning" : ""}`} size={15} />
+                        {translatingField === "hi-translation"
+                          ? "અનુવાદ થઈ રહ્યો છે..."
+                          : "✨ અનુવાદ AI અનુવાદ"}
+                      </button>
+                    </div>
                   </div>
 
                   <RichTextEditor
@@ -2312,18 +2317,21 @@ function ShlokManagement() {
                       <Sparkles className="btn-icon" size={16} /> Hindi Message / Explanation (हिन्दी संदेश)
                     </label>
 
-                    <button
-                      type="button"
-                      className="field-ai-translate-btn hi-btn"
-                      onClick={() => handleTranslateField("hi", "message")}
-                      disabled={translatingField !== null}
-                      title="માત્ર સંદેશ/વ્યાખ્યાને AI દ્વારા હિન્દીમાં અનુવાદ કરો"
-                    >
-                      <Sparkles className={`btn-icon ${translatingField === "hi-message" ? "spinning" : ""}`} size={15} />
-                      {translatingField === "hi-message"
-                        ? "સંદેશ અનુવાદ થઈ રહ્યો છે..."
-                        : "✨ સંદેશ AI અનુવાદ"}
-                    </button>
+                    <div className="section-header-actions">
+                      {renderLangTabs()}
+                      <button
+                        type="button"
+                        className="field-ai-translate-btn hi-btn"
+                        onClick={() => handleTranslateField("hi", "message")}
+                        disabled={translatingField !== null}
+                        title="માત્ર સંદેશ/વ્યાખ્યાને AI દ્વારા હિન્દીમાં અનુવાદ કરો"
+                      >
+                        <Sparkles className={`btn-icon ${translatingField === "hi-message" ? "spinning" : ""}`} size={15} />
+                        {translatingField === "hi-message"
+                          ? "સંદેશ અનુવાદ થઈ રહ્યો છે..."
+                          : "✨ સંદેશ AI અનુવાદ"}
+                      </button>
+                    </div>
                   </div>
 
                   <RichTextEditor
@@ -2347,25 +2355,6 @@ function ShlokManagement() {
             {/* TAB CONTENT: ENGLISH */}
             {activeLangTab === "en" && (
               <>
-                {/* ENGLISH SPEAKER */}
-                <div className="form-group">
-                  <label>
-                    Speaker (વક્તા - English)
-                  </label>
-
-                  <input
-                    type="text"
-                    name="speakerEn"
-                    value={
-                      formData.speaker || formData.speakerEn || ""
-                    }
-                    readOnly
-                    disabled
-                    style={{ backgroundColor: "#f8fafc", cursor: "not-allowed", color: "#334155" }}
-                    placeholder="ગુજરાતી ટેબમાં સ્પીકર લખો..."
-                  />
-                </div>
-
                 {/* WORD-WISE ENGLISH MEANING */}
                 <div className="word-wise-section">
                   <div className="word-wise-section-header">
@@ -2381,18 +2370,21 @@ function ShlokManagement() {
                       </div>
                     </div>
 
-                    <button
-                      type="button"
-                      className="field-ai-translate-btn en-btn"
-                      onClick={() => handleTranslateField("en", "words")}
-                      disabled={translatingField !== null}
-                      title="Translate only word meanings to English using AI"
-                    >
-                      <Sparkles className={`btn-icon ${translatingField === "en-words" ? "spinning" : ""}`} size={15} />
-                      {translatingField === "en-words"
-                        ? "શબ્દાર્થ અનુવાદ થઈ રહ્યો છે..."
-                        : "✨ શબ્દાર્થ AI અનુવાદ"}
-                    </button>
+                    <div className="section-header-actions">
+                      {renderLangTabs()}
+                      <button
+                        type="button"
+                        className="field-ai-translate-btn en-btn"
+                        onClick={() => handleTranslateField("en", "words")}
+                        disabled={translatingField !== null}
+                        title="Translate only word meanings to English using AI"
+                      >
+                        <Sparkles className={`btn-icon ${translatingField === "en-words" ? "spinning" : ""}`} size={15} />
+                        {translatingField === "en-words"
+                          ? "શબ્દાર્થ અનુવાદ થઈ રહ્યો છે..."
+                          : "✨ શબ્દાર્થ AI અનુવાદ"}
+                      </button>
+                    </div>
                   </div>
 
                   {wordMeanings.length === 0 ? (
@@ -2480,18 +2472,21 @@ function ShlokManagement() {
                       <BookOpen className="btn-icon" size={16} /> English Translation (અંગ્રેજી અનુવાદ)
                     </label>
 
-                    <button
-                      type="button"
-                      className="field-ai-translate-btn en-btn"
-                      onClick={() => handleTranslateField("en", "translation")}
-                      disabled={translatingField !== null}
-                      title="Translate only verse translation to English using AI"
-                    >
-                      <Sparkles className={`btn-icon ${translatingField === "en-translation" ? "spinning" : ""}`} size={15} />
-                      {translatingField === "en-translation"
-                        ? "અનુવાદ થઈ રહ્યો છે..."
-                        : "✨ અનુવાદ AI અનુવાદ"}
-                    </button>
+                    <div className="section-header-actions">
+                      {renderLangTabs()}
+                      <button
+                        type="button"
+                        className="field-ai-translate-btn en-btn"
+                        onClick={() => handleTranslateField("en", "translation")}
+                        disabled={translatingField !== null}
+                        title="Translate only verse translation to English using AI"
+                      >
+                        <Sparkles className={`btn-icon ${translatingField === "en-translation" ? "spinning" : ""}`} size={15} />
+                        {translatingField === "en-translation"
+                          ? "અનુવાદ થઈ રહ્યો છે..."
+                          : "✨ અનુવાદ AI અનુવાદ"}
+                      </button>
+                    </div>
                   </div>
 
                   <RichTextEditor
@@ -2518,18 +2513,21 @@ function ShlokManagement() {
                       <Sparkles className="btn-icon" size={16} /> English Divine Message / Commentary (અંગ્રેજી સંદેશ)
                     </label>
 
-                    <button
-                      type="button"
-                      className="field-ai-translate-btn en-btn"
-                      onClick={() => handleTranslateField("en", "message")}
-                      disabled={translatingField !== null}
-                      title="Translate only spiritual message to English using AI"
-                    >
-                      <Sparkles className={`btn-icon ${translatingField === "en-message" ? "spinning" : ""}`} size={15} />
-                      {translatingField === "en-message"
-                        ? "સંદેશ અનુવાદ થઈ રહ્યો છે..."
-                        : "✨ સંદેશ AI અનુવાદ"}
-                    </button>
+                    <div className="section-header-actions">
+                      {renderLangTabs()}
+                      <button
+                        type="button"
+                        className="field-ai-translate-btn en-btn"
+                        onClick={() => handleTranslateField("en", "message")}
+                        disabled={translatingField !== null}
+                        title="Translate only spiritual message to English using AI"
+                      >
+                        <Sparkles className={`btn-icon ${translatingField === "en-message" ? "spinning" : ""}`} size={15} />
+                        {translatingField === "en-message"
+                          ? "સંદેશ અનુવાદ થઈ રહ્યો છે..."
+                          : "✨ સંદેશ AI અનુવાદ"}
+                      </button>
+                    </div>
                   </div>
 
                   <RichTextEditor

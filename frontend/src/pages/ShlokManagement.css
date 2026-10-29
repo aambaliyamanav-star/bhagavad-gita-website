@@ -4517,3 +4517,97 @@ html[data-theme="dark"] .refresh-btn,
   cursor: not-allowed;
   transform: none;
 }
+
+/* =====================================================
+   SECTION HEADER ACTIONS & LANGUAGE TABS
+===================================================== */
+.section-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.section-lang-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.section-lang-tab {
+  padding: 6px 13px;
+  font-size: 12.5px;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1.5px solid #d8e5f5;
+  background: #ffffff;
+  color: #334155;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  line-height: 1.25;
+}
+
+.section-lang-tab:hover {
+  background: #f0f7ff;
+  border-color: #1976d2;
+  color: #1976d2;
+}
+
+.section-lang-tab.active {
+  background: #1976d2;
+  color: #ffffff;
+  border-color: #1976d2;
+  box-shadow: 0 2px 8px rgba(25, 118, 210, 0.25);
+}
+
+/* Dark mode overrides for section lang tabs & AI buttons */
+html[data-theme="dark"] .section-lang-tab {
+  background: #1e293b;
+  color: #cbd5e1;
+  border-color: #334155;
+}
+
+html[data-theme="dark"] .section-lang-tab:hover {
+  background: #273549;
+  border-color: #3b82f6;
+  color: #93c5fd;
+}
+
+html[data-theme="dark"] .section-lang-tab.active {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
+}
+
+html[data-theme="dark"] .field-ai-translate-btn {
+  background: #1e293b;
+  color: #cbd5e1;
+  border-color: #334155;
+}
+
+html[data-theme="dark"] .field-ai-translate-btn.hi-btn {
+  background: rgba(234, 88, 12, 0.15);
+  color: #fb923c;
+  border-color: rgba(234, 88, 12, 0.35);
+}
+
+html[data-theme="dark"] .field-ai-translate-btn.hi-btn:hover:not(:disabled) {
+  background: rgba(234, 88, 12, 0.25);
+  border-color: #fb923c;
+}
+
+html[data-theme="dark"] .field-ai-translate-btn.en-btn {
+  background: rgba(79, 70, 229, 0.15);
+  color: #a5b4fc;
+  border-color: rgba(79, 70, 229, 0.35);
+}
+
+html[data-theme="dark"] .field-ai-translate-btn.en-btn:hover:not(:disabled) {
+  background: rgba(79, 70, 229, 0.25);
+  border-color: #818cf8;
+}
