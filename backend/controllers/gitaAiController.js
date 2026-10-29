@@ -531,9 +531,9 @@ exports.askGitaAI = async (req, res) => {
     const apiKey = process.env.GEMINI_API_KEY;
     if (apiKey) {
       const modelsToTry = [
-        "gemini-flash-lite-latest",
-        "gemini-3-flash-preview",
         "gemini-3.1-flash-lite",
+        "gemini-3-flash-preview",
+        "gemini-flash-lite-latest",
         "gemini-flash-latest"
       ];
       for (const modelName of modelsToTry) {
