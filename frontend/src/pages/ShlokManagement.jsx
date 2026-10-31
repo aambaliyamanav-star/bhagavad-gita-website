@@ -488,6 +488,9 @@ function ShlokManagement() {
       message: "",
       messageHi: "",
       messageEn: "",
+      example: "",
+      exampleHi: "",
+      exampleEn: "",
     });
 
   /* =====================================================
@@ -788,6 +791,9 @@ function ShlokManagement() {
       message: "",
       messageHi: "",
       messageEn: "",
+      example: "",
+      exampleHi: "",
+      exampleEn: "",
     });
 
     setWordMeanings([]);
@@ -1121,6 +1127,11 @@ function ShlokManagement() {
         if (!formData.message?.trim() && !plainMessage) {
           throw new Error("પહેલાં ગુજરાતી સંદેશ લખો જેથી તેનું AI દ્વારા અનુવાદ થઈ શકે.");
         }
+      } else if (field === "example") {
+        const plainExample = htmlToPlainText(formData.example);
+        if (!formData.example?.trim() && !plainExample) {
+          throw new Error("પહેલાં ગુજરાતી ઉદાહરણ લખો જેથી તેનું AI દ્વારા અનુવાદ થઈ શકે.");
+        }
       }
 
       const token = getValidToken();
@@ -1147,6 +1158,7 @@ function ShlokManagement() {
           sanskrit: formData.sanskrit,
           translation: formData.translation,
           message: formData.message,
+          example: formData.example,
           wordMeanings: cleanedWords,
           targetLang: targetLang,
           field: field,
@@ -1230,6 +1242,22 @@ function ShlokManagement() {
               translated.messageEn || prev.messageEn,
           }));
           setAutoTranslateSuccess("✨ ગીતા સંદેશ / વ્યાખ્યા સફળતાપૂર્વક અંગ્રેજીમાં AI દ્વારા અનુવાદિત થઈ!");
+        }
+      } else if (field === "example") {
+        if (targetLang === "hi") {
+          setFormData((prev) => ({
+            ...prev,
+            exampleHi:
+              translated.exampleHi || prev.exampleHi,
+          }));
+          setAutoTranslateSuccess("✨ વાસ્તવિક ઉદાહરણ / દ્રષ્ટાંત સફળતાપૂર્વક હિન્દીમાં AI દ્વારા અનુવાદિત થયું!");
+        } else {
+          setFormData((prev) => ({
+            ...prev,
+            exampleEn:
+              translated.exampleEn || prev.exampleEn,
+          }));
+          setAutoTranslateSuccess("✨ વાસ્તવિક ઉદાહરણ / દ્રષ્ટાંત સફળતાપૂર્વક અંગ્રેજીમાં AI દ્વારા અનુવાદિત થયું!");
         }
       }
     } catch (err) {
@@ -1384,6 +1412,17 @@ function ShlokManagement() {
 
           messageEn:
             formData.messageEn?.trim() ||
+            "",
+
+          example:
+            formData.example,
+
+          exampleHi:
+            formData.exampleHi?.trim() ||
+            "",
+
+          exampleEn:
+            formData.exampleEn?.trim() ||
             "",
         };
 
@@ -1567,6 +1606,15 @@ function ShlokManagement() {
 
       messageEn:
         shlok.messageEn || "",
+
+      example:
+        shlok.example || "",
+
+      exampleHi:
+        shlok.exampleHi || "",
+
+      exampleEn:
+        shlok.exampleEn || "",
     });
 
     const existingWords =
@@ -2230,6 +2278,34 @@ function ShlokManagement() {
                     placeholder="શ્લોકમાંથી મળતો સંદેશ..."
                   />
                 </div>
+
+                {/* REAL-LIFE EXAMPLE / ANALOGY */}
+                <div className="form-group" id="section-example">
+                  <div className="form-group-header-with-btn">
+                    <label style={{ margin: 0 }}>
+                      <Lightbulb className="btn-icon" size={16} /> Real-Life Example / Analogy (વાસ્તવિક ઉદાહરણ / દ્રષ્ટાંત)
+                    </label>
+
+                    <div className="section-header-actions">
+                      {renderLangTabs("example")}
+                    </div>
+                  </div>
+
+                  <RichTextEditor
+                    value={
+                      formData.example
+                    }
+                    onChange={(value) =>
+                      setFormData(
+                        (current) => ({
+                          ...current,
+                          example: value,
+                        })
+                      )
+                    }
+                    placeholder="જીવનમાં ઉતારવા માટેનું સરળ વાસ્તવિક ઉદાહરણ અથવા દ્રષ્ટાંત..."
+                  />
+                </div>
               </>
             )}
 
@@ -2426,6 +2502,46 @@ function ShlokManagement() {
                     placeholder="श्लोक से मिलने वाला आध्यात्मिक संदेश..."
                   />
                 </div>
+
+                {/* HINDI REAL-LIFE EXAMPLE */}
+                <div className="form-group" id="section-example">
+                  <div className="form-group-header-with-btn">
+                    <label style={{ margin: 0 }}>
+                      <Lightbulb className="btn-icon" size={16} /> Hindi Real-Life Example (व्यावहारिक उदाहरण / दृष्टांत)
+                    </label>
+
+                    <div className="section-header-actions">
+                      {renderLangTabs("example")}
+                      <button
+                        type="button"
+                        className="field-ai-translate-btn hi-btn"
+                        onClick={() => handleTranslateField("hi", "example")}
+                        disabled={translatingField !== null}
+                        title="માત્ર ઉદાહરણને AI દ્વારા હિન્દીમાં અનુવાદ કરો"
+                      >
+                        <Sparkles className={`btn-icon ${translatingField === "hi-example" ? "spinning" : ""}`} size={15} />
+                        {translatingField === "hi-example"
+                          ? "ઉદાહરણ અનુવાદ થઈ રહ્યું છે..."
+                          : "✨ ઉદાહરણ AI અનુવાદ"}
+                      </button>
+                    </div>
+                  </div>
+
+                  <RichTextEditor
+                    value={
+                      formData.exampleHi
+                    }
+                    onChange={(value) =>
+                      setFormData(
+                        (current) => ({
+                          ...current,
+                          exampleHi: value,
+                        })
+                      )
+                    }
+                    placeholder="श्लोक का व्यावहारिक जीवन से जुड़ा उदाहरण या दृष्टांत..."
+                  />
+                </div>
               </>
             )}
 
@@ -2620,6 +2736,46 @@ function ShlokManagement() {
                       )
                     }
                     placeholder="Spiritual message and practical life commentary in English..."
+                  />
+                </div>
+
+                {/* ENGLISH REAL-LIFE EXAMPLE */}
+                <div className="form-group" id="section-example">
+                  <div className="form-group-header-with-btn">
+                    <label style={{ margin: 0 }}>
+                      <Lightbulb className="btn-icon" size={16} /> English Real-Life Example / Analogy (અંગ્રેજી ઉદાહરણ)
+                    </label>
+
+                    <div className="section-header-actions">
+                      {renderLangTabs("example")}
+                      <button
+                        type="button"
+                        className="field-ai-translate-btn en-btn"
+                        onClick={() => handleTranslateField("en", "example")}
+                        disabled={translatingField !== null}
+                        title="Translate only real-life example to English using AI"
+                      >
+                        <Sparkles className={`btn-icon ${translatingField === "en-example" ? "spinning" : ""}`} size={15} />
+                        {translatingField === "en-example"
+                          ? "ઉદાહરણ અનુવાદ થઈ રહ્યું છે..."
+                          : "✨ ઉદાહરણ AI અનુવાદ"}
+                      </button>
+                    </div>
+                  </div>
+
+                  <RichTextEditor
+                    value={
+                      formData.exampleEn
+                    }
+                    onChange={(value) =>
+                      setFormData(
+                        (current) => ({
+                          ...current,
+                          exampleEn: value,
+                        })
+                      )
+                    }
+                    placeholder="Real-life analogy, illustration, or practical example in English..."
                   />
                 </div>
               </>
@@ -2937,6 +3093,21 @@ function ShlokManagement() {
 
                           </div>
 
+                          {/* EXAMPLE */}
+                          {shlok.example && (
+                            <div className="detail-content example-detail">
+                              <h4>
+                                <Lightbulb className="btn-icon" size={16} /> વાસ્તવિક ઉદાહરણ / દ્રષ્ટાંત
+                              </h4>
+                              <div
+                                className="admin-message-text"
+                                dangerouslySetInnerHTML={{
+                                  __html: shlok.example,
+                                }}
+                              />
+                            </div>
+                          )}
+
                           {/* HINDI TRANSLATION PREVIEW */}
                           {shlok.translationHi && (
                             <div className="detail-content translation-detail" style={{ borderLeft: "3px solid #f59e0b" }}>
@@ -2964,6 +3135,70 @@ function ShlokManagement() {
                                 className="admin-message-text"
                                 dangerouslySetInnerHTML={{
                                   __html: shlok.messageHi,
+                                }}
+                              />
+                            </div>
+                          )}
+
+                          {/* HINDI EXAMPLE PREVIEW */}
+                          {shlok.exampleHi && (
+                            <div className="detail-content example-detail" style={{ borderLeft: "3px solid #f59e0b" }}>
+                              <h4>
+                                <Lightbulb className="btn-icon" size={16} /> हिन्दी उदाहरण (Hindi Example)
+                              </h4>
+
+                              <div
+                                className="admin-message-text"
+                                dangerouslySetInnerHTML={{
+                                  __html: shlok.exampleHi,
+                                }}
+                              />
+                            </div>
+                          )}
+
+                          {/* ENGLISH TRANSLATION PREVIEW */}
+                          {shlok.translationEn && (
+                            <div className="detail-content translation-detail" style={{ borderLeft: "3px solid #3b82f6" }}>
+                              <h4>
+                                <BookOpen className="btn-icon" size={16} /> English Translation
+                              </h4>
+
+                              <div
+                                className="admin-translation-text"
+                                dangerouslySetInnerHTML={{
+                                  __html: shlok.translationEn,
+                                }}
+                              />
+                            </div>
+                          )}
+
+                          {/* ENGLISH MESSAGE PREVIEW */}
+                          {shlok.messageEn && (
+                            <div className="detail-content message-detail" style={{ borderLeft: "3px solid #3b82f6" }}>
+                              <h4>
+                                <Sparkles className="btn-icon" size={16} /> English Message
+                              </h4>
+
+                              <div
+                                className="admin-message-text"
+                                dangerouslySetInnerHTML={{
+                                  __html: shlok.messageEn,
+                                }}
+                              />
+                            </div>
+                          )}
+
+                          {/* ENGLISH EXAMPLE PREVIEW */}
+                          {shlok.exampleEn && (
+                            <div className="detail-content example-detail" style={{ borderLeft: "3px solid #3b82f6" }}>
+                              <h4>
+                                <Lightbulb className="btn-icon" size={16} /> English Example / Analogy
+                              </h4>
+
+                              <div
+                                className="admin-message-text"
+                                dangerouslySetInnerHTML={{
+                                  __html: shlok.exampleEn,
                                 }}
                               />
                             </div>
