@@ -1,6 +1,6 @@
 import { getValidToken } from "../utils/authHelper.js";
 import { useEffect, useRef, useState } from "react";
-import { BookOpen, Heart, Mic, Sparkles, Lightbulb, AlertCircle, ChevronLeft, ChevronRight, Share2 } from "lucide-react";
+import { BookOpen, Heart, Mic, Sparkles, AlertCircle, ChevronLeft, ChevronRight, Share2 } from "lucide-react";
 import "./ChapterReader.css";
 import ShareShlokaModal from "../components/ShareShlokaModal.jsx";
 import SudarshanShimmerLoader from "../components/SudarshanShimmerLoader.jsx";
@@ -1645,29 +1645,6 @@ const prepareSanskritLines = () => {
 
           </div>
 
-          {/* =================================================
-              REAL-LIFE EXAMPLE / ANALOGY
-          ================================================= */}
-
-          {(localized.example || shloka.example) && (
-            <div className="content-box example-box">
-
-              <h3>
-                <Lightbulb className="btn-icon" size={18} /> {txt("વાસ્તવિક ઉદાહરણ / દ્રષ્ટાંત", "व्यावहारिक उदाहरण / दृष्टांत", "Real-Life Example / Analogy")}
-              </h3>
-
-              <div
-                className="example-text formatted-content"
-                dangerouslySetInnerHTML={{
-                  __html:
-                    localized.example ||
-                    shloka.example,
-                }}
-              />
-
-            </div>
-          )}
-
         </div>
 
         {/* NEXT SHLOK */}
@@ -1866,7 +1843,6 @@ const prepareSanskritLines = () => {
             translation: localized.translation || shloka.translation,
             speaker: localized.speaker || shloka.speaker,
             message: localized.message || shloka.message,
-            example: localized.example || shloka.example,
           }}
         />
       )}

@@ -212,36 +212,6 @@ const shlokSchema = new mongoose.Schema(
       default: "",
       trim: true,
     },
-
-    // =================================================
-    // REAL-LIFE EXAMPLE / ANALOGY (GUJARATI)
-    // =================================================
-
-    example: {
-      type: String,
-      default: "",
-      trim: true,
-    },
-
-    // =================================================
-    // REAL-LIFE EXAMPLE / ANALOGY (HINDI)
-    // =================================================
-
-    exampleHi: {
-      type: String,
-      default: "",
-      trim: true,
-    },
-
-    // =================================================
-    // REAL-LIFE EXAMPLE / ANALOGY (ENGLISH)
-    // =================================================
-
-    exampleEn: {
-      type: String,
-      default: "",
-      trim: true,
-    },
   },
 
   {

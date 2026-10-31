@@ -810,7 +810,6 @@ async function translateSingleFieldToHindi({
   sanskrit,
   translation,
   message,
-  example,
   wordMeanings = [],
 }) {
   if (field === "words") {
@@ -933,33 +932,6 @@ ${message}`;
     };
   }
 
-  if (field === "example") {
-    const prompt = `You are a professional, accurate translator.
-Translate the following practical life example / real-life analogy (ઉદાહરણ / દ્રષ્ટાંત) strictly and faithfully from Gujarati into Hindi.
-
-CRITICAL RULES:
-1. TRANSLATE ONLY THE GIVEN GUJARATI TEXT:
-   Translate strictly and faithfully what is written in the Gujarati Example below into clear Hindi (उदाहरण).
-   Do NOT add outside verses, commentaries, or extra ideas not present in the user's Gujarati source.
-2. FORMATTING: Preserve any HTML formatting (e.g. <ul>, <li>, <b>, <i>, <p>, <br>) exactly as provided.
-
-Return ONLY valid JSON:
-{
-  "exampleHi": "Hindi example..."
-}
-
-GUJARATI TEXT TO TRANSLATE:
-${example}`;
-
-    const parsed = await callGeminiJson(prompt);
-    if (!parsed || !parsed.exampleHi || !parsed.exampleHi.trim()) {
-      throw new Error("AI દ્વારા ઉદાહરણનો હિન્દી અનુવાદ પ્રાપ્ત થઈ શક્યો નથી. કૃપા કરીને થોડી વાર પછી ફરી પ્રયાસ કરો.");
-    }
-    return {
-      exampleHi: parsed.exampleHi.trim(),
-    };
-  }
-
   return {};
 }
 
@@ -971,7 +943,6 @@ async function translateSingleFieldToEnglish({
   sanskrit,
   translation,
   message,
-  example,
   wordMeanings = [],
 }) {
   if (field === "words") {
@@ -1090,33 +1061,6 @@ ${message}`;
     }
     return {
       messageEn: parsed.messageEn.trim(),
-    };
-  }
-
-  if (field === "example") {
-    const prompt = `You are a professional, accurate translator.
-Translate the following practical life example / real-life analogy (ઉદાહરણ / દ્રષ્ટાંત) strictly and faithfully from Gujarati into English.
-
-CRITICAL RULES:
-1. TRANSLATE ONLY THE GIVEN GUJARATI TEXT:
-   Translate strictly and faithfully what is written in the Gujarati Example below into clear, inspiring English.
-   Do NOT add outside verses, commentaries, or extra ideas not present in the user's Gujarati source.
-2. FORMATTING: Preserve any HTML formatting (e.g. <ul>, <li>, <b>, <i>, <p>, <br>) exactly as provided.
-
-Return ONLY valid JSON:
-{
-  "exampleEn": "English example..."
-}
-
-GUJARATI TEXT TO TRANSLATE:
-${example}`;
-
-    const parsed = await callGeminiJson(prompt);
-    if (!parsed || !parsed.exampleEn || !parsed.exampleEn.trim()) {
-      throw new Error("AI દ્વારા ઉદાહરણનો અંગ્રેજી અનુવાદ પ્રાપ્ત થઈ શક્યો નથી. કૃપા કરીને ફરી પ્રયાસ કરો.");
-    }
-    return {
-      exampleEn: parsed.exampleEn.trim(),
     };
   }
 
