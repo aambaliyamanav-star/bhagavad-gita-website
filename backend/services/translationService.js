@@ -1067,7 +1067,206 @@ ${message}`;
   return {};
 }
 
+
+/**
+ * Translates an individual field (question, options, explanation) of a Quiz into Hindi
+ */
+async function translateQuizFieldToHindi({
+  field,
+  question,
+  options = [],
+  correctAnswer,
+  explanation = "",
+  category = "all",
+  chapterNumber = null,
+}) {
+  const apiKey = process.env.GEMINI_API_KEY;
+  const cleanKey = String(apiKey || "").trim();
+
+  if (!cleanKey) {
+    if (field === "question") return { questionHi: cleanHtml(question) };
+    if (field === "options") return {
+      optionsHi: (options || []).map((o) => cleanHtml(o)),
+      correctAnswerHi: cleanHtml(correctAnswer),
+    };
+    if (field === "explanation") return { explanationHi: cleanHtml(explanation) };
+    return {};
+  }
+
+  if (field === "question") {
+    const prompt = `You are a revered Vedic and Bhagavad Gita scholar.
+Translate the following Bhagavad Gita / Mahabharata Quiz Question strictly and faithfully from Gujarati into authentic, devotional Hindi (Devanagari script).
+
+CRITICAL RULES:
+1. Translate only the given Gujarati question accurately into natural Hindi.
+2. Preserve divine Sanskrit names (e.g. શ્રીકૃષ્ણ -> श्रीकृष्ण, અર્જુન -> अर्जुन, ભીષ્મ -> भीष्म, કુરુક્ષેત્ર -> कुरुक्षेत्र).
+3. Return ONLY valid JSON:
+{
+  "questionHi": "Hindi question here..."
+}
+
+GUJARATI QUESTION TO TRANSLATE:
+${cleanHtml(question)}`;
+
+    const parsed = await callGeminiJson(prompt);
+    if (!parsed || !parsed.questionHi || !parsed.questionHi.trim()) {
+      throw new Error("AI દ્વારા પ્રશ્નનો હિન્દી અનુવાદ પ્રાપ્ત થઈ શક્યો નથી. કૃપા કરીને ફરી પ્રયાસ કરો.");
+    }
+    return { questionHi: parsed.questionHi.trim() };
+  }
+
+  if (field === "options") {
+    const prompt = `You are a revered Vedic and Bhagavad Gita scholar.
+Translate the following 4 quiz options and correct answer strictly and faithfully from Gujarati into authentic, devotional Hindi (Devanagari script).
+
+CRITICAL RULES:
+1. Translate each of the 4 options in the EXACT SAME ORDER (indexes 0 to 3).
+2. The translated correct answer MUST match the exact text of the corresponding translated option in optionsHi.
+3. Return ONLY valid JSON:
+{
+  "optionsHi": ["...", "...", "...", "..."],
+  "correctAnswerHi": "..."
+}
+
+DATA TO TRANSLATE:
+Options: ${JSON.stringify((options || []).map((o) => cleanHtml(o)))}
+Correct Answer: ${cleanHtml(correctAnswer)}`;
+
+    const parsed = await callGeminiJson(prompt);
+    if (!parsed || !Array.isArray(parsed.optionsHi) || parsed.optionsHi.length !== 4) {
+      throw new Error("AI દ્વારા વિકલ્પોનો હિન્દી અનુવાદ પ્રાપ્ત થઈ શક્યો નથી. કૃપા કરીને ફરી પ્રયાસ કરો.");
+    }
+    return {
+      optionsHi: parsed.optionsHi.map((o) => String(o || "").trim()),
+      correctAnswerHi: parsed.correctAnswerHi ? String(parsed.correctAnswerHi).trim() : "",
+    };
+  }
+
+  if (field === "explanation") {
+    const prompt = `You are a revered Vedic and Bhagavad Gita scholar.
+Translate the following quiz explanation strictly and faithfully from Gujarati into inspiring, clear Hindi (Devanagari script).
+
+CRITICAL RULES:
+1. Translate only what is written in the explanation faithfully into Hindi.
+2. Return ONLY valid JSON:
+{
+  "explanationHi": "Hindi explanation here..."
+}
+
+GUJARATI EXPLANATION TO TRANSLATE:
+${cleanHtml(explanation)}`;
+
+    const parsed = await callGeminiJson(prompt);
+    if (!parsed || !parsed.explanationHi || !parsed.explanationHi.trim()) {
+      throw new Error("AI દ્વારા સમજૂતીનો હિન્દી અનુવાદ પ્રાપ્ત થઈ શક્યો નથી. કૃપા કરીને ફરી પ્રયાસ કરો.");
+    }
+    return { explanationHi: parsed.explanationHi.trim() };
+  }
+
+  return {};
+}
+
+/**
+ * Translates an individual field (question, options, explanation) of a Quiz into English
+ */
+async function translateQuizFieldToEnglish({
+  field,
+  question,
+  options = [],
+  correctAnswer,
+  explanation = "",
+  category = "all",
+  chapterNumber = null,
+}) {
+  const apiKey = process.env.GEMINI_API_KEY;
+  const cleanKey = String(apiKey || "").trim();
+
+  if (!cleanKey) {
+    if (field === "question") return { questionEn: cleanHtml(question) };
+    if (field === "options") return {
+      optionsEn: (options || []).map((o) => cleanHtml(o)),
+      correctAnswerEn: cleanHtml(correctAnswer),
+    };
+    if (field === "explanation") return { explanationEn: cleanHtml(explanation) };
+    return {};
+  }
+
+  if (field === "question") {
+    const prompt = `You are a revered Vedic and Bhagavad Gita scholar.
+Translate the following Bhagavad Gita / Mahabharata Quiz Question strictly and faithfully from Gujarati into clear, accurate, and devotional English.
+
+CRITICAL RULES:
+1. Translate only the given Gujarati question accurately into natural English.
+2. Keep sacred scriptural names accurate (e.g. Krishna, Arjuna, Bhishma, Kurukshetra).
+3. Return ONLY valid JSON:
+{
+  "questionEn": "English question here..."
+}
+
+GUJARATI QUESTION TO TRANSLATE:
+${cleanHtml(question)}`;
+
+    const parsed = await callGeminiJson(prompt);
+    if (!parsed || !parsed.questionEn || !parsed.questionEn.trim()) {
+      throw new Error("AI દ્વારા પ્રશ્નનો અંગ્રેજી અનુવાદ પ્રાપ્ત થઈ શક્યો નથી. કૃપા કરીને ફરી પ્રયાસ કરો.");
+    }
+    return { questionEn: parsed.questionEn.trim() };
+  }
+
+  if (field === "options") {
+    const prompt = `You are a revered Vedic and Bhagavad Gita scholar.
+Translate the following 4 quiz options and correct answer strictly and faithfully from Gujarati into clear, accurate English.
+
+CRITICAL RULES:
+1. Translate each of the 4 options in the EXACT SAME ORDER (indexes 0 to 3).
+2. The translated correct answer MUST match the exact text of the corresponding translated option in optionsEn.
+3. Return ONLY valid JSON:
+{
+  "optionsEn": ["...", "...", "...", "..."],
+  "correctAnswerEn": "..."
+}
+
+DATA TO TRANSLATE:
+Options: ${JSON.stringify((options || []).map((o) => cleanHtml(o)))}
+Correct Answer: ${cleanHtml(correctAnswer)}`;
+
+    const parsed = await callGeminiJson(prompt);
+    if (!parsed || !Array.isArray(parsed.optionsEn) || parsed.optionsEn.length !== 4) {
+      throw new Error("AI દ્વારા વિકલ્પોનો અંગ્રેજી અનુવાદ પ્રાપ્ત થઈ શક્યો નથી. કૃપા કરીને ફરી પ્રયાસ કરો.");
+    }
+    return {
+      optionsEn: parsed.optionsEn.map((o) => String(o || "").trim()),
+      correctAnswerEn: parsed.correctAnswerEn ? String(parsed.correctAnswerEn).trim() : "",
+    };
+  }
+
+  if (field === "explanation") {
+    const prompt = `You are a revered Vedic and Bhagavad Gita scholar.
+Translate the following quiz explanation strictly and faithfully from Gujarati into clear, inspiring English.
+
+CRITICAL RULES:
+1. Translate only what is written in the explanation faithfully into English.
+2. Return ONLY valid JSON:
+{
+  "explanationEn": "English explanation here..."
+}
+
+GUJARATI EXPLANATION TO TRANSLATE:
+${cleanHtml(explanation)}`;
+
+    const parsed = await callGeminiJson(prompt);
+    if (!parsed || !parsed.explanationEn || !parsed.explanationEn.trim()) {
+      throw new Error("AI દ્વારા સમજૂતીનો અંગ્રેજી અનુવાદ પ્રાપ્ત થઈ શક્યો નથી. કૃપા કરીને ફરી પ્રયાસ કરો.");
+    }
+    return { explanationEn: parsed.explanationEn.trim() };
+  }
+
+  return {};
+}
+
 module.exports = {
+  translateQuizFieldToHindi,
+  translateQuizFieldToEnglish,
   translateShlokToHindi,
   translateShlokToEnglish,
   translateSingleFieldToHindi,
