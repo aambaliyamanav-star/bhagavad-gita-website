@@ -168,16 +168,15 @@ function drawRoundRect(ctx, x, y, w, h, radius, fillStyle, strokeStyle, lineWidt
 
 function cleanHtmlText(htmlString) {
   if (!htmlString) return "";
+
+  // Replace <br> and block elements with newlines first so lines are never merged together
+  const converted = String(htmlString)
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/(div|p|li|blockquote|h[1-6]|tr)>/gi, "\n")
+    .replace(/<(div|p|li|blockquote|h[1-6]|tr)[^>]*>/gi, "\n");
+
   const temp = document.createElement("div");
-  temp.innerHTML = String(htmlString);
-
-  // Replace <br> tags with newline
-  temp.querySelectorAll("br").forEach((br) => br.replaceWith("\n"));
-
-  // Add newline after block elements
-  temp.querySelectorAll("p, div, li, h1, h2, h3, h4, h5, h6").forEach((el) => {
-    el.insertAdjacentText("afterend", "\n");
-  });
+  temp.innerHTML = converted;
 
   let text = temp.textContent || temp.innerText || "";
 

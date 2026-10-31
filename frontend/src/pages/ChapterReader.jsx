@@ -238,31 +238,23 @@ useEffect(() => {
       return "";
     }
 
+    // Convert all block tags and breaks into newlines first so lines are never merged together
+    const converted = String(text)
+      .replace(/<br\s*\/?>/gi, "\n")
+      .replace(/<\/(div|p|li|blockquote|h[1-6]|tr)>/gi, "\n")
+      .replace(/<(div|p|li|blockquote|h[1-6]|tr)[^>]*>/gi, "\n");
+
     const temp =
       document.createElement("div");
 
-    temp.innerHTML = text;
-
-    temp
-      .querySelectorAll("br")
-      .forEach((br) => {
-        br.replaceWith("\n");
-      });
-
-    temp
-      .querySelectorAll("div, p, li")
-      .forEach((element) => {
-        element.insertAdjacentText(
-          "afterend",
-          "\n"
-        );
-      });
+    temp.innerHTML = converted;
 
     return (
       temp.textContent ||
       temp.innerText ||
       ""
     )
+      .replace(/&nbsp;/gi, " ")
       .replace(/\r\n/g, "\n")
       .replace(/\r/g, "\n")
       .replace(/[ \t]+/g, " ")
@@ -1264,7 +1256,7 @@ if (
 
 const prepareSanskritLines = () => {
   const plainSanskrit =
-    removeHtml(shloka.sanskrit);
+    removeHtml(shloka?.sanskrit);
 
   if (!plainSanskrit) {
     return [];
@@ -1279,8 +1271,8 @@ const prepareSanskritLines = () => {
     )
     .filter(Boolean);
 
-  // If already 2 lines, keep database structure
-  if (rawLines.length === 2) {
+  // If already 2 or more lines, faithfully preserve the database / user line structure
+  if (rawLines.length >= 2) {
     return rawLines.map((line) =>
       line
         .split(" ")
@@ -1288,25 +1280,38 @@ const prepareSanskritLines = () => {
     );
   }
 
-  // Collect all words
-  const allWords = rawLines
-    .join(" ")
-    .split(" ")
-    .filter(Boolean);
+  // If only 1 line, check if a Sanskrit single danda '।' divides the two halves
+  if (rawLines.length === 1) {
+    const single = rawLines[0];
+    const dandaMatch = single.match(/^(.*?।(?!\s*।))\s+(.+)$/);
+    if (dandaMatch && dandaMatch[1].trim() && dandaMatch[2].trim()) {
+      return [
+        dandaMatch[1].trim().split(" ").filter(Boolean),
+        dandaMatch[2].trim().split(" ").filter(Boolean),
+      ];
+    }
 
-  if (allWords.length === 0) {
-    return [];
+    // Collect all words
+    const allWords = single
+      .split(" ")
+      .filter(Boolean);
+
+    if (allWords.length === 0) {
+      return [];
+    }
+
+    // Split into exactly 2 lines
+    const middle = Math.ceil(
+      allWords.length / 2
+    );
+
+    return [
+      allWords.slice(0, middle),
+      allWords.slice(middle),
+    ];
   }
 
-  // Split into exactly 2 lines
-  const middle = Math.ceil(
-    allWords.length / 2
-  );
-
-  return [
-    allWords.slice(0, middle),
-    allWords.slice(middle),
-  ];
+  return [];
 };
 
   // =====================================================
