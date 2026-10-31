@@ -238,43 +238,27 @@ function wrapText(ctx, text, maxWidth) {
 function extractMessagePoints(htmlOrText) {
   if (!htmlOrText) return [];
 
-  const temp = document.createElement("div");
-  temp.innerHTML = String(htmlOrText);
-
-  // Check if there are multiple <p>, <li>
-  const blocks = temp.querySelectorAll("p, li");
-  const extracted = [];
-  if (blocks.length > 1) {
-    blocks.forEach((el) => {
-      const txt = cleanHtmlText(el.innerHTML);
-      if (txt && txt.length > 5 && !extracted.includes(txt)) {
-        extracted.push(txt);
-      }
-    });
-  }
-
-  if (extracted.length > 1) {
-    return extracted;
-  }
-
-  // Split by double newline or single newline
+  // Convert HTML cleanly with cleanHtmlText which converts <p>, <div>, <li>, <br> to \n
   const clean = cleanHtmlText(htmlOrText);
+  if (!clean) return [];
+
+  // 1. Split by newlines from paragraphs, lists, divs, or breaks
   const byNewlines = clean
     .split(/\n+/)
     .map((s) => s.trim())
-    .filter((s) => s.length > 5);
+    .filter((s) => s.length > 3);
 
   if (byNewlines.length > 1) {
     return byNewlines;
   }
 
-  // Look for topic breaks like "1. ", "2. ", or "Title : " following sentence end
+  // 2. Look for topic breaks like "1. ", "2. ", "•", "✦", or "Title : " following sentence end
   const byTopic = clean.split(/(?<=[.!?।॥])\s+(?=[^.:?!]{2,30}\s*:\s*)/g);
   if (byTopic.length > 1) {
-    return byTopic.map((s) => s.trim()).filter(Boolean);
+    return byTopic.map((s) => s.trim()).filter((s) => s.length > 3);
   }
 
-  return clean ? [clean] : [];
+  return [clean];
 }
 
 export default function ShareShlokaModal({
@@ -376,67 +360,7 @@ export default function ShareShlokaModal({
         }
       }
 
-      // Measure Sanskrit (Auto-adjusted to fit strictly in 2 lines)
-      const sanskritBoxW = width - 110; // 970px
-      const sanskritMaxW = sanskritBoxW - 50; // 920px
-      let sanskritFontSize = hasMessage ? 44 : 50;
-      let sanskritLineH = hasMessage ? 78 : 90;
-      let sanskritVerticalPadding = hasMessage ? 42 : 52;
-      ctx.font = `bold ${sanskritFontSize}px "Noto Sans Devanagari", "Noto Sans Gujarati", serif`;
-
-      // Auto-fit check: if any line exceeds sanskritMaxW, step down font size until it fits cleanly in 1 line
-      if (rawSanskritLines.length > 0) {
-        let maxLineW = Math.max(...rawSanskritLines.map((l) => ctx.measureText(l).width));
-        while (maxLineW > sanskritMaxW && sanskritFontSize > 28) {
-          sanskritFontSize -= 1;
-          ctx.font = `bold ${sanskritFontSize}px "Noto Sans Devanagari", "Noto Sans Gujarati", serif`;
-          maxLineW = Math.max(...rawSanskritLines.map((l) => ctx.measureText(l).width));
-        }
-        sanskritLineH = Math.round(sanskritFontSize * 1.78);
-        sanskritVerticalPadding = Math.round(sanskritFontSize * 0.95);
-      }
-
-      const wrappedSanskrit = [];
-      if (rawSanskritLines.length > 0) {
-        rawSanskritLines.forEach((line) => {
-          wrappedSanskrit.push(...wrapText(ctx, line, sanskritMaxW));
-        });
-      } else {
-        wrappedSanskrit.push(...wrapText(ctx, cleanSanskrit, sanskritMaxW));
-      }
-      const sanskritToDisplay = wrappedSanskrit.slice(0, 2);
-
-      // Measure Translation (Large, clear reading font)
-      const mainTextMaxW = width - 140; // 940px
-      const transFontSize = hasMessage ? 42 : 48;
-      const transLineH = hasMessage ? 76 : 86;
-      ctx.font = `bold ${transFontSize}px "Noto Sans Gujarati", sans-serif`;
-      const wrappedTranslation = wrapText(ctx, cleanTranslation, mainTextMaxW);
-      const maxTransLines = hasMessage ? 8 : 12;
-      const translationToDisplay = wrappedTranslation.slice(0, maxTransLines);
-
-      // Measure Message Points (Slightly larger as requested, keeping comfortable space above website link)
-      let msgFontSize = 39.5;
-      let msgLineH = 68;
-      let msgPointGap = 28;
-      const msgTitleH = 58;
-      ctx.font = `bold ${msgFontSize}px "Noto Sans Gujarati", sans-serif`;
-      let wrappedMessagePoints = [];
-      if (hasMessage) {
-        messagePoints.slice(0, 3).forEach((point) => {
-          let prefix = "✦ ";
-          if (/^\d+[.)]/.test(point) || /^•/.test(point) || /^✦/.test(point)) {
-            prefix = "";
-          }
-          const pointText = `${prefix}${point}`;
-          const lines = wrapText(ctx, pointText, mainTextMaxW).slice(0, 5);
-          if (lines.length > 0) {
-            wrappedMessagePoints.push(lines);
-          }
-        });
-      }
-
-      // 2. Pre-calculate Heights for 9:16 Aspect Ratio (1080 x 1920)
+      // 2. Pre-calculate Layout and Auto-Scale to Fit Within Card Borders
       const cardHeight = 1920;
       canvas.width = width;
       canvas.height = cardHeight;
@@ -444,75 +368,136 @@ export default function ShareShlokaModal({
       const outerMargin = 38;
       const innerMargin = 52;
 
-      // Header Block vertical coordinates (Proper breathing room from top border & between elements)
-      const headingCenterY = innerMargin + 72; // 124px (Comfortably below inner gold border at y=52)
-      const badgeH = 58;
-      const badgeCenterY = headingCenterY + 84; // 208px (Clean space between heading and badge)
-      const speakerH = cleanSpeaker ? 44 : 0;
-      const speakerCenterY = cleanSpeaker ? badgeCenterY + badgeH / 2 + 42 : badgeCenterY + badgeH / 2; // ~279px
-      const headerDividerY = cleanSpeaker ? speakerCenterY + 22 + 36 : badgeCenterY + badgeH / 2 + 38; // ~337px
+      // Header Block vertical coordinates
+      const headingCenterY = innerMargin + 66; // 118px (Comfortably below top inner border at y=52)
+      const badgeH = 54;
+      const badgeCenterY = headingCenterY + 74; // 192px
+      const speakerH = cleanSpeaker ? 40 : 0;
+      const speakerCenterY = cleanSpeaker ? badgeCenterY + badgeH / 2 + 36 : badgeCenterY + badgeH / 2;
+      const headerDividerY = cleanSpeaker ? speakerCenterY + 22 + 30 : badgeCenterY + badgeH / 2 + 32;
 
-      const totalSanskritLinesH = (sanskritToDisplay.length - 1) * sanskritLineH;
-      const sanskritBoxH = totalSanskritLinesH + sanskritVerticalPadding * 2;
-      const sanskritDividerH = 18;
-      const totalSanskritH = sanskritBoxH + sanskritDividerH;
-
-      const transTitleH = 60;
-      const transContentH = translationToDisplay.length * transLineH;
-      const totalTranslationH = transTitleH + transContentH;
-
-      let totalMessageH = 0;
-      if (wrappedMessagePoints.length > 0) {
-        let totalMsgLines = 0;
-        wrappedMessagePoints.forEach((lines) => {
-          totalMsgLines += lines.length;
-        });
-        const pointsGaps = (wrappedMessagePoints.length - 1) * msgPointGap;
-        const msgDividerH = 18;
-        totalMessageH = msgDividerH + msgTitleH + (totalMsgLines * msgLineH) + pointsGaps;
-      }
-
+      // Footer Block vertical limits (Firm boundary strictly above bottom inner border and footer branding)
       const footerDividerY = cardHeight - innerMargin - 66; // 1802px
-      // Ensure comfortable breathing space ABOVE the footer divider and website link
-      const targetContentBottom = footerDividerY - 70; // 1732px
-      const availableH = targetContentBottom - headerDividerY; // ~1395px
+      const maxContentBottom = footerDividerY - 26; // 1776px
+      const availableH = maxContentBottom - headerDividerY; // ~1460px
 
-      let totalBodyContentH = totalSanskritH + totalTranslationH + totalMessageH;
+      const sanskritBoxW = width - 110; // 970px
+      const sanskritMaxW = sanskritBoxW - 50; // 920px
+      const mainTextMaxW = width - 140; // 940px
 
-      // Safety check: if message is long, automatically step down font size to prevent ANY overflow
-      if (hasMessage && totalBodyContentH + 80 > availableH) {
-        while (totalBodyContentH + 80 > availableH && msgFontSize > 26) {
-          msgFontSize -= 1;
-          msgLineH = Math.round(msgFontSize * 1.7);
-          msgPointGap = Math.max(16, Math.round(msgPointGap * 0.9));
-          ctx.font = `bold ${msgFontSize}px "Noto Sans Gujarati", sans-serif`;
-          wrappedMessagePoints = [];
-          messagePoints.slice(0, 3).forEach((point) => {
+      // Simulation evaluator to find exact height at any scale
+      const evaluateLayout = (scale) => {
+        // Sanskrit sizing
+        let sFontSize = Math.max(28, Math.round((hasMessage ? 42 : 48) * Math.min(1.0, scale + 0.08)));
+        ctx.font = `bold ${sFontSize}px "Noto Sans Devanagari", "Noto Sans Gujarati", serif`;
+        if (rawSanskritLines.length > 0) {
+          let maxLineW = Math.max(...rawSanskritLines.map((l) => ctx.measureText(l).width));
+          while (maxLineW > sanskritMaxW && sFontSize > 24) {
+            sFontSize -= 1;
+            ctx.font = `bold ${sFontSize}px "Noto Sans Devanagari", "Noto Sans Gujarati", serif`;
+            maxLineW = Math.max(...rawSanskritLines.map((l) => ctx.measureText(l).width));
+          }
+        }
+        const sLineH = Math.round(sFontSize * 1.62);
+        const sVertPad = Math.round(sFontSize * (hasMessage ? 0.68 : 0.88));
+
+        const wrappedS = [];
+        if (rawSanskritLines.length > 0) {
+          rawSanskritLines.forEach((line) => {
+            wrappedS.push(...wrapText(ctx, line, sanskritMaxW));
+          });
+        } else {
+          wrappedS.push(...wrapText(ctx, cleanSanskrit, sanskritMaxW));
+        }
+        const sToDisplay = wrappedS.length <= 3 ? wrappedS : wrappedS.slice(0, 2);
+        const totalSLinesH = (sToDisplay.length - 1) * sLineH;
+        const sBoxH = totalSLinesH + sVertPad * 2;
+        const totalSH = sBoxH + 16;
+
+        // Translation sizing
+        const tFontSize = Math.max(20, Math.round((hasMessage ? 38 : 46) * scale));
+        const tLineH = Math.round(tFontSize * 1.65);
+        const tTitleH = Math.max(34, Math.round(52 * scale));
+        ctx.font = `bold ${tFontSize}px "Noto Sans Gujarati", sans-serif`;
+        const wrappedTrans = wrapText(ctx, cleanTranslation, mainTextMaxW);
+        const totalTransH = tTitleH + wrappedTrans.length * tLineH;
+
+        // Message sizing
+        let totalMsgH = 0;
+        let mFontSize = Math.max(18, Math.round(35 * scale));
+        let mLineH = Math.round(mFontSize * 1.60);
+        let mPointGap = Math.max(12, Math.round(22 * scale));
+        let mTitleH = Math.max(34, Math.round(48 * scale));
+        let wrappedMsgPoints = [];
+
+        if (hasMessage) {
+          ctx.font = `bold ${mFontSize}px "Noto Sans Gujarati", sans-serif`;
+          messagePoints.forEach((point) => {
             let prefix = "✦ ";
-            if (/^\d+[.)]/.test(point) || /^•/.test(point) || /^✦/.test(point)) {
+            if (/^[\d+.)•✦\-\*]/.test(point)) {
               prefix = "";
             }
             const pointText = `${prefix}${point}`;
-            const lines = wrapText(ctx, pointText, mainTextMaxW).slice(0, 5);
+            const lines = wrapText(ctx, pointText, mainTextMaxW);
             if (lines.length > 0) {
-              wrappedMessagePoints.push(lines);
+              wrappedMsgPoints.push(lines);
             }
           });
-          let totalMsgLines = 0;
-          wrappedMessagePoints.forEach((lines) => {
-            totalMsgLines += lines.length;
+
+          let totalMLines = 0;
+          wrappedMsgPoints.forEach((lines) => {
+            totalMLines += lines.length;
           });
-          const pointsGaps = (wrappedMessagePoints.length - 1) * msgPointGap;
-          totalMessageH = 18 + msgTitleH + (totalMsgLines * msgLineH) + pointsGaps;
-          totalBodyContentH = totalSanskritH + totalTranslationH + totalMessageH;
+          const pointsGaps = Math.max(0, wrappedMsgPoints.length - 1) * mPointGap;
+          totalMsgH = 16 + mTitleH + (totalMLines * mLineH) + pointsGaps;
+        }
+
+        const numGaps = hasMessage ? 3 : 2;
+        const baseGap = Math.max(16, Math.round(30 * scale));
+        const totalRequiredH = totalSH + totalTransH + (hasMessage ? totalMsgH : 0) + (numGaps * baseGap);
+
+        return {
+          scale,
+          totalRequiredH,
+          baseGap,
+          numGaps,
+          sFontSize,
+          sLineH,
+          sVertPad,
+          sBoxH,
+          sToDisplay,
+          totalSH,
+          tFontSize,
+          tLineH,
+          tTitleH,
+          wrappedTrans,
+          totalTransH,
+          mFontSize,
+          mLineH,
+          mPointGap,
+          mTitleH,
+          wrappedMsgPoints,
+          totalMsgH,
+        };
+      };
+
+      // Search for the LARGEST scale factor where all text fits with zero overflow
+      let bestLayout = null;
+      for (let s = 1.0; s >= 0.46; s -= 0.02) {
+        const layout = evaluateLayout(Number(s.toFixed(2)));
+        if (layout.totalRequiredH <= availableH || s <= 0.48) {
+          bestLayout = layout;
+          break;
         }
       }
+      if (!bestLayout) {
+        bestLayout = evaluateLayout(0.48);
+      }
 
-      const totalSlack = Math.max(0, availableH - totalBodyContentH);
-      const numGaps = hasMessage ? 3 : 2;
-
-      // Distribute slack evenly so there is comfortable space above the website link
-      const sectionGap = Math.max(28, Math.min(56, Math.floor(totalSlack / (numGaps + 1))));
+      // Distribute slack evenly so content fills the card proportionally and beautifully
+      const totalSlack = Math.max(0, availableH - bestLayout.totalRequiredH);
+      const extraPerGap = Math.floor(totalSlack / (bestLayout.numGaps + 1));
+      const sectionGap = Math.min(54, bestLayout.baseGap + extraPerGap);
 
     // 3. Render Background & Frames
     // Radial Gradient
@@ -673,61 +658,63 @@ export default function ShareShlokaModal({
       boxX,
       boxY,
       sanskritBoxW,
-      sanskritBoxH,
+      bestLayout.sBoxH,
       22,
       currentTheme.sanskritBoxBg || "rgba(255, 255, 255, 0.08)",
       currentTheme.sanskritBoxBorder || "rgba(245, 197, 66, 0.40)",
       1.8
     );
 
-    ctx.font = `bold ${sanskritFontSize}px "Noto Sans Devanagari", "Noto Sans Gujarati", serif`;
+    ctx.font = `bold ${bestLayout.sFontSize}px "Noto Sans Devanagari", "Noto Sans Gujarati", serif`;
     ctx.fillStyle = currentTheme.sanskritColor;
 
-    let sLineY = boxY + sanskritVerticalPadding;
-    sanskritToDisplay.forEach((line) => {
+    let sLineY = boxY + bestLayout.sVertPad;
+    bestLayout.sToDisplay.forEach((line) => {
       ctx.fillText(line, width / 2, sLineY);
-      sLineY += sanskritLineH;
+      sLineY += bestLayout.sLineH;
     });
 
-    currY = boxY + sanskritBoxH + 16;
+    currY = boxY + bestLayout.sBoxH + 16;
     drawDivider(currY, 500);
     currY += sectionGap;
 
-    // 6. Gujarati Translation / Meaning Section (Right below Sanskrit)
-    ctx.font = 'bold 40px "Noto Sans Gujarati", sans-serif';
+    // 6. Translation Section (Right below Sanskrit)
+    const transHeadingSize = Math.max(26, Math.round(36 * (bestLayout.tFontSize / 38)));
+    ctx.font = `bold ${transHeadingSize}px "Noto Sans Gujarati", sans-serif`;
     ctx.fillStyle = currentTheme.headerColor;
     ctx.fillText(txt("• ગુજરાતી ભાવાર્થ •", "• हिन्दी भावार्थ •", "• English Translation •"), width / 2, currY + 12);
-    currY += transTitleH;
+    currY += bestLayout.tTitleH;
 
-    ctx.font = `bold ${transFontSize}px "Noto Sans Gujarati", sans-serif`;
+    ctx.font = `bold ${bestLayout.tFontSize}px "Noto Sans Gujarati", sans-serif`;
     ctx.fillStyle = currentTheme.translationColor;
 
-    translationToDisplay.forEach((line) => {
-      ctx.fillText(line, width / 2, currY + 12);
-      currY += transLineH;
+    bestLayout.wrappedTrans.forEach((line) => {
+      ctx.fillText(line, width / 2, currY + 10);
+      currY += bestLayout.tLineH;
     });
 
-    // 7. Divine Message / Understanding (Right below Gujarati Translation)
-    if (hasMessage && wrappedMessagePoints.length > 0) {
+    // 7. Divine Message / Understanding (Right below Translation)
+    if (hasMessage && bestLayout.wrappedMsgPoints.length > 0) {
       currY += 16;
       drawDivider(currY, 480);
       currY += sectionGap;
 
-      ctx.font = 'bold 38px "Noto Sans Gujarati", sans-serif';
+      const msgHeadingSize = Math.max(26, Math.round(34 * (bestLayout.mFontSize / 35)));
+      ctx.font = `bold ${msgHeadingSize}px "Noto Sans Gujarati", sans-serif`;
       ctx.fillStyle = currentTheme.sanskritAccent;
-      ctx.fillText(txt("✨ દિવ્ય સંદેશ / જીવન બોધ ✨", "✨ दिव्य संदेश / जीवन बोध ✨", "✨ Divine Message / Life Wisdom ✨"), width / 2, currY + 12);
-      currY += msgTitleH;
+      ctx.fillText(txt("✨ દિવ્ય સંદેશ / જીવન બોધ ✨", "✨ दिव्य संदेश / जीवन बोध ✨", "✨ Divine Message / Life Wisdom ✨"), width / 2, currY + 10);
+      currY += bestLayout.mTitleH;
 
-      ctx.font = `bold ${msgFontSize}px "Noto Sans Gujarati", sans-serif`;
+      ctx.font = `bold ${bestLayout.mFontSize}px "Noto Sans Gujarati", sans-serif`;
       ctx.fillStyle = currentTheme.translationColor;
 
-      wrappedMessagePoints.forEach((lines, pIdx) => {
+      bestLayout.wrappedMsgPoints.forEach((lines, pIdx) => {
         lines.forEach((line) => {
-          ctx.fillText(line, width / 2, currY + 10);
-          currY += msgLineH;
+          ctx.fillText(line, width / 2, currY + 8);
+          currY += bestLayout.mLineH;
         });
-        if (pIdx < wrappedMessagePoints.length - 1) {
-          currY += msgPointGap;
+        if (pIdx < bestLayout.wrappedMsgPoints.length - 1) {
+          currY += bestLayout.mPointGap;
         }
       });
     }
