@@ -1021,57 +1021,6 @@
 
 
 /* =========================================================
-   REAL-LIFE EXAMPLE / ANALOGY
-   ========================================================= */
-
-.example-box {
-  margin-top: 18px;
-  margin-bottom: 0;
-  background:
-    linear-gradient(
-      145deg,
-      #ffffff,
-      #fffbeb
-    );
-  border: 1px solid rgba(245, 158, 11, 0.28);
-}
-
-.example-box h3 {
-  color: #b45309;
-}
-
-.dark .example-box,
-[data-theme="dark"] .example-box {
-  background:
-    linear-gradient(
-      145deg,
-      #1e1b12,
-      #17140b
-    );
-  border: 1px solid rgba(245, 158, 11, 0.28);
-}
-
-.dark .example-box h3,
-[data-theme="dark"] .example-box h3 {
-  color: #fcd34d;
-}
-
-.example-text {
-  font-size: 17px;
-  line-height: 1.85;
-  color: #78350f;
-  font-weight: 500;
-  text-align: left;
-  overflow-wrap: anywhere;
-}
-
-.dark .example-text,
-[data-theme="dark"] .example-text {
-  color: #fde68a;
-}
-
-
-/* =========================================================
    FORMATTED HTML CONTENT
    ========================================================= */
 
