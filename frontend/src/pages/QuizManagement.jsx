@@ -87,11 +87,26 @@ function QuizManagement() {
   // FORM
   // =====================================================
 
-  const [formData, setFormData] =
-    useState({
-      category: "all",
-      chapterNumber: "",
-      shlokaNumber: "",
+  const [formData, setFormData] = useState(() => {
+    let savedCategory = "all";
+    let savedChapter = "";
+    let savedShloka = "";
+    try {
+      savedCategory = localStorage.getItem("quiz_last_category") || "all";
+      savedChapter =
+        localStorage.getItem("quiz_last_chapterNumber") ||
+        (savedCategory.startsWith("chapter-")
+          ? savedCategory.replace("chapter-", "")
+          : "");
+      savedShloka = localStorage.getItem("quiz_last_shlokaNumber") || "";
+    } catch (e) {
+      // ignore localStorage restriction
+    }
+
+    return {
+      category: savedCategory,
+      chapterNumber: savedChapter,
+      shlokaNumber: savedShloka,
       question: "",
       option1: "",
       option2: "",
@@ -115,7 +130,8 @@ function QuizManagement() {
       option4En: "",
       correctAnswerEn: "",
       explanationEn: "",
-    });
+    };
+  });
 
   // =====================================================
   // TOKEN
@@ -196,6 +212,14 @@ function QuizManagement() {
       value,
     } = event.target;
 
+    if (name === "shlokaNumber") {
+      try {
+        localStorage.setItem("quiz_last_shlokaNumber", value);
+      } catch (e) {
+        // ignore
+      }
+    }
+
     setFormData(
       (previous) => ({
         ...previous,
@@ -212,24 +236,23 @@ function QuizManagement() {
   // =====================================================
 
   const handleCategoryChange = (event) => {
-    const category =
-      event.target.value;
+    const category = event.target.value;
+    const chapterNumber = category.startsWith("chapter-")
+      ? category.replace("chapter-", "")
+      : "";
+
+    try {
+      localStorage.setItem("quiz_last_category", category);
+      localStorage.setItem("quiz_last_chapterNumber", chapterNumber);
+    } catch (e) {
+      // ignore
+    }
 
     setFormData(
       (previous) => ({
         ...previous,
-
         category,
-
-        chapterNumber:
-          category.startsWith(
-            "chapter-"
-          )
-            ? category.replace(
-                "chapter-",
-                ""
-              )
-            : "",
+        chapterNumber,
       })
     );
 
@@ -241,38 +264,59 @@ function QuizManagement() {
   // RESET FORM
   // =====================================================
 
-  const resetForm = () => {
-    setFormData({
-      category: "all",
-      chapterNumber: "",
-      shlokaNumber: "",
-      question: "",
-      option1: "",
-      option2: "",
-      option3: "",
-      option4: "",
-      correctAnswer: "",
-      explanation: "",
-      questionHi: "",
-      option1Hi: "",
-      option2Hi: "",
-      option3Hi: "",
-      option4Hi: "",
-      correctAnswerHi: "",
-      explanationHi: "",
-      questionEn: "",
-      option1En: "",
-      option2En: "",
-      option3En: "",
-      option4En: "",
-      correctAnswerEn: "",
-      explanationEn: "",
+  const resetForm = (preserveSelection = true) => {
+    setFormData((previous) => {
+      let category = "all";
+      let chapterNumber = "";
+      let shlokaNumber = "";
+
+      if (preserveSelection) {
+        category = previous.category || "all";
+        chapterNumber = previous.chapterNumber || "";
+        shlokaNumber = previous.shlokaNumber || "";
+      } else {
+        try {
+          category = localStorage.getItem("quiz_last_category") || "all";
+          chapterNumber =
+            localStorage.getItem("quiz_last_chapterNumber") ||
+            (category.startsWith("chapter-") ? category.replace("chapter-", "") : "");
+          shlokaNumber = localStorage.getItem("quiz_last_shlokaNumber") || "";
+        } catch (e) {
+          // ignore
+        }
+      }
+
+      return {
+        category,
+        chapterNumber,
+        shlokaNumber,
+        question: "",
+        option1: "",
+        option2: "",
+        option3: "",
+        option4: "",
+        correctAnswer: "",
+        explanation: "",
+        questionHi: "",
+        option1Hi: "",
+        option2Hi: "",
+        option3Hi: "",
+        option4Hi: "",
+        correctAnswerHi: "",
+        explanationHi: "",
+        questionEn: "",
+        option1En: "",
+        option2En: "",
+        option3En: "",
+        option4En: "",
+        correctAnswerEn: "",
+        explanationEn: "",
+      };
     });
 
     setEditingId(null);
     setActiveLangTab("gu");
     setError("");
-    setSuccess("");
     setAutoTranslateSuccess("");
   };
 
@@ -1106,7 +1150,7 @@ function QuizManagement() {
           "Question successfully save થયો."
       );
 
-      resetForm();
+      resetForm(true);
 
       await loadQuestions();
 
