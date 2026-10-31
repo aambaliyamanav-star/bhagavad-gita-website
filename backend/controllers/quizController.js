@@ -6,6 +6,8 @@ const QuizUserProgress = require("../models/QuizUserProgress");
 const {
   translateQuizToHindi,
   translateQuizToEnglish,
+  translateQuizFieldToHindi,
+  translateQuizFieldToEnglish,
 } = require("../services/translationService");
 
 // =====================================================
@@ -1807,7 +1809,58 @@ const autoTranslateQuizQuestion = async (req, res) => {
       category,
       chapterNumber,
       targetLang,
+      field, // "question" | "options" | "explanation" | "all"
     } = req.body;
+
+    // SINGLE FIELD TRANSLATION
+    if (field && field !== "all") {
+      if (field === "question" && (!question || !String(question).trim())) {
+        return res.status(400).json({
+          success: false,
+          message: "પહેલાં ગુજરાતી પ્રશ્ન (Question) લખો.",
+        });
+      }
+
+      if (field === "options") {
+        if (!Array.isArray(options) || options.length !== 4 || options.some(o => !String(o || "").trim())) {
+          return res.status(400).json({
+            success: false,
+            message: "પહેલાં ચારેય ગુજરાતી વિકલ્પો (Options 1 થી 4) ભરો.",
+          });
+        }
+      }
+
+      if (field === "explanation" && (!explanation || !String(explanation).trim())) {
+        return res.status(400).json({
+          success: false,
+          message: "પહેલાં ગુજરાતી સમજૂતી (Explanation) લખો.",
+        });
+      }
+
+      if (targetLang === "en") {
+        const translated = await translateQuizFieldToEnglish({
+          field,
+          question,
+          options,
+          correctAnswer,
+          explanation,
+          category,
+          chapterNumber,
+        });
+        return res.status(200).json({ success: true, data: translated, translated });
+      }
+
+      const translated = await translateQuizFieldToHindi({
+        field,
+        question,
+        options,
+        correctAnswer,
+        explanation,
+        category,
+        chapterNumber,
+      });
+      return res.status(200).json({ success: true, data: translated, translated });
+    }
 
     if (!question || !String(question).trim()) {
       return res.status(400).json({

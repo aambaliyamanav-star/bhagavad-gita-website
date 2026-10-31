@@ -1,5 +1,5 @@
 import { getValidToken } from "../utils/authHelper.js";
-import { useEffect, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   BrainCircuit,
@@ -21,6 +21,7 @@ import {
   ChevronUp,
   HelpCircle,
   FileQuestion,
+  List,
   Sparkles
 } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext.jsx";
@@ -61,6 +62,7 @@ function QuizManagement() {
   const [activeLangTab, setActiveLangTab] = useState("gu");
   const [translating, setTranslating] = useState(false);
   const [translatingLang, setTranslatingLang] = useState(null);
+  const [translatingField, setTranslatingField] = useState(null);
   const [autoTranslateSuccess, setAutoTranslateSuccess] = useState("");
   const [deletingAll, setDeletingAll] = useState(false);
 
@@ -393,6 +395,229 @@ function QuizManagement() {
   // =====================================================
   // AI AUTO-TRANSLATE (GUJARATI -> HINDI & ENGLISH)
   // =====================================================
+
+  
+  // =====================================================
+  // SCROLL PRESERVATION & SECTION LANGUAGE SWITCHER
+  // =====================================================
+  const targetScrollInfoRef = useRef(null);
+
+  const handleLangTabSwitch = (newLang, sectionKey, event) => {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    if (activeLangTab === newLang) return;
+
+    const savedScrollY =
+      window.scrollY ||
+      window.pageYOffset ||
+      document.documentElement.scrollTop ||
+      0;
+    let sectionOffsetFromViewport = null;
+
+    if (sectionKey) {
+      const sectionEl = document.getElementById(`section-${sectionKey}`);
+      if (sectionEl) {
+        sectionOffsetFromViewport = sectionEl.getBoundingClientRect().top;
+      }
+    }
+
+    targetScrollInfoRef.current = {
+      sectionKey,
+      sectionOffsetFromViewport,
+      savedScrollY,
+    };
+
+    setActiveLangTab(newLang);
+  };
+
+  useLayoutEffect(() => {
+    if (!targetScrollInfoRef.current) return;
+    const { sectionKey, sectionOffsetFromViewport, savedScrollY } =
+      targetScrollInfoRef.current;
+
+    const restoreScroll = () => {
+      if (sectionKey && sectionOffsetFromViewport !== null) {
+        const newSectionEl = document.getElementById(`section-${sectionKey}`);
+        if (newSectionEl) {
+          const currentTop = newSectionEl.getBoundingClientRect().top;
+          const delta = currentTop - sectionOffsetFromViewport;
+          if (Math.abs(delta) > 0.5) {
+            window.scrollBy({ top: delta, behavior: "instant" });
+          }
+          return;
+        }
+      }
+      if (savedScrollY !== null && savedScrollY !== undefined) {
+        window.scrollTo({ top: savedScrollY, behavior: "instant" });
+      }
+    };
+
+    restoreScroll();
+    const rafId = requestAnimationFrame(restoreScroll);
+    const t1 = setTimeout(restoreScroll, 25);
+    const t2 = setTimeout(restoreScroll, 75);
+    const t3 = setTimeout(restoreScroll, 150);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+    };
+  }, [activeLangTab]);
+
+  const renderLangTabs = (sectionKey = "quiz-question") => (
+    <div className="section-lang-tabs">
+      <button
+        type="button"
+        className={`section-lang-tab ${activeLangTab === "gu" ? "active" : ""}`}
+        onClick={(e) => handleLangTabSwitch("gu", sectionKey, e)}
+      >
+        ગુજરાતી વિગત
+      </button>
+      <button
+        type="button"
+        className={`section-lang-tab ${activeLangTab === "hi" ? "active" : ""}`}
+        onClick={(e) => handleLangTabSwitch("hi", sectionKey, e)}
+      >
+        હિન્દી વિગત
+      </button>
+      <button
+        type="button"
+        className={`section-lang-tab ${activeLangTab === "en" ? "active" : ""}`}
+        onClick={(e) => handleLangTabSwitch("en", sectionKey, e)}
+      >
+        અંગ્રેજી વિગત
+      </button>
+    </div>
+  );
+
+  // =====================================================
+  // FIELD SPECIFIC AI TRANSLATION (Question / Options / Explanation)
+  // =====================================================
+  const handleTranslateField = async (targetLang = "hi", field = "question") => {
+    try {
+      setTranslatingField(`${targetLang}-${field}`);
+      setError("");
+      setAutoTranslateSuccess("");
+
+      if (field === "question") {
+        if (!formData.question || !formData.question.trim()) {
+          throw new Error("કૃપા કરીને પહેલાં ગુજરાતી પ્રશ્ન (Question) લખો જેથી AI તેનું અનુવાદ કરી શકે.");
+        }
+      } else if (field === "options") {
+        const rawOptions = [
+          formData.option1,
+          formData.option2,
+          formData.option3,
+          formData.option4,
+        ].map((o) => (o || "").trim());
+
+        if (rawOptions.some((o) => !o)) {
+          throw new Error("કૃપા કરીને પહેલાં ચારેય ગુજરાતી વિકલ્પો (Options 1 થી 4) ભરો જેથી AI તેનું અનુવાદ કરી શકે.");
+        }
+      } else if (field === "explanation") {
+        if (!formData.explanation || !formData.explanation.trim()) {
+          throw new Error("કૃપા કરીને પહેલાં ગુજરાતી સમજૂતી (Explanation) લખો જેથી AI તેનું અનુવાદ કરી શકે.");
+        }
+      }
+
+      const token = getToken();
+      const rawOptions = [
+        formData.option1,
+        formData.option2,
+        formData.option3,
+        formData.option4,
+      ].map((o) => (o || "").trim());
+
+      const response = await fetch(`${API_URL}/admin/auto-translate`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          category: formData.category,
+          chapterNumber: formData.chapterNumber,
+          question: formData.question,
+          options: rawOptions,
+          correctAnswer: formData.correctAnswer,
+          explanation: formData.explanation,
+          targetLang: targetLang,
+          field: field,
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "ઓટો-અનુવાદ થઈ શક્યો નથી.");
+      }
+
+      const translated = data?.data || data?.translated;
+      if (!translated) {
+        throw new Error("ઓટો-અનુવાદ માહિતી પ્રાપ્ત થઈ શકી નથી.");
+      }
+
+      if (field === "question") {
+        if (targetLang === "hi") {
+          setFormData((prev) => ({
+            ...prev,
+            questionHi: translated.questionHi || prev.questionHi,
+          }));
+          setAutoTranslateSuccess("✨ પ્રશ્ન સફળતાપૂર્વક હિન્દીમાં AI દ્વારા અનુવાદિત થયો!");
+        } else {
+          setFormData((prev) => ({
+            ...prev,
+            questionEn: translated.questionEn || prev.questionEn,
+          }));
+          setAutoTranslateSuccess("✨ પ્રશ્ન સફળતાપૂર્વક અંગ્રેજીમાં AI દ્વારા અનુવાદિત થયો!");
+        }
+      } else if (field === "options") {
+        if (targetLang === "hi") {
+          setFormData((prev) => ({
+            ...prev,
+            option1Hi: translated.optionsHi?.[0] || prev.option1Hi,
+            option2Hi: translated.optionsHi?.[1] || prev.option2Hi,
+            option3Hi: translated.optionsHi?.[2] || prev.option3Hi,
+            option4Hi: translated.optionsHi?.[3] || prev.option4Hi,
+            correctAnswerHi: translated.correctAnswerHi || prev.correctAnswerHi,
+          }));
+          setAutoTranslateSuccess("✨ વિકલ્પો અને સાચો જવાબ સફળતાપૂર્વક હિન્દીમાં AI દ્વારા અનુવાદિત થયા!");
+        } else {
+          setFormData((prev) => ({
+            ...prev,
+            option1En: translated.optionsEn?.[0] || prev.option1En,
+            option2En: translated.optionsEn?.[1] || prev.option2En,
+            option3En: translated.optionsEn?.[2] || prev.option3En,
+            option4En: translated.optionsEn?.[3] || prev.option4En,
+            correctAnswerEn: translated.correctAnswerEn || prev.correctAnswerEn,
+          }));
+          setAutoTranslateSuccess("✨ વિકલ્પો અને સાચો જવાબ સફળતાપૂર્વક અંગ્રેજીમાં AI દ્વારા અનુવાદિત થયા!");
+        }
+      } else if (field === "explanation") {
+        if (targetLang === "hi") {
+          setFormData((prev) => ({
+            ...prev,
+            explanationHi: translated.explanationHi || prev.explanationHi,
+          }));
+          setAutoTranslateSuccess("✨ સમજૂતી સફળતાપૂર્વક હિન્દીમાં AI દ્વારા અનુવાદિત થઈ!");
+        } else {
+          setFormData((prev) => ({
+            ...prev,
+            explanationEn: translated.explanationEn || prev.explanationEn,
+          }));
+          setAutoTranslateSuccess("✨ સમજૂતી સફળતાપૂર્વક અંગ્રેજીમાં AI દ્વારા અનુવાદિત થઈ!");
+        }
+      }
+    } catch (err) {
+      console.error("Field translate error:", err);
+      setError(err.message || "ઓટો-અનુવાદ કરવામાં error આવ્યો.");
+    } finally {
+      setTranslatingField(null);
+    }
+  };
 
   const handleAutoTranslate = async (targetLang = "hi") => {
     try {
@@ -1502,73 +1727,20 @@ function QuizManagement() {
           )}
 
           {/* =================================================
-              LANGUAGE TABS & AI AUTO-TRANSLATE (SINGLE LINE: TABS LEFT, AI RIGHT)
+              CONTENT SECTIONS (QUESTION / OPTIONS / EXPLANATION WITH SEPARATE TABS)
           ================================================= */}
-          <div className="admin-lang-tabs-bar" style={{ marginBottom: "20px" }}>
-            <div className="admin-lang-tabs-left">
-              <button
-                type="button"
-                className={`admin-lang-tab ${activeLangTab === "gu" ? "active" : ""}`}
-                onClick={() => setActiveLangTab("gu")}
-              >
-                ગુજરાતી વિગત
-              </button>
-              <button
-                type="button"
-                className={`admin-lang-tab ${activeLangTab === "hi" ? "active" : ""}`}
-                onClick={() => setActiveLangTab("hi")}
-              >
-                હિન્દી વિગત
-              </button>
-              <button
-                type="button"
-                className={`admin-lang-tab ${activeLangTab === "en" ? "active" : ""}`}
-                onClick={() => setActiveLangTab("en")}
-              >
-                અંગ્રેજી વિગત
-              </button>
-            </div>
-
-            <div className="auto-translate-btns-group">
-              {/* 1. HINDI AUTO-TRANSLATE */}
-              <button
-                type="button"
-                className="auto-translate-ai-btn hi-btn"
-                onClick={() => handleAutoTranslate("hi")}
-                disabled={translating}
-                title="ગુજરાતી પ્રશ્ન અને વિકલ્પો પરથી AI દ્વારા આપોઆપ હિન્દી અનુવાદ કરો"
-              >
-                <Sparkles className={`btn-icon ${translatingLang === "hi" ? "spinning" : ""}`} size={14} />
-                {translatingLang === "hi"
-                  ? txt("AI હિન્દી અનુવાદ...", "AI अनुवाद...", "Translating...")
-                  : txt("✨ AI હિન્દી ઓટો-અનુવાદ", "✨ AI हिन्दी ऑटो-अनुवाद", "✨ AI Hindi Auto-Translate")}
-              </button>
-
-              {/* 2. ENGLISH AUTO-TRANSLATE */}
-              <button
-                type="button"
-                className="auto-translate-ai-btn en-btn"
-                onClick={() => handleAutoTranslate("en")}
-                disabled={translating}
-                title="ગુજરાતી પ્રશ્ન અને વિકલ્પો પરથી AI દ્વારા આપોઆપ અંગ્રેજી અનુવાદ કરો"
-              >
-                <Sparkles className={`btn-icon ${translatingLang === "en" ? "spinning" : ""}`} size={14} />
-                {translatingLang === "en"
-                  ? txt("AI અંગ્રેજી અનુવાદ...", "AI अनुवाद...", "Translating...")
-                  : txt("✨ AI અંગ્રેજી ઓટો-અનુવાદ", "✨ AI अंग्रेज़ी ऑटो-अनुवाद", "✨ AI English Auto-Translate")}
-              </button>
-            </div>
-          </div>
-
           {activeLangTab === "gu" && (
             <>
-              {/* =================================================
-                  GUJARATI QUESTION
-              ================================================= */}
-              <div className="quiz-form-group">
-                <label>
-                  Question (ગુજરાતી પ્રશ્ન) <span style={{ color: "#e11d48" }}>*</span>
-                </label>
+              {/* GUJARATI QUESTION */}
+              <div className="quiz-form-group" id="section-quiz-question">
+                <div className="form-group-header-with-btn">
+                  <label style={{ margin: 0 }}>
+                    <HelpCircle className="btn-icon" size={16} /> Question (ગુજરાતી પ્રશ્ન) <span style={{ color: "#e11d48" }}>*</span>
+                  </label>
+                  <div className="section-header-actions">
+                    {renderLangTabs("quiz-question")}
+                  </div>
+                </div>
                 <textarea
                   name="question"
                   value={formData.question}
@@ -1579,98 +1751,107 @@ function QuizManagement() {
                 />
               </div>
 
-              {/* GUJARATI OPTION 1 */}
-              <div className="quiz-form-group">
-                <label>
-                  Option 1 (ગુજરાતી) <span style={{ color: "#e11d48" }}>*</span>
-                </label>
-                <input
-                  type="text"
-                  name="option1"
-                  value={formData.option1}
-                  onChange={handleChange}
-                  placeholder="Option 1"
-                  required
-                />
-              </div>
+              {/* GUJARATI OPTIONS & CORRECT ANSWER */}
+              <div className="quiz-options-section-box" id="section-quiz-options">
+                <div className="form-group-header-with-btn" style={{ marginBottom: "14px" }}>
+                  <label style={{ margin: 0 }}>
+                    <List className="btn-icon" size={16} /> Options & Correct Answer (ગુજરાતી વિકલ્પો અને સાચો જવાબ) <span style={{ color: "#e11d48" }}>*</span>
+                  </label>
+                  <div className="section-header-actions">
+                    {renderLangTabs("quiz-options")}
+                  </div>
+                </div>
 
-              {/* GUJARATI OPTION 2 */}
-              <div className="quiz-form-group">
-                <label>
-                  Option 2 (ગુજરાતી) <span style={{ color: "#e11d48" }}>*</span>
-                </label>
-                <input
-                  type="text"
-                  name="option2"
-                  value={formData.option2}
-                  onChange={handleChange}
-                  placeholder="Option 2"
-                  required
-                />
-              </div>
+                <div className="quiz-options-grid-container">
+                  {/* OPTION 1 */}
+                  <div className="quiz-form-group">
+                    <label>Option 1 (ગુજરાતી) <span style={{ color: "#e11d48" }}>*</span></label>
+                    <input
+                      type="text"
+                      name="option1"
+                      value={formData.option1}
+                      onChange={handleChange}
+                      placeholder="Option 1"
+                      required
+                    />
+                  </div>
 
-              {/* GUJARATI OPTION 3 */}
-              <div className="quiz-form-group">
-                <label>
-                  Option 3 (ગુજરાતી) <span style={{ color: "#e11d48" }}>*</span>
-                </label>
-                <input
-                  type="text"
-                  name="option3"
-                  value={formData.option3}
-                  onChange={handleChange}
-                  placeholder="Option 3"
-                  required
-                />
-              </div>
+                  {/* OPTION 2 */}
+                  <div className="quiz-form-group">
+                    <label>Option 2 (ગુજરાતી) <span style={{ color: "#e11d48" }}>*</span></label>
+                    <input
+                      type="text"
+                      name="option2"
+                      value={formData.option2}
+                      onChange={handleChange}
+                      placeholder="Option 2"
+                      required
+                    />
+                  </div>
 
-              {/* GUJARATI OPTION 4 */}
-              <div className="quiz-form-group">
-                <label>
-                  Option 4 (ગુજરાતી) <span style={{ color: "#e11d48" }}>*</span>
-                </label>
-                <input
-                  type="text"
-                  name="option4"
-                  value={formData.option4}
-                  onChange={handleChange}
-                  placeholder="Option 4"
-                  required
-                />
-              </div>
+                  {/* OPTION 3 */}
+                  <div className="quiz-form-group">
+                    <label>Option 3 (ગુજરાતી) <span style={{ color: "#e11d48" }}>*</span></label>
+                    <input
+                      type="text"
+                      name="option3"
+                      value={formData.option3}
+                      onChange={handleChange}
+                      placeholder="Option 3"
+                      required
+                    />
+                  </div>
 
-              {/* GUJARATI CORRECT ANSWER */}
-              <div className="quiz-form-group">
-                <label>
-                  Correct Answer (સાચો જવાબ) <span style={{ color: "#e11d48" }}>*</span>
-                </label>
-                <select
-                  name="correctAnswer"
-                  value={formData.correctAnswer}
-                  onChange={handleChange}
-                  required
-                >
-                  <option value="">-- Correct Answer પસંદ કરો --</option>
-                  {[
-                    formData.option1,
-                    formData.option2,
-                    formData.option3,
-                    formData.option4,
-                  ]
-                    .filter((option) => option && option.trim())
-                    .map((option, index) => (
-                      <option key={index} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                </select>
+                  {/* OPTION 4 */}
+                  <div className="quiz-form-group">
+                    <label>Option 4 (ગુજરાતી) <span style={{ color: "#e11d48" }}>*</span></label>
+                    <input
+                      type="text"
+                      name="option4"
+                      value={formData.option4}
+                      onChange={handleChange}
+                      placeholder="Option 4"
+                      required
+                    />
+                  </div>
+                </div>
+
+                {/* CORRECT ANSWER */}
+                <div className="quiz-form-group" style={{ marginBottom: 0 }}>
+                  <label>Correct Answer (સાચો જવાબ) <span style={{ color: "#e11d48" }}>*</span></label>
+                  <select
+                    name="correctAnswer"
+                    value={formData.correctAnswer}
+                    onChange={handleChange}
+                    required
+                  >
+                    <option value="">-- Correct Answer પસંદ કરો --</option>
+                    {[
+                      formData.option1,
+                      formData.option2,
+                      formData.option3,
+                      formData.option4,
+                    ]
+                      .filter((option) => option && option.trim())
+                      .map((option, index) => (
+                        <option key={index} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                  </select>
+                </div>
               </div>
 
               {/* GUJARATI EXPLANATION */}
-              <div className="quiz-form-group">
-                <label>
-                  Explanation (સમજણ) <span> (Optional)</span>
-                </label>
+              <div className="quiz-form-group" id="section-quiz-explanation">
+                <div className="form-group-header-with-btn">
+                  <label style={{ margin: 0 }}>
+                    <BookOpen className="btn-icon" size={16} /> Explanation (સમજણ / વ્યાખ્યા) <span>(Optional)</span>
+                  </label>
+                  <div className="section-header-actions">
+                    {renderLangTabs("quiz-explanation")}
+                  </div>
+                </div>
                 <textarea
                   name="explanation"
                   value={formData.explanation}
@@ -1684,101 +1865,147 @@ function QuizManagement() {
 
           {activeLangTab === "hi" && (
             <>
-              {/* =================================================
-                  HINDI QUESTION (AUTO-TRANSLATED / EDITABLE)
-              ================================================= */}
-              <div className="quiz-form-group">
-                <label>
-                  Question (हिन्दी प्रश्न) - <i>AI દ્વારા આપોઆપ ભરાશે અથવા તમે જાતે પણ લખી શકો છો</i>
-                </label>
+              {/* HINDI QUESTION */}
+              <div className="quiz-form-group" id="section-quiz-question">
+                <div className="form-group-header-with-btn">
+                  <label style={{ margin: 0 }}>
+                    <HelpCircle className="btn-icon" size={16} /> Question (हिन्दी प्रश्न)
+                  </label>
+                  <div className="section-header-actions">
+                    {renderLangTabs("quiz-question")}
+                    <button
+                      type="button"
+                      className="field-ai-translate-btn hi-btn"
+                      onClick={() => handleTranslateField("hi", "question")}
+                      disabled={translatingField !== null}
+                      title="માત્ર પ્રશ્નને AI દ્વારા હિન્દીમાં અનુવાદ કરો"
+                    >
+                      <Sparkles className={`btn-icon ${translatingField === "hi-question" ? "spinning" : ""}`} size={14} />
+                      {translatingField === "hi-question" ? "અનુવાદ થઈ રહ્યો છે..." : "✨ પ્રશ્ન AI અનુવાદ"}
+                    </button>
+                  </div>
+                </div>
                 <textarea
                   name="questionHi"
                   value={formData.questionHi}
                   onChange={handleChange}
-                  placeholder="हिन्दी में प्रश्न લખો અથવા ઉપર '✨ AI હિન્દી ઓટો-અનુવાદ' બટન દબાવો..."
+                  placeholder="हिन्दी में प्रश्न લખો અથવા ઉપર '✨ પ્રશ્ન AI અનુવાદ' બટન દબાવો..."
                   rows="4"
                 />
               </div>
 
-              {/* HINDI OPTION 1 */}
-              <div className="quiz-form-group">
-                <label>Option 1 (हिन्दी)</label>
-                <input
-                  type="text"
-                  name="option1Hi"
-                  value={formData.option1Hi}
-                  onChange={handleChange}
-                  placeholder="हिन्दी Option 1"
-                />
-              </div>
+              {/* HINDI OPTIONS & CORRECT ANSWER */}
+              <div className="quiz-options-section-box" id="section-quiz-options">
+                <div className="form-group-header-with-btn" style={{ marginBottom: "14px" }}>
+                  <label style={{ margin: 0 }}>
+                    <List className="btn-icon" size={16} /> Options & Correct Answer (हिन्दी विकल्प और सही उत्तर)
+                  </label>
+                  <div className="section-header-actions">
+                    {renderLangTabs("quiz-options")}
+                    <button
+                      type="button"
+                      className="field-ai-translate-btn hi-btn"
+                      onClick={() => handleTranslateField("hi", "options")}
+                      disabled={translatingField !== null}
+                      title="માત્ર વિકલ્પો અને સાચા જવાબને AI દ્વારા હિન્દીમાં અનુવાદ કરો"
+                    >
+                      <Sparkles className={`btn-icon ${translatingField === "hi-options" ? "spinning" : ""}`} size={14} />
+                      {translatingField === "hi-options" ? "અનુવાદ થઈ રહ્યો છે..." : "✨ વિકલ્પો AI અનુવાદ"}
+                    </button>
+                  </div>
+                </div>
 
-              {/* HINDI OPTION 2 */}
-              <div className="quiz-form-group">
-                <label>Option 2 (हिन्दी)</label>
-                <input
-                  type="text"
-                  name="option2Hi"
-                  value={formData.option2Hi}
-                  onChange={handleChange}
-                  placeholder="हिन्दी Option 2"
-                />
-              </div>
+                <div className="quiz-options-grid-container">
+                  <div className="quiz-form-group">
+                    <label>Option 1 (हिन्दी)</label>
+                    <input
+                      type="text"
+                      name="option1Hi"
+                      value={formData.option1Hi}
+                      onChange={handleChange}
+                      placeholder="हिन्दी Option 1"
+                    />
+                  </div>
 
-              {/* HINDI OPTION 3 */}
-              <div className="quiz-form-group">
-                <label>Option 3 (हिन्दी)</label>
-                <input
-                  type="text"
-                  name="option3Hi"
-                  value={formData.option3Hi}
-                  onChange={handleChange}
-                  placeholder="हिन्दी Option 3"
-                />
-              </div>
+                  <div className="quiz-form-group">
+                    <label>Option 2 (हिन्दी)</label>
+                    <input
+                      type="text"
+                      name="option2Hi"
+                      value={formData.option2Hi}
+                      onChange={handleChange}
+                      placeholder="हिन्दी Option 2"
+                    />
+                  </div>
 
-              {/* HINDI OPTION 4 */}
-              <div className="quiz-form-group">
-                <label>Option 4 (हिन्दी)</label>
-                <input
-                  type="text"
-                  name="option4Hi"
-                  value={formData.option4Hi}
-                  onChange={handleChange}
-                  placeholder="हिन्दी Option 4"
-                />
-              </div>
+                  <div className="quiz-form-group">
+                    <label>Option 3 (हिन्दी)</label>
+                    <input
+                      type="text"
+                      name="option3Hi"
+                      value={formData.option3Hi}
+                      onChange={handleChange}
+                      placeholder="हिन्दी Option 3"
+                    />
+                  </div>
 
-              {/* HINDI CORRECT ANSWER */}
-              <div className="quiz-form-group">
-                <label>
-                  Correct Answer (हिन्दी सही उत्तर)
-                </label>
-                <select
-                  name="correctAnswerHi"
-                  value={formData.correctAnswerHi}
-                  onChange={handleChange}
-                >
-                  <option value="">-- हिन्दी Correct Answer પસંદ કરો --</option>
-                  {[
-                    formData.option1Hi,
-                    formData.option2Hi,
-                    formData.option3Hi,
-                    formData.option4Hi,
-                  ]
-                    .filter((option) => option && option.trim())
-                    .map((option, index) => (
-                      <option key={index} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                </select>
+                  <div className="quiz-form-group">
+                    <label>Option 4 (हिन्दी)</label>
+                    <input
+                      type="text"
+                      name="option4Hi"
+                      value={formData.option4Hi}
+                      onChange={handleChange}
+                      placeholder="हिन्दी Option 4"
+                    />
+                  </div>
+                </div>
+
+                {/* HINDI CORRECT ANSWER */}
+                <div className="quiz-form-group" style={{ marginBottom: 0 }}>
+                  <label>Correct Answer (हिन्दी सही उत्तर)</label>
+                  <select
+                    name="correctAnswerHi"
+                    value={formData.correctAnswerHi}
+                    onChange={handleChange}
+                  >
+                    <option value="">-- हिन्दी Correct Answer પસંદ કરો --</option>
+                    {[
+                      formData.option1Hi,
+                      formData.option2Hi,
+                      formData.option3Hi,
+                      formData.option4Hi,
+                    ]
+                      .filter((option) => option && option.trim())
+                      .map((option, index) => (
+                        <option key={index} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                  </select>
+                </div>
               </div>
 
               {/* HINDI EXPLANATION */}
-              <div className="quiz-form-group">
-                <label>
-                  Explanation (हिन्दी व्याख्या) <span> (Optional)</span>
-                </label>
+              <div className="quiz-form-group" id="section-quiz-explanation">
+                <div className="form-group-header-with-btn">
+                  <label style={{ margin: 0 }}>
+                    <BookOpen className="btn-icon" size={16} /> Explanation (हिन्दी व्याख्या) <span>(Optional)</span>
+                  </label>
+                  <div className="section-header-actions">
+                    {renderLangTabs("quiz-explanation")}
+                    <button
+                      type="button"
+                      className="field-ai-translate-btn hi-btn"
+                      onClick={() => handleTranslateField("hi", "explanation")}
+                      disabled={translatingField !== null}
+                      title="માત્ર સમજૂતીને AI દ્વારા હિન્દીમાં અનુવાદ કરો"
+                    >
+                      <Sparkles className={`btn-icon ${translatingField === "hi-explanation" ? "spinning" : ""}`} size={14} />
+                      {translatingField === "hi-explanation" ? "અનુવાદ થઈ રહ્યો છે..." : "✨ સમજૂતી AI અનુવાદ"}
+                    </button>
+                  </div>
+                </div>
                 <textarea
                   name="explanationHi"
                   value={formData.explanationHi}
@@ -1792,101 +2019,147 @@ function QuizManagement() {
 
           {activeLangTab === "en" && (
             <>
-              {/* =================================================
-                  ENGLISH QUESTION (AUTO-TRANSLATED / EDITABLE)
-              ================================================= */}
-              <div className="quiz-form-group">
-                <label>
-                  Question (English Question) - <i>AI દ્વારા આપોઆપ ભરાશે અથવા તમે જાતે પણ લખી શકો છો</i>
-                </label>
+              {/* ENGLISH QUESTION */}
+              <div className="quiz-form-group" id="section-quiz-question">
+                <div className="form-group-header-with-btn">
+                  <label style={{ margin: 0 }}>
+                    <HelpCircle className="btn-icon" size={16} /> Question (English Question)
+                  </label>
+                  <div className="section-header-actions">
+                    {renderLangTabs("quiz-question")}
+                    <button
+                      type="button"
+                      className="field-ai-translate-btn en-btn"
+                      onClick={() => handleTranslateField("en", "question")}
+                      disabled={translatingField !== null}
+                      title="Translate only question to English using AI"
+                    >
+                      <Sparkles className={`btn-icon ${translatingField === "en-question" ? "spinning" : ""}`} size={14} />
+                      {translatingField === "en-question" ? "અનુવાદ થઈ રહ્યો છે..." : "✨ પ્રશ્ન AI અનુવાદ"}
+                    </button>
+                  </div>
+                </div>
                 <textarea
                   name="questionEn"
                   value={formData.questionEn}
                   onChange={handleChange}
-                  placeholder="Type question in English or click '✨ AI બધી ભાષા ઓટો-અનુવાદ' above..."
+                  placeholder="Type question in English or click '✨ પ્રશ્ન AI અનુવાદ' above..."
                   rows="4"
                 />
               </div>
 
-              {/* ENGLISH OPTION 1 */}
-              <div className="quiz-form-group">
-                <label>Option 1 (English)</label>
-                <input
-                  type="text"
-                  name="option1En"
-                  value={formData.option1En}
-                  onChange={handleChange}
-                  placeholder="English Option 1"
-                />
-              </div>
+              {/* ENGLISH OPTIONS & CORRECT ANSWER */}
+              <div className="quiz-options-section-box" id="section-quiz-options">
+                <div className="form-group-header-with-btn" style={{ marginBottom: "14px" }}>
+                  <label style={{ margin: 0 }}>
+                    <List className="btn-icon" size={16} /> Options & Correct Answer (English Options & Answer)
+                  </label>
+                  <div className="section-header-actions">
+                    {renderLangTabs("quiz-options")}
+                    <button
+                      type="button"
+                      className="field-ai-translate-btn en-btn"
+                      onClick={() => handleTranslateField("en", "options")}
+                      disabled={translatingField !== null}
+                      title="Translate only options and answer to English using AI"
+                    >
+                      <Sparkles className={`btn-icon ${translatingField === "en-options" ? "spinning" : ""}`} size={14} />
+                      {translatingField === "en-options" ? "અનુવાદ થઈ રહ્યો છે..." : "✨ વિકલ્પો AI અનુવાદ"}
+                    </button>
+                  </div>
+                </div>
 
-              {/* ENGLISH OPTION 2 */}
-              <div className="quiz-form-group">
-                <label>Option 2 (English)</label>
-                <input
-                  type="text"
-                  name="option2En"
-                  value={formData.option2En}
-                  onChange={handleChange}
-                  placeholder="English Option 2"
-                />
-              </div>
+                <div className="quiz-options-grid-container">
+                  <div className="quiz-form-group">
+                    <label>Option 1 (English)</label>
+                    <input
+                      type="text"
+                      name="option1En"
+                      value={formData.option1En}
+                      onChange={handleChange}
+                      placeholder="English Option 1"
+                    />
+                  </div>
 
-              {/* ENGLISH OPTION 3 */}
-              <div className="quiz-form-group">
-                <label>Option 3 (English)</label>
-                <input
-                  type="text"
-                  name="option3En"
-                  value={formData.option3En}
-                  onChange={handleChange}
-                  placeholder="English Option 3"
-                />
-              </div>
+                  <div className="quiz-form-group">
+                    <label>Option 2 (English)</label>
+                    <input
+                      type="text"
+                      name="option2En"
+                      value={formData.option2En}
+                      onChange={handleChange}
+                      placeholder="English Option 2"
+                    />
+                  </div>
 
-              {/* ENGLISH OPTION 4 */}
-              <div className="quiz-form-group">
-                <label>Option 4 (English)</label>
-                <input
-                  type="text"
-                  name="option4En"
-                  value={formData.option4En}
-                  onChange={handleChange}
-                  placeholder="English Option 4"
-                />
-              </div>
+                  <div className="quiz-form-group">
+                    <label>Option 3 (English)</label>
+                    <input
+                      type="text"
+                      name="option3En"
+                      value={formData.option3En}
+                      onChange={handleChange}
+                      placeholder="English Option 3"
+                    />
+                  </div>
 
-              {/* ENGLISH CORRECT ANSWER */}
-              <div className="quiz-form-group">
-                <label>
-                  Correct Answer (English Correct Answer)
-                </label>
-                <select
-                  name="correctAnswerEn"
-                  value={formData.correctAnswerEn}
-                  onChange={handleChange}
-                >
-                  <option value="">-- Select English Correct Answer --</option>
-                  {[
-                    formData.option1En,
-                    formData.option2En,
-                    formData.option3En,
-                    formData.option4En,
-                  ]
-                    .filter((option) => option && option.trim())
-                    .map((option, index) => (
-                      <option key={index} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                </select>
+                  <div className="quiz-form-group">
+                    <label>Option 4 (English)</label>
+                    <input
+                      type="text"
+                      name="option4En"
+                      value={formData.option4En}
+                      onChange={handleChange}
+                      placeholder="English Option 4"
+                    />
+                  </div>
+                </div>
+
+                {/* ENGLISH CORRECT ANSWER */}
+                <div className="quiz-form-group" style={{ marginBottom: 0 }}>
+                  <label>Correct Answer (English Correct Answer)</label>
+                  <select
+                    name="correctAnswerEn"
+                    value={formData.correctAnswerEn}
+                    onChange={handleChange}
+                  >
+                    <option value="">-- Select English Correct Answer --</option>
+                    {[
+                      formData.option1En,
+                      formData.option2En,
+                      formData.option3En,
+                      formData.option4En,
+                    ]
+                      .filter((option) => option && option.trim())
+                      .map((option, index) => (
+                        <option key={index} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                  </select>
+                </div>
               </div>
 
               {/* ENGLISH EXPLANATION */}
-              <div className="quiz-form-group">
-                <label>
-                  Explanation (English Explanation) <span> (Optional)</span>
-                </label>
+              <div className="quiz-form-group" id="section-quiz-explanation">
+                <div className="form-group-header-with-btn">
+                  <label style={{ margin: 0 }}>
+                    <BookOpen className="btn-icon" size={16} /> Explanation (English Explanation) <span>(Optional)</span>
+                  </label>
+                  <div className="section-header-actions">
+                    {renderLangTabs("quiz-explanation")}
+                    <button
+                      type="button"
+                      className="field-ai-translate-btn en-btn"
+                      onClick={() => handleTranslateField("en", "explanation")}
+                      disabled={translatingField !== null}
+                      title="Translate only explanation to English using AI"
+                    >
+                      <Sparkles className={`btn-icon ${translatingField === "en-explanation" ? "spinning" : ""}`} size={14} />
+                      {translatingField === "en-explanation" ? "અનુવાદ થઈ રહ્યો છે..." : "✨ સમજૂતી AI અનુવાદ"}
+                    </button>
+                  </div>
+                </div>
                 <textarea
                   name="explanationEn"
                   value={formData.explanationEn}
@@ -1897,7 +2170,6 @@ function QuizManagement() {
               </div>
             </>
           )}
-
 
           {/* =================================================
               SUBMIT
@@ -1956,131 +2228,164 @@ function QuizManagement() {
 
         <div className="quiz-list-header">
 
-          <div>
-
-            <h2>
-              <span className="quiz-heading-icon-wrap">
-                <FileQuestion size={22} />
-              </span>
-              Quiz Questions
-            </h2>
-
-            <p>
-              કુલ{" "}
-              {filteredQuestions.length}{" "}
-              questions
-            </p>
-
+          <div className="quiz-list-header-left">
+            <span className="quiz-heading-icon-wrap">
+              <FileQuestion size={22} />
+            </span>
+            <div>
+              <h2>Quiz Questions</h2>
+              <div className="quiz-header-badges-row">
+                <span className="quiz-total-count-badge">
+                  કુલ {filteredQuestions.length} questions
+                </span>
+                {questionFilter.startsWith("chapter-") && shlokaFilter !== "all" && (
+                  <span className="quiz-active-shlok-badge">
+                    શ્લોક {shlokaFilter}
+                  </span>
+                )}
+              </div>
+            </div>
           </div>
-
 
           <div className="quiz-list-controls">
 
-            {/* =================================================
-                FILTER
-            ================================================= */}
+            {/* FILTERS TOOLBAR */}
+            <div className="quiz-filter-bar-group">
+              {/* CHAPTER FILTER */}
+              <div className="quiz-question-filter">
+                <label htmlFor="question-filter">
+                  Filter:
+                </label>
+                <select
+                  id="question-filter"
+                  value={questionFilter}
+                  onChange={handleQuestionFilterChange}
+                >
+                  <option value="all">
+                    બધા Questions
+                  </option>
 
-            <div className="quiz-question-filter">
-
-              <label htmlFor="question-filter">
-                Filter:
-              </label>
-
-              <select
-                id="question-filter"
-                value={
-                  questionFilter
-                }
-                onChange={
-                  handleQuestionFilterChange
-                }
-              >
-
-                <option value="all">
-                  <Library className="btn-icon" size={16} /> બધા Questions
-                </option>
-
-                {Array.from(
-                  { length: 18 },
-                  (_, index) => (
-                    <option
-                      key={index + 1}
-                      value={`chapter-${index + 1}`}
-                    >
-                      <BookOpen className="btn-icon" size={16} /> અધ્યાય {index + 1}
+                  {Array.from({ length: 18 }, (_, index) => (
+                    <option key={index + 1} value={`chapter-${index + 1}`}>
+                      અધ્યાય {index + 1}
                     </option>
-                  )
+                  ))}
+
+                  <option value="mahabharata">
+                    સમગ્ર મહાભારત
+                  </option>
+                </select>
+              </div>
+
+              {/* SHLOKA NUMBER FILTER BOX (DIRECT INPUT & DROPDOWN) */}
+              <div className="quiz-question-filter quiz-shloka-filter-item">
+                <label htmlFor="shloka-filter-input">શ્લોક:</label>
+                <input
+                  id="shloka-filter-input"
+                  type="number"
+                  min="1"
+                  placeholder="શ્લોક નં."
+                  disabled={!questionFilter.startsWith("chapter-")}
+                  value={shlokaFilter === "all" || shlokaFilter === "none" ? "" : shlokaFilter}
+                  onChange={(e) => {
+                    const val = e.target.value.trim();
+                    setShlokaFilter(val === "" ? "all" : val);
+                  }}
+                  className="quiz-shloka-num-input"
+                  title={
+                    !questionFilter.startsWith("chapter-")
+                      ? "શ્લોક ફિલ્ટર માટે પહેલાં કોઈ અધ્યાય પસંદ કરો"
+                      : "શ્લોક નંબર લખો જેથી માત્ર તે શ્લોકના જ પ્રશ્નો દેખાય"
+                  }
+                />
+                <select
+                  id="shloka-filter-select"
+                  value={shlokaFilter}
+                  disabled={!questionFilter.startsWith("chapter-")}
+                  onChange={(e) => setShlokaFilter(e.target.value)}
+                  className="quiz-shloka-quick-select"
+                  title={
+                    !questionFilter.startsWith("chapter-")
+                      ? "શ્લોક પસંદ કરવા પહેલાં અધ્યાય પસંદ કરો"
+                      : "ઉપલબ્ધ શ્લોક પસંદ કરો"
+                  }
+                >
+                  <option value="all">બધા</option>
+                  {questionFilter.startsWith("chapter-") &&
+                    shlokaStats &&
+                    Object.entries(shlokaStats.counts)
+                      .sort(([a], [b]) => Number(a) - Number(b))
+                      .map(([sNum, count]) => (
+                        <option key={sNum} value={sNum}>
+                          શ્લોક {sNum} ({count})
+                        </option>
+                      ))}
+                  {questionFilter.startsWith("chapter-") &&
+                    shlokaStats &&
+                    shlokaStats.unassigned > 0 && (
+                      <option value="none">સામાન્ય ({shlokaStats.unassigned})</option>
+                    )}
+                </select>
+                {questionFilter.startsWith("chapter-") && shlokaFilter !== "all" && (
+                  <button
+                    type="button"
+                    className="quiz-shloka-clear-btn"
+                    onClick={() => setShlokaFilter("all")}
+                    title="શ્લોક ફિલ્ટર હટાવો (બધા શ્લોક)"
+                  >
+                    ✖
+                  </button>
                 )}
-
-                <option value="mahabharata">
-                  સમગ્ર મહાભારત
-                </option>
-
-              </select>
-
+              </div>
             </div>
 
+            {/* ACTION BUTTONS GROUP */}
+            <div className="quiz-action-bar-group">
+              <button
+                type="button"
+                className="quiz-refresh-button"
+                onClick={loadQuestions}
+                disabled={deletingAll}
+                title={txt("Refresh Questions", "Refresh Questions", "Refresh Questions")}
+              >
+                <RefreshCw className="btn-icon" size={15} /> Refresh
+              </button>
 
-            {/* =================================================
-                REFRESH
-            ================================================= */}
-
-            <button
-              type="button"
-              className="quiz-refresh-button"
-              onClick={
-                loadQuestions
-              }
-              disabled={deletingAll}
-              title={txt("Refresh Questions", "Refresh Questions", "Refresh Questions")}
-            >
-              <RefreshCw className="btn-icon" size={16} /> Refresh
-            </button>
-
-
-            {/* =================================================
-                DELETE ALL (FILTERED) QUESTIONS
-            ================================================= */}
-
-            <button
-              type="button"
-              className="quiz-delete-all-button"
-              onClick={handleDeleteFilteredQuestions}
-              disabled={filteredQuestions.length === 0 || deletingAll}
-              title={
-                filteredQuestions.length === 0
-                  ? txt("Delete કરવા માટે કોઈ પ્રશ્નો નથી", "Delete करने के लिए कोई प्रश्न नहीं हैं", "No questions to delete")
-                  : txt(
-                      `${getFilterLabel()} ના બધા (${filteredQuestions.length}) પ્રશ્નો Delete કરો`,
-                      `${getFilterLabel()} के सभी (${filteredQuestions.length}) प्रश्न Delete करें`,
-                      `Delete all (${filteredQuestions.length}) questions of ${getFilterLabel()}`
-                    )
-              }
-            >
-              {deletingAll ? (
-                <>
-                  <Loader2 className="btn-icon animate-spin" size={16} />
-                  <span>{txt("Deleting...", "Deleting...", "Deleting...")}</span>
-                </>
-              ) : (
-                <>
-                  <Trash2 className="btn-icon" size={16} />
-                  <span>
-                    {txt(
-                      `Delete All Questions`,
-                      `Delete All Questions`,
-                      `Delete All Questions`
-                    )}
-                    {filteredQuestions.length > 0 && ` (${filteredQuestions.length})`}
-                  </span>
-                </>
-              )}
-            </button>
+              <button
+                type="button"
+                className="quiz-delete-all-button"
+                onClick={handleDeleteFilteredQuestions}
+                disabled={filteredQuestions.length === 0 || deletingAll}
+                title={
+                  filteredQuestions.length === 0
+                    ? txt("Delete કરવા માટે કોઈ પ્રશ્નો નથી", "Delete करने के लिए कोई प्रश्न नहीं हैं", "No questions to delete")
+                    : txt(
+                        `${getFilterLabel()} ના બધા (${filteredQuestions.length}) પ્રશ્નો Delete કરો`,
+                        `${getFilterLabel()} के सभी (${filteredQuestions.length}) प्रश्न Delete करें`,
+                        `Delete all (${filteredQuestions.length}) questions of ${getFilterLabel()}`
+                      )
+                }
+              >
+                {deletingAll ? (
+                  <>
+                    <Loader2 className="btn-icon animate-spin" size={15} />
+                    <span>{txt("Deleting...", "Deleting...", "Deleting...")}</span>
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="btn-icon" size={15} />
+                    <span>
+                      {txt("Delete All Questions", "Delete All Questions", "Delete All Questions")}
+                      {filteredQuestions.length > 0 && ` (${filteredQuestions.length})`}
+                    </span>
+                  </>
+                )}
+              </button>
+            </div>
 
           </div>
 
         </div>
-
 
         {/* =================================================
             SHLOKA BREAKDOWN & CHIP FILTER (FOR CHAPTERS)
