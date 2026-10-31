@@ -292,6 +292,9 @@ const addShlok = async (req, res) => {
       message,
       messageHi,
       messageEn,
+      example,
+      exampleHi,
+      exampleEn,
     } = req.body;
 
     if (
@@ -408,6 +411,21 @@ const addShlok = async (req, res) => {
         messageEn:
           String(
             messageEn || ""
+          ).trim(),
+
+        example:
+          String(
+            example || ""
+          ).trim(),
+
+        exampleHi:
+          String(
+            exampleHi || ""
+          ).trim(),
+
+        exampleEn:
+          String(
+            exampleEn || ""
           ).trim(),
       });
 
@@ -779,6 +797,9 @@ const updateShlok = async (
       message,
       messageHi,
       messageEn,
+      example,
+      exampleHi,
+      exampleEn,
     } = req.body;
 
     if (
@@ -923,6 +944,21 @@ const updateShlok = async (
               String(
                 messageEn || ""
               ).trim(),
+
+            example:
+              String(
+                example || ""
+              ).trim(),
+
+            exampleHi:
+              String(
+                exampleHi || ""
+              ).trim(),
+
+            exampleEn:
+              String(
+                exampleEn || ""
+              ).trim(),
           },
         },
 
@@ -969,12 +1005,13 @@ const autoTranslateShlok = async (req, res) => {
       wordMeanings,
       translation,
       message,
+      example,
       targetLang,
-      field, // "words" | "translation" | "message" | "all"
+      field, // "words" | "translation" | "message" | "example" | "all"
     } = req.body;
 
     // =========================================================
-    // 1. SINGLE FIELD TRANSLATION (Words, Translation, Message)
+    // 1. SINGLE FIELD TRANSLATION (Words, Translation, Message, Example)
     // =========================================================
     if (field && field !== "all") {
       if (field === "words" && (!wordMeanings || wordMeanings.length === 0)) {
@@ -998,12 +1035,20 @@ const autoTranslateShlok = async (req, res) => {
         });
       }
 
+      if (field === "example" && !example) {
+        return res.status(400).json({
+          success: false,
+          message: "પહેલાં ગુજરાતી ઉદાહરણ લખો.",
+        });
+      }
+
       if (targetLang === "en") {
         const result = await translateSingleFieldToEnglish({
           field,
           sanskrit,
           translation,
           message,
+          example,
           wordMeanings: wordMeanings || [],
         });
 
@@ -1020,6 +1065,7 @@ const autoTranslateShlok = async (req, res) => {
         sanskrit,
         translation,
         message,
+        example,
         wordMeanings: wordMeanings || [],
       });
 

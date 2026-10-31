@@ -160,6 +160,16 @@ export function LanguageProvider({ children }) {
           ? shlok.messageHi
           : shlok.message,
 
+      example:
+        isEn && shlok.exampleEn && shlok.exampleEn.trim()
+          ? shlok.exampleEn
+          : isHi && shlok.exampleHi && shlok.exampleHi.trim()
+          ? shlok.exampleHi
+          : shlok.example || "",
+
+      exampleHi: shlok.exampleHi || "",
+      exampleEn: shlok.exampleEn || "",
+
       // Word meanings: Sanskrit 'word' stays untouched. 'meaning' switches to English/Hindi ONLY if added, otherwise Gujarati.
       wordMeanings: (shlok.wordMeanings || []).map((w) => ({
         ...w,
