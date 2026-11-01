@@ -2609,7 +2609,8 @@ function QuizManagement() {
               QUESTION GRID
           ================================================= */
 
-          <div className="quiz-question-grid">
+          <div className="quiz-question-scroll-wrapper">
+            <div className="quiz-question-grid">
 
             {filteredQuestions.map(
               (item, index) => {
@@ -2890,6 +2891,7 @@ function QuizManagement() {
               }
             )}
 
+            </div>
           </div>
 
         )}

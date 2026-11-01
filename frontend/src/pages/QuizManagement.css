@@ -4844,3 +4844,49 @@ html[data-theme='dark'] .quiz-quick-share-btn,
   color: #fbbf24 !important;
   border-color: rgba(245, 158, 11, 0.45) !important;
 }
+
+/* =========================================================
+   QUIZ QUESTION SCROLL WRAPPER (5 ROWS / 10 QUESTIONS)
+========================================================= */
+.quiz-question-scroll-wrapper {
+  max-height: 495px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 4px 6px 12px 2px;
+  border-radius: 14px;
+  scroll-behavior: smooth;
+  box-sizing: border-box;
+}
+
+.quiz-question-scroll-wrapper::-webkit-scrollbar {
+  width: 7px;
+}
+
+.quiz-question-scroll-wrapper::-webkit-scrollbar-track {
+  background: rgba(226, 232, 240, 0.6);
+  border-radius: 8px;
+}
+
+.quiz-question-scroll-wrapper::-webkit-scrollbar-thumb {
+  background: #93c5fd;
+  border-radius: 8px;
+}
+
+.quiz-question-scroll-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #3b82f6;
+}
+
+html[data-theme='dark'] .quiz-question-scroll-wrapper::-webkit-scrollbar-track,
+.dark .quiz-question-scroll-wrapper::-webkit-scrollbar-track {
+  background: rgba(30, 41, 59, 0.7) !important;
+}
+
+html[data-theme='dark'] .quiz-question-scroll-wrapper::-webkit-scrollbar-thumb,
+.dark .quiz-question-scroll-wrapper::-webkit-scrollbar-thumb {
+  background: #1e3a8a !important;
+}
+
+html[data-theme='dark'] .quiz-question-scroll-wrapper::-webkit-scrollbar-thumb:hover,
+.dark .quiz-question-scroll-wrapper::-webkit-scrollbar-thumb:hover {
+  background: #3b82f6 !important;
+}
