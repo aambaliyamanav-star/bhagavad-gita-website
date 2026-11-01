@@ -329,13 +329,16 @@ export default function ShareQuizQuestionModal({
 
       const chNum = questionData.chapterNumber;
       const shlNum = questionData.shlokaNumber;
+      const qNum = questionData.shlokaQuestionNumber || 1;
       let badgeLabel = "શ્રીમદ્ભગવદ્ગીતા ક્વિઝ";
       if (chNum) {
-        badgeLabel = `અધ્યાય ${chNum}${shlNum ? ` • શ્લોક ${shlNum}` : ""}`;
+        badgeLabel = `અધ્યાય ${chNum}${shlNum ? ` • શ્લોક ${shlNum}` : ""} • પ્રશ્ન ${qNum}`;
       } else if (questionData.category === "mahabharata") {
-        badgeLabel = "સમગ્ર મહાભારત ક્વિઝ";
+        badgeLabel = `સમગ્ર મહાભારત ક્વિઝ • પ્રશ્ન ${qNum}`;
       } else if (questionData.category) {
-        badgeLabel = questionData.category;
+        badgeLabel = `${questionData.category} • પ્રશ્ન ${qNum}`;
+      } else {
+        badgeLabel = `શ્રીમદ્ભગવદ્ગીતા ક્વિઝ • પ્રશ્ન ${qNum}`;
       }
 
       // Vertical layout boundaries
@@ -632,7 +635,7 @@ export default function ShareQuizQuestionModal({
       // Section Header (Gujarati)
       ctx.font = `bold ${bestLayout.sectionHeaderH}px "Noto Sans Gujarati", sans-serif`;
       ctx.fillStyle = currentTheme.titleAccent;
-      ctx.fillText("✦ પ્રશ્ન (ગુજરાતી) ✦", width / 2, currY + bestLayout.sectionHeaderH / 2);
+      ctx.fillText(`✦ પ્રશ્ન ${qNum} (ગુજરાતી) ✦`, width / 2, currY + bestLayout.sectionHeaderH / 2);
       currY += bestLayout.sectionHeaderH + 12;
 
       // Gujarati Question Box
@@ -717,7 +720,7 @@ export default function ShareQuizQuestionModal({
       // Section Header (English)
       ctx.font = `bold ${bestLayout.sectionHeaderH}px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif`;
       ctx.fillStyle = currentTheme.titleAccent;
-      ctx.fillText("✦ Question (English) ✦", width / 2, currY + bestLayout.sectionHeaderH / 2);
+      ctx.fillText(`✦ Question ${qNum} (English) ✦`, width / 2, currY + bestLayout.sectionHeaderH / 2);
       currY += bestLayout.sectionHeaderH + 12;
 
       // English Question Box
@@ -831,15 +834,17 @@ export default function ShareQuizQuestionModal({
     if (!previewUrl) return;
     const link = document.createElement("a");
     const ch = questionData.chapterNumber || "general";
-    const shl = questionData.shlokaNumber || "q";
-    link.download = `Gita_Quiz_Question_Ch${ch}_${shl}.png`;
+    const shl = questionData.shlokaNumber ? `_Shl${questionData.shlokaNumber}` : "";
+    const qNum = questionData.shlokaQuestionNumber || 1;
+    link.download = `Gita_Quiz_Question_Ch${ch}${shl}_Q${qNum}.png`;
     link.href = previewUrl;
     link.click();
   };
 
   const handleShareWhatsApp = async () => {
     const canvas = canvasRef.current;
-    const shareText = `શ્રીમદ્ભગવદ્ગીતા ક્વિઝ\nસાચો ઉત્તર આપવા માટે વેબસાઇટની મુલાકાત લો:\nhttps://gita-gyan-m.vercel.app`;
+    const qNum = questionData.shlokaQuestionNumber || 1;
+    const shareText = `શ્રીમદ્ભગવદ્ગીતા ક્વિઝ - પ્રશ્ન ${qNum}\nસાચો ઉત્તર આપવા માટે વેબસાઇટની મુલાકાત લો:\nhttps://gita-gyan-m.vercel.app`;
 
     if (canvas && navigator.canShare) {
       try {
@@ -847,16 +852,17 @@ export default function ShareQuizQuestionModal({
           canvas.toBlob(resolve, "image/png")
         );
         const ch = questionData.chapterNumber || "general";
+        const shl = questionData.shlokaNumber ? `_Shl${questionData.shlokaNumber}` : "";
         const file = new File(
           [blob],
-          `Gita_Quiz_Question_Ch${ch}.png`,
+          `Gita_Quiz_Question_Ch${ch}${shl}_Q${qNum}.png`,
           { type: "image/png" }
         );
 
         if (navigator.canShare({ files: [file] })) {
           await navigator.share({
             files: [file],
-            title: "શ્રીમદ્ભગવદ્ગીતા ક્વિઝ પ્રશ્ન",
+            title: `શ્રીમદ્ભગવદ્ગીતા ક્વિઝ - પ્રશ્ન ${qNum}`,
             text: shareText
           });
           return;
@@ -871,6 +877,7 @@ export default function ShareQuizQuestionModal({
   };
 
   const handleCopyText = () => {
+    const qNum = questionData.shlokaQuestionNumber || 1;
     const qGu = cleanHtmlText(questionData.question || "");
     const qEn = cleanHtmlText(questionData.questionEn || questionData.question || "");
     const optsGu = (questionData.options || []).map((o, i) => `(${String.fromCharCode(65 + i)}) ${cleanHtmlText(o)}`).join("\n");
@@ -879,10 +886,10 @@ export default function ShareQuizQuestionModal({
       : optsGu;
 
     const chStr = questionData.chapterNumber
-      ? `📌 અધ્યાય ${questionData.chapterNumber}${questionData.shlokaNumber ? ` • શ્લોક ${questionData.shlokaNumber}` : ""}\n`
-      : "";
+      ? `📌 અધ્યાય ${questionData.chapterNumber}${questionData.shlokaNumber ? ` • શ્લોક ${questionData.shlokaNumber}` : ""} • પ્રશ્ન ${qNum}\n`
+      : `📌 પ્રશ્ન ${qNum}\n`;
 
-    const textToCopy = `॥ શ્રીમદ્ભગવદ્ગીતા ક્વિઝ ॥\n${chStr}\n❓ પ્રશ્ન (ગુજરાતી):\n${qGu}\n\n${optsGu}\n\n━━━━━━━━━━━━━━━━━━━━\n\n❓ Question (English):\n${qEn}\n\n${optsEn}\n\n🌐 સાચો ઉત્તર આપવા માટે વેબસાઇટ જુઓ:\nhttps://gita-gyan-m.vercel.app`;
+    const textToCopy = `॥ શ્રીમદ્ભગવદ્ગીતા ક્વિઝ ॥\n${chStr}\n❓ પ્રશ્ન ${qNum} (ગુજરાતી):\n${qGu}\n\n${optsGu}\n\n━━━━━━━━━━━━━━━━━━━━\n\n❓ Question ${qNum} (English):\n${qEn}\n\n${optsEn}\n\n🌐 સાચો ઉત્તર આપવા માટે વેબસાઇટ જુઓ:\nhttps://gita-gyan-m.vercel.app`;
 
     navigator.clipboard.writeText(textToCopy).then(() => {
       setCopiedText(true);
@@ -914,6 +921,11 @@ export default function ShareQuizQuestionModal({
           <div className="share-quiz-modal-title">
             <Sparkles size={18} className="share-quiz-sparkle-icon" />
             <h3>Share Question Card</h3>
+            {questionData.shlokaQuestionNumber && (
+              <span className="share-quiz-admin-tag" style={{ background: "#eff6ff", color: "#1d4ed8", borderColor: "#bfdbfe" }}>
+                {questionData.shlokaNumber ? `શ્લોક ${questionData.shlokaNumber} • Q#${questionData.shlokaQuestionNumber}` : `Q#${questionData.shlokaQuestionNumber}`}
+              </span>
+            )}
             <span className="share-quiz-admin-tag">Admin Only</span>
           </div>
 

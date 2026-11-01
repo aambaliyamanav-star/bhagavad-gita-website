@@ -1,5 +1,5 @@
 import { getValidToken } from "../utils/authHelper.js";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ShareQuizQuestionModal from "../components/ShareQuizQuestionModal.jsx";
 import {
@@ -69,6 +69,61 @@ function QuizManagement() {
   const [deletingAll, setDeletingAll] = useState(false);
 
   // =====================================================
+  // SHLOKA-RELATIVE QUESTION NUMBER CALCULATION
+  // =====================================================
+  // Computes sequential 1-based question number grouped by shloka
+  // (e.g. Shloka 1 -> Q#1, Q#2...; Shloka 2 -> restarts at Q#1).
+  // Applies retroactively to all questions in the database by creation order.
+  // STRICTLY for Admin overview & Share Question Card (never shown to quiz users).
+  const shlokaQuestionNumberMap = useMemo(() => {
+    const map = new Map();
+    const groups = {};
+
+    (questions || []).forEach((q) => {
+      const ch = q.chapterNumber ? `ch_${q.chapterNumber}` : `cat_${q.category || "general"}`;
+      const shl = q.shlokaNumber ? `sh_${q.shlokaNumber}` : "general";
+      const groupKey = `${ch}_${shl}`;
+
+      if (!groups[groupKey]) {
+        groups[groupKey] = [];
+      }
+      groups[groupKey].push(q);
+    });
+
+    Object.values(groups).forEach((groupList) => {
+      groupList.sort((a, b) => {
+        const timeA = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const timeB = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        if (timeA !== timeB) return timeA - timeB;
+        return String(a._id || "").localeCompare(String(b._id || ""));
+      });
+
+      groupList.forEach((q, idx) => {
+        map.set(String(q._id), idx + 1);
+      });
+    });
+
+    return map;
+  }, [questions]);
+
+  // Preview next question number in form for current shloka
+  const currentFormQNum = useMemo(() => {
+    if (editingId) {
+      return shlokaQuestionNumberMap.get(String(editingId)) || null;
+    }
+    const ch = formData.chapterNumber ? `ch_${formData.chapterNumber}` : `cat_${formData.category || "general"}`;
+    const shl = formData.shlokaNumber ? `sh_${formData.shlokaNumber}` : "general";
+    const groupKey = `${ch}_${shl}`;
+    let count = 0;
+    (questions || []).forEach((q) => {
+      const qCh = q.chapterNumber ? `ch_${q.chapterNumber}` : `cat_${q.category || "general"}`;
+      const qShl = q.shlokaNumber ? `sh_${q.shlokaNumber}` : "general";
+      if (`${qCh}_${qShl}` === groupKey) count++;
+    });
+    return count + 1;
+  }, [editingId, formData.chapterNumber, formData.shlokaNumber, formData.category, questions, shlokaQuestionNumberMap]);
+
+  // =====================================================
   // SHARE QUESTION MODAL STATE (ADMIN ONLY)
   // =====================================================
 
@@ -76,7 +131,11 @@ function QuizManagement() {
   const [selectedQuestionForShare, setSelectedQuestionForShare] = useState(null);
 
   const handleOpenShareQuestion = (question) => {
-    setSelectedQuestionForShare(question);
+    const qNum = shlokaQuestionNumberMap.get(String(question._id)) || 1;
+    setSelectedQuestionForShare({
+      ...question,
+      shlokaQuestionNumber: qNum
+    });
     setShareModalOpen(true);
   };
 
@@ -1669,10 +1728,20 @@ function QuizManagement() {
             {editingId ? (
               <span>
                 <Edit3 className="btn-icon" size={20} /> Quiz Question Edit કરો
+                {shlokaQuestionNumberMap.get(String(editingId)) && (
+                  <span className="quiz-q-num-badge-pill" title="આ પ્રશ્નનો ક્રમ">
+                    Q#{shlokaQuestionNumberMap.get(String(editingId))}
+                  </span>
+                )}
               </span>
             ) : (
               <span>
                 <Plus className="btn-icon" size={20} /> New Quiz Question Add કરો
+                {currentFormQNum && (
+                  <span className="quiz-q-num-badge-pill" title="આ શ્લોક માટે હવે ઉમેરાશે તે પ્રશ્ન ક્રમ">
+                    {formData.shlokaNumber ? `શ્લોક ${formData.shlokaNumber} • પ્રશ્ન #${currentFormQNum}` : `આગામી પ્રશ્ન #${currentFormQNum}`}
+                  </span>
+                )}
               </span>
             )}
           </h2>
@@ -2604,6 +2673,9 @@ function QuizManagement() {
                   expandedQuestionId ===
                   item._id;
 
+                const shlokaQNum =
+                  shlokaQuestionNumberMap.get(String(item._id)) || (index + 1);
+
                 return (
                   <article
                     className={
@@ -2628,7 +2700,10 @@ function QuizManagement() {
                     >
                       <span className="quiz-question-title-text">
                         <HelpCircle className="btn-icon question-help-icon" size={18} />
-                        {item.question}
+                        <span className="quiz-shloka-q-badge" title={`શ્લોક સંબંધિત પ્રશ્ન ક્રમ: ${shlokaQNum}`}>
+                          {item.shlokaNumber ? `શ્લોક ${item.shlokaNumber} • Q#${shlokaQNum}` : `Q#${shlokaQNum}`}
+                        </span>
+                        <span className="quiz-question-text-actual">{item.question}</span>
                       </span>
                       <span className="quiz-card-header-right-tools">
                         <button
@@ -2638,7 +2713,7 @@ function QuizManagement() {
                             e.stopPropagation();
                             handleOpenShareQuestion(item);
                           }}
-                          title="Share Question Card"
+                          title={`Share Question Card (પ્રશ્ન #${shlokaQNum})`}
                           aria-label="Share Question Card"
                         >
                           <Share2 size={14} />
@@ -2663,8 +2738,8 @@ function QuizManagement() {
 
                         <div className="quiz-question-card-top">
 
-                          <span className="quiz-question-number">
-                            #{index + 1}
+                          <span className="quiz-question-number" title="શ્લોક સંબંધિત પ્રશ્ન ક્રમ (Share Question Number)">
+                            {item.shlokaNumber ? `શ્લોક ${item.shlokaNumber} • પ્રશ્ન #${shlokaQNum}` : `પ્રશ્ન #${shlokaQNum}`}
                           </span>
 
                           <span className="quiz-question-category">

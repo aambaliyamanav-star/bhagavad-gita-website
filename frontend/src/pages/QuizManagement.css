@@ -3523,8 +3523,63 @@ button span {
 .quiz-question-title-text {
   display: flex !important;
   align-items: center !important;
-  gap: 8px !important;
+  gap: 10px !important;
   flex: 1 !important;
+  min-width: 0 !important;
+}
+
+.quiz-question-text-actual {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.quiz-shloka-q-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 8px;
+  border-radius: 6px;
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+  font-size: 11.5px;
+  font-weight: 700;
+  white-space: nowrap;
+  flex-shrink: 0;
+  letter-spacing: 0.2px;
+}
+
+.quiz-q-num-badge-pill {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 8px;
+  padding: 3px 9px;
+  border-radius: 6px;
+  background: #f0fdf4;
+  color: #15803d;
+  border: 1px solid #bbf7d0;
+  font-size: 12px;
+  font-weight: 700;
+  vertical-align: middle;
+}
+
+.dark-theme .quiz-shloka-q-badge,
+.dark-mode .quiz-shloka-q-badge,
+[data-theme="dark"] .quiz-shloka-q-badge {
+  background: rgba(30, 58, 138, 0.4);
+  color: #93c5fd;
+  border-color: rgba(59, 130, 246, 0.4);
+}
+
+.dark-theme .quiz-q-num-badge-pill,
+.dark-mode .quiz-q-num-badge-pill,
+[data-theme="dark"] .quiz-q-num-badge-pill {
+  background: rgba(20, 83, 45, 0.4);
+  color: #86efac;
+  border-color: rgba(34, 197, 94, 0.4);
 }
 
 .quiz-card-expand-indicator {
