@@ -7,7 +7,6 @@ import {
   Check,
   Sparkles,
   Palette,
-  MessageCircle,
   Share2
 } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext.jsx";
@@ -259,7 +258,6 @@ export default function ShareQuizQuestionModal({
   const logoImageRef = useRef(null);
   const [selectedThemeId, setSelectedThemeId] = useState("royal-blue");
   const [previewUrl, setPreviewUrl] = useState("");
-  const [copied, setCopied] = useState(false);
   const [copiedText, setCopiedText] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
 
@@ -872,29 +870,6 @@ export default function ShareQuizQuestionModal({
     window.open(whatsappUrl, "_blank", "noopener,noreferrer");
   };
 
-  const handleCopyImage = async () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    try {
-      const blob = await new Promise((resolve) =>
-        canvas.toBlob(resolve, "image/png")
-      );
-      if (typeof window.ClipboardItem !== "undefined" && navigator.clipboard) {
-        await navigator.clipboard.write([
-          new window.ClipboardItem({ "image/png": blob })
-        ]);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2500);
-      } else {
-        handleDownload();
-      }
-    } catch (e) {
-      console.error("Clipboard copy failed:", e);
-      handleDownload();
-    }
-  };
-
   const handleCopyText = () => {
     const qGu = cleanHtmlText(questionData.question || "");
     const qEn = cleanHtmlText(questionData.questionEn || questionData.question || "");
@@ -984,21 +959,22 @@ export default function ShareQuizQuestionModal({
                   <button
                     key={theme.id}
                     type="button"
-                    className={`share-quiz-theme-chip ${isActive ? "active" : ""}`}
+                    className={`share-quiz-theme-circle-btn ${isActive ? "active" : ""}`}
                     onClick={() => setSelectedThemeId(theme.id)}
+                    title={theme.name}
+                    aria-label={theme.name}
                   >
                     <span
                       className="share-quiz-theme-color-dot"
                       style={{ background: theme.sampleColor }}
                     />
-                    <span>{theme.name}</span>
                   </button>
                 );
               })}
             </div>
           </div>
 
-          {/* Action Buttons */}
+          {/* Action Buttons: 3 options in 1 single row */}
           <div className="share-quiz-actions">
             <div className="share-quiz-btn-row">
               <button
@@ -1006,9 +982,10 @@ export default function ShareQuizQuestionModal({
                 className="share-quiz-action-btn share-quiz-download-btn"
                 onClick={handleDownload}
                 disabled={isGenerating || !previewUrl}
+                title="ડાઉનલોડ કાર્ડ (PNG)"
               >
-                <Download size={16} />
-                <span>ડાઉનલોડ કાર્ડ (PNG)</span>
+                <Download size={15} />
+                <span>ડાઉનલોડ</span>
               </button>
 
               <button
@@ -1016,35 +993,21 @@ export default function ShareQuizQuestionModal({
                 className="share-quiz-action-btn share-quiz-whatsapp-btn"
                 onClick={handleShareWhatsApp}
                 disabled={isGenerating || !previewUrl}
+                title="શેર કરો (WhatsApp / Social Share)"
               >
-                <MessageCircle size={16} />
-                <span>WhatsApp શેર</span>
-              </button>
-            </div>
-
-            <div className="share-quiz-btn-row">
-              <button
-                type="button"
-                className="share-quiz-action-btn share-quiz-copy-btn"
-                onClick={handleCopyImage}
-                disabled={isGenerating || !previewUrl}
-              >
-                {copied ? <Check size={16} color="#10b981" /> : <Copy size={16} />}
-                <span>{copied ? "ઇમેજ કોપી થઈ ગઈ!" : "ઇમેજ કોપી કરો"}</span>
+                <Share2 size={15} />
+                <span>શેર</span>
               </button>
 
               <button
                 type="button"
                 className="share-quiz-action-btn share-quiz-copy-btn"
                 onClick={handleCopyText}
+                title="પ્રશ્નનું લખાણ કોપી કરો"
               >
-                {copiedText ? <Check size={16} color="#10b981" /> : <Copy size={16} />}
-                <span>{copiedText ? "લખાણ કોપી થયું!" : "પ્રશ્ન લખાણ કોપી કરો"}</span>
+                {copiedText ? <Check size={15} color="#10b981" /> : <Copy size={15} />}
+                <span>{copiedText ? "કોપી થયું!" : "લખાણ કોપી"}</span>
               </button>
-            </div>
-
-            <div className="share-quiz-notice">
-              🔒 આ કાર્ડમાં માત્ર પ્રશ્ન અને વિકલ્પો જ આવશે (કોઈ ઉત્તર કે explanation નહીં આવે), જેથી સોશિયલ મીડિયા પર શેર કરી શકાય.
             </div>
           </div>
         </div>
@@ -1053,3 +1016,4 @@ export default function ShareQuizQuestionModal({
     document.body
   );
 }
+
