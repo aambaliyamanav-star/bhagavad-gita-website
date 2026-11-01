@@ -106,23 +106,6 @@ function QuizManagement() {
     return map;
   }, [questions]);
 
-  // Preview next question number in form for current shloka
-  const currentFormQNum = useMemo(() => {
-    if (editingId) {
-      return shlokaQuestionNumberMap.get(String(editingId)) || null;
-    }
-    const ch = formData.chapterNumber ? `ch_${formData.chapterNumber}` : `cat_${formData.category || "general"}`;
-    const shl = formData.shlokaNumber ? `sh_${formData.shlokaNumber}` : "general";
-    const groupKey = `${ch}_${shl}`;
-    let count = 0;
-    (questions || []).forEach((q) => {
-      const qCh = q.chapterNumber ? `ch_${q.chapterNumber}` : `cat_${q.category || "general"}`;
-      const qShl = q.shlokaNumber ? `sh_${q.shlokaNumber}` : "general";
-      if (`${qCh}_${qShl}` === groupKey) count++;
-    });
-    return count + 1;
-  }, [editingId, formData.chapterNumber, formData.shlokaNumber, formData.category, questions, shlokaQuestionNumberMap]);
-
   // =====================================================
   // SHARE QUESTION MODAL STATE (ADMIN ONLY)
   // =====================================================
@@ -205,6 +188,27 @@ function QuizManagement() {
       explanationEn: "",
     };
   });
+
+  // =====================================================
+  // PREVIEW NEXT QUESTION NUMBER IN FORM FOR SHLOKA
+  // =====================================================
+  const currentFormQNum = useMemo(() => {
+    if (editingId) {
+      return shlokaQuestionNumberMap.get(String(editingId)) || null;
+    }
+    if (!formData) return null;
+    const ch = formData.chapterNumber ? `ch_${formData.chapterNumber}` : `cat_${formData.category || "general"}`;
+    const shl = formData.shlokaNumber ? `sh_${formData.shlokaNumber}` : "general";
+    const groupKey = `${ch}_${shl}`;
+    let count = 0;
+    (questions || []).forEach((q) => {
+      if (!q) return;
+      const qCh = q.chapterNumber ? `ch_${q.chapterNumber}` : `cat_${q.category || "general"}`;
+      const qShl = q.shlokaNumber ? `sh_${q.shlokaNumber}` : "general";
+      if (`${qCh}_${qShl}` === groupKey) count++;
+    });
+    return count + 1;
+  }, [editingId, formData?.chapterNumber, formData?.shlokaNumber, formData?.category, questions, shlokaQuestionNumberMap]);
 
   // =====================================================
   // TOKEN
