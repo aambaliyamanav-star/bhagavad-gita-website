@@ -2408,66 +2408,7 @@ function QuizManagement() {
                 </select>
               </div>
 
-              {/* SHLOKA NUMBER FILTER BOX (DIRECT INPUT & DROPDOWN) */}
-              <div className="quiz-question-filter quiz-shloka-filter-item">
-                <label htmlFor="shloka-filter-input">શ્લોક:</label>
-                <input
-                  id="shloka-filter-input"
-                  type="number"
-                  min="1"
-                  placeholder="શ્લોક નં."
-                  disabled={!questionFilter.startsWith("chapter-")}
-                  value={shlokaFilter === "all" || shlokaFilter === "none" ? "" : shlokaFilter}
-                  onChange={(e) => {
-                    const val = e.target.value.trim();
-                    setShlokaFilter(val === "" ? "all" : val);
-                  }}
-                  className="quiz-shloka-num-input"
-                  title={
-                    !questionFilter.startsWith("chapter-")
-                      ? "શ્લોક ફિલ્ટર માટે પહેલાં કોઈ અધ્યાય પસંદ કરો"
-                      : "શ્લોક નંબર લખો જેથી માત્ર તે શ્લોકના જ પ્રશ્નો દેખાય"
-                  }
-                />
-                <select
-                  id="shloka-filter-select"
-                  value={shlokaFilter}
-                  disabled={!questionFilter.startsWith("chapter-")}
-                  onChange={(e) => setShlokaFilter(e.target.value)}
-                  className="quiz-shloka-quick-select"
-                  title={
-                    !questionFilter.startsWith("chapter-")
-                      ? "શ્લોક પસંદ કરવા પહેલાં અધ્યાય પસંદ કરો"
-                      : "ઉપલબ્ધ શ્લોક પસંદ કરો"
-                  }
-                >
-                  <option value="all">બધા</option>
-                  {questionFilter.startsWith("chapter-") &&
-                    shlokaStats &&
-                    Object.entries(shlokaStats.counts)
-                      .sort(([a], [b]) => Number(a) - Number(b))
-                      .map(([sNum, count]) => (
-                        <option key={sNum} value={sNum}>
-                          શ્લોક {sNum} ({count})
-                        </option>
-                      ))}
-                  {questionFilter.startsWith("chapter-") &&
-                    shlokaStats &&
-                    shlokaStats.unassigned > 0 && (
-                      <option value="none">સામાન્ય ({shlokaStats.unassigned})</option>
-                    )}
-                </select>
-                {questionFilter.startsWith("chapter-") && shlokaFilter !== "all" && (
-                  <button
-                    type="button"
-                    className="quiz-shloka-clear-btn"
-                    onClick={() => setShlokaFilter("all")}
-                    title="શ્લોક ફિલ્ટર હટાવો (બધા શ્લોક)"
-                  >
-                    ✖
-                  </button>
-                )}
-              </div>
+
             </div>
 
             {/* ACTION BUTTONS GROUP */}
