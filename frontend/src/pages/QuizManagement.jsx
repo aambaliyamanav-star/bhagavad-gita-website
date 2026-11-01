@@ -1,7 +1,9 @@
 import { getValidToken } from "../utils/authHelper.js";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ShareQuizQuestionModal from "../components/ShareQuizQuestionModal.jsx";
 import {
+  Share2,
   BrainCircuit,
   Save,
   Plus,
@@ -65,6 +67,18 @@ function QuizManagement() {
   const [translatingField, setTranslatingField] = useState(null);
   const [autoTranslateSuccess, setAutoTranslateSuccess] = useState("");
   const [deletingAll, setDeletingAll] = useState(false);
+
+  // =====================================================
+  // SHARE QUESTION MODAL STATE (ADMIN ONLY)
+  // =====================================================
+
+  const [shareModalOpen, setShareModalOpen] = useState(false);
+  const [selectedQuestionForShare, setSelectedQuestionForShare] = useState(null);
+
+  const handleOpenShareQuestion = (question) => {
+    setSelectedQuestionForShare(question);
+    setShareModalOpen(true);
+  };
 
   // =====================================================
   // EXPANDED QUESTION
@@ -2616,8 +2630,22 @@ function QuizManagement() {
                         <HelpCircle className="btn-icon question-help-icon" size={18} />
                         {item.question}
                       </span>
-                      <span className="quiz-card-expand-indicator">
-                        {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                      <span className="quiz-card-header-right-tools">
+                        <button
+                          type="button"
+                          className="quiz-quick-share-btn"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleOpenShareQuestion(item);
+                          }}
+                          title="Share Question Card"
+                          aria-label="Share Question Card"
+                        >
+                          <Share2 size={14} />
+                        </button>
+                        <span className="quiz-card-expand-indicator">
+                          {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+                        </span>
                       </span>
                     </h3>
 
@@ -2801,6 +2829,15 @@ function QuizManagement() {
 
                           <button
                             type="button"
+                            className="quiz-share-card-button"
+                            onClick={() => handleOpenShareQuestion(item)}
+                            title="આ પ્રશ્નનું સોશિયલ મીડિયા Share Card બનાવો"
+                          >
+                            <Share2 className="btn-icon" size={15} /> Share Card
+                          </button>
+
+                          <button
+                            type="button"
                             className="quiz-edit-button"
                             onClick={() =>
                               handleEdit(
@@ -2838,6 +2875,17 @@ function QuizManagement() {
         )}
 
       </section>
+
+      {/* =================================================
+          SHARE QUIZ QUESTION MODAL (ADMIN ONLY)
+      ================================================= */}
+      {selectedQuestionForShare && (
+        <ShareQuizQuestionModal
+          isOpen={shareModalOpen}
+          onClose={() => setShareModalOpen(false)}
+          questionData={selectedQuestionForShare}
+        />
+      )}
 
     </main>
   );
