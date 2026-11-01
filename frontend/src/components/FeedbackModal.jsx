@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import {
   Star,
   X,
@@ -41,6 +42,7 @@ const RATING_LABELS_EN = {
 };
 
 export default function FeedbackModal() {
+  const location = useLocation();
   const { user } = useAuth();
   const { isHindi, isEnglish, isGujarati, txt } = useLanguage();
 
@@ -67,7 +69,8 @@ export default function FeedbackModal() {
     fetchStats();
   }, []);
 
-  // WhatsApp-like pill expand & collapse animation: starts AFTER AI pill closes
+  // WhatsApp-like pill expand & collapse animation:
+  // Starts strictly AFTER Gita AI pill closes, and ONLY on the Home page when no modals are open!
   useEffect(() => {
     // If already shown in this session (e.g. on page refresh), DO NOT PLAY AGAIN!
     const introAlreadyShown =
@@ -82,6 +85,15 @@ export default function FeedbackModal() {
     let collapseTimer;
 
     const runRatingPill = () => {
+      // Re-check early constraints
+      if (sessionStorage.getItem("gita_fab_rating_intro_shown") === "true") return;
+
+      // Must strictly be on Home page ("/")
+      if (location.pathname !== "/") return;
+
+      // Must not open if rating modal dialog is currently showing
+      if (isOpen || document.querySelector(".feedback-modal-overlay")) return;
+
       // Mark as shown so refreshing the page NEVER plays the intro again!
       sessionStorage.setItem("gita_fab_rating_intro_shown", "true");
 
@@ -97,18 +109,12 @@ export default function FeedbackModal() {
     // Listen for AI pill finish event
     window.addEventListener("gita-ai-pill-closed", runRatingPill, { once: true });
 
-    // Safety fallback: if AI assistant is not present or event delayed, run after 7 seconds
-    const safetyFallback = setTimeout(() => {
-      runRatingPill();
-    }, 7000);
-
     return () => {
       window.removeEventListener("gita-ai-pill-closed", runRatingPill);
-      clearTimeout(safetyFallback);
       clearTimeout(expandTimer);
       clearTimeout(collapseTimer);
     };
-  }, []);
+  }, [location.pathname, isOpen]);
 
   // Initialize name and email from logged-in user
   useEffect(() => {
@@ -352,6 +358,9 @@ export default function FeedbackModal() {
       setSubmitted(false);
       setError("");
     }, 300);
+    try {
+      window.dispatchEvent(new CustomEvent("feedback-modal-closed"));
+    } catch (e) {}
   };
 
   const activeRating = isLocked ? 5 : hoverRating || rating;

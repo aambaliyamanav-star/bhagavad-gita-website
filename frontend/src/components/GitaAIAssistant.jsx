@@ -32,6 +32,7 @@ import {
 import { useTheme } from "../context/ThemeContext";
 import { useAuth } from "../context/AuthContext.jsx";
 import { useLanguage } from "../context/LanguageContext.jsx";
+import { isRunningInStandaloneApp } from "../utils/pwaManager.js";
 import {
   getAllConversations,
   saveConversation,
@@ -317,7 +318,55 @@ export default function GitaAIAssistant() {
     }, 2500);
   };
 
-  // WhatsApp-like pill expand & collapse sequence: ONLY on first open per session!
+  // Check whether any initial/startup popups, splash screen, or modal dialogs are active or pending
+  const areStartupModalsPending = () => {
+    if (typeof window === "undefined" || typeof document === "undefined") return false;
+
+    const isStandalone = isRunningInStandaloneApp();
+
+    // 1. Splash screen active or overlay in DOM
+    if (isStandalone && sessionStorage.getItem("gita_splash_already_shown") !== "true") {
+      return true;
+    }
+    if (document.querySelector(".app-splash-overlay")) {
+      return true;
+    }
+
+    // 2. Language selection modal active or pending
+    if (isStandalone) {
+      if (localStorage.getItem("gita_app_lang_selected") !== "true") return true;
+    } else {
+      if (sessionStorage.getItem("gita_web_lang_selected") !== "true") return true;
+    }
+    if (document.querySelector(".mobile-lang-modal-overlay")) {
+      return true;
+    }
+
+    // 3. App notification prompt overlay active in DOM
+    if (document.querySelector(".app-notification-prompt-overlay")) {
+      return true;
+    }
+
+    // 4. Feedback / Rating modal dialog active in DOM
+    if (document.querySelector(".feedback-modal-overlay")) {
+      return true;
+    }
+
+    // 5. Auth pages (/login, /register, etc.)
+    const pathname = window.location.pathname;
+    if (
+      pathname === "/login" ||
+      pathname === "/register" ||
+      pathname === "/forgot-password"
+    ) {
+      return true;
+    }
+
+    return false;
+  };
+
+  // WhatsApp-like pill expand & collapse sequence:
+  // ONLY on first visit to HOME PAGE per session, AFTER all startup popups/modals close!
   useEffect(() => {
     // If already shown in this session (e.g. on page refresh), DO NOT PLAY AGAIN!
     const introAlreadyShown =
@@ -328,52 +377,83 @@ export default function GitaAIAssistant() {
       return;
     }
 
-    // Mark as shown so refreshing the page NEVER plays the intro again!
-    sessionStorage.setItem("gita_fab_intro_shown", "true");
+    let settleTimer = null;
+    let expandTimer = null;
+    let collapseTimer = null;
+    let glideTimer = null;
 
-    let expandTimer;
-    let collapseTimer;
+    const runPillIntro = () => {
+      // Re-verify intro not yet shown
+      if (sessionStorage.getItem("gita_fab_intro_shown") === "true") return;
 
-    const startPillSequence = () => {
+      // Must strictly be on Home page ("/")
+      if (location.pathname !== "/") return;
+
+      // Must have zero startup modals pending or showing
+      if (areStartupModalsPending()) return;
+
+      // If chat assistant is already open, do not show pill
+      if (isOpen) return;
+
+      // Mark as shown so refreshing the page NEVER plays the intro again!
+      sessionStorage.setItem("gita_fab_intro_shown", "true");
+
       expandTimer = setTimeout(() => {
         setIsLabelExpanded(true);
 
         collapseTimer = setTimeout(() => {
           setIsLabelExpanded(false);
           // Wait for smooth collapse glide (750ms) to finish, then trigger rating pill!
-          setTimeout(() => {
+          glideTimer = setTimeout(() => {
             try {
               window.dispatchEvent(new CustomEvent("gita-ai-pill-closed"));
             } catch (e) {}
           }, 750);
         }, 4000); // 4 seconds duration
-      }, 500);
+      }, 300);
     };
 
-    const splashAlreadyShown =
-      typeof window !== "undefined" &&
-      sessionStorage.getItem("gita_splash_already_shown") === "true";
+    // Schedule check with a settle delay to allow any incoming modals/overlays to mount
+    const scheduleCheck = (delay = 700) => {
+      clearTimeout(settleTimer);
 
-    if (!splashAlreadyShown) {
-      const handleSplashDone = () => {
-        startPillSequence();
-      };
-      window.addEventListener("gita-splash-finished", handleSplashDone, { once: true });
-      const fallbackTimer = setTimeout(startPillSequence, 1200);
-      return () => {
-        window.removeEventListener("gita-splash-finished", handleSplashDone);
-        clearTimeout(fallbackTimer);
-        clearTimeout(expandTimer);
-        clearTimeout(collapseTimer);
-      };
-    } else {
-      startPillSequence();
-      return () => {
-        clearTimeout(expandTimer);
-        clearTimeout(collapseTimer);
-      };
-    }
-  }, []);
+      if (sessionStorage.getItem("gita_fab_intro_shown") === "true") return;
+      if (location.pathname !== "/") return;
+      if (areStartupModalsPending()) return;
+      if (isOpen) return;
+
+      settleTimer = setTimeout(() => {
+        runPillIntro();
+      }, delay);
+    };
+
+    // Initial check on mount / route change
+    scheduleCheck(800);
+
+    // Listen to startup workflow completion events
+    const handleStepDone = () => {
+      scheduleCheck(700);
+    };
+
+    window.addEventListener("gita-splash-finished", handleStepDone);
+    window.addEventListener("gita-language-selected", handleStepDone);
+    window.addEventListener("gita-notification-prompt-done", handleStepDone);
+    window.addEventListener("gita-login-prompt-done", handleStepDone);
+    window.addEventListener("feedback-modal-closed", handleStepDone);
+
+    return () => {
+      window.removeEventListener("gita-splash-finished", handleStepDone);
+      window.removeEventListener("gita-language-selected", handleStepDone);
+      window.removeEventListener("gita-notification-prompt-done", handleStepDone);
+      window.removeEventListener("gita-login-prompt-done", handleStepDone);
+      window.removeEventListener("feedback-modal-closed", handleStepDone);
+
+      clearTimeout(settleTimer);
+      clearTimeout(expandTimer);
+      clearTimeout(collapseTimer);
+      clearTimeout(glideTimer);
+    };
+  }, [location.pathname, isOpen]);
 
   // Retrieve or resolve the current active conversation object
   const getActiveConversation = () => {
