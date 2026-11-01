@@ -2168,10 +2168,70 @@
   }
 
 
-  .message-text {
-    font-size: 15px;
+  /* Mobile Message Box: Seamlessly integrated into main card (no nested box) */
+  .content-box.message-box {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-bottom: 4px !important;
+    padding-top: 20px !important;
+    margin: 20px 0 0 0 !important;
+    border-top: 1.5px dashed rgba(59, 130, 246, 0.25) !important;
+    width: 100% !important;
+    text-align: left !important;
+  }
 
-    line-height: 1.75;
+  [data-theme="dark"] .content-box.message-box,
+  .dark .content-box.message-box {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-top: 1.5px dashed rgba(96, 165, 250, 0.25) !important;
+  }
+
+  .content-box.message-box h3 {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    font-size: 15.5px !important;
+    font-weight: 800 !important;
+    color: var(--reader-primary) !important;
+    margin: 0 0 14px 0 !important;
+    padding: 5px 12px !important;
+    background: rgba(59, 130, 246, 0.08) !important;
+    border-radius: 8px !important;
+    border: 1px solid rgba(59, 130, 246, 0.15) !important;
+  }
+
+  [data-theme="dark"] .content-box.message-box h3,
+  .dark .content-box.message-box h3 {
+    background: rgba(59, 130, 246, 0.18) !important;
+    border-color: rgba(96, 165, 250, 0.25) !important;
+    color: #93c5fd !important;
+  }
+
+  .message-text {
+    font-size: 15.5px !important;
+    line-height: 1.75 !important;
+    text-align: left !important;
+  }
+
+  .message-text ul,
+  .message-text ol,
+  .formatted-content ul,
+  .formatted-content ol {
+    padding-left: 20px !important;
+    margin: 0 0 10px 0 !important;
+  }
+
+  .message-text li,
+  .formatted-content li {
+    margin-bottom: 12px !important;
+    line-height: 1.75 !important;
+    padding-left: 2px !important;
   }
 
 
@@ -2311,8 +2371,29 @@
 
   .shloka-card {
     width: 98%;
+    padding: 14px 10px;
+  }
 
-    padding: 12px;
+  .content-box.message-box {
+    padding-top: 16px !important;
+    margin-top: 16px !important;
+  }
+
+  .content-box.message-box h3 {
+    font-size: 14.5px !important;
+    padding: 4px 10px !important;
+  }
+
+  .message-text {
+    font-size: 15px !important;
+    line-height: 1.7 !important;
+  }
+
+  .message-text ul,
+  .message-text ol,
+  .formatted-content ul,
+  .formatted-content ol {
+    padding-left: 17px !important;
   }
 
 
