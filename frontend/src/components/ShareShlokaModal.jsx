@@ -557,18 +557,18 @@ export default function ShareShlokaModal({
     const cosA = Math.cos(angle);
     const sinA = Math.sin(angle);
 
-    ctx.font = '600 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.font = '700 22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
     ctx.fillStyle = currentTheme.borderGold || currentTheme.headerColor || "#f5c542";
-    ctx.globalAlpha = 0.052; // Faint, subtle, non-intrusive luxury watermark
+    ctx.globalAlpha = 0.08; // Easily visible in normal card view while preserving text contrast
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
 
     ctx.translate(width / 2, cardHeight / 2);
     ctx.rotate(angle);
 
-    const stepX = 260; // Spacing between repeated links in a row
-    const stepY = 56;  // Vertical line height between rows
-    const bounds = 1450; // Ample bounds to seamlessly cover rotated 1080x1920 card
+    const stepX = 370; // Spacing between repeated links in a row
+    const stepY = 72;  // Vertical line height between rows
+    const bounds = 1500; // Ample bounds to seamlessly cover rotated 1080x1920 card
 
     for (let yRot = -bounds; yRot <= bounds; yRot += stepY) {
       const rowIndex = Math.round((yRot + bounds) / stepY);
@@ -583,7 +583,7 @@ export default function ShareShlokaModal({
 
         // Skip candidate if inside or directly adjacent to the logo area
         const distToLogo = Math.hypot(worldX - logoCenterX, worldY - logoCenterY);
-        if (distToLogo < exclusionRadius + 45) {
+        if (distToLogo < exclusionRadius + 65) {
           continue;
         }
 
@@ -786,11 +786,11 @@ export default function ShareShlokaModal({
     // Sleek Website Link Pill (Professional & Prominent)
     const siteUrl = "gita-gyan-m.vercel.app";
     const pillText = `🔗 ${siteUrl}`;
-    ctx.font = '600 18px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.font = '700 22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
     const pillMetrics = ctx.measureText(pillText);
-    const pillW = Math.min(width - 220, pillMetrics.width + 48);
-    const pillH = 38;
-    const pillY = footerDividerY + 34;
+    const pillW = Math.min(width - 200, pillMetrics.width + 54);
+    const pillH = 44;
+    const pillY = footerDividerY + 36;
 
     drawRoundRect(
       ctx,
@@ -798,10 +798,10 @@ export default function ShareShlokaModal({
       pillY - pillH / 2,
       pillW,
       pillH,
-      19,
-      "rgba(0, 0, 0, 0.35)",
+      22,
+      "rgba(0, 0, 0, 0.45)",
       currentTheme.innerBorder,
-      1.2
+      1.4
     );
 
     ctx.fillStyle = currentTheme.headerColor;

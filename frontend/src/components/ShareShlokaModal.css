@@ -301,17 +301,17 @@
 .share-preview-clickable-link {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 4px 12px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(245, 197, 66, 0.35);
+  gap: 6px;
+  padding: 5px 14px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1.5px solid rgba(245, 197, 66, 0.4);
   border-radius: 999px;
   color: #ffd54f;
-  font-size: 0.74rem;
-  font-weight: 600;
+  font-size: 0.86rem;
+  font-weight: 700;
   text-decoration: none;
   transition: all 0.2s ease;
-  letter-spacing: 0.2px;
+  letter-spacing: 0.3px;
 }
 
 .share-preview-clickable-link:hover {
