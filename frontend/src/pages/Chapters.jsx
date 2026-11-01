@@ -122,7 +122,11 @@ function Chapters() {
   }, []);
 
   const openChapter = (chapterNumber) => {
-    navigate(`/chapter/${chapterNumber}`);
+    try {
+      sessionStorage.setItem(`gita_last_shloka_ch_${chapterNumber}`, "1");
+      localStorage.setItem(`gita_last_shloka_ch_${chapterNumber}`, "1");
+    } catch (e) {}
+    navigate(`/chapter/${chapterNumber}?shloka=1`);
   };
 
   const getChapterName = (chapter) => {

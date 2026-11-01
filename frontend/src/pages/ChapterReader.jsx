@@ -340,16 +340,27 @@ const response = await fetch(
         }
 
         // =================================================
-        // REQUESTED SHLOK
+        // RESOLVE INITIAL SHLOKA (URL PARAM -> PERSISTED STORAGE -> DEFAULT 1)
         // =================================================
 
-        if (requestedShloka) {
+        let targetShlokaNum = requestedShloka;
+        if (!targetShlokaNum) {
+          try {
+            const sessionVal = Number(sessionStorage.getItem(`gita_last_shloka_ch_${currentChapterNumber}`));
+            const localVal = Number(localStorage.getItem(`gita_last_shloka_ch_${currentChapterNumber}`));
+            targetShlokaNum = sessionVal || localVal || 1;
+          } catch (e) {
+            targetShlokaNum = 1;
+          }
+        }
+
+        if (targetShlokaNum) {
           if (
             !user &&
-            requestedShloka > 5
+            targetShlokaNum > 5
           ) {
-            const redirectPath = `/chapter/${currentChapterNumber}?shloka=${requestedShloka}`;
-            const redirectMsg = isHindi ? `अध्याय ${currentChapterNumber} के श्लोक ${requestedShloka} पढ़ने के लिए Login करना आवश्यक है।` : `અધ્યાય ${currentChapterNumber} ના શ્લોક ${requestedShloka} વાંચવા માટે Login કરવું જરૂરી છે.`;
+            const redirectPath = `/chapter/${currentChapterNumber}?shloka=${targetShlokaNum}`;
+            const redirectMsg = isHindi ? `अध्याय ${currentChapterNumber} के श्लोक ${targetShlokaNum} पढ़ने के लिए Login करना आवश्यक है।` : `અધ્યાય ${currentChapterNumber} ના શ્લોક ${targetShlokaNum} વાંચવા માટે Login કરવું જરૂરી છે.`;
 
             localStorage.setItem(
               "pendingChapter",
@@ -361,7 +372,7 @@ const response = await fetch(
             localStorage.setItem(
               "pendingShloka",
               String(
-                requestedShloka
+                targetShlokaNum
               )
             );
 
@@ -388,7 +399,7 @@ const response = await fetch(
               (item) =>
                 Number(
                   item.shlokNumber
-                ) === requestedShloka
+                ) === targetShlokaNum
             );
 
           if (shlokaIndex !== -1) {
@@ -435,9 +446,58 @@ const response = await fetch(
 
 }, [
   currentChapterNumber,
-  requestedShloka,
   user,
 ]);
+
+  // =====================================================
+  // HANDLE EXTERNAL URL QUERY PARAM CHANGE (IN-MEMORY)
+  // =====================================================
+
+  useEffect(() => {
+    if (!requestedShloka || shlokas.length === 0) return;
+
+    const currentShlokNum = Number(shlokas[currentShloka]?.shlokNumber);
+    if (currentShlokNum === requestedShloka) return;
+
+    const targetIndex = shlokas.findIndex(
+      (item) => Number(item.shlokNumber) === requestedShloka
+    );
+    if (targetIndex !== -1) {
+      setCurrentShloka(targetIndex);
+    }
+  }, [requestedShloka, shlokas]);
+
+  // =====================================================
+  // SYNC CURRENT SHLOKA WITH URL & STORAGE (FOR PAGE REFRESH)
+  // =====================================================
+
+  useEffect(() => {
+    if (shlokas.length === 0) return;
+
+    const current = shlokas[currentShloka];
+    if (!current || !current.shlokNumber) return;
+
+    const shlokNum = Number(current.shlokNumber);
+
+    // 1. Save in session & local storage for this chapter
+    try {
+      sessionStorage.setItem(
+        `gita_last_shloka_ch_${currentChapterNumber}`,
+        String(shlokNum)
+      );
+      localStorage.setItem(
+        `gita_last_shloka_ch_${currentChapterNumber}`,
+        String(shlokNum)
+      );
+    } catch (e) {}
+
+    // 2. Synchronize URL query parameter smoothly via replaceState (no page reload, no history spam)
+    const targetUrl = `/chapter/${currentChapterNumber}?shloka=${shlokNum}`;
+    const currentUrl = window.location.pathname + window.location.search;
+    if (currentUrl !== targetUrl) {
+      window.history.replaceState(window.history.state, "", targetUrl);
+    }
+  }, [currentShloka, shlokas, currentChapterNumber]);
 
   // =====================================================
   // LOAD FAVOURITES FROM BACKEND
@@ -1152,8 +1212,13 @@ if (
         shloka.shlokNumber
       );
 
+      try {
+        sessionStorage.setItem(`gita_last_shloka_ch_${nextChapterNumber}`, "1");
+        localStorage.setItem(`gita_last_shloka_ch_${nextChapterNumber}`, "1");
+      } catch (e) {}
+
       navigate(
-        `/chapter/${nextChapterNumber}`
+        `/chapter/${nextChapterNumber}?shloka=1`
       );
 
       window.scrollTo({
@@ -1182,8 +1247,13 @@ if (
         shloka.shlokNumber
       );
 
+      try {
+        sessionStorage.setItem(`gita_last_shloka_ch_${previousChapterNumber}`, "1");
+        localStorage.setItem(`gita_last_shloka_ch_${previousChapterNumber}`, "1");
+      } catch (e) {}
+
       navigate(
-        `/chapter/${previousChapterNumber}`
+        `/chapter/${previousChapterNumber}?shloka=1`
       );
 
       window.scrollTo({
