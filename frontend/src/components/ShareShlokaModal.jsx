@@ -529,13 +529,74 @@ export default function ShareShlokaModal({
     ctx.fillStyle = topGlow;
     ctx.fillRect(0, 0, width, cardHeight);
 
-    // Subtle App Logo Background Watermark (Ensures crystal-clear font readability)
+    // =========================================================================
+    // Subtle Website Link Repeating Background Watermark (Excluding Logo Zone)
+    // =========================================================================
     const logoImg = logoImageRef.current;
-    if (logoImg && logoImg.complete && logoImg.naturalWidth > 0) {
+    const hasLogo = logoImg && logoImg.complete && logoImg.naturalWidth > 0;
+    const logoSize = 650;
+    const logoCenterX = width / 2;
+    const logoCenterY = (cardHeight - logoSize) / 2 + 40 + logoSize / 2; // 1000px
+    const exclusionRadius = 355; // Clean circular buffer around the central logo
+
+    ctx.save();
+    // 1. Clipping Mask: Keep watermark strictly inside card borders & EXCLUDE circular logo region
+    ctx.beginPath();
+    ctx.rect(
+      outerMargin + 2,
+      outerMargin + 2,
+      width - (outerMargin + 2) * 2,
+      cardHeight - (outerMargin + 2) * 2
+    );
+    ctx.arc(logoCenterX, logoCenterY, exclusionRadius, 0, Math.PI * 2);
+    ctx.clip("evenodd");
+
+    // 2. Setup Watermark Typography & Coordinates
+    const watermarkText = "gita-gyan-m.vercel.app";
+    const angle = -24 * (Math.PI / 180);
+    const cosA = Math.cos(angle);
+    const sinA = Math.sin(angle);
+
+    ctx.font = '600 14px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.fillStyle = currentTheme.borderGold || currentTheme.headerColor || "#f5c542";
+    ctx.globalAlpha = 0.052; // Faint, subtle, non-intrusive luxury watermark
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+
+    ctx.translate(width / 2, cardHeight / 2);
+    ctx.rotate(angle);
+
+    const stepX = 260; // Spacing between repeated links in a row
+    const stepY = 56;  // Vertical line height between rows
+    const bounds = 1450; // Ample bounds to seamlessly cover rotated 1080x1920 card
+
+    for (let yRot = -bounds; yRot <= bounds; yRot += stepY) {
+      const rowIndex = Math.round((yRot + bounds) / stepY);
+      const xOffset = rowIndex % 2 === 1 ? stepX / 2 : 0;
+
+      for (let xRot = -bounds; xRot <= bounds; xRot += stepX) {
+        const curXRot = xRot + xOffset;
+
+        // Unrotated world coordinates to test distance from the logo center
+        const worldX = width / 2 + curXRot * cosA - yRot * sinA;
+        const worldY = cardHeight / 2 + curXRot * sinA + yRot * cosA;
+
+        // Skip candidate if inside or directly adjacent to the logo area
+        const distToLogo = Math.hypot(worldX - logoCenterX, worldY - logoCenterY);
+        if (distToLogo < exclusionRadius + 45) {
+          continue;
+        }
+
+        ctx.fillText(watermarkText, curXRot, yRot);
+      }
+    }
+    ctx.restore();
+
+    // Subtle App Logo Background Watermark (Rendered in its clean, dedicated center zone)
+    if (hasLogo) {
       ctx.save();
       // Gentle opacity ensuring fonts remain 100% crisp, sharp and high-contrast
       ctx.globalAlpha = 0.085;
-      const logoSize = 650;
       const logoX = (width - logoSize) / 2;
       const logoY = (cardHeight - logoSize) / 2 + 40;
       ctx.drawImage(logoImg, logoX, logoY, logoSize, logoSize);
