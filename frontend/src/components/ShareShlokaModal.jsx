@@ -203,6 +203,76 @@ function cleanHtmlText(htmlString) {
     .trim();
 }
 
+function preserveUnderlinesInHtml(htmlString) {
+  if (!htmlString) return "";
+  const str = String(htmlString);
+  if (!/<u\b|<ins\b|underline/i.test(str)) {
+    return str;
+  }
+
+  if (typeof document !== "undefined") {
+    try {
+      const container = document.createElement("div");
+      container.innerHTML = str;
+
+      const allElements = Array.from(container.querySelectorAll("*"));
+      const underlineNodes = allElements.filter((el) => {
+        const tag = el.tagName.toUpperCase();
+        if (tag === "U" || tag === "INS") return true;
+        const style = (el.getAttribute("style") || "").toLowerCase();
+        return /text-decoration(-line)?\s*:\s*[^;]*underline/i.test(style);
+      });
+
+      // Keep only top-level underline nodes to prevent nested markers
+      const topLevelUnderlines = underlineNodes.filter((el) => {
+        return !underlineNodes.some((other) => other !== el && other.contains(el));
+      });
+
+      topLevelUnderlines.forEach((el) => {
+        el.innerHTML = `\uE000${el.innerHTML}\uE001`;
+      });
+
+      return container.innerHTML;
+    } catch (e) {
+      console.warn("Error preserving underlines via DOM:", e);
+    }
+  }
+
+  // Regex fallback with word boundary \b
+  return str
+    .replace(/<(u|ins)\b[^>]*>([\s\S]*?)<\/\1>/gi, "\uE000$2\uE001")
+    .replace(
+      /<span\b[^>]*style=["'][^"']*text-decoration(-line)?\s*:\s*[^"']*underline[^"']*["'][^>]*>([\s\S]*?)<\/span>/gi,
+      "\uE000$2\uE001"
+    );
+}
+
+function parseLineSegments(line) {
+  if (!line || !line.includes("\uE000")) {
+    return [{ text: line || "", underline: false }];
+  }
+
+  const segments = [];
+  const parts = line.split(/(\uE000[^\uE001]*\uE001)/g);
+
+  for (const part of parts) {
+    if (!part) continue;
+    if (part.startsWith("\uE000") && part.endsWith("\uE001")) {
+      const text = part.slice(1, -1);
+      if (text) {
+        segments.push({ text, underline: true });
+      }
+    } else {
+      const text = part.replace(/[\uE000\uE001]/g, "");
+      if (text) {
+        segments.push({ text, underline: false });
+      }
+    }
+  }
+
+  return segments;
+}
+
 function wrapText(ctx, text, maxWidth) {
   if (!text) return [];
   const paragraphs = String(text).split("\n");
@@ -217,11 +287,21 @@ function wrapText(ctx, text, maxWidth) {
     for (let i = 0; i < words.length; i++) {
       const word = words[i];
       const testLine = currentLine ? currentLine + " " + word : word;
-      const testWidth = ctx.measureText(testLine).width;
+      const cleanTestLine = testLine.replace(/[\uE000\uE001]/g, "");
+      const testWidth = ctx.measureText(cleanTestLine).width;
 
       if (testWidth > maxWidth && currentLine) {
-        allLines.push(currentLine);
-        currentLine = word;
+        const starts = (currentLine.match(/\uE000/g) || []).length;
+        const ends = (currentLine.match(/\uE001/g) || []).length;
+        const lineUnderlineOpen = starts > ends;
+
+        if (lineUnderlineOpen) {
+          allLines.push(currentLine + "\uE001");
+          currentLine = "\uE000" + word;
+        } else {
+          allLines.push(currentLine);
+          currentLine = word;
+        }
       } else {
         currentLine = testLine;
       }
@@ -238,15 +318,16 @@ function wrapText(ctx, text, maxWidth) {
 function extractMessagePoints(htmlOrText) {
   if (!htmlOrText) return [];
 
-  // Convert HTML cleanly with cleanHtmlText which converts <p>, <div>, <li>, <br> to \n
-  const clean = cleanHtmlText(htmlOrText);
+  // Preserve underline styling before stripping HTML
+  const marked = preserveUnderlinesInHtml(htmlOrText);
+  const clean = cleanHtmlText(marked);
   if (!clean) return [];
 
   // 1. Split by newlines from paragraphs, lists, divs, or breaks
   const byNewlines = clean
     .split(/\n+/)
     .map((s) => s.trim())
-    .filter((s) => s.length > 3);
+    .filter((s) => s.replace(/[\uE000\uE001]/g, "").length > 3);
 
   if (byNewlines.length > 1) {
     return byNewlines;
@@ -255,7 +336,9 @@ function extractMessagePoints(htmlOrText) {
   // 2. Look for topic breaks like "1. ", "2. ", "•", "✦", or "Title : " following sentence end
   const byTopic = clean.split(/(?<=[.!?।॥])\s+(?=[^.:?!]{2,30}\s*:\s*)/g);
   if (byTopic.length > 1) {
-    return byTopic.map((s) => s.trim()).filter((s) => s.length > 3);
+    return byTopic
+      .map((s) => s.trim())
+      .filter((s) => s.replace(/[\uE000\uE001]/g, "").length > 3);
   }
 
   return [clean];
@@ -434,10 +517,11 @@ export default function ShareShlokaModal({
           ctx.font = `bold ${mFontSize}px "Noto Sans Gujarati", sans-serif`;
           messagePoints.forEach((point) => {
             let prefix = "✦ ";
-            if (/^[\d+.)•✦\-\*]/.test(point)) {
+            const cleanCheck = point.replace(/[\uE000\uE001]/g, "").trim();
+            if (/^[\d+.)•✦\-\*]/.test(cleanCheck)) {
               prefix = "";
             }
-            const pointText = `${prefix}${point}`;
+            const pointText = prefix ? `${prefix}${point}` : point;
             const lines = wrapText(ctx, pointText, mainTextMaxW);
             if (lines.length > 0) {
               wrappedMsgPoints.push(lines);
@@ -771,7 +855,48 @@ export default function ShareShlokaModal({
 
       bestLayout.wrappedMsgPoints.forEach((lines, pIdx) => {
         lines.forEach((line) => {
-          ctx.fillText(line, width / 2, currY + 8);
+          const segments = parseLineSegments(line);
+          const hasUnderline = segments.some((s) => s.underline);
+
+          if (!hasUnderline) {
+            ctx.textAlign = "center";
+            ctx.fillText(line.replace(/[\uE000\uE001]/g, ""), width / 2, currY + 8);
+          } else {
+            const cleanFullText = line.replace(/[\uE000\uE001]/g, "");
+            const totalLineWidth = ctx.measureText(cleanFullText).width;
+            let currentX = width / 2 - totalLineWidth / 2;
+            const lineY = currY + 8;
+            const underlineY = lineY + Math.round(bestLayout.mFontSize * 0.58);
+            const underlineThickness = Math.max(2, Math.round(bestLayout.mFontSize * 0.08));
+
+            ctx.textAlign = "left";
+            segments.forEach((seg) => {
+              const segW = ctx.measureText(seg.text).width;
+              ctx.fillText(seg.text, currentX, lineY);
+
+              if (seg.underline) {
+                const trimmedText = seg.text.replace(/\s+$/, "");
+                const underlineW = trimmedText ? ctx.measureText(trimmedText).width : segW;
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.strokeStyle =
+                  currentTheme.borderGold ||
+                  currentTheme.sanskritAccent ||
+                  currentTheme.translationColor;
+                ctx.lineWidth = underlineThickness;
+                ctx.lineCap = "round";
+                ctx.moveTo(currentX, underlineY);
+                ctx.lineTo(currentX + underlineW, underlineY);
+                ctx.stroke();
+                ctx.restore();
+              }
+
+              currentX += segW;
+            });
+            ctx.textAlign = "center";
+          }
+
           currY += bestLayout.mLineH;
         });
         if (pIdx < bestLayout.wrappedMsgPoints.length - 1) {
@@ -908,11 +1033,12 @@ export default function ShareShlokaModal({
         `✨ Divine Message / Life Wisdom:\n`
       );
       messagePoints.forEach((point) => {
+        const cleanPt = point.replace(/[\uE000\uE001]/g, "").trim();
         let prefix = "• ";
-        if (/^\d+[.)]/.test(point) || /^•/.test(point) || /^✦/.test(point)) {
+        if (/^\d+[.)]/.test(cleanPt) || /^•/.test(cleanPt) || /^✦/.test(cleanPt)) {
           prefix = "";
         }
-        copyText += `${prefix}${point}\n`;
+        copyText += `${prefix}${cleanPt}\n`;
       });
       copyText += `\n`;
     }
