@@ -150,62 +150,67 @@ function QuizCategory() {
     fetchSummary();
   }, []);
 
-  // Helper to generate available shlokas & ranges dynamically with disabled status
+  // Helper to generate shloka range intervals: 1-5, 1-10, 1-15...
   const getShlokaRangeOptions = (chapterNum) => {
     const ch = Number(chapterNum);
     const total = CHAPTER_VERSES[ch] || 47;
     const chapterShlokas = quizSummary?.shlokas?.[ch] || {};
-    const totalChapterQuestions = quizSummary?.chapters?.[ch] || 0;
 
-    const allOption = {
-      value: "all",
-      label: txt(
-        `બધા શ્લોક (૧ થી ${total}) ${quizSummary ? (totalChapterQuestions > 0 ? `[${totalChapterQuestions} પ્રશ્નો]` : `(${txt("હજુ પ્રશ્નો નથી", "प्रश्न नहीं हैं", "No questions")})`) : ""}`,
-        `सभी श्लोक (१ से ${total}) ${quizSummary ? (totalChapterQuestions > 0 ? `[${totalChapterQuestions} प्रश्न]` : `(${txt("હજુ પ્રશ્નો નથી", "प्रश्न नहीं हैं", "No questions")})`) : ""}`,
-        `All Shlokas (1 to ${total}) ${quizSummary ? (totalChapterQuestions > 0 ? `[${totalChapterQuestions} Questions]` : `(${txt("હજુ પ્રશ્નો નથી", "प्रश्न नहीं हैं", "No questions")})`) : ""}`
-      ),
-      disabled: quizSummary !== null && totalChapterQuestions === 0,
-    };
+    // Find the highest shloka number in this chapter that has questions
+    const shlokaNums = Object.keys(chapterShlokas)
+      .map(Number)
+      .filter((n) => !isNaN(n) && n > 0 && chapterShlokas[n] > 0);
+    const maxShloka = shlokaNums.length > 0 ? Math.max(...shlokaNums) : 0;
 
-    // Specific Individual Shlokas
-    const singleOptions = [];
-    for (let s = 1; s <= total; s++) {
-      const sCount = chapterShlokas[s] || 0;
-      const isDisabled = quizSummary !== null && sCount === 0;
+    // "All Shlokas" is only enabled if questions exist up to all total shlokas in chapter
+    const isAllDisabled =
+      quizSummary !== null && (maxShloka < total || maxShloka === 0);
 
-      singleOptions.push({
-        value: `${s}-${s}`,
+    const ranges = [
+      {
+        value: "all",
         label: txt(
-          `શ્લોક ${s} ${quizSummary ? (sCount > 0 ? `[${sCount} પ્રશ્નો]` : `(${txt("હજુ પ્રશ્નો નથી", "प्रश्न नहीं हैं", "No questions")})`) : ""}`,
-          `श्लोक ${s} ${quizSummary ? (sCount > 0 ? `[${sCount} प्रश्न]` : `(${txt("હજુ પ્રશ્નો નથી", "प्रश्न नहीं हैं", "No questions")})`) : ""}`,
-          `Shloka ${s} ${quizSummary ? (sCount > 0 ? `[${sCount} Questions]` : `(${txt("હજુ પ્રશ્નો નથી", "प्रश्न नहीं हैं", "No questions")})`) : ""}`
+          `બધા શ્લોક (૧ થી ${total})`,
+          `सभी श्लोक (१ से ${total})`,
+          `All Shlokas (1 to ${total})`
         ),
-        disabled: isDisabled,
-      });
-    }
+        disabled: isAllDisabled,
+      },
+    ];
 
-    // Shloka Ranges
-    const rangeOptions = [];
-    for (let end = 5; end <= total; end += 5) {
-      let rangeCount = 0;
-      for (let s = 1; s <= end; s++) {
-        rangeCount += chapterShlokas[s] || 0;
-      }
-      const isDisabled = quizSummary !== null && rangeCount === 0;
+    for (let end = 5; end < total; end += 5) {
+      // Range 1-end is enabled only if questions have been added up to this end
+      const isRangeDisabled =
+        quizSummary !== null && (maxShloka < end || maxShloka === 0);
 
-      rangeOptions.push({
+      ranges.push({
         value: `1-${end}`,
         label: txt(
-          `શ્લોક ૧ થી ${end} ${quizSummary ? (rangeCount > 0 ? `[${rangeCount} પ્રશ્નો]` : `(${txt("હજુ પ્રશ્નો નથી", "प्रश्न नहीं हैं", "No questions")})`) : ""}`,
-          `श्लोक १ से ${end} ${quizSummary ? (rangeCount > 0 ? `[${rangeCount} प्रश्न]` : `(${txt("હજુ પ્રશ્નો નથી", "प्रश्न नहीं हैं", "No questions")})`) : ""}`,
-          `Shlokas 1 to ${end} ${quizSummary ? (rangeCount > 0 ? `[${rangeCount} Questions]` : `(${txt("હજુ પ્રશ્નો નથી", "प्रश्न नहीं हैं", "No questions")})`) : ""}`
+          `શ્લોક ૧ થી ${end}`,
+          `श्लोक १ से ${end}`,
+          `Shlokas 1 to ${end}`
         ),
-        disabled: isDisabled,
+        disabled: isRangeDisabled,
       });
     }
 
-    return { allOption, singleOptions, rangeOptions };
+    return ranges;
   };
+
+  // If the currently selected shloka range is disabled, auto-switch to the first enabled range
+  useEffect(() => {
+    if (quizType !== "chapter" || !selectedChapter || !quizSummary) return;
+
+    const ranges = getShlokaRangeOptions(selectedChapter);
+    const currentOption = ranges.find((r) => r.value === selectedShlokaRange);
+
+    if (!currentOption || currentOption.disabled) {
+      const firstEnabled = ranges.find((r) => !r.disabled);
+      if (firstEnabled) {
+        setSelectedShlokaRange(firstEnabled.value);
+      }
+    }
+  }, [selectedChapter, quizSummary, quizType, selectedShlokaRange]);
 
   // =====================================================
   // GET TOKEN
@@ -382,8 +387,17 @@ function QuizCategory() {
       }
     }
     setSelectedChapter(val);
-    setSelectedShlokaRange("all");
+
+    if (val) {
+      const ranges = getShlokaRangeOptions(val);
+      const firstEnabled = ranges.find((r) => !r.disabled);
+      setSelectedShlokaRange(firstEnabled ? firstEnabled.value : "all");
+    } else {
+      setSelectedShlokaRange("all");
+    }
+
     setQuestionCount(10);
+    setAvailableQuestions(null);
     setError("");
   };
 
@@ -753,12 +767,6 @@ function QuizCategory() {
                 const qCount = quizSummary ? (quizSummary.chapters?.[num] || 0) : null;
                 const isDisabled = quizSummary !== null && qCount === 0;
 
-                const countSuffix = quizSummary !== null
-                  ? (qCount > 0
-                      ? ` (${qCount} ${txt("પ્રશ્નો", "प्रश्न", "Questions")})`
-                      : ` (${txt("હજુ પ્રશ્નો નથી", "अभी प्रश्न नहीं हैं", "No questions yet")})`)
-                  : "";
-
                 const baseLabel = isEnglish
                   ? `Chapter ${num} - ${chapterNamesEn[num] || chapterName}`
                   : isHindi
@@ -772,7 +780,7 @@ function QuizCategory() {
                     disabled={isDisabled}
                     style={isDisabled ? { color: "#94a3b8", backgroundColor: "#f8fafc" } : {}}
                   >
-                    {baseLabel}{countSuffix}
+                    {baseLabel}
                   </option>
                 );
               })}
@@ -790,7 +798,7 @@ function QuizCategory() {
           <div className="quiz-setup-group">
 
             <label htmlFor="quiz-shloka-select">
-              <BookOpen size={14} className="btn-icon" /> {txt("શ્લોક પસંદ કરો (Shloka / Range)", "श्लोक चुनें (Shloka / Range)", "Select Shloka / Range")}
+              <BookOpen size={14} className="btn-icon" /> {txt("શ્લોક પસંદ કરો (Shloka Range)", "श्लोक चुनें (Shloka Range)", "Select Shloka Range")}
             </label>
 
             <select
@@ -802,46 +810,16 @@ function QuizCategory() {
                 setError("");
               }}
             >
-              {(() => {
-                const { allOption, singleOptions, rangeOptions } = getShlokaRangeOptions(selectedChapter);
-                return (
-                  <>
-                    <option
-                      value={allOption.value}
-                      disabled={allOption.disabled}
-                      style={allOption.disabled ? { color: "#94a3b8", backgroundColor: "#f8fafc" } : {}}
-                    >
-                      {allOption.label}
-                    </option>
-
-                    <optgroup label={txt("✨ ચોક્કસ શ્લોક (Individual Shlokas)", "✨ विशिष्ट श्लोक (Individual Shlokas)", "✨ Individual Shlokas")}>
-                      {singleOptions.map((opt) => (
-                        <option
-                          key={opt.value}
-                          value={opt.value}
-                          disabled={opt.disabled}
-                          style={opt.disabled ? { color: "#94a3b8", backgroundColor: "#f8fafc" } : {}}
-                        >
-                          {opt.label}
-                        </option>
-                      ))}
-                    </optgroup>
-
-                    <optgroup label={txt("📚 શ્લોક રેન્જ (Shloka Ranges)", "📚 श्लोक रेंज (Shloka Ranges)", "📚 Shloka Ranges")}>
-                      {rangeOptions.map((opt) => (
-                        <option
-                          key={opt.value}
-                          value={opt.value}
-                          disabled={opt.disabled}
-                          style={opt.disabled ? { color: "#94a3b8", backgroundColor: "#f8fafc" } : {}}
-                        >
-                          {opt.label}
-                        </option>
-                      ))}
-                    </optgroup>
-                  </>
-                );
-              })()}
+              {getShlokaRangeOptions(selectedChapter).map((opt) => (
+                <option
+                  key={opt.value}
+                  value={opt.value}
+                  disabled={opt.disabled}
+                  style={opt.disabled ? { color: "#94a3b8", backgroundColor: "#f8fafc" } : {}}
+                >
+                  {opt.label}
+                </option>
+              ))}
             </select>
 
           </div>
