@@ -519,13 +519,29 @@
   font-size: 0.98rem;
   line-height: 1.55;
   color: #1e3a8a;
-  font-style: italic;
   font-weight: 650;
   margin: 0;
 }
 
 [data-theme="dark"] .sanskrit-text {
   color: #93c5fd;
+}
+
+.sanskrit-text p {
+  margin: 0 0 6px 0;
+  line-height: inherit;
+  color: inherit;
+  font-weight: inherit;
+}
+
+.sanskrit-text p:last-child {
+  margin-bottom: 0;
+}
+
+.sanskrit-text strong,
+.sanskrit-text b {
+  font-weight: 700;
+  color: inherit;
 }
 
 /* MEANING BLOCK */
@@ -548,6 +564,7 @@
   color: #90caf9;
 }
 
+.card-meaning-text,
 .card-meaning-block p {
   font-size: 0.94rem;
   line-height: 1.62;
@@ -555,8 +572,21 @@
   margin: 0;
 }
 
+[data-theme="dark"] .card-meaning-text,
 [data-theme="dark"] .card-meaning-block p {
   color: #c4d7ec;
+}
+
+.card-meaning-text p {
+  margin: 0 0 8px 0;
+}
+
+.card-meaning-text p:last-child {
+  margin-bottom: 0;
+}
+
+.card-meaning-text span {
+  color: inherit;
 }
 
 /* PRACTICAL LESSON BLOCK */
@@ -572,19 +602,65 @@
   font-size: 0.82rem;
   font-weight: 750;
   display: block;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
+.card-lesson-text,
 .card-lesson-block p {
   font-size: 0.90rem;
-  line-height: 1.52;
+  line-height: 1.55;
   color: #243b55;
   margin: 0;
-  font-weight: 550;
+  font-weight: 500;
 }
 
+[data-theme="dark"] .card-lesson-text,
 [data-theme="dark"] .card-lesson-block p {
   color: #d5e5f7;
+}
+
+.card-lesson-text p {
+  margin: 0 0 6px 0;
+}
+
+.card-lesson-text p:last-child {
+  margin-bottom: 0;
+}
+
+.card-lesson-text ul,
+.card-lesson-text ol {
+  padding-left: 20px;
+  margin: 6px 0 6px 0;
+}
+
+.card-lesson-text li {
+  margin-bottom: 8px;
+  line-height: 1.55;
+}
+
+.card-lesson-text li:last-child {
+  margin-bottom: 0;
+}
+
+.card-lesson-text li p {
+  margin: 0;
+  display: inline;
+}
+
+.card-lesson-text u {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  font-weight: 700;
+  color: #1d4ed8;
+}
+
+[data-theme="dark"] .card-lesson-text u {
+  color: #93c5fd;
+}
+
+[data-theme="dark"] .card-lesson-text,
+[data-theme="dark"] .card-lesson-text * {
+  color: inherit;
 }
 
 /* 3D ACTION BUTTON */

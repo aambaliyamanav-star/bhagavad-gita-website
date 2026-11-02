@@ -476,7 +476,12 @@ function LifeGuidance() {
                   /* Shloka has been added by admin and is in DB */
                   <>
                     <div className="card-sanskrit-block">
-                      <p className="sanskrit-text">"{foundShlok.sanskrit}"</p>
+                      <div
+                        className="sanskrit-text formatted-content"
+                        dangerouslySetInnerHTML={{
+                          __html: foundShlok.sanskrit || ""
+                        }}
+                      />
                     </div>
 
                     <div className="card-meaning-block">
@@ -488,13 +493,16 @@ function LifeGuidance() {
                           "Meaning / Translation"
                         )}
                       </h4>
-                      <p>
-                        {isEnglish
-                          ? (foundShlok.translationEn || foundShlok.translation || foundShlok.messageEn || foundShlok.message)
-                          : isHindi
-                          ? (foundShlok.translationHi || foundShlok.translation || foundShlok.messageHi || foundShlok.message)
-                          : (foundShlok.translation || foundShlok.message)}
-                      </p>
+                      <div
+                        className="card-meaning-text formatted-content"
+                        dangerouslySetInnerHTML={{
+                          __html: isEnglish
+                            ? (foundShlok.translationEn || foundShlok.translation || foundShlok.messageEn || foundShlok.message || "")
+                            : isHindi
+                            ? (foundShlok.translationHi || foundShlok.translation || foundShlok.messageHi || foundShlok.message || "")
+                            : (foundShlok.translation || foundShlok.message || "")
+                        }}
+                      />
                     </div>
 
                     {(foundShlok.message || foundShlok.messageHi || foundShlok.messageEn) && (
@@ -511,13 +519,16 @@ function LifeGuidance() {
                         >
                           💡 {txt("ગીતા સંદેશ / માર્ગદર્શન:", "गीता संदेश / मार्गदर्शन:", "Gita Guidance:")}
                         </span>
-                        <p>
-                          {isEnglish
-                            ? (foundShlok.messageEn || foundShlok.message)
-                            : isHindi
-                            ? (foundShlok.messageHi || foundShlok.message)
-                            : foundShlok.message}
-                        </p>
+                        <div
+                          className="card-lesson-text formatted-content"
+                          dangerouslySetInnerHTML={{
+                            __html: isEnglish
+                              ? (foundShlok.messageEn || foundShlok.message || "")
+                              : isHindi
+                              ? (foundShlok.messageHi || foundShlok.message || "")
+                              : (foundShlok.message || "")
+                          }}
+                        />
                       </div>
                     )}
 
