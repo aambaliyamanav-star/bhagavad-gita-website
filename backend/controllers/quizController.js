@@ -159,6 +159,9 @@ const getQuizQuestions = async (req, res) => {
       if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
         from = parts[0];
         to = parts[1];
+      } else if (parts.length === 1 && !isNaN(parts[0])) {
+        from = parts[0];
+        to = parts[0];
       }
     }
 
@@ -362,6 +365,9 @@ const getQuizQuestionsCount = async (req, res) => {
       if (parts.length === 2 && !isNaN(parts[0]) && !isNaN(parts[1])) {
         from = parts[0];
         to = parts[1];
+      } else if (parts.length === 1 && !isNaN(parts[0])) {
+        from = parts[0];
+        to = parts[0];
       }
     }
 
@@ -383,6 +389,70 @@ const getQuizQuestionsCount = async (req, res) => {
       message: "Questions count fetch કરવામાં error આવ્યો.",
       count: 0,
       totalQuestions: 0,
+    });
+  }
+};
+
+
+
+// =====================================================
+// GET AVAILABLE QUESTIONS SUMMARY (CHAPTERS & SHLOKAS)
+// =====================================================
+
+const getQuizQuestionsSummary = async (req, res) => {
+  try {
+    const questions = await QuizQuestion.find(
+      { isActive: true },
+      "category chapterNumber shlokaNumber"
+    ).lean();
+
+    const chapters = {};
+    const shlokas = {};
+    let totalAll = 0;
+    let mahabharataTotal = 0;
+
+    questions.forEach((q) => {
+      totalAll++;
+      const cat = String(q.category || "").toLowerCase();
+      if (cat === "mahabharata") {
+        mahabharataTotal++;
+        return;
+      }
+
+      let ch = q.chapterNumber;
+      if (!ch && cat.startsWith("chapter-")) {
+        ch = Number(cat.replace("chapter-", ""));
+      }
+
+      if (ch && ch >= 1 && ch <= 18) {
+        chapters[ch] = (chapters[ch] || 0) + 1;
+        if (!shlokas[ch]) {
+          shlokas[ch] = {};
+        }
+
+        const sNum = q.shlokaNumber;
+        if (sNum && sNum >= 1) {
+          shlokas[ch][sNum] = (shlokas[ch][sNum] || 0) + 1;
+        } else {
+          shlokas[ch]["general"] = (shlokas[ch]["general"] || 0) + 1;
+        }
+      }
+    });
+
+    return res.status(200).json({
+      success: true,
+      total: totalAll,
+      mahabharata: mahabharataTotal,
+      chapters,
+      shlokas,
+    });
+  } catch (error) {
+    console.error("❌ Get Quiz Questions Summary Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Quiz summary fetch કરવામાં error આવ્યો.",
+      chapters: {},
+      shlokas: {},
     });
   }
 };
@@ -1952,6 +2022,8 @@ module.exports = {
   getQuizQuestions,
 
   getQuizQuestionsCount,
+
+  getQuizQuestionsSummary,
 
   getQuizQuestionById,
 

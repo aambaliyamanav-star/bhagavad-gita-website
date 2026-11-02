@@ -380,7 +380,7 @@ function Quiz() {
           if (shlokaRangeParam && shlokaRangeParam !== "all") {
             const parts = shlokaRangeParam.split("-");
             const from = parseInt(parts[0], 10);
-            const to = parseInt(parts[1], 10);
+            const to = parts[1] !== undefined ? parseInt(parts[1], 10) : from;
             if (!isNaN(from) && !isNaN(to)) {
               fetchedQuestions = fetchedQuestions.filter((item) => {
                 const sNum = Number(item.shlokaNumber);
@@ -1419,9 +1419,12 @@ function Quiz() {
       "chapter" &&
     chapterParam
   ) {
+    const cleanRange = shlokaRangeParam
+      ? String(shlokaRangeParam).replace(/^(\d+)-\1$/, "$1")
+      : "";
     const rangeSuffix =
       shlokaRangeParam && shlokaRangeParam !== "all"
-        ? ` (${txt("શ્લોક", "श्लोक", "Verse")} ${shlokaRangeParam})`
+        ? ` (${txt("શ્લોક", "श्लोक", "Verse")} ${cleanRange})`
         : "";
     quizTitle = `${txt(`અધ્યાય ${chapterParam}`, `अध्याय ${chapterParam}`, `Chapter ${chapterParam}`)}${rangeSuffix}`;
   }

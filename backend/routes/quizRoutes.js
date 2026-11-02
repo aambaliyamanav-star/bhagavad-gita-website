@@ -3,6 +3,7 @@ const express = require("express");
 const {
   getQuizQuestions,
   getQuizQuestionsCount,
+  getQuizQuestionsSummary,
   getQuizQuestionById,
   submitQuiz,
   getMyQuizResults,
@@ -32,6 +33,12 @@ const router = express.Router();
 router.get(
   "/questions/count",
   getQuizQuestionsCount
+);
+
+// GET QUIZ QUESTIONS SUMMARY (AVAILABLE CHAPTERS & SHLOKAS)
+router.get(
+  "/questions/summary",
+  getQuizQuestionsSummary
 );
 
 // GET QUIZ QUESTIONS
