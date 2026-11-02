@@ -630,8 +630,8 @@ function QuizCategory() {
 
             </button>
 
-            {/* MAHABHARATA */}
-
+            {/* MAHABHARATA (હાલ પૂરતું છુપાવેલું છે - પ્રશ્નો ઉમેરાયા પછી ફરીથી એક્ટિવ કરી શકાશે) */}
+            {/*
             <button
               type="button"
               className={
@@ -659,6 +659,7 @@ function QuizCategory() {
               </span>
 
             </button>
+            */}
 
           </div>
 
