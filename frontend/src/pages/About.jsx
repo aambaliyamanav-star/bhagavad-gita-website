@@ -538,7 +538,9 @@ function About() {
 
   const openAiAssistant = () => {
     setSelectedFeature(null);
-    window.dispatchEvent(new CustomEvent("open-gita-ai-assistant"));
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent("open-gita-ai-assistant"));
+    }, 50);
   };
 
   const openFeedback = () => {

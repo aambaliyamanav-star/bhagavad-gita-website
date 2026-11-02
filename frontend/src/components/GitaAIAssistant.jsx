@@ -1274,6 +1274,19 @@ export default function GitaAIAssistant() {
     setIsOpen(true);
   };
 
+  // Listen for open-gita-ai-assistant event (e.g. from About Us page modal)
+  useEffect(() => {
+    const handleOpenAssistant = () => {
+      setIsHistoryOpen(false);
+      handleFabClick();
+    };
+
+    window.addEventListener("open-gita-ai-assistant", handleOpenAssistant);
+    return () => {
+      window.removeEventListener("open-gita-ai-assistant", handleOpenAssistant);
+    };
+  }, [user, location.pathname, location.search]);
+
 
   // Login, Register અથવા Quiz રમતી વખતે Floating AI બટન બતાવવાની જરૂર નથી
   if (
