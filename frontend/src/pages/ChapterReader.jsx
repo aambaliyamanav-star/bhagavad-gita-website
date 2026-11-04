@@ -1,6 +1,6 @@
 import { getValidToken } from "../utils/authHelper.js";
-import { useEffect, useRef, useState } from "react";
-import { BookOpen, Heart, Mic, Sparkles, AlertCircle, ChevronLeft, ChevronRight, Share2 } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { BookOpen, Heart, Mic, Sparkles, AlertCircle, ChevronLeft, ChevronRight, Share2, Volume2, Square, Play } from "lucide-react";
 import "./ChapterReader.css";
 import ShareShlokaModal from "../components/ShareShlokaModal.jsx";
 import SudarshanShimmerLoader from "../components/SudarshanShimmerLoader.jsx";
@@ -13,7 +13,7 @@ import {
 
 import { useAuth } from "../context/AuthContext.jsx";
 import { useLanguage } from "../context/LanguageContext.jsx";
-import { trackShlokaRead } from "../utils/readingTracker.js";
+import { trackShlokaRead, getFirstUnreadShloka, getLocalProgress } from "../utils/readingTracker.js";
 
 function ChapterReader() {
   const { chapterNumber } = useParams();
@@ -64,6 +64,28 @@ const [sanskritFontSize, setSanskritFontSize] = useState(21);
   // =====================================================
 
   const [shareModalOpen, setShareModalOpen] = useState(false);
+
+  // =====================================================
+  // TEXT-TO-SPEECH (AUDIO) STATE
+  // =====================================================
+  const [speakingType, setSpeakingType] = useState(null); // null | 'translation' | 'message'
+  const [pausedType, setPausedType] = useState(null); // null | 'translation' | 'message'
+  const speakingTypeRef = useRef(null);
+  const pausedTypeRef = useRef(null);
+  const pausedShlokaIndexRef = useRef(null);
+  const [audioLoading, setAudioLoading] = useState(false);
+  const audioPlayerRef = useRef(null);
+  const autoPlayTimerRef = useRef(null);
+  const isContinuousPlayRef = useRef(false);
+  const autoPlayNextShlokaRef = useRef(false);
+  const currentShlokaRef = useRef(currentShloka);
+  const shlokasRef = useRef(shlokas);
+  const userRef = useRef(user);
+  const translationContainerRef = useRef(null);
+  const messageContainerRef = useRef(null);
+  const lastActiveWordIdxRef = useRef(-1);
+  const lastActiveWordElRef = useRef(null);
+  const lastScrollTimeRef = useRef(0);
 
   // =====================================================
   // API URL
@@ -346,9 +368,13 @@ const response = await fetch(
         let targetShlokaNum = requestedShloka;
         if (!targetShlokaNum) {
           try {
-            const sessionVal = Number(sessionStorage.getItem(`gita_last_shloka_ch_${currentChapterNumber}`));
-            const localVal = Number(localStorage.getItem(`gita_last_shloka_ch_${currentChapterNumber}`));
-            targetShlokaNum = sessionVal || localVal || 1;
+            const localProgress = getLocalProgress();
+            const firstUnread = getFirstUnreadShloka(
+              localProgress.readShlokas,
+              currentChapterNumber,
+              fetchedShlokas.length
+            );
+            targetShlokaNum = firstUnread || 1;
           } catch (e) {
             targetShlokaNum = 1;
           }
@@ -479,7 +505,7 @@ const response = await fetch(
 
     const shlokNum = Number(current.shlokNumber);
 
-    // 1. Save in session & local storage for this chapter
+    // 1. Save in session & local storage for immediate in-page reload and continue reading
     try {
       sessionStorage.setItem(
         `gita_last_shloka_ch_${currentChapterNumber}`,
@@ -489,6 +515,14 @@ const response = await fetch(
         `gita_last_shloka_ch_${currentChapterNumber}`,
         String(shlokNum)
       );
+      localStorage.setItem(
+        "gita_continue_reading",
+        JSON.stringify({
+          chapterNumber: currentChapterNumber,
+          shlokNumber: shlokNum,
+          updatedAt: new Date().toISOString(),
+        })
+      );
     } catch (e) {}
 
     // 2. Synchronize URL query parameter smoothly via replaceState (no page reload, no history spam)
@@ -497,7 +531,12 @@ const response = await fetch(
     if (currentUrl !== targetUrl) {
       window.history.replaceState(window.history.state, "", targetUrl);
     }
-  }, [currentShloka, shlokas, currentChapterNumber]);
+
+    // 3. Immediately save Continue Reading to backend if user is logged in
+    if (user) {
+      saveContinueReading(currentChapterNumber, shlokNum);
+    }
+  }, [currentShloka, shlokas, currentChapterNumber, user]);
 
   // =====================================================
   // LOAD FAVOURITES FROM BACKEND
@@ -630,34 +669,9 @@ const response = await fetch(
   };
 
   // =====================================================
-  // SAVE CONTINUE READING WHEN CURRENT SHLOK CHANGES
+  // CONTINUE READING IS SAVED WHEN SHLOKA IS COMPLETED
+  // (Either 50s reading time or full audio listened)
   // =====================================================
-
-  useEffect(() => {
-    if (
-      !user ||
-      shlokas.length === 0
-    ) {
-      return;
-    }
-
-    const current =
-      shlokas[currentShloka];
-
-    if (!current) {
-      return;
-    }
-
-    saveContinueReading(
-      currentChapterNumber,
-      current.shlokNumber
-    );
-  }, [
-    currentShloka,
-    shlokas,
-    user,
-    currentChapterNumber,
-  ]);
 
   // =====================================================
   // TIMED READING TRACKER (50-SECOND MINIMUM READ)
@@ -692,6 +706,15 @@ const response = await fetch(
         const token = getValidToken();
         trackShlokaRead(currentChapterNumber, current.shlokNumber, token);
         trackedInSessionRef.current.add(sessionKey);
+        try {
+          localStorage.setItem(
+            `gita_last_shloka_ch_${currentChapterNumber}`,
+            String(current.shlokNumber)
+          );
+        } catch (e) {}
+        if (user) {
+          saveContinueReading(currentChapterNumber, current.shlokNumber);
+        }
       }
     };
 
@@ -927,6 +950,576 @@ if (
   });
 };
 
+  // Advances to next shloka automatically in continuous play mode
+  const advanceToNextShloka = () => {
+    const list = shlokasRef.current || [];
+    const currentIndex = currentShlokaRef.current;
+    const nextIndex = currentIndex + 1;
+
+    // Check if next shloka exists in this chapter
+    if (nextIndex < list.length) {
+      const nextShlok = list[nextIndex];
+
+      // Login check: if user not logged in and next shloka > 5, stop autoplay & prompt login
+      if (!userRef.current && Number(nextShlok?.shlokNumber) > 5) {
+        isContinuousPlayRef.current = false;
+        autoPlayNextShlokaRef.current = false;
+        selectShloka(nextIndex);
+        return;
+      }
+
+      // Mark that this transition is automatic so audio starts automatically on next shloka
+      autoPlayNextShlokaRef.current = true;
+      selectShloka(nextIndex);
+    } else {
+      // Reached the end of the chapter!
+      isContinuousPlayRef.current = false;
+      autoPlayNextShlokaRef.current = false;
+      setSpeakingType(null);
+      setAudioLoading(false);
+    }
+  };
+
+  // =====================================================
+  // TEXT-TO-SPEECH (AUDIO) ENGINE
+  // =====================================================
+
+  // Wraps text tokens inside HTML into spans with data-word-idx for accurate, attractive audio tracking
+  const wrapHtmlWithSpans = (htmlString) => {
+    if (!htmlString || typeof htmlString !== "string") return "";
+    try {
+      let wordIdx = 0;
+      return htmlString.replace(/(<[^>]+>)|([^<]+)/g, (match, tag, text) => {
+        if (tag) return tag;
+        if (text) {
+          return text.replace(/([^\s]+)/g, (word) => {
+            return `<span class="tts-word" data-word-idx="${wordIdx++}">${word}</span>`;
+          });
+        }
+        return match;
+      });
+    } catch (e) {
+      return htmlString;
+    }
+  };
+
+  // Clear any existing active word / sentence TTS highlighting
+  const clearTtsHighlights = () => {
+    lastActiveWordIdxRef.current = -1;
+    lastActiveWordElRef.current = null;
+    if (typeof document !== "undefined") {
+      const highlighted = document.querySelectorAll(".tts-word-active, .tts-word-read");
+      highlighted.forEach((el) => {
+        el.classList.remove("tts-word-active", "tts-word-read");
+      });
+    }
+  };
+
+  // Re-applies active and previously read word highlights so they never disappear on pause/stop
+  const restoreTtsHighlights = (containerSelector, activeIndex) => {
+    if (activeIndex === undefined || activeIndex === null || activeIndex < 0) return;
+    if (typeof document === "undefined") return;
+    const container = document.querySelector(containerSelector);
+    if (!container) return;
+    const words = Array.from(container.querySelectorAll(".tts-word"));
+    for (let i = 0; i < words.length; i++) {
+      if (i === activeIndex) {
+        words[i].classList.add("tts-word-active");
+        words[i].classList.remove("tts-word-read");
+      } else if (i < activeIndex) {
+        words[i].classList.remove("tts-word-active");
+        words[i].classList.add("tts-word-read");
+      } else {
+        words[i].classList.remove("tts-word-active", "tts-word-read");
+      }
+    }
+  };
+
+  // Helper to extract clean spoken text from HTML with natural pauses (1s pause after point titles / colons / lists)
+  const extractCleanTextForSpeech = (htmlString) => {
+    if (!htmlString) return "";
+    try {
+      const tempDiv = document.createElement("div");
+      const preprocessed = String(htmlString)
+        .replace(/<br\s*[\/]?>/gi, " [P] ")
+        .replace(/<\/p>/gi, " [P] ")
+        .replace(/<\/li>/gi, " [P] ")
+        .replace(/<li>/gi, " [P] ")
+        .replace(/&nbsp;/gi, " ")
+        .replace(/&amp;/gi, "&");
+      tempDiv.innerHTML = preprocessed;
+      let text = (tempDiv.textContent || tempDiv.innerText || "");
+
+      // Strip remaining HTML tags
+      text = text.replace(/<[^>]*>/g, "");
+
+      // 1-second natural pause after speaker name or point titles with colons (e.g. "ધૃતરાષ્ટ્રે કહ્યું :")
+      text = text.replace(/\s*[:：]\s*/g, " [P] ");
+
+      // Remove bullet marks
+      text = text.replace(/[•\-\*]/g, " ");
+
+      // Collapse extra spaces
+      text = text.replace(/\s+/g, " ").trim();
+
+      // Replace pause marker with ". ... " which causes a calm ~1 second pause in speech synthesis
+      text = text.replace(/\s*\[P\]\s*/g, ". ... ");
+
+      // Clean up duplicate pause markers or trailing punctuation
+      text = text
+        .replace(/(\.\s*\.\.\.\s*)+/g, ". ... ")
+        .replace(/^[\.\s\.\.\.]+/, "")
+        .replace(/[\.\s\.\.\.]+$/, ".")
+        .trim();
+
+      return text;
+    } catch (e) {
+      return String(htmlString)
+        .replace(/<[^>]*>/g, " ")
+        .replace(/\s*[:：]\s*/g, ". ... ")
+        .trim();
+    }
+  };
+
+  // Smoothly scroll the screen to keep the active section comfortably in view
+  const scrollToSection = (sectionType) => {
+    try {
+      const selector = sectionType === "message" ? ".message-box" : ".translation-box";
+      const el = document.querySelector(selector);
+      if (el) {
+        const yOffset = -90; // Leave comfortable space below top navbar
+        const y = el.getBoundingClientRect().top + window.pageYOffset + yOffset;
+        window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
+      }
+    } catch (e) {}
+  };
+
+  // Resiliently fetch Microsoft Neural AI speech audio (with automatic retry)
+  const fetchNeuralAudioBlob = async (text, lang) => {
+    const isLocal =
+      typeof window !== "undefined" &&
+      (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
+
+    const ttsBase = isLocal
+      ? "http://localhost:5000"
+      : "https://bhagavad-gita-website.onrender.com";
+
+    let lastFetchErr = null;
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      try {
+        const response = await fetch(`${ttsBase}/api/tts/speak`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            text,
+            lang,
+            voice: "male", // Niranjan (deep devotional voice)
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`TTS server returned status ${response.status}`);
+        }
+
+        return await response.blob();
+      } catch (err) {
+        lastFetchErr = err;
+        if (attempt < 2) {
+          await new Promise((r) => setTimeout(r, 650));
+        }
+      }
+    }
+    throw lastFetchErr;
+  };
+
+  // Pause currently playing speech at the exact current position without losing font highlights
+  const pauseSpeech = (type) => {
+    isContinuousPlayRef.current = false;
+    autoPlayNextShlokaRef.current = false;
+    if (autoPlayTimerRef.current) {
+      clearTimeout(autoPlayTimerRef.current);
+      autoPlayTimerRef.current = null;
+    }
+    if (audioPlayerRef.current) {
+      audioPlayerRef.current.pause();
+    }
+    speakingTypeRef.current = null;
+    pausedTypeRef.current = type;
+    pausedShlokaIndexRef.current = currentShloka;
+    setSpeakingType(null);
+    setPausedType(type);
+    setAudioLoading(false);
+
+    // Ensure all read and active word highlights stay 100% visible
+    const activeIdx = lastActiveWordIdxRef.current;
+    const selector = type === "translation" ? ".gujarati-meaning" : ".message-text";
+    requestAnimationFrame(() => {
+      restoreTtsHighlights(selector, activeIdx);
+    });
+    setTimeout(() => {
+      restoreTtsHighlights(selector, activeIdx);
+    }, 40);
+  };
+
+  // Resume paused speech from the exact paused word
+  const resumeSpeech = async (type) => {
+    if (
+      pausedTypeRef.current === type &&
+      pausedShlokaIndexRef.current === currentShloka &&
+      audioPlayerRef.current &&
+      !audioPlayerRef.current.ended
+    ) {
+      speakingTypeRef.current = type;
+      pausedTypeRef.current = null;
+      setSpeakingType(type);
+      setPausedType(null);
+      isContinuousPlayRef.current = true;
+      scrollToSection(type);
+      try {
+        await audioPlayerRef.current.play();
+      } catch (err) {
+        console.error("Resume audio play error:", err);
+      }
+    }
+  };
+
+  // Starts or continues playing speech for a given section (NEVER pauses; used for auto-play and fresh plays)
+  const startSpeech = async (type, overrideIndex = null) => {
+    // Clear any pending automatic timers
+    if (autoPlayTimerRef.current) {
+      clearTimeout(autoPlayTimerRef.current);
+      autoPlayTimerRef.current = null;
+    }
+
+    // Stop and reset previous audio
+    if (audioPlayerRef.current) {
+      audioPlayerRef.current.pause();
+      audioPlayerRef.current.currentTime = 0;
+    }
+    clearTtsHighlights();
+    speakingTypeRef.current = type;
+    pausedTypeRef.current = null;
+    pausedShlokaIndexRef.current = null;
+    setPausedType(null);
+    setSpeakingType(type);
+    setAudioLoading(true);
+
+    isContinuousPlayRef.current = true;
+
+    const list = shlokasRef.current || shlokas;
+    const targetIdx = overrideIndex !== null ? overrideIndex : currentShlokaRef.current;
+    const targetShlok = list[targetIdx] || {};
+    const targetLocalized = getLocalizedShlok(targetShlok);
+    const rawText =
+      type === "translation"
+        ? targetLocalized.translation || targetShlok?.translation
+        : targetLocalized.message || targetShlok?.message;
+
+    const textToSpeak = extractCleanTextForSpeech(rawText);
+    if (!textToSpeak) {
+      speakingTypeRef.current = null;
+      setSpeakingType(null);
+      setAudioLoading(false);
+      // If message is missing or empty, wait 2s and move to next shloka automatically
+      if (type === "message" && isContinuousPlayRef.current) {
+        autoPlayTimerRef.current = setTimeout(() => {
+          advanceToNextShloka();
+        }, 2000);
+      }
+      return;
+    }
+
+    const langCode = isEnglish ? "en" : isHindi ? "hi" : "gu";
+    scrollToSection(type);
+
+    try {
+      const blob = await fetchNeuralAudioBlob(textToSpeak, langCode);
+      const audioBlobUrl = URL.createObjectURL(blob);
+
+      const audio = new Audio(audioBlobUrl);
+      audioPlayerRef.current = audio;
+
+      // Word tracking and live font highlighting with smooth auto-scroll
+      const containerSelector =
+        type === "translation" ? ".gujarati-meaning" : ".message-text";
+
+      audio.ontimeupdate = () => {
+        if (!audio.duration || isNaN(audio.duration) || audio.duration === 0) return;
+
+        const container = document.querySelector(containerSelector);
+        if (!container) return;
+
+        const words = Array.from(container.querySelectorAll(".tts-word"));
+        if (!words || words.length === 0) return;
+
+        let totalWeight = 0;
+        const wordWeights = [];
+        for (let i = 0; i < words.length; i++) {
+          const wText = (words[i].textContent || "").trim();
+          const hasPause = /[:：.!?]$/.test(wText);
+          const weight = Math.max(wText.length, 2) + (hasPause ? 8 : 0);
+          totalWeight += weight;
+          wordWeights.push(totalWeight);
+        }
+
+        const progress = Math.min(Math.max(audio.currentTime / audio.duration, 0), 1);
+        const targetWeight = progress * totalWeight;
+
+        let activeIndex = wordWeights.findIndex((w) => w >= targetWeight);
+        if (activeIndex === -1) activeIndex = words.length - 1;
+
+        if (activeIndex !== lastActiveWordIdxRef.current) {
+          for (let i = 0; i < words.length; i++) {
+            if (i === activeIndex) {
+              words[i].classList.add("tts-word-active");
+              words[i].classList.remove("tts-word-read");
+            } else if (i < activeIndex) {
+              words[i].classList.remove("tts-word-active");
+              words[i].classList.add("tts-word-read");
+            } else {
+              words[i].classList.remove("tts-word-active", "tts-word-read");
+            }
+          }
+
+          lastActiveWordIdxRef.current = activeIndex;
+
+          // Intelligent Dynamic Auto-scroll:
+          // Whatever word is currently spoken is always kept in visible view.
+          // When speech approaches the bottom of the screen, smoothly scroll down ~2 lines (~80px).
+          const activeEl = words[activeIndex];
+          if (activeEl) {
+            const rect = activeEl.getBoundingClientRect();
+            const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+            const navbarOffset = 85;
+            const bottomThreshold = viewportHeight - 130;
+            const now = Date.now();
+
+            if (now - lastScrollTimeRef.current > 650) {
+              if (rect.bottom > bottomThreshold) {
+                lastScrollTimeRef.current = now;
+                const scrollAmount = Math.max(80, rect.bottom - (viewportHeight - 200));
+                window.scrollBy({ top: scrollAmount, behavior: "smooth" });
+              } else if (rect.top < navbarOffset) {
+                lastScrollTimeRef.current = now;
+                const scrollAmount = rect.top - navbarOffset - 30;
+                window.scrollBy({ top: scrollAmount, behavior: "smooth" });
+              }
+            }
+          }
+        }
+      };
+
+      audio.onended = () => {
+        clearTtsHighlights();
+        speakingTypeRef.current = null;
+        pausedTypeRef.current = null;
+        setSpeakingType(null);
+        setPausedType(null);
+        pausedShlokaIndexRef.current = null;
+        setAudioLoading(false);
+        try {
+          URL.revokeObjectURL(audioBlobUrl);
+        } catch (e) {}
+
+        // Mark shloka as read because the user listened to the audio!
+        const targetShlokaObj = shlokas[targetIdx];
+        if (targetShlokaObj && targetShlokaObj.shlokNumber) {
+          const sessionKey = `${currentChapterNumber}-${targetShlokaObj.shlokNumber}`;
+          const token = getValidToken();
+          trackShlokaRead(currentChapterNumber, targetShlokaObj.shlokNumber, token);
+          trackedInSessionRef.current.add(sessionKey);
+          try {
+            localStorage.setItem(
+              `gita_last_shloka_ch_${currentChapterNumber}`,
+              String(targetShlokaObj.shlokNumber)
+            );
+          } catch (e) {}
+          if (user) {
+            saveContinueReading(currentChapterNumber, targetShlokaObj.shlokNumber);
+          }
+        }
+
+        // If translation just ended, wait 1 second and automatically play message continuously!
+        if (type === "translation") {
+          if (autoPlayTimerRef.current) {
+            clearTimeout(autoPlayTimerRef.current);
+          }
+          autoPlayTimerRef.current = setTimeout(() => {
+            startSpeech("message", targetIdx);
+          }, 1000);
+        } else if (type === "message" && isContinuousPlayRef.current) {
+          // If message just ended, wait 2 seconds and automatically move to next shloka continuously!
+          if (autoPlayTimerRef.current) {
+            clearTimeout(autoPlayTimerRef.current);
+          }
+          autoPlayTimerRef.current = setTimeout(() => {
+            advanceToNextShloka();
+          }, 2000);
+        }
+      };
+
+      audio.onerror = () => {
+        console.error("Audio playback error occurred");
+        clearTtsHighlights();
+        speakingTypeRef.current = null;
+        pausedTypeRef.current = null;
+        setSpeakingType(null);
+        setPausedType(null);
+        pausedShlokaIndexRef.current = null;
+        setAudioLoading(false);
+        if (autoPlayTimerRef.current) {
+          clearTimeout(autoPlayTimerRef.current);
+          autoPlayTimerRef.current = null;
+        }
+      };
+
+      await audio.play();
+      setAudioLoading(false);
+    } catch (err) {
+      console.error("Neural TTS error:", err);
+      clearTtsHighlights();
+      speakingTypeRef.current = null;
+      pausedTypeRef.current = null;
+      setSpeakingType(null);
+      setPausedType(null);
+      pausedShlokaIndexRef.current = null;
+      setAudioLoading(false);
+      if (autoPlayTimerRef.current) {
+        clearTimeout(autoPlayTimerRef.current);
+        autoPlayTimerRef.current = null;
+      }
+    }
+  };
+
+  // Main user button click handler (Toggles Stop / Resume / Play)
+  const toggleSpeech = async (type, overrideIndex = null) => {
+    if (speakingTypeRef.current === type) {
+      pauseSpeech(type);
+    } else if (
+      pausedTypeRef.current === type &&
+      pausedShlokaIndexRef.current === currentShloka &&
+      audioPlayerRef.current &&
+      !audioPlayerRef.current.ended
+    ) {
+      await resumeSpeech(type);
+    } else {
+      await startSpeech(type, overrideIndex);
+    }
+  };
+
+  // Stop any ongoing speech or audio playback when switching shlokas manually, or handle auto-advance
+  useEffect(() => {
+    currentShlokaRef.current = currentShloka;
+
+    if (autoPlayNextShlokaRef.current) {
+      // Auto-advance from previous shloka: start translation for this new shloka
+      autoPlayNextShlokaRef.current = false;
+      speakingTypeRef.current = null;
+      pausedTypeRef.current = null;
+      setPausedType(null);
+      pausedShlokaIndexRef.current = null;
+      startSpeech("translation", currentShloka);
+      return;
+    }
+
+    // Manual shloka change (user selected another shloka / clicked next or prev / initial load):
+    // Stop continuous autoplay and ongoing audio immediately, and reset paused/resume states
+    isContinuousPlayRef.current = false;
+    clearTtsHighlights();
+    speakingTypeRef.current = null;
+    pausedTypeRef.current = null;
+    setPausedType(null);
+    pausedShlokaIndexRef.current = null;
+    if (autoPlayTimerRef.current) {
+      clearTimeout(autoPlayTimerRef.current);
+      autoPlayTimerRef.current = null;
+    }
+    if (audioPlayerRef.current) {
+      audioPlayerRef.current.pause();
+      audioPlayerRef.current.currentTime = 0;
+    }
+    setSpeakingType(null);
+    setAudioLoading(false);
+  }, [currentShloka]);
+
+  // Stop audio immediately when chapter changes
+  useEffect(() => {
+    isContinuousPlayRef.current = false;
+    autoPlayNextShlokaRef.current = false;
+    clearTtsHighlights();
+    speakingTypeRef.current = null;
+    pausedTypeRef.current = null;
+    setPausedType(null);
+    pausedShlokaIndexRef.current = null;
+    if (autoPlayTimerRef.current) {
+      clearTimeout(autoPlayTimerRef.current);
+      autoPlayTimerRef.current = null;
+    }
+    if (audioPlayerRef.current) {
+      audioPlayerRef.current.pause();
+      audioPlayerRef.current.currentTime = 0;
+    }
+    setSpeakingType(null);
+    setAudioLoading(false);
+  }, [currentChapterNumber]);
+
+  // Stop audio when navigating away from page or on browser back/forward
+  useEffect(() => {
+    const handleNavigationStop = () => {
+      isContinuousPlayRef.current = false;
+      autoPlayNextShlokaRef.current = false;
+      clearTtsHighlights();
+      speakingTypeRef.current = null;
+      pausedTypeRef.current = null;
+      setPausedType(null);
+      pausedShlokaIndexRef.current = null;
+      if (autoPlayTimerRef.current) {
+        clearTimeout(autoPlayTimerRef.current);
+        autoPlayTimerRef.current = null;
+      }
+      if (audioPlayerRef.current) {
+        audioPlayerRef.current.pause();
+        audioPlayerRef.current.currentTime = 0;
+      }
+      setSpeakingType(null);
+      setAudioLoading(false);
+    };
+
+    window.addEventListener("popstate", handleNavigationStop);
+
+    return () => {
+      handleNavigationStop();
+      window.removeEventListener("popstate", handleNavigationStop);
+    };
+  }, []);
+
+  useEffect(() => {
+    shlokasRef.current = shlokas;
+  }, [shlokas]);
+
+  useEffect(() => {
+    userRef.current = user;
+  }, [user]);
+
+  const currentShlok = shlokas[currentShloka] || {};
+  const currentLocalized = getLocalizedShlok(currentShlok);
+
+  const wrappedTranslationHtml = useMemo(() => {
+    return wrapHtmlWithSpans(
+      currentLocalized.translation ||
+      currentShlok.translation ||
+      txt("ગુજરાતી અનુવાદ ઉપલબ્ધ નથી.", "हिन्दी अनुवाद उपलब्ध नहीं है।", "Translation not available.")
+    );
+  }, [currentLocalized.translation, currentShlok.translation, currentShloka, isEnglish, isHindi]);
+
+  const wrappedMessageHtml = useMemo(() => {
+    return wrapHtmlWithSpans(
+      currentLocalized.message ||
+      currentShlok.message ||
+      txt("સંદેશ ઉપલબ્ધ નથી.", "सन्देश उपलब्ध नहीं है।", "Message not available.")
+    );
+  }, [currentLocalized.message, currentShlok.message, currentShloka, isEnglish, isHindi]);
+
   // =====================================================
   // INVALID CHAPTER
   // =====================================================
@@ -1066,11 +1659,8 @@ if (
   // CURRENT SHLOKA
   // =====================================================
 
-  const shloka =
-    shlokas[currentShloka] || {};
-
-  const localized =
-    getLocalizedShlok(shloka);
+  const shloka = currentShlok;
+  const localized = currentLocalized;
 
   const currentChapterTitle = isEnglish
     ? (CHAPTER_NAMES[currentChapterNumber]?.en || `Chapter ${currentChapterNumber}`)
@@ -1083,6 +1673,10 @@ if (
   // =====================================================
   // NEXT SHLOK
   // =====================================================
+
+
+
+
 
 const nextShloka = () => {
   if (
@@ -1675,19 +2269,66 @@ const prepareSanskritLines = () => {
               TRANSLATION
           ================================================= */}
 
-          <div className="content-box translation-box">
+          <div className={`content-box translation-box ${(speakingType === "translation" || (pausedType === "translation" && pausedShlokaIndexRef.current === currentShloka)) ? "tts-box-active" : ""}`}>
 
-            <h3>
-              <BookOpen className="btn-icon" size={18} /> {txt("ગુજરાતી અનુવાદ", "हिन्दी अनुवाद", "English Translation")}
-            </h3>
+            <div className="content-box-header">
+              <h3>
+                <BookOpen className="btn-icon" size={18} /> {txt("ગુજરાતી અનુવાદ", "हिन्दी अनुवाद", "English Translation")}
+              </h3>
+
+              <button
+                type="button"
+                className={`shloka-speech-btn ${
+                  speakingType === "translation"
+                    ? "is-speaking"
+                    : pausedType === "translation" && pausedShlokaIndexRef.current === currentShloka
+                    ? "is-paused"
+                    : ""
+                }`}
+                onClick={() => toggleSpeech("translation")}
+                title={
+                  speakingType === "translation"
+                    ? txt("ઓડિયો સ્ટોપ કરો", "ऑडियो स्टॉप करें", "Stop Audio")
+                    : pausedType === "translation" && pausedShlokaIndexRef.current === currentShloka
+                    ? txt("ઓડિયો ફરી ચાલુ કરો", "ऑडियो फिर से शुरू करें", "Resume Audio")
+                    : txt("અનુવાદ સાંભળો", "अनुवाद सुनें", "Listen to Translation")
+                }
+                aria-label={
+                  speakingType === "translation"
+                    ? "Stop Audio"
+                    : pausedType === "translation" && pausedShlokaIndexRef.current === currentShloka
+                    ? "Resume Audio"
+                    : "Listen to Translation Audio"
+                }
+              >
+                {speakingType === "translation" ? (
+                  audioLoading ? (
+                    <span>{txt("લોડ થાય છે...", "लोड हो रहा है...", "Loading...")}</span>
+                  ) : (
+                    <>
+                      <Square size={12} fill="currentColor" />
+                      <span>{txt("સ્ટોપ", "स्टॉप", "Stop")}</span>
+                    </>
+                  )
+                ) : pausedType === "translation" && pausedShlokaIndexRef.current === currentShloka ? (
+                  <>
+                    <Play size={13} fill="currentColor" />
+                    <span>{txt("ચાલુ કરો", "जारी रखें", "Resume")}</span>
+                  </>
+                ) : (
+                  <>
+                    <Volume2 size={15} />
+                    <span>{txt("સાંભળો", "सुनें", "Listen")}</span>
+                  </>
+                )}
+              </button>
+            </div>
 
             <div
-              className="gujarati-meaning formatted-content"
+              ref={translationContainerRef}
+              className={`gujarati-meaning formatted-content ${(speakingType === "translation" || (pausedType === "translation" && pausedShlokaIndexRef.current === currentShloka)) ? "tts-section-active" : ""}`}
               dangerouslySetInnerHTML={{
-                __html:
-                  localized.translation ||
-                  shloka.translation ||
-                  txt("ગુજરાતી અનુવાદ ઉપલબ્ધ નથી.", "हिन्दी अनुवाद उपलब्ध नहीं है।", "Translation not available."),
+                __html: wrappedTranslationHtml,
               }}
             />
 
@@ -1697,19 +2338,66 @@ const prepareSanskritLines = () => {
               MESSAGE
           ================================================= */}
 
-          <div className="content-box message-box">
+          <div className={`content-box message-box ${(speakingType === "message" || (pausedType === "message" && pausedShlokaIndexRef.current === currentShloka)) ? "tts-box-active" : ""}`}>
 
-            <h3>
-              <Sparkles className="btn-icon" size={18} /> {txt("સંદેશ / સમજણ", "सन्देश / व्याख्या", "Message / Meaning")}
-            </h3>
+            <div className="content-box-header">
+              <h3>
+                <Sparkles className="btn-icon" size={18} /> {txt("સંદેશ / સમજણ", "सन्देश / व्याख्या", "Message / Meaning")}
+              </h3>
+
+              <button
+                type="button"
+                className={`shloka-speech-btn ${
+                  speakingType === "message"
+                    ? "is-speaking"
+                    : pausedType === "message" && pausedShlokaIndexRef.current === currentShloka
+                    ? "is-paused"
+                    : ""
+                }`}
+                onClick={() => toggleSpeech("message")}
+                title={
+                  speakingType === "message"
+                    ? txt("ઓડિયો સ્ટોપ કરો", "ऑडियो स्टॉप करें", "Stop Audio")
+                    : pausedType === "message" && pausedShlokaIndexRef.current === currentShloka
+                    ? txt("ઓડિયો ફરી ચાલુ કરો", "ऑडियो फिर से शुरू करें", "Resume Audio")
+                    : txt("સંદેશ સાંભળો", "सन्देश सुनें", "Listen to Message")
+                }
+                aria-label={
+                  speakingType === "message"
+                    ? "Stop Audio"
+                    : pausedType === "message" && pausedShlokaIndexRef.current === currentShloka
+                    ? "Resume Audio"
+                    : "Listen to Message Audio"
+                }
+              >
+                {speakingType === "message" ? (
+                  audioLoading ? (
+                    <span>{txt("લોડ થાય છે...", "लोड हो रहा है...", "Loading...")}</span>
+                  ) : (
+                    <>
+                      <Square size={12} fill="currentColor" />
+                      <span>{txt("સ્ટોપ", "स्टॉप", "Stop")}</span>
+                    </>
+                  )
+                ) : pausedType === "message" && pausedShlokaIndexRef.current === currentShloka ? (
+                  <>
+                    <Play size={13} fill="currentColor" />
+                    <span>{txt("ચાલુ કરો", "जारी रखें", "Resume")}</span>
+                  </>
+                ) : (
+                  <>
+                    <Volume2 size={15} />
+                    <span>{txt("સાંભળો", "सुनें", "Listen")}</span>
+                  </>
+                )}
+              </button>
+            </div>
 
             <div
-              className="message-text formatted-content"
+              ref={messageContainerRef}
+              className={`message-text formatted-content ${(speakingType === "message" || (pausedType === "message" && pausedShlokaIndexRef.current === currentShloka)) ? "tts-section-active" : ""}`}
               dangerouslySetInnerHTML={{
-                __html:
-                  localized.message ||
-                  shloka.message ||
-                  txt("સંદેશ ઉપલબ્ધ નથી.", "सन्देश उपलब्ध नहीं है।", "Message not available."),
+                __html: wrappedMessageHtml,
               }}
             />
 

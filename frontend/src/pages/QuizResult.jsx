@@ -6,7 +6,14 @@ import SudarshanShimmerLoader from "../components/SudarshanShimmerLoader.jsx";
 import { useLanguage } from "../context/LanguageContext.jsx";
 import "./QuizResult.css";
 
-const API_URL = "https://bhagavad-gita-website.onrender.com/api/quiz";
+const isLocal =
+  typeof window !== "undefined" &&
+  (window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1");
+
+const API_URL = isLocal
+  ? "http://localhost:5000/api/quiz"
+  : "https://bhagavad-gita-website.onrender.com/api/quiz";
 
 function QuizResult() {
   const { isHindi, isEnglish, isGujarati, txt } = useLanguage();
@@ -349,6 +356,32 @@ function QuizResult() {
   };
 
   // =====================================================
+  // RETAKE QUIZ FROM HISTORY
+  // =====================================================
+
+  const handleRetakeFromHistory = (result) => {
+    const chapterNumber = getChapterNumber(result);
+    const params = new URLSearchParams();
+
+    if (chapterNumber) {
+      params.set("category", "chapter");
+      params.set("chapter", String(chapterNumber));
+      if (result.shlokaRange && result.shlokaRange !== "all") {
+        params.set("shlokaRange", result.shlokaRange);
+      }
+    } else if (result.category === "mahabharata") {
+      params.set("category", "mahabharata");
+    } else {
+      params.set("category", "all");
+    }
+
+    const count = Number(result.totalQuestions) || 10;
+    params.set("count", String(count));
+
+    navigate(`/quiz/play?${params.toString()}`);
+  };
+
+  // =====================================================
   // TOGGLE RESULT
   // =====================================================
 
@@ -573,73 +606,63 @@ function QuizResult() {
         {results.map((result, index) => {
 
           // ------------------------------------------------
-          // TOTAL
+          // COMPLETION STATUS (TRUE OR FALSE)
           // ------------------------------------------------
 
-          const totalQuestions =
-            Number(
-              result.totalQuestions || 0
-            );
+          const isCompleted = result.completed !== false;
 
           // ------------------------------------------------
-          // CORRECT
+          // TOTAL, PLAYED & SKIPPED QUESTIONS
           // ------------------------------------------------
 
-          const correctAnswers =
-            Number(
-              result.correctAnswers || 0
-            );
+          const rawTotalQuestions = Number(result.totalQuestions || 0);
+          const correctAnswers = Number(result.correctAnswers || 0);
 
-          // ------------------------------------------------
-          // SKIPPED
-          // ------------------------------------------------
+          // Calculate answered / played count from answers array or (correct + wrong)
+          const answeredCount =
+            Array.isArray(result.answers) && result.answers.length > 0
+              ? result.answers.filter(
+                  (a) =>
+                    a &&
+                    a.selectedAnswer &&
+                    String(a.selectedAnswer).trim() !== ""
+                ).length
+              : correctAnswers + Number(result.wrongAnswers || 0);
 
-          const skippedQuestions =
-            Number(
-              result.skippedQuestions || 0
-            );
+          // If incomplete and total was recorded as only the answered count (e.g. 2 instead of 10),
+          // recover the actual quiz size (standard options: 10, 20, 30, etc., minimum 10)
+          let totalQuestions = rawTotalQuestions;
+          if (!isCompleted && (totalQuestions <= answeredCount || totalQuestions < 10)) {
+            totalQuestions = Math.max(10, Math.ceil(Math.max(1, answeredCount) / 10) * 10);
+          }
 
-          // ------------------------------------------------
-          // WRONG
-          // ------------------------------------------------
+          const rawSkippedQuestions = Number(result.skippedQuestions || 0);
+          const skippedQuestions = !isCompleted
+            ? Math.max(0, totalQuestions - answeredCount)
+            : rawSkippedQuestions;
 
-          const calculatedWrong =
-            Math.max(
-              totalQuestions -
-                correctAnswers -
-                skippedQuestions,
-              0
-            );
+          const calculatedWrong = Math.max(
+            totalQuestions - correctAnswers - skippedQuestions,
+            0
+          );
 
-          const wrongAnswers =
-            Number.isFinite(
-              Number(result.wrongAnswers)
-            )
-              ? Number(result.wrongAnswers)
-              : calculatedWrong;
+          const wrongAnswers = Number.isFinite(Number(result.wrongAnswers))
+            ? Number(result.wrongAnswers)
+            : calculatedWrong;
 
           // ------------------------------------------------
           // PERCENTAGE
           // ------------------------------------------------
 
-          const calculatedPercentage =
-            getPercentage(
-              correctAnswers,
-              totalQuestions
-            );
+          const calculatedPercentage = getPercentage(
+            correctAnswers,
+            totalQuestions
+          );
 
-          let percentage =
-            Number(
-              result.percentage
-            );
+          let percentage = Number(result.percentage);
 
-          if (
-            !Number.isFinite(
-              percentage
-            )
-          ) {
-            percentage =
-              calculatedPercentage;
+          if (!Number.isFinite(percentage) || !isCompleted) {
+            percentage = calculatedPercentage;
           }
 
           percentage = Math.min(
@@ -713,11 +736,7 @@ function QuizResult() {
 
           return (
             <article
-              className={
-                isExpanded
-                  ? "quiz-history-item quiz-history-expanded"
-                  : "quiz-history-item"
-              }
+              className={`quiz-history-item ${isExpanded ? "quiz-history-expanded" : ""} ${!isCompleted ? "quiz-item-incomplete" : ""}`}
               key={resultKey}
             >
 
@@ -762,9 +781,37 @@ function QuizResult() {
 
                 <div className="quiz-history-info">
 
-                  <h3 className="quiz-history-title">
-                    {targetInfo.shortTitle}
-                  </h3>
+                  <div className="quiz-history-title-wrap">
+                    <h3 className="quiz-history-title">
+                      {targetInfo.shortTitle}
+                    </h3>
+                    {!isCompleted && (
+                      <span className="quiz-history-status-badge incomplete">
+                        <AlertCircle size={11} className="badge-icon" />
+                        {txt("અધૂરી", "अधूरी", "Incomplete")}
+                      </span>
+                    )}
+                  </div>
+
+                  <p className="quiz-history-summary-line">
+                    {!isCompleted ? (
+                      <span className="quiz-history-incomplete-summary">
+                        {txt(
+                          `કુલ ${totalQuestions} માંથી ${answeredCount} રમેલા (${skippedQuestions} બાકી)`,
+                          `कुल ${totalQuestions} में से ${answeredCount} खेले (${skippedQuestions} बाकी)`,
+                          `Played ${answeredCount} of ${totalQuestions} (${skippedQuestions} left)`
+                        )}
+                      </span>
+                    ) : (
+                      <span className="quiz-history-completed-summary">
+                        {txt(
+                          `કુલ ${totalQuestions} પ્રશ્નો • ${correctAnswers} સાચા`,
+                          `कुल ${totalQuestions} प्रश्न • ${correctAnswers} सही`,
+                          `${totalQuestions} Questions • ${correctAnswers} Correct`
+                        )}
+                      </span>
+                    )}
+                  </p>
 
                   {formattedDate && (
                     <p className="quiz-history-date">
@@ -781,7 +828,7 @@ function QuizResult() {
                 --------------------------------------------- */}
 
                 <div
-                  className="quiz-history-circle"
+                  className={`quiz-history-circle ${!isCompleted ? "incomplete" : ""}`}
                   style={{
                     "--score": `${percentage}%`,
                   }}
@@ -797,7 +844,7 @@ function QuizResult() {
                     </strong>
 
                     <span>
-                      SCORE
+                      {!isCompleted ? txt("અધૂરી", "अधूरी", "INCOMPLETE") : "SCORE"}
                     </span>
 
                   </div>
@@ -842,6 +889,15 @@ function QuizResult() {
                         <span className="quiz-result-number">
                           Quiz #{results.length - index}
                         </span>
+                        {!isCompleted ? (
+                          <span className="quiz-status-pill incomplete">
+                            <AlertCircle size={13} /> {txt("અધૂરી ક્વિઝ", "अधूरी क्विज़", "Incomplete Quiz")}
+                          </span>
+                        ) : (
+                          <span className="quiz-status-pill completed">
+                            <CheckCircle2 size={13} /> {txt("પૂર્ણ ક્વિઝ", "पूर्ण क्विज़", "Completed")}
+                          </span>
+                        )}
                       </div>
 
                       <h2 className="quiz-result-title">
@@ -885,11 +941,15 @@ function QuizResult() {
                       MESSAGE
                   ============================================= */}
 
-                  <div className="quiz-result-message">
+                  <div className={`quiz-result-message ${!isCompleted ? "incomplete-message" : ""}`}>
 
-                    {getResultMessage(
-                      percentage
-                    )}
+                    {!isCompleted
+                      ? txt(
+                          `આ ક્વિઝ અધૂરી મૂકવામાં આવી હતી. કુલ ${totalQuestions} માંથી ${answeredCount} પ્રશ્નો રમેલા હતા અને ${skippedQuestions} પ્રશ્નો બાકી રહ્યા હતા. તમે તેને ફરીથી શરૂ કરી શકો છો.`,
+                          `यह क्विज़ अधूरी छोड़ दी गई थी। कुल ${totalQuestions} में से ${answeredCount} प्रश्न खेले गए थे और ${skippedQuestions} प्रश्न बाकी रह गए थे। आप इसे पुनः शुरू कर सकते हैं।`,
+                          `This quiz was left incomplete. ${answeredCount} of ${totalQuestions} questions were played and ${skippedQuestions} questions remained. You can retake it anytime.`
+                        )
+                      : getResultMessage(percentage)}
 
                   </div>
 
@@ -919,6 +979,29 @@ function QuizResult() {
                       </div>
 
                     </div>
+
+
+                    {/* ANSWERED / PLAYED */}
+
+                    {!isCompleted && (
+                      <div className="quiz-result-stat answered">
+
+                        <span className="quiz-result-stat-icon">
+                          <CheckCircle2 size={20} />
+                        </span>
+
+                        <div>
+
+                          <strong>
+                            {answeredCount}
+                          </strong>
+
+                          <span>{txt("રમેલા પ્રશ્નો", "खेले गए प्रश्न", "Questions Played")}</span>
+
+                        </div>
+
+                      </div>
+                    )}
 
 
                     {/* CORRECT */}
@@ -966,7 +1049,7 @@ function QuizResult() {
                     {/* SKIPPED */}
 
                     {skippedQuestions > 0 && (
-                      <div className="quiz-result-stat skipped">
+                      <div className={`quiz-result-stat skipped ${!isCompleted ? "remaining" : ""}`}>
 
                         <span className="quiz-result-stat-icon">
                           <SkipForward size={20} />
@@ -978,7 +1061,11 @@ function QuizResult() {
                             {skippedQuestions}
                           </strong>
 
-                          <span>{txt("છોડેલા પ્રશ્નો", "छोड़े गए प्रश्न", "Skipped Questions")}</span>
+                          <span>
+                            {!isCompleted
+                              ? txt("બાકી પ્રશ્નો", "बाकी प्रश्न", "Remaining Questions")
+                              : txt("છોડેલા પ્રશ્નો", "छोड़े गए प्रश्न", "Skipped Questions")}
+                          </span>
 
                         </div>
 
@@ -1020,16 +1107,29 @@ function QuizResult() {
 
 
                   {/* =============================================
-                      DATE
+                      DATE & RETAKE ACTION
                   ============================================= */}
 
-                  {formattedDate && (
-                    <div className="quiz-result-date">
+                  <div className="quiz-history-card-footer">
+                    {formattedDate && (
+                      <div className="quiz-result-date">
+                        <Clock size={13} className="btn-icon" /> {formattedDate}
+                      </div>
+                    )}
 
-                      <Clock size={13} className="btn-icon" /> {formattedDate}
-
-                    </div>
-                  )}
+                    <button
+                      type="button"
+                      className="quiz-history-retake-btn"
+                      onClick={() => handleRetakeFromHistory(result)}
+                    >
+                      <PlayCircle size={15} className="btn-icon" />
+                      <span>
+                        {!isCompleted
+                          ? txt("આ ક્વિઝ ફરી શરૂ કરો", "यह क्विज़ पुनः शुरू करें", "Retake This Quiz")
+                          : txt("આ Quiz ફરીથી આપો", "यह Quiz पुनः दें", "Retake This Quiz")}
+                      </span>
+                    </button>
+                  </div>
 
                 </section>
               )}

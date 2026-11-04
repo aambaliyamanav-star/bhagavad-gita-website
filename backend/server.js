@@ -17,6 +17,7 @@ const visitorRoutes = require("./routes/visitorRoutes");
 const feedbackRoutes = require("./routes/feedbackRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
 const appAnalyticsRoutes = require("./routes/appAnalyticsRoutes");
+const ttsRoutes = require("./routes/ttsRoutes");
 const notificationController = require("./controllers/notificationController");
 
 const {
@@ -75,6 +76,7 @@ app.use("/api/visitors", visitorRoutes);
 app.use("/api/feedback", feedbackRoutes);
 app.use("/api/notifications", notificationRoutes);
 app.use("/api/app-analytics", appAnalyticsRoutes);
+app.use("/api/tts", ttsRoutes);
 
 // Root health check endpoint
 app.get("/", (req, res) => {

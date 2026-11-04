@@ -277,17 +277,6 @@
 }
 
 
-.quiz-category-description {
-  margin: 7px 0 0;
-
-  color: var(--text-secondary);
-
-  font-size: 15px;
-
-  line-height: 1.6;
-}
-
-
 /* =========================================================
    BACK BUTTON
 ========================================================= */
@@ -761,27 +750,6 @@
 }
 
 
-.quiz-available-count {
-  white-space: nowrap;
-
-  padding: 11px 15px;
-
-  border-radius: 12px;
-
-  color: var(--primary);
-
-  background:
-    var(--primary-soft);
-
-  font-size: 13px;
-
-  font-weight: 700;
-
-  border:
-    1px solid var(--border);
-}
-
-
 /* =========================================================
    ERROR
 ========================================================= */
@@ -1098,11 +1066,6 @@
   }
 
 
-  .quiz-category-description {
-    font-size: 13px;
-  }
-
-
   .quiz-category-subtitle {
     font-size: 12px;
   }
@@ -1180,14 +1143,6 @@
   }
 
 
-  .quiz-available-count {
-    text-align: center;
-
-    white-space: normal;
-  }
-
-
-
   .quiz-start-button {
     padding: 15px;
 
@@ -1195,22 +1150,7 @@
   }
 
 
-  .quiz-info-item {
-    padding: 16px;
-
-    min-height: 85px;
   }
-
-
-  .quiz-info-icon {
-    width: 43px;
-    height: 43px;
-
-    min-width: 43px;
-
-    font-size: 20px;
-  }
-}
 
 
 /* =========================================================
@@ -1236,11 +1176,6 @@
 
   .quiz-category-header h1 {
     font-size: 22px;
-  }
-
-
-  .quiz-category-description {
-    font-size: 12px;
   }
 
 

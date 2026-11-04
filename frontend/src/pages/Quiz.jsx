@@ -1,5 +1,5 @@
 import { getValidToken, handleAuth401, clearAuthSession } from "../utils/authHelper.js";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import {
   useNavigate,
   useSearchParams,
@@ -50,6 +50,9 @@ function Quiz() {
   const [earnedBadges, setEarnedBadges] =
     useState([]);
 
+  const hasSubmittedRef = useRef(false);
+  const quizStateRef = useRef({});
+
   // =====================================================
   // URL PARAMETERS
   // =====================================================
@@ -71,12 +74,21 @@ function Quiz() {
   const questionCount =
     Number(countParam) || 10;
 
+  // Active quiz session key for refresh persistence
+  const sessionKey = `gita_active_quiz_${categoryParam || "all"}_${chapterParam || ""}_${shlokaRangeParam || "all"}_${questionCount}`;
+
   // =====================================================
   // API
   // =====================================================
 
-  const API_URL =
-    "https://bhagavad-gita-website.onrender.com/api/quiz";
+  const isLocal =
+    typeof window !== "undefined" &&
+    (window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1");
+
+  const API_URL = isLocal
+    ? "http://localhost:5000/api/quiz"
+    : "https://bhagavad-gita-website.onrender.com/api/quiz";
 
   // =====================================================
   // TOKEN
@@ -162,6 +174,40 @@ function Quiz() {
       try {
         setLoading(true);
         setError("");
+
+        // =================================================
+        // RESTORE SAVED QUIZ SESSION ON PAGE REFRESH
+        // =================================================
+        try {
+          const savedRaw = sessionStorage.getItem(sessionKey);
+          if (savedRaw) {
+            const saved = JSON.parse(savedRaw);
+            if (
+              saved &&
+              Array.isArray(saved.questions) &&
+              saved.questions.length > 0
+            ) {
+              setQuestions(saved.questions);
+              setCurrentQuestion(
+                typeof saved.currentQuestion === "number"
+                  ? saved.currentQuestion
+                  : 0
+              );
+              setSelectedAnswer(saved.selectedAnswer || "");
+              setAnswers(Array.isArray(saved.answers) ? saved.answers : []);
+              setScore(typeof saved.score === "number" ? saved.score : 0);
+              setStartTime(saved.startTime || Date.now());
+              setQuizCompleted(Boolean(saved.quizCompleted));
+              setEarnedBadges(
+                Array.isArray(saved.earnedBadges) ? saved.earnedBadges : []
+              );
+              setLoading(false);
+              return;
+            }
+          }
+        } catch (e) {
+          console.warn("Failed to restore saved quiz session:", e);
+        }
 
         setQuestions([]);
         setCurrentQuestion(0);
@@ -534,8 +580,61 @@ function Quiz() {
     chapterParam,
     shlokaRangeParam,
     questionCount,
+    sessionKey,
     navigate,
   ]);
+
+  // =====================================================
+  // PERSIST ACTIVE QUIZ PROGRESS ON ANSWERS / QUESTION CHANGE
+  // =====================================================
+
+  useEffect(() => {
+    if (!questions || questions.length === 0) return;
+
+    try {
+      const stateToSave = {
+        questions,
+        currentQuestion,
+        selectedAnswer,
+        answers,
+        score,
+        startTime,
+        quizCompleted,
+        earnedBadges,
+      };
+      sessionStorage.setItem(sessionKey, JSON.stringify(stateToSave));
+    } catch (e) {
+      console.warn("Failed to persist quiz session:", e);
+    }
+  }, [
+    questions,
+    currentQuestion,
+    selectedAnswer,
+    answers,
+    score,
+    startTime,
+    quizCompleted,
+    earnedBadges,
+    sessionKey,
+  ]);
+
+  // Synchronize state ref for unmount and exit handlers
+  useEffect(() => {
+    quizStateRef.current = {
+      questions,
+      currentQuestion,
+      selectedAnswer,
+      answers,
+      score,
+      startTime,
+      quizCompleted,
+      question,
+      sessionKey,
+      categoryParam,
+      chapterParam,
+      shlokaRangeParam,
+    };
+  });
 
   // =====================================================
   // CURRENT QUESTION
@@ -835,6 +934,7 @@ function Quiz() {
 
   const finishQuiz = async () => {
     try {
+      hasSubmittedRef.current = true;
       setSubmitting(true);
       setError("");
 
@@ -1061,10 +1161,178 @@ function Quiz() {
   };
 
   // =====================================================
+  // DETECT PAGE RELOAD (F5) TO PREVENT FALSE INCOMPLETE
+  // =====================================================
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      try {
+        sessionStorage.setItem("gita_is_page_reloading", "true");
+      } catch (e) {}
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    try {
+      sessionStorage.removeItem("gita_is_page_reloading");
+    } catch (e) {}
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, []);
+
+  // =====================================================
+  // SAVE INCOMPLETE QUIZ
+  // =====================================================
+
+  const saveIncompleteQuiz = () => {
+    const state = quizStateRef.current;
+    if (state.quizCompleted || hasSubmittedRef.current) return;
+    if (!state.questions || state.questions.length === 0) return;
+
+    hasSubmittedRef.current = true;
+
+    let finalAnswers = [...(state.answers || [])];
+
+    if (state.question && state.selectedAnswer) {
+      const existingIndex = finalAnswers.findIndex(
+        (item) => String(item.questionId || item._id) === String(state.question._id)
+      );
+
+      const currentAnswer = {
+        questionId: state.question._id,
+        selectedAnswer: state.selectedAnswer,
+        correctAnswer: String(state.question.correctAnswer || "").trim(),
+        isCorrect: checkIfOptionIsCorrect(state.selectedAnswer),
+      };
+
+      if (existingIndex === -1) {
+        finalAnswers.push(currentAnswer);
+      } else {
+        finalAnswers[existingIndex] = currentAnswer;
+      }
+    }
+
+    const uniqueAnswersMap = new Map();
+    finalAnswers.forEach((item) => {
+      const qId = item.questionId || item._id;
+      if (qId) {
+        uniqueAnswersMap.set(String(qId), item);
+      }
+    });
+
+    finalAnswers = Array.from(uniqueAnswersMap.values());
+
+    let resultCategory = "all";
+    let resultChapter = null;
+
+    if (
+      categoryParam === "chapter" ||
+      (categoryParam && categoryParam.startsWith("chapter-"))
+    ) {
+      const ch =
+        chapterParam ||
+        (categoryParam.startsWith("chapter-")
+          ? categoryParam.replace("chapter-", "")
+          : "1");
+      resultCategory = `chapter-${ch}`;
+      resultChapter = Number(ch) || 1;
+    } else if (categoryParam === "mahabharata") {
+      resultCategory = "mahabharata";
+    }
+
+    const durationSeconds = Math.max(
+      1,
+      Math.round((Date.now() - (state.startTime || Date.now())) / 1000)
+    );
+
+    // Build full quiz answers array including all questions from the quiz
+    // Questions answered have their chosen answer; unanswered ones have selectedAnswer: "" (skipped)
+    const fullQuizAnswers = (state.questions || []).map((q) => {
+      const answeredItem = finalAnswers.find(
+        (item) => String(item.questionId || item._id) === String(q._id)
+      );
+      if (answeredItem && answeredItem.selectedAnswer) {
+        return {
+          questionId: q._id,
+          selectedAnswer: String(answeredItem.selectedAnswer).trim(),
+        };
+      }
+      return {
+        questionId: q._id,
+        selectedAnswer: "",
+      };
+    });
+
+    const submitData = {
+      category: resultCategory,
+      chapter: resultChapter,
+      shlokaRange:
+        categoryParam === "chapter" && shlokaRangeParam
+          ? shlokaRangeParam
+          : "",
+      answers: fullQuizAnswers,
+      totalQuestions: state.questions.length,
+      timeTaken: durationSeconds,
+      completed: false,
+    };
+
+    const token = getToken();
+    if (!token) return;
+
+    try {
+      fetch(`${API_URL}/submit`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(submitData),
+        keepalive: true,
+      }).catch((err) => {
+        console.warn("Failed to record incomplete quiz:", err);
+      });
+    } catch (e) {
+      console.warn("Exception recording incomplete quiz:", e);
+    }
+  };
+
+  // =====================================================
+  // SPA NAVIGATION UNMOUNT LISTENER
+  // =====================================================
+
+  useEffect(() => {
+    return () => {
+      let isReloading = false;
+      try {
+        isReloading = sessionStorage.getItem("gita_is_page_reloading") === "true";
+      } catch (e) {}
+
+      const state = quizStateRef.current;
+      if (
+        !isReloading &&
+        !hasSubmittedRef.current &&
+        !state.quizCompleted &&
+        state.questions &&
+        state.questions.length > 0
+      ) {
+        saveIncompleteQuiz();
+        try {
+          sessionStorage.removeItem(state.sessionKey);
+        } catch (e) {}
+      }
+    };
+  }, []);
+
+  // =====================================================
   // RETRY
   // =====================================================
 
   const retryQuiz = () => {
+    try {
+      sessionStorage.removeItem(sessionKey);
+    } catch (e) {}
     window.location.reload();
   };
 
@@ -1073,6 +1341,12 @@ function Quiz() {
   // =====================================================
 
   const exitQuiz = () => {
+    if (!quizCompleted && questions && questions.length > 0 && !hasSubmittedRef.current) {
+      saveIncompleteQuiz();
+    }
+    try {
+      sessionStorage.removeItem(sessionKey);
+    } catch (e) {}
     navigate("/quiz");
   };
 

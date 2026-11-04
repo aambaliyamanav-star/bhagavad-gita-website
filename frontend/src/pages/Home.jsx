@@ -21,6 +21,35 @@ import { getLocalProgress } from "../utils/readingTracker.js";
 import { useLanguage } from "../context/LanguageContext.jsx";
 import { getValidToken } from "../utils/authHelper.js";
 
+const stripHtml = (html) => {
+  if (!html) return "";
+  try {
+    if (typeof document !== "undefined") {
+      const temp = document.createElement("div");
+      temp.innerHTML = String(html)
+        .replace(/<br\s*\/?>/gi, " ")
+        .replace(/<\/(p|div|li|h[1-6])>/gi, " ")
+        .replace(/<(p|div|li|h[1-6])[^>]*>/gi, " ");
+      const text = temp.textContent || temp.innerText || "";
+      return text.replace(/\s+/g, " ").trim();
+    }
+  } catch (e) {
+    // fallback
+  }
+  return String(html)
+    .replace(/<br\s*\/?>/gi, " ")
+    .replace(/<\/(?:p|div|li|h[1-6])>/gi, " ")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/\s+/g, " ")
+    .trim();
+};
+
 function Home() {
   const navigate = useNavigate();
 
@@ -319,17 +348,29 @@ useEffect(() => {
 
   useEffect(() => {
     const loadContinueReading = async () => {
+      // 1. Instant local restore
+      let localSaved = null;
+      try {
+        const raw = localStorage.getItem("gita_continue_reading");
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.chapterNumber && parsed.shlokNumber) {
+            localSaved = parsed;
+            setContinueReading(parsed);
+          }
+        }
+      } catch (e) {}
+
       if (!user) {
-        setContinueReading(null);
+        if (!localSaved) {
+          setContinueReading(null);
+        }
         setContinueReadingLoading(false);
         return;
       }
 
-      const token =
-        getValidToken();
-
+      const token = getValidToken();
       if (!token) {
-        setContinueReading(null);
         setContinueReadingLoading(false);
         return;
       }
@@ -341,33 +382,33 @@ useEffect(() => {
           CONTINUE_READING_API_URL,
           {
             method: "GET",
-
             headers: {
-              Authorization:
-                `Bearer ${token}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );
 
-        const data =
-          await response.json();
-
-        if (!response.ok) {
-          throw new Error(
-            data.message ||
-              txt("Continue Reading load થઈ શક્યું નથી.", "पठन जारी रखें लोड नहीं हो सका।", "Could not load Continue Reading.")
-          );
-        }
+        const data = await response.json();
 
         if (
+          response.ok &&
           data.continueReading &&
           data.continueReading.chapterNumber &&
           data.continueReading.shlokNumber
         ) {
-          setContinueReading(
-            data.continueReading
-          );
-        } else {
+          const serverData = data.continueReading;
+          if (localSaved && localSaved.updatedAt && serverData.updatedAt) {
+            const localTime = new Date(localSaved.updatedAt).getTime();
+            const serverTime = new Date(serverData.updatedAt).getTime();
+            if (localTime > serverTime) {
+              setContinueReading(localSaved);
+            } else {
+              setContinueReading(serverData);
+            }
+          } else {
+            setContinueReading(serverData);
+          }
+        } else if (!localSaved) {
           setContinueReading(null);
         }
       } catch (error) {
@@ -375,14 +416,16 @@ useEffect(() => {
           "❌ Continue Reading Load Error:",
           error
         );
-
-        setContinueReading(null);
       } finally {
         setContinueReadingLoading(false);
       }
     };
 
     loadContinueReading();
+    window.addEventListener("focus", loadContinueReading);
+    return () => {
+      window.removeEventListener("focus", loadContinueReading);
+    };
   }, [user]);
 
   // =====================================================
@@ -428,6 +471,7 @@ useEffect(() => {
       return;
     }
 
+    // Go directly to the exact chapter and shloka the user was last at!
     navigate(
       `/chapter/${continueReading.chapterNumber}?shloka=${continueReading.shlokNumber}`
     );
@@ -881,7 +925,7 @@ useEffect(() => {
                 shlokaValue
               );
 
-          const searchableText = [
+          const rawSearchable = [
             shlok.sanskrit,
             shlok.sanskritLine1,
             shlok.sanskritLine2,
@@ -898,8 +942,9 @@ useEffect(() => {
             shlok.chapterNameEn,
           ]
             .filter(Boolean)
-            .join(" ")
-            .toLowerCase();
+            .join(" ");
+
+          const searchableText = stripHtml(rawSearchable).toLowerCase();
 
           const matchesText =
             !textValue ||
@@ -1105,7 +1150,7 @@ useEffect(() => {
             onClick={handleReadingTracker}
             title={txt("ગીતા વાંચન પ્રગતિ અને બેજ જુઓ", "गीता पठन प्रगति और बैज देखें", "View Gita Reading Progress & Badges")}
           >
-            <Trophy className="btn-icon tracker-trophy-blue" size={20} /> {txt("વાંચન પ્રગતિ", "पठन प्रगति", "Reading Tracker")}
+            <Trophy className="btn-icon tracker-trophy-icon" size={20} /> {txt("વાંચન પ્રગતિ", "पठन प्रगति", "Reading Tracker")}
             {readingStats.currentStreak > 0 && (
               <span className="hero-streak-chip">
                 <Flame size={14} className="streak-chip-flame" /> {readingStats.currentStreak}d
@@ -1265,10 +1310,12 @@ useEffect(() => {
                     </h4>
 
                     <p>
-                      {txt(
-                        item.translation,
-                        item.translationHi || item.translation,
-                        item.translationEn || item.translation
+                      {stripHtml(
+                        txt(
+                          item.translation,
+                          item.translationHi || item.translation,
+                          item.translationEn || item.translation
+                        )
                       )}
                     </p>
 

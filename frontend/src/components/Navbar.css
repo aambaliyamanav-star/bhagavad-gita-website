@@ -193,18 +193,6 @@ body {
   text-shadow: 0 0 12px rgba(245, 158, 11, 0.45);
 }
 
-.navbar.navbar-home .nav-lang-btn,
-.navbar.navbar-home .page-name-badge,
-.navbar.navbar-home .menu-toggle {
-  border-color: rgba(245, 158, 11, 0.35);
-}
-
-.navbar.navbar-home .nav-lang-btn:hover,
-.navbar.navbar-home .menu-toggle:hover {
-  border-color: #fbbf24;
-  box-shadow: 0 0 12px rgba(245, 158, 11, 0.35);
-}
-
 /* =========================================================
    NAVBAR SPACER
    ========================================================= */
@@ -599,11 +587,6 @@ body {
   font-weight: 700;
 }
 
-.lang-option-flag {
-  font-size: 16px;
-  line-height: 1;
-}
-
 .lang-option-label {
   flex: 1;
 }
@@ -656,12 +639,6 @@ body {
   align-items: center;
   gap: 8px;
   margin-bottom: 8px;
-}
-
-.side-menu-lang-title {
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-primary, #ffffff);
 }
 
 .side-lang-segmented-bar {
@@ -1486,99 +1463,6 @@ body {
    USER BOX
    ========================================================= */
 
-.side-menu-user {
-  width: 100%;
-
-  min-height: 64px;
-
-  margin-bottom: 8px;
-
-  padding: 10px 13px;
-
-  box-sizing: border-box;
-
-  display: flex;
-  align-items: center;
-
-  gap: 12px;
-
-  border-radius: 16px;
-
-  background:
-    rgba(200, 235, 255, 0.55);
-
-  border:
-    1px solid
-    rgba(100, 180, 255, 0.35);
-
-  backdrop-filter: blur(6px);
-}
-
-.side-menu-user-avatar {
-  width: 42px;
-  height: 42px;
-
-  flex: 0 0 42px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 50%;
-
-  background:
-    linear-gradient(
-      135deg,
-      #2196f3,
-      #0d47a1
-    );
-
-  color: white;
-  font-weight: bold;
-  font-size: 17px;
-
-  box-shadow:
-    0 3px 10px
-      rgba(20, 80, 200, 0.25);
-}
-
-.side-menu-user-info {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.side-menu-user-info strong {
-  color: #0d3d7c;
-  font-size: 14px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.side-menu-user-info span {
-  margin-top: 3px;
-  color: #5a7fa0;
-  font-size: 10px;
-}
-
-[data-theme="dark"] .side-menu-user {
-  background:
-    rgba(20, 50, 100, 0.45);
-
-  border-color:
-    rgba(80, 150, 255, 0.20);
-}
-
-[data-theme="dark"] .side-menu-user-info strong {
-  color: #d0ecff;
-}
-
-[data-theme="dark"] .side-menu-user-info span {
-  color: #6a9ec0;
-}
-
-
 /* =========================================================
    THEME TOGGLE â€” GLASS ROW
    ========================================================= */
@@ -1923,14 +1807,6 @@ body {
 .side-menu-footer span {
   font-size: 20px;
   line-height: 1;
-}
-
-.side-menu-footer-logo-img {
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
-  border-radius: 5px;
-  vertical-align: middle;
 }
 
 .side-menu-footer p {

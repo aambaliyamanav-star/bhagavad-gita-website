@@ -7,7 +7,6 @@ import {
   BrainCircuit,
   Save,
   Plus,
-  Library,
   BookOpen,
   RefreshCw,
   Search,

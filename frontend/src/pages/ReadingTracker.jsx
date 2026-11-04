@@ -35,6 +35,7 @@ import {
   TOTAL_GITA_SHLOKAS,
   getCombinedReadingProgress,
   countChapterRead,
+  getFirstUnreadShloka,
   syncLocalToCloud,
 } from "../utils/readingTracker.js";
 import "./ReadingTracker.css";
@@ -165,10 +166,36 @@ function ReadingTracker() {
 
   const isReadToday = progressData.lastReadDate === todayStr;
 
-  const lastReadInfo = useMemo(() => {
+  const nextToReadInfo = useMemo(() => {
     const list = progressData.readShlokas || [];
     if (list.length === 0) return null;
-    return list[list.length - 1];
+
+    // The most recently read shloka indicates which chapter the user was reading
+    const lastRead = list[list.length - 1];
+    const chMeta = CHAPTER_METADATA.find((m) => m.chapter === lastRead.chapterNumber);
+    const totalInCh = chMeta ? chMeta.shlokas : 47;
+    const firstUnreadInCh = getFirstUnreadShloka(list, lastRead.chapterNumber, totalInCh);
+    const readInCh = countChapterRead(list, lastRead.chapterNumber);
+
+    if (readInCh < totalInCh) {
+      return {
+        chapterNumber: lastRead.chapterNumber,
+        shlokNumber: firstUnreadInCh,
+      };
+    }
+
+    // If that chapter is completed, find the next chapter with unread shlokas
+    for (const m of CHAPTER_METADATA) {
+      const readCount = countChapterRead(list, m.chapter);
+      if (readCount < m.shlokas) {
+        return {
+          chapterNumber: m.chapter,
+          shlokNumber: getFirstUnreadShloka(list, m.chapter, m.shlokas),
+        };
+      }
+    }
+
+    return { chapterNumber: 1, shlokNumber: 1 };
   }, [progressData.readShlokas]);
 
   const filteredChapters = useMemo(() => {
@@ -328,16 +355,16 @@ function ReadingTracker() {
             </div>
             <div className="rt-stat-body">
               <span className="rt-stat-label">{txt("આગળ વાંચો", "आगे पढ़ें", "Continue Reading")}</span>
-              {lastReadInfo ? (
+              {nextToReadInfo ? (
                 <>
                   <div className="rt-continue-chapter">
-                    {txt("અ.", "अ.", "Ch.")} {lastReadInfo.chapterNumber} &nbsp;•&nbsp; {txt("શ્લોક", "श्लोक", "Verse")} {lastReadInfo.shlokNumber}
+                    {txt("અ.", "अ.", "Ch.")} {nextToReadInfo.chapterNumber} &nbsp;•&nbsp; {txt("શ્લોક", "श्लोक", "Verse")} {nextToReadInfo.shlokNumber}
                   </div>
-                  <p className="rt-stat-sub">{txt("છેલ્લે અહીં સુધી", "पिछला यहाँ तक", "Last read up to here")}</p>
+                  <p className="rt-stat-sub">{txt("અહીંથી આગળ વાંચો", "यहाँ से आगे पढ़ें", "Continue from here")}</p>
                   <button
                     type="button"
                     className="rt-continue-btn"
-                    onClick={() => navigate(`/chapter/${lastReadInfo.chapterNumber}?shloka=${lastReadInfo.shlokNumber}`)}
+                    onClick={() => navigate(`/chapter/${nextToReadInfo.chapterNumber}?shloka=${nextToReadInfo.shlokNumber}`)}
                   >
                     <span>{txt("ચાલુ રાખો", "जारी रखें", "Continue")}</span>
                     <ArrowRight size={15} />
@@ -532,7 +559,20 @@ function ReadingTracker() {
                     <button
                       type="button"
                       className="rt-ch-btn"
-                      onClick={() => navigate(`/chapter/${item.chapter}`)}
+                      onClick={() => {
+                        if (isCompleted) {
+                          navigate(`/chapter/${item.chapter}?shloka=1`);
+                        } else if (isInProgress) {
+                          const nextShloka = getFirstUnreadShloka(
+                            progressData.readShlokas,
+                            item.chapter,
+                            item.shlokas
+                          );
+                          navigate(`/chapter/${item.chapter}?shloka=${nextShloka}`);
+                        } else {
+                          navigate(`/chapter/${item.chapter}?shloka=1`);
+                        }
+                      }}
                     >
                       <span>{isCompleted ? txt("પુનરાવર્તન", "पुनरावृत्ति", "Revisit") : isInProgress ? txt("ચાલુ રાખો", "जारी रखें", "Continue") : txt("વાંચો", "पढ़ें", "Read")}</span>
                       <ChevronRight size={15} />

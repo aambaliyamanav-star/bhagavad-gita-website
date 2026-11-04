@@ -534,7 +534,11 @@ const submitQuiz = async (
       answers,
       timeTaken,
       shlokaRange,
+      completed,
+      totalQuestions: reqTotalQuestions,
     } = req.body;
+
+    const isCompleted = typeof completed === "boolean" ? completed : true;
 
     // =================================================
     // VALIDATE ANSWERS
@@ -552,7 +556,8 @@ const submitQuiz = async (
     }
 
     if (
-      answers.length === 0
+      answers.length === 0 &&
+      isCompleted !== false
     ) {
       return res.status(400).json({
         success: false,
@@ -573,7 +578,8 @@ const submitQuiz = async (
     const questionIds = validAnswers.map((item) => item.questionId);
 
     if (
-      questionIds.length === 0
+      questionIds.length === 0 &&
+      isCompleted !== false
     ) {
       return res.status(400).json({
         success: false,
@@ -588,11 +594,13 @@ const submitQuiz = async (
     // =================================================
 
     const questions =
-      await QuizQuestion.find({
-        _id: {
-          $in: questionIds,
-        },
-      });
+      questionIds.length > 0
+        ? await QuizQuestion.find({
+            _id: {
+              $in: questionIds,
+            },
+          })
+        : [];
 
     // =================================================
     // SCORE VARIABLES
@@ -748,8 +756,16 @@ const submitQuiz = async (
     // TOTAL QUESTIONS
     // =================================================
 
-    const totalQuestions =
-      answers.length;
+    const totalQuestions = Math.max(
+      Number(reqTotalQuestions) || 0,
+      answers.length,
+      checkedAnswers.length
+    );
+
+    // If quiz was incomplete, remaining unanswered questions are counted as skipped
+    if (isCompleted === false && totalQuestions > (correctAnswers + wrongAnswers)) {
+      skippedQuestions = totalQuestions - (correctAnswers + wrongAnswers);
+    }
 
     // =================================================
     // SCORE
@@ -862,7 +878,7 @@ const submitQuiz = async (
         answers:
           checkedAnswers,
 
-        completed: true,
+        completed: isCompleted,
       });
 
     // =================================================

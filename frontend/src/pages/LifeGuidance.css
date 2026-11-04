@@ -397,14 +397,6 @@
   flex-direction: column;
 }
 
-.essence-tag {
-  font-size: 0.82rem;
-  font-weight: 750;
-  letter-spacing: 0.2px;
-  margin-bottom: 6px;
-  text-transform: uppercase;
-}
-
 .essence-info h3 {
   font-size: 1.05rem;
   line-height: 1.62;

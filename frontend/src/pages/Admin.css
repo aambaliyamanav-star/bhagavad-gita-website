@@ -3551,12 +3551,6 @@ html[data-theme='dark'] .user-visits-icon,
   font-weight: 800;
 }
 
-.admin-fb-category-tag.compact {
-  padding: 2px 7px;
-  font-size: 0.68rem;
-  border-radius: 4px;
-}
-
 .admin-fb-compact-time {
   color: #94a3b8;
   font-size: 0.7rem;
@@ -3701,38 +3695,6 @@ html[data-theme='dark'] .user-visits-icon,
   font-size: 0.825rem;
   font-weight: 800;
   color: #b45309;
-}
-
-.admin-fb-category-tag {
-  padding: 3px 10px;
-  border-radius: 6px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  text-transform: capitalize;
-}
-
-.admin-fb-category-tag.suggestion {
-  background: #ecfdf5;
-  color: #047857;
-  border: 1px solid #a7f3d0;
-}
-
-.admin-fb-category-tag.feedback {
-  background: #eff6ff;
-  color: #1d4ed8;
-  border: 1px solid #bfdbfe;
-}
-
-.admin-fb-category-tag.appreciation {
-  background: #fdf4ff;
-  color: #a21caf;
-  border: 1px solid #f5d0fe;
-}
-
-.admin-fb-category-tag.bug {
-  background: #fef2f2;
-  color: #b91c1c;
-  border: 1px solid #fecaca;
 }
 
 .admin-fb-date {

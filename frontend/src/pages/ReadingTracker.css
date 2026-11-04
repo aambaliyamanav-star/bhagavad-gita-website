@@ -113,12 +113,6 @@
   letter-spacing: -0.3px;
 }
 
-.rt-page-subtitle {
-  font-size: 0.88rem;
-  color: var(--rt-text-muted);
-  margin: 0;
-}
-
 .rt-header-right {
   display: flex;
   align-items: center;
@@ -285,16 +279,6 @@
   flex-shrink: 0;
 }
 
-.rt-icon-orange {
-  background: var(--rt-orange-light);
-  color: var(--rt-orange);
-}
-
-.rt-icon-gold {
-  background: var(--rt-gold-light);
-  color: var(--rt-gold);
-}
-
 .rt-icon-blue {
   background: var(--rt-blue-light);
   color: var(--rt-blue);
@@ -456,7 +440,6 @@
   margin-top: 2px;
 }
 
-.rt-icon-gold-text { color: var(--rt-blue); }
 .rt-icon-blue-text { color: var(--rt-blue); }
 
 .rt-section-title {

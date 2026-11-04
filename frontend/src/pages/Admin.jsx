@@ -75,7 +75,6 @@ function Admin() {
   const [feedbackSummary, setFeedbackSummary] = useState(null);
   const [loadingFeedbacks, setLoadingFeedbacks] = useState(true);
   const [refreshingFeedbacks, setRefreshingFeedbacks] = useState(false);
-  const [feedbackCategoryFilter, setFeedbackCategoryFilter] = useState("all");
   const [feedbackRatingFilter, setFeedbackRatingFilter] = useState("all");
   const [feedbackSearch, setFeedbackSearch] = useState("");
   const [deletingFeedbackId, setDeletingFeedbackId] = useState(null);
@@ -1545,28 +1544,6 @@ function Admin() {
                   </div>
                 </div>
 
-                <div className="admin-feedback-filter-group">
-                  <span className="admin-feedback-filter-label">કેટેગરી:</span>
-                  <div className="admin-feedback-pills">
-                    {[
-                      { id: "all", label: "બધા" },
-                      { id: "suggestion", label: "સૂચન" },
-                      { id: "feedback", label: "પ્રતિસાદ" },
-                      { id: "appreciation", label: "પ્રશંસા" },
-                      { id: "bug", label: "બગ" },
-                    ].map((cat) => (
-                      <button
-                        key={cat.id}
-                        type="button"
-                        className={`admin-feedback-pill ${feedbackCategoryFilter === cat.id ? "active" : ""}`}
-                        onClick={() => setFeedbackCategoryFilter(cat.id)}
-                      >
-                        {cat.label}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
                 <div className="admin-feedback-search-wrap">
                   <input
                     type="text"
@@ -1582,9 +1559,6 @@ function Admin() {
               {(() => {
                 const filtered = feedbacks.filter((fb) => {
                   if (feedbackRatingFilter !== "all" && fb.rating !== Number(feedbackRatingFilter)) {
-                    return false;
-                  }
-                  if (feedbackCategoryFilter !== "all" && fb.category !== feedbackCategoryFilter) {
                     return false;
                   }
                   if (feedbackSearch.trim()) {
@@ -1670,16 +1644,6 @@ function Admin() {
                               </>
                             )}
                           </div>
-
-                          <span className={`admin-fb-category-tag compact ${fb.category}`}>
-                            {fb.category === "suggestion"
-                              ? "સૂચન"
-                              : fb.category === "bug"
-                              ? "બગ"
-                              : fb.category === "appreciation"
-                              ? "પ્રશંસા"
-                              : "પ્રતિસાદ"}
-                          </span>
 
                           <span className="admin-fb-compact-time">
                             {formatTimeAgo(fb.createdAt)}
@@ -1828,18 +1792,8 @@ function Admin() {
                   </div>
                 )}
 
-                {/* 3. CATEGORY & TIME META */}
+                {/* 3. TIME META */}
                 <div className="admin-modal-meta-row" style={{ marginTop: "4px" }}>
-                  <span className={`admin-fb-category-tag ${activeFeedbackModal.category}`}>
-                    {activeFeedbackModal.category === "suggestion"
-                      ? "સૂચન"
-                      : activeFeedbackModal.category === "bug"
-                      ? "બગ / સમસ્યા"
-                      : activeFeedbackModal.category === "appreciation"
-                      ? "પ્રશંસા"
-                      : "પ્રતિસાદ"}
-                  </span>
-
                   <span className="admin-fb-date">
                     તારીખ/સમય: {formatTimeAgo(activeFeedbackModal.createdAt)}
                     {activeFeedbackModal.createdAt && (

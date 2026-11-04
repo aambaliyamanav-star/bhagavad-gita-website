@@ -387,83 +387,17 @@
    CONTENT COMMON
 ===================================================== */
 
-.favourite-sanskrit,
-.favourite-translation,
-.favourite-message {
-  margin-top: 18px;
-  padding: 18px;
-  border-radius: 14px;
-  line-height: 1.8;
-}
-
-
 /* =====================================================
    SANSKRIT
 ===================================================== */
-
-.favourite-sanskrit {
-  background: rgba(255, 255, 255, 0.45);
-  border: 1px solid rgba(59, 130, 246, 0.16);
-}
-
-.favourite-sanskrit h3 {
-  margin: 0 0 12px;
-  font-size: 17px;
-  color: #236b9f;
-}
-
-.favourite-sanskrit div {
-  font-size: 20px;
-  font-weight: 600;
-  line-height: 2;
-  text-align: center;
-  color: #234c6b;
-}
-
 
 /* =====================================================
    TRANSLATION
 ===================================================== */
 
-.favourite-translation {
-  background: rgba(255, 255, 255, 0.45);
-  border: 1px solid rgba(59, 130, 246, 0.16);
-}
-
-.favourite-translation h3 {
-  margin: 0 0 10px;
-  font-size: 17px;
-  color: #496f9b;
-}
-
-.favourite-translation div {
-  font-size: 16px;
-  line-height: 1.9;
-  color: #3e5870;
-}
-
-
 /* =====================================================
    MESSAGE
 ===================================================== */
-
-.favourite-message {
-  background: rgba(255, 255, 255, 0.45);
-  border: 1px solid rgba(59, 130, 246, 0.16);
-}
-
-.favourite-message h3 {
-  margin: 0 0 10px;
-  font-size: 17px;
-  color: #327394;
-}
-
-.favourite-message div {
-  font-size: 16px;
-  line-height: 1.9;
-  color: #36586b;
-}
-
 
 /* =====================================================
    READ SHLOKA BUTTON (COMPACT BUTTON)
@@ -683,26 +617,6 @@
   .favourite-card-header {
 
     align-items: flex-start;
-  }
-
-  .favourite-sanskrit,
-  .favourite-translation,
-  .favourite-message {
-
-    padding: 14px;
-  }
-
-  .favourite-sanskrit div {
-
-    font-size: 17px;
-
-    line-height: 1.8;
-  }
-
-  .favourite-translation div,
-  .favourite-message div {
-
-    font-size: 15px;
   }
 
   .favourite-empty-card {
@@ -938,28 +852,7 @@
    DARK INNER BOXES (Sanskrit, Translation, Message)
 ===================================================== */
 
-[data-theme="dark"] .favourite-sanskrit,
-[data-theme="dark"] .favourite-translation,
-[data-theme="dark"] .favourite-message {
-  background: rgba(10, 25, 55, 0.45) !important;
-  border: 1px solid rgba(96, 165, 250, 0.15) !important;
-  box-shadow: 0 7px 18px rgba(0, 0, 0, 0.20) !important;
-}
-
-[data-theme="dark"] .favourite-sanskrit h3,
-[data-theme="dark"] .favourite-translation h3,
-[data-theme="dark"] .favourite-message h3 {
-  color: #75c0eb !important;
-}
-
-[data-theme="dark"] .favourite-sanskrit div,
-[data-theme="dark"] .favourite-translation div,
-[data-theme="dark"] .favourite-message div {
-  color: #c7e8fa !important;
-}
-
-
-/* =====================================================
+[data-theme="dark"] [data-theme="dark"] [data-theme="dark"] /* =====================================================
    DARK READ SHLOKA BUTTON
 ===================================================== */
 
@@ -1046,26 +939,6 @@
   box-shadow:
     0 2px 0 #174c72,
     0 5px 10px rgba(0, 0, 0, 0.28) !important;
-}
-
-
-/* =====================================================
-   DARK MODE - FORCE NO WHITE
-===================================================== */
-
-[data-theme="dark"] .favourite-page,
-[data-theme="dark"] .favourite-header,
-[data-theme="dark"] .favourite-top-bar,
-[data-theme="dark"] .favourite-card,
-[data-theme="dark"] .favourite-empty-card,
-[data-theme="dark"] .favourite-sanskrit,
-[data-theme="dark"] .favourite-translation,
-[data-theme="dark"] .favourite-message,
-[data-theme="dark"] .favourite-number,
-[data-theme="dark"] .remove-favourite-btn,
-[data-theme="dark"] .clear-favourite-btn {
-
-  color-scheme: dark;
 }
 
 

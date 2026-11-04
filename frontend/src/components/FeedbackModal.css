@@ -241,13 +241,6 @@
   color: #b45309;
 }
 
-.feedback-avg-total {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #b45309;
-  margin-left: 2px;
-}
-
 /* Star Rating Selector Section */
 .feedback-rating-section {
   display: flex;
@@ -323,20 +316,6 @@
   color: #1e40af;
   min-height: 18px;
   text-align: center;
-}
-
-.rating-locked-box {
-  background: #fffbeb !important;
-  border-color: #fde68a !important;
-}
-
-.disabled-star {
-  cursor: default !important;
-  transform: none !important;
-}
-
-.disabled-star:hover {
-  transform: none !important;
 }
 
 /* Form Inputs */
@@ -597,11 +576,7 @@
 }
 
 [data-theme="dark"] .feedback-avg-max,
-[data-theme="dark"] .feedback-avg-total {
-  color: #fde68a;
-}
-
-[data-theme="dark"] .feedback-rating-section {
+[data-theme="dark"] [data-theme="dark"] .feedback-rating-section {
   background: #1e293b;
   border-color: #334155;
 }
@@ -619,12 +594,7 @@
   color: #60a5fa;
 }
 
-[data-theme="dark"] .rating-locked-box {
-  background: rgba(120, 53, 15, 0.3) !important;
-  border-color: rgba(245, 158, 11, 0.4) !important;
-}
-
-[data-theme="dark"] .feedback-field-label,
+[data-theme="dark"] [data-theme="dark"] .feedback-field-label,
 [data-theme="dark"] .feedback-group-title {
   color: #cbd5e1;
 }

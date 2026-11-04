@@ -109,19 +109,6 @@
   color: #bfdbfe;
 }
 
-.qa-subtitle {
-  font-size: 15px;
-  color: #475569;
-  max-width: 600px;
-  margin: 0 auto;
-  line-height: 1.6;
-}
-
-[data-theme="dark"] .qa-subtitle,
-.dark .qa-subtitle {
-  color: #94a3b8;
-}
-
 /* =====================================================
    STATS RIBBON
    ===================================================== */

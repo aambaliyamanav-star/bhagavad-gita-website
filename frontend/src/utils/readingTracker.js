@@ -197,6 +197,26 @@ export function countChapterRead(readShlokas = [], chapterNum) {
   return (readShlokas || []).filter((s) => Number(s.chapterNumber) === Number(chapterNum)).length;
 }
 
+export function getFirstUnreadShloka(readShlokas = [], chapterNum, totalShlokas = null) {
+  const ch = Number(chapterNum);
+  const meta = CHAPTER_METADATA.find((m) => m.chapter === ch);
+  const total = Number(totalShlokas) || (meta ? meta.shlokas : 47);
+
+  const readSet = new Set(
+    (readShlokas || [])
+      .filter((s) => Number(s.chapterNumber) === ch)
+      .map((s) => Number(s.shlokNumber))
+  );
+
+  for (let i = 1; i <= total; i++) {
+    if (!readSet.has(i)) {
+      return i;
+    }
+  }
+
+  return 1;
+}
+
 function getTodayString() {
   const now = new Date();
   const year = now.getFullYear();
@@ -377,9 +397,23 @@ export async function getCombinedReadingProgress(token = null) {
     if (res.ok) {
       const data = await res.json();
       if (data.success && data.data) {
+        // Merge remote readShlokas with local readShlokas so nothing is lost
+        const mergedMap = new Map();
+        (data.data.readShlokas || []).forEach((s) => {
+          mergedMap.set(`${s.chapterNumber}-${s.shlokNumber}`, s);
+        });
+        (local.readShlokas || []).forEach((s) => {
+          const key = `${s.chapterNumber}-${s.shlokNumber}`;
+          if (!mergedMap.has(key)) {
+            mergedMap.set(key, s);
+          }
+        });
+        const mergedList = Array.from(mergedMap.values());
+        data.data.readShlokas = mergedList;
+
         // Also cache to local storage
         saveLocalProgress({
-          readShlokas: data.data.readShlokas || [],
+          readShlokas: mergedList,
           currentStreak: data.data.currentStreak || 0,
           longestStreak: data.data.longestStreak || 0,
           lastReadDate: data.data.lastReadDate || null,

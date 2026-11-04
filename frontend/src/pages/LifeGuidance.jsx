@@ -245,7 +245,25 @@ const GUIDANCE_TOPICS = [
 function LifeGuidance() {
   const navigate = useNavigate();
   const { isHindi, isEnglish, txt, CHAPTER_NAMES } = useLanguage();
-  const [selectedTopicId, setSelectedTopicId] = useState(GUIDANCE_TOPICS[0].id);
+
+  // Resolve initial topic from URL param or storage so refresh preserves current button
+  const getInitialTopicId = () => {
+    try {
+      const urlParam = new URLSearchParams(window.location.search).get("topic");
+      if (urlParam && GUIDANCE_TOPICS.some((t) => t.id === urlParam)) {
+        return urlParam;
+      }
+      const saved =
+        sessionStorage.getItem("gita_guidance_selected_topic") ||
+        localStorage.getItem("gita_guidance_selected_topic");
+      if (saved && GUIDANCE_TOPICS.some((t) => t.id === saved)) {
+        return saved;
+      }
+    } catch (e) {}
+    return GUIDANCE_TOPICS[0].id;
+  };
+
+  const [selectedTopicId, setSelectedTopicId] = useState(getInitialTopicId);
   const [chapterCache, setChapterCache] = useState({});
   const [loadingChapters, setLoadingChapters] = useState({});
   const shlokasSectionRef = useRef(null);
@@ -267,6 +285,44 @@ function LifeGuidance() {
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
+  }, []);
+
+  // Synchronize active topic to URL & Storage whenever it changes
+  useEffect(() => {
+    if (!selectedTopicId) return;
+    try {
+      sessionStorage.setItem("gita_guidance_selected_topic", selectedTopicId);
+      localStorage.setItem("gita_guidance_selected_topic", selectedTopicId);
+
+      const currentParams = new URLSearchParams(window.location.search);
+      if (currentParams.get("topic") !== selectedTopicId) {
+        currentParams.set("topic", selectedTopicId);
+        const newUrl = `${window.location.pathname}?${currentParams.toString()}`;
+        window.history.replaceState(window.history.state, "", newUrl);
+      }
+    } catch (e) {}
+
+    // Ensure active topic pill is scrolled into view in horizontal scroller on mobile
+    try {
+      const activeBtn = document.querySelector(".topic-pill-btn.active");
+      if (activeBtn) {
+        activeBtn.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "nearest" });
+      }
+    } catch (e) {}
+  }, [selectedTopicId]);
+
+  // Support browser back/forward buttons
+  useEffect(() => {
+    const handlePopState = () => {
+      try {
+        const urlParam = new URLSearchParams(window.location.search).get("topic");
+        if (urlParam && GUIDANCE_TOPICS.some((t) => t.id === urlParam)) {
+          setSelectedTopicId(urlParam);
+        }
+      } catch (e) {}
+    };
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
   const currentTopic =
@@ -318,6 +374,10 @@ function LifeGuidance() {
 
   const handleSelectTopic = (topicId) => {
     setSelectedTopicId(topicId);
+    try {
+      sessionStorage.setItem("gita_guidance_selected_topic", topicId);
+      localStorage.setItem("gita_guidance_selected_topic", topicId);
+    } catch (e) {}
 
     // Smoothly scroll down to the shlokas section
     setTimeout(() => {

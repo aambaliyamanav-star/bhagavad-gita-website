@@ -557,22 +557,9 @@
   padding: 8px;
 }
 
-.register-city-input-wrap {
-  width: 100%;
-  position: relative;
-}
-
 .register-custom-input-box {
   margin-top: 8px;
   width: 100%;
-}
-
-.register-field-hint {
-  display: block;
-  font-size: 11.5px;
-  color: #64748b;
-  margin-top: 5px;
-  line-height: 1.4;
 }
 
 /* =====================================================
@@ -1509,11 +1496,6 @@
 [data-theme="dark"] .register-field select option {
   background: #0f1f38;
   color: #e2e8f0;
-}
-
-.dark .register-field-hint,
-[data-theme="dark"] .register-field-hint {
-  color: #94a3b8;
 }
 
 /* =====================================================

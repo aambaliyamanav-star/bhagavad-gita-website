@@ -14,7 +14,14 @@ function QuizCategory() {
   // API
   // =====================================================
 
-  const API_URL = "https://bhagavad-gita-website.onrender.com/api/quiz";
+  const isLocal =
+    typeof window !== "undefined" &&
+    (window.location.hostname === "localhost" ||
+      window.location.hostname === "127.0.0.1");
+
+  const API_URL = isLocal
+    ? "http://localhost:5000/api/quiz"
+    : "https://bhagavad-gita-website.onrender.com/api/quiz";
 
   // =====================================================
   // CHAPTER NAMES
@@ -105,19 +112,50 @@ function QuizCategory() {
   };
 
   // =====================================================
-  // STATE
+  // STATE & INITIAL PERSISTENCE (RESTORE ON REFRESH)
   // =====================================================
 
-  const [quizType, setQuizType] = useState("all");
+  const getInitialCategoryState = () => {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlType = urlParams.get("category");
+      const urlChapter = urlParams.get("chapter");
+      const urlRange = urlParams.get("shlokaRange");
+      const urlCount = urlParams.get("count");
+
+      const raw =
+        sessionStorage.getItem("gita_quiz_category_prefs") ||
+        localStorage.getItem("gita_quiz_category_prefs");
+      const saved = raw ? JSON.parse(raw) : {};
+
+      return {
+        quizType: urlType || saved.quizType || "all",
+        selectedChapter: urlChapter || saved.selectedChapter || "",
+        selectedShlokaRange: urlRange || saved.selectedShlokaRange || "all",
+        questionCount: Number(urlCount || saved.questionCount) || 10,
+      };
+    } catch (e) {
+      return {
+        quizType: "all",
+        selectedChapter: "",
+        selectedShlokaRange: "all",
+        questionCount: 10,
+      };
+    }
+  };
+
+  const initialCategoryPrefs = getInitialCategoryState();
+
+  const [quizType, setQuizType] = useState(initialCategoryPrefs.quizType);
 
   const [selectedChapter, setSelectedChapter] =
-    useState("");
+    useState(initialCategoryPrefs.selectedChapter);
 
   const [selectedShlokaRange, setSelectedShlokaRange] =
-    useState("all");
+    useState(initialCategoryPrefs.selectedShlokaRange);
 
   const [questionCount, setQuestionCount] =
-    useState(10);
+    useState(initialCategoryPrefs.questionCount);
 
   const [availableQuestions, setAvailableQuestions] =
     useState(null);
@@ -211,6 +249,40 @@ function QuizCategory() {
       }
     }
   }, [selectedChapter, quizSummary, quizType, selectedShlokaRange]);
+
+  // Synchronize category preferences with sessionStorage, localStorage, and URL for refresh persistence
+  useEffect(() => {
+    try {
+      const prefs = {
+        quizType,
+        selectedChapter,
+        selectedShlokaRange,
+        questionCount,
+      };
+      sessionStorage.setItem("gita_quiz_category_prefs", JSON.stringify(prefs));
+      localStorage.setItem("gita_quiz_category_prefs", JSON.stringify(prefs));
+
+      const params = new URLSearchParams(window.location.search);
+      params.set("category", quizType);
+      if (quizType === "chapter" && selectedChapter) {
+        params.set("chapter", selectedChapter);
+        if (selectedShlokaRange && selectedShlokaRange !== "all") {
+          params.set("shlokaRange", selectedShlokaRange);
+        } else {
+          params.delete("shlokaRange");
+        }
+      } else {
+        params.delete("chapter");
+        params.delete("shlokaRange");
+      }
+      if (questionCount) {
+        params.set("count", String(questionCount));
+      }
+
+      const newUrl = `${window.location.pathname}?${params.toString()}`;
+      window.history.replaceState(window.history.state, "", newUrl);
+    } catch (e) {}
+  }, [quizType, selectedChapter, selectedShlokaRange, questionCount]);
 
   // =====================================================
   // GET TOKEN
@@ -544,6 +616,18 @@ function QuizCategory() {
         );
       }
     }
+
+    // =================================================
+    // CLEAR OLD ACTIVE QUIZ SESSIONS BEFORE NEW START
+    // =================================================
+
+    try {
+      Object.keys(sessionStorage).forEach((key) => {
+        if (key.startsWith("gita_active_quiz_")) {
+          sessionStorage.removeItem(key);
+        }
+      });
+    } catch (e) {}
 
     // =================================================
     // START QUIZ

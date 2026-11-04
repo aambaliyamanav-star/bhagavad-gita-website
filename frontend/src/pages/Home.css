@@ -337,16 +337,22 @@ body.dark {
   border-color: rgba(37, 99, 235, 0.35);
 }
 
-.tracker-trophy-blue,
-.tracker-trophy-gold {
+.tracker-trophy-icon {
+  color: #f59e0b;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 5px rgba(245, 158, 11, 0.45));
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.tracker-hero-btn:hover .tracker-trophy-icon {
+  transform: scale(1.2) rotate(-8deg);
   color: #fbbf24;
 }
 
-html[data-theme="dark"] .tracker-trophy-blue,
-body[data-theme="dark"] .tracker-trophy-blue,
-html[data-theme="dark"] .tracker-trophy-gold,
-body[data-theme="dark"] .tracker-trophy-gold {
-  color: #60a5fa;
+html[data-theme="dark"] .tracker-trophy-icon,
+body[data-theme="dark"] .tracker-trophy-icon {
+  color: #fbbf24;
+  filter: drop-shadow(0 2px 8px rgba(251, 191, 36, 0.6));
 }
 
 .hero-streak-chip {
