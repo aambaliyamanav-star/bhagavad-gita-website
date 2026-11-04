@@ -2979,3 +2979,18 @@ button:focus-visible {
   justify-content: center;
   line-height: 1;
 }
+
+/* Sanskrit word TTS highlighting support */
+.sanskrit-word.tts-word {
+  display: inline-block;
+}
+.sanskrit-word.tts-word.tts-word-active {
+  display: inline-block !important;
+}
+
+.sanskrit-punctuation {
+  display: inline-block;
+  padding: 2px 3px;
+  color: var(--reader-sanskrit-word);
+  user-select: none;
+}

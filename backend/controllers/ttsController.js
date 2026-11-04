@@ -15,6 +15,10 @@ const VOICE_MAP = {
     male: "en-IN-PrabhatNeural",
     female: "en-IN-NeerjaNeural",
   },
+  sa: {
+    male: "hi-IN-MadhurNeural",
+    female: "hi-IN-SwaraNeural",
+  },
 };
 
 // In-memory audio buffer cache (stores up to 300 shloka audio clips for zero latency and zero repeated timeouts)
@@ -23,7 +27,7 @@ const MAX_CACHE_SIZE = 300;
 
 const generateSpeech = async (req, res) => {
   try {
-    const { text, lang = "gu", voice = "male" } = req.body || {};
+    const { text, lang = "gu", voice = "male", rate, pitch } = req.body || {};
 
     if (!text || typeof text !== "string" || !text.trim()) {
       return res.status(400).json({
@@ -39,10 +43,18 @@ const generateSpeech = async (req, res) => {
     const voiceLang = VOICE_MAP[lang] ? lang : "gu";
     const selectedVoice = VOICE_MAP[voiceLang][voice] || VOICE_MAP[voiceLang].male;
 
+    // Prosody settings:
+    // For Sanskrit ('sa'), use a measured devotional cadence (-22% speed, -2Hz pitch)
+    // so every sacred word is clearly audible and recited with traditional shloka rag/meter.
+    const prosodyOptions = {
+      rate: rate !== undefined ? rate : (lang === "sa" ? "-22%" : "-2%"),
+      pitch: pitch !== undefined ? pitch : (lang === "sa" ? "-2Hz" : "+0Hz"),
+    };
+
     // Check memory cache first
     const cacheKey = crypto
       .createHash("md5")
-      .update(`${selectedVoice}:${cleanText}`)
+      .update(`${selectedVoice}:${prosodyOptions.rate}:${prosodyOptions.pitch}:${cleanText}`)
       .digest("hex");
 
     if (audioCache.has(cacheKey)) {
@@ -64,7 +76,7 @@ const generateSpeech = async (req, res) => {
       try {
         const tts = new MsEdgeTTS({ connectionTimeoutMs: 25000, synthesisTimeoutMs: 60000 });
         await tts.setMetadata(selectedVoice, OUTPUT_FORMAT.AUDIO_24KHZ_48KBITRATE_MONO_MP3);
-        const { audioStream } = tts.toStream(cleanText);
+        const { audioStream } = tts.toStream(cleanText, prosodyOptions);
 
         const chunks = [];
         await new Promise((resolve, reject) => {

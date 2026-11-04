@@ -68,8 +68,8 @@ const [sanskritFontSize, setSanskritFontSize] = useState(21);
   // =====================================================
   // TEXT-TO-SPEECH (AUDIO) STATE
   // =====================================================
-  const [speakingType, setSpeakingType] = useState(null); // null | 'translation' | 'message'
-  const [pausedType, setPausedType] = useState(null); // null | 'translation' | 'message'
+  const [speakingType, setSpeakingType] = useState(null); // null | 'sanskrit' | 'translation' | 'message'
+  const [pausedType, setPausedType] = useState(null); // null | 'sanskrit' | 'translation' | 'message'
   const speakingTypeRef = useRef(null);
   const pausedTypeRef = useRef(null);
   const pausedShlokaIndexRef = useRef(null);
@@ -1081,10 +1081,48 @@ if (
     }
   };
 
+  // Formats Sanskrit verse text with natural poetic meter (rag/chandas pauses) for authentic recitation
+  const formatSanskritForSpeech = (shlokObj) => {
+    if (!shlokObj) return "";
+    let plain = removeHtml(shlokObj.sanskrit || "");
+    if (!plain && (shlokObj.sanskritLine1 || shlokObj.sanskritLine2)) {
+      plain = [shlokObj.sanskritLine1, shlokObj.sanskritLine2].filter(Boolean).join("\n");
+    }
+    // Strip trailing shloka numbers like ॥ १ ॥ or || 1 ||
+    plain = plain.replace(/[॥\|]\s*[\d\.\-०-९]+\s*[॥\|]/g, "।");
+    const rawLines = plain
+      .split(/\n+/)
+      .map((l) => l.replace(/\s+/g, " ").trim())
+      .filter(Boolean);
+
+    const rhythmLines = rawLines
+      .map((line) => {
+        let cleanLine = line.replace(/[|।॥]+$/g, "").trim();
+        const words = cleanLine.split(/\s+/).filter((w) => !/^[|।॥\d\.\-०-९]+$/.test(w));
+        if (words.length >= 4) {
+          const half = Math.ceil(words.length / 2);
+          const pada1 = words.slice(0, half).join(" ");
+          const pada2 = words.slice(half).join(" ");
+          return `${pada1}, ${pada2} ।`;
+        } else if (words.length > 0) {
+          return `${words.join(" ")} ।`;
+        }
+        return "";
+      })
+      .filter(Boolean);
+
+    return rhythmLines.join("\n\n");
+  };
+
   // Smoothly scroll the screen to keep the active section comfortably in view
   const scrollToSection = (sectionType) => {
     try {
-      const selector = sectionType === "message" ? ".message-box" : ".translation-box";
+      const selector =
+        sectionType === "sanskrit"
+          ? ".sanskrit-box"
+          : sectionType === "message"
+          ? ".message-box"
+          : ".translation-box";
       const el = document.querySelector(selector);
       if (el) {
         const yOffset = -90; // Leave comfortable space below top navbar
@@ -1095,7 +1133,7 @@ if (
   };
 
   // Resiliently fetch Microsoft Neural AI speech audio (with automatic retry)
-  const fetchNeuralAudioBlob = async (text, lang) => {
+  const fetchNeuralAudioBlob = async (text, lang, customRate = null) => {
     const isLocal =
       typeof window !== "undefined" &&
       (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
@@ -1104,17 +1142,22 @@ if (
       ? "http://localhost:5000"
       : "https://bhagavad-gita-website.onrender.com";
 
+    const payload = {
+      text,
+      lang,
+      voice: "male", // Niranjan / Madhur
+    };
+    if (customRate) {
+      payload.rate = customRate;
+    }
+
     let lastFetchErr = null;
     for (let attempt = 1; attempt <= 2; attempt++) {
       try {
         const response = await fetch(`${ttsBase}/api/tts/speak`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            text,
-            lang,
-            voice: "male", // Niranjan (deep devotional voice)
-          }),
+          body: JSON.stringify(payload),
         });
 
         if (!response.ok) {
@@ -1152,7 +1195,12 @@ if (
 
     // Ensure all read and active word highlights stay 100% visible
     const activeIdx = lastActiveWordIdxRef.current;
-    const selector = type === "translation" ? ".gujarati-meaning" : ".message-text";
+    const selector =
+      type === "sanskrit"
+        ? ".sanskrit"
+        : type === "translation"
+        ? ".gujarati-meaning"
+        : ".message-text";
     requestAnimationFrame(() => {
       restoreTtsHighlights(selector, activeIdx);
     });
@@ -1210,18 +1258,26 @@ if (
     const targetIdx = overrideIndex !== null ? overrideIndex : currentShlokaRef.current;
     const targetShlok = list[targetIdx] || {};
     const targetLocalized = getLocalizedShlok(targetShlok);
-    const rawText =
-      type === "translation"
-        ? targetLocalized.translation || targetShlok?.translation
-        : targetLocalized.message || targetShlok?.message;
+    let textToSpeak = "";
+    if (type === "sanskrit") {
+      textToSpeak = formatSanskritForSpeech(targetShlok);
+    } else {
+      const rawText =
+        type === "translation"
+          ? targetLocalized.translation || targetShlok?.translation
+          : targetLocalized.message || targetShlok?.message;
+      textToSpeak = extractCleanTextForSpeech(rawText);
+    }
 
-    const textToSpeak = extractCleanTextForSpeech(rawText);
     if (!textToSpeak) {
       speakingTypeRef.current = null;
       setSpeakingType(null);
       setAudioLoading(false);
-      // If message is missing or empty, wait 2s and move to next shloka automatically
-      if (type === "message" && isContinuousPlayRef.current) {
+      // If sanskrit is missing, immediately try playing translation
+      if (type === "sanskrit") {
+        startSpeech("translation", targetIdx);
+      } else if (type === "message" && isContinuousPlayRef.current) {
+        // If message is missing or empty, wait 2s and move to next shloka automatically
         autoPlayTimerRef.current = setTimeout(() => {
           advanceToNextShloka();
         }, 2000);
@@ -1229,11 +1285,12 @@ if (
       return;
     }
 
-    const langCode = isEnglish ? "en" : isHindi ? "hi" : "gu";
+    const langCode = type === "sanskrit" ? "sa" : (isEnglish ? "en" : isHindi ? "hi" : "gu");
+    const customRate = type === "sanskrit" ? "-22%" : "-2%";
     scrollToSection(type);
 
     try {
-      const blob = await fetchNeuralAudioBlob(textToSpeak, langCode);
+      const blob = await fetchNeuralAudioBlob(textToSpeak, langCode, customRate);
       const audioBlobUrl = URL.createObjectURL(blob);
 
       const audio = new Audio(audioBlobUrl);
@@ -1241,7 +1298,11 @@ if (
 
       // Word tracking and live font highlighting with smooth auto-scroll
       const containerSelector =
-        type === "translation" ? ".gujarati-meaning" : ".message-text";
+        type === "sanskrit"
+          ? ".sanskrit"
+          : type === "translation"
+          ? ".gujarati-meaning"
+          : ".message-text";
 
       audio.ontimeupdate = () => {
         if (!audio.duration || isNaN(audio.duration) || audio.duration === 0) return;
@@ -1254,10 +1315,12 @@ if (
 
         let totalWeight = 0;
         const wordWeights = [];
+        const isSanskrit = type === "sanskrit";
         for (let i = 0; i < words.length; i++) {
           const wText = (words[i].textContent || "").trim();
-          const hasPause = /[:：.!?]$/.test(wText);
-          const weight = Math.max(wText.length, 2) + (hasPause ? 8 : 0);
+          const hasPause = /[:：.!?|।॥]$/.test(wText);
+          const isSanskritPadaEnd = isSanskrit && (i % 2 === 1);
+          const weight = Math.max(wText.length, 2) + (hasPause ? 8 : isSanskritPadaEnd ? 6 : 0);
           totalWeight += weight;
           wordWeights.push(totalWeight);
         }
@@ -1339,8 +1402,16 @@ if (
           }
         }
 
-        // If translation just ended, wait 1 second and automatically play message continuously!
-        if (type === "translation") {
+        // If sanskrit just ended, wait 1 second and automatically play translation!
+        if (type === "sanskrit") {
+          if (autoPlayTimerRef.current) {
+            clearTimeout(autoPlayTimerRef.current);
+          }
+          autoPlayTimerRef.current = setTimeout(() => {
+            startSpeech("translation", targetIdx);
+          }, 1000);
+        } else if (type === "translation") {
+          // If translation just ended, wait 1 second and automatically play message continuously!
           if (autoPlayTimerRef.current) {
             clearTimeout(autoPlayTimerRef.current);
           }
@@ -1412,13 +1483,13 @@ if (
     currentShlokaRef.current = currentShloka;
 
     if (autoPlayNextShlokaRef.current) {
-      // Auto-advance from previous shloka: start translation for this new shloka
+      // Auto-advance from previous shloka: start Sanskrit audio for this new shloka
       autoPlayNextShlokaRef.current = false;
       speakingTypeRef.current = null;
       pausedTypeRef.current = null;
       setPausedType(null);
       pausedShlokaIndexRef.current = null;
-      startSpeech("translation", currentShloka);
+      startSpeech("sanskrit", currentShloka);
       return;
     }
 
@@ -2013,6 +2084,21 @@ const prepareSanskritLines = () => {
                     word,
                     wordPosition
                   ) => {
+                    const isPunctuationOrNumber = /^[|।॥\d\.\-०-९\s]+$/.test(word.trim());
+                    if (isPunctuationOrNumber) {
+                      return (
+                        <span
+                          key={`punct-${lineIndex}-${wordPosition}`}
+                          className="sanskrit-punctuation"
+                        >
+                          {word}
+                          {wordPosition < line.length - 1 && (
+                            <span className="sanskrit-word-space">{" "}</span>
+                          )}
+                        </span>
+                      );
+                    }
+
                     const wordIndex =
                       globalWordIndex++;
 
@@ -2031,13 +2117,14 @@ const prepareSanskritLines = () => {
                         className="sanskrit-word-wrapper"
                       >
                         <span
-                          className={
+                          className={`sanskrit-word tts-word ${
                             isActive
-                              ? "sanskrit-word active-word"
+                              ? "active-word"
                               : meaning
-                              ? "sanskrit-word clickable-word"
-                              : "sanskrit-word"
-                          }
+                              ? "clickable-word"
+                              : ""
+                          }`}
+                          data-word-idx={wordIndex}
                           onClick={() => {
                             if (
                               meaning
@@ -2236,21 +2323,70 @@ const prepareSanskritLines = () => {
               SANSKRIT (PURE SANSKRIT - PRESERVED 100%)
           ================================================= */}
 
-          <div className="content-box sanskrit-box">
+          <div className={`content-box sanskrit-box ${(speakingType === "sanskrit" || (pausedType === "sanskrit" && pausedShlokaIndexRef.current === currentShloka)) ? "tts-box-active" : ""}`}>
 
-            <h3>
-              <Sparkles className="btn-icon" size={18} /> {txt("સંસ્કૃત શ્લોક", "संस्कृत श्लोक", "Sanskrit Shloka")}
-            </h3>
+            <div className="content-box-header">
+              <h3>
+                <Sparkles className="btn-icon" size={18} /> {txt("સંસ્કૃત શ્લોક", "संस्कृत श्लोक", "Sanskrit Shloka")}
+              </h3>
 
-<div
-  ref={sanskritRef}
-  className="sanskrit formatted-content"
-  style={{
-    fontSize: `${sanskritFontSize}px`,
-  }}
->
-  {renderSanskritWords()}
-</div>
+              <button
+                type="button"
+                className={`shloka-speech-btn ${
+                  speakingType === "sanskrit"
+                    ? "is-speaking"
+                    : pausedType === "sanskrit" && pausedShlokaIndexRef.current === currentShloka
+                    ? "is-paused"
+                    : ""
+                }`}
+                onClick={() => toggleSpeech("sanskrit")}
+                title={
+                  speakingType === "sanskrit"
+                    ? txt("ઓડિયો સ્ટોપ કરો", "ऑडियो स्टॉप करें", "Stop Audio")
+                    : pausedType === "sanskrit" && pausedShlokaIndexRef.current === currentShloka
+                    ? txt("ઓડિયો ફરી ચાલુ કરો", "ऑडियो फिर से शुरू करें", "Resume Audio")
+                    : txt("શ્લોક સાંભળો", "श्लोक सुनें", "Listen to Shloka")
+                }
+                aria-label={
+                  speakingType === "sanskrit"
+                    ? "Stop Audio"
+                    : pausedType === "sanskrit" && pausedShlokaIndexRef.current === currentShloka
+                    ? "Resume Audio"
+                    : "Listen to Sanskrit Shloka Audio"
+                }
+              >
+                {speakingType === "sanskrit" ? (
+                  audioLoading ? (
+                    <span>{txt("લોડ થાય છે...", "लोड हो रहा है...", "Loading...")}</span>
+                  ) : (
+                    <>
+                      <Square size={12} fill="currentColor" />
+                      <span>{txt("સ્ટોપ", "स्टॉप", "Stop")}</span>
+                    </>
+                  )
+                ) : pausedType === "sanskrit" && pausedShlokaIndexRef.current === currentShloka ? (
+                  <>
+                    <Play size={13} fill="currentColor" />
+                    <span>{txt("ચાલુ કરો", "जारी रखें", "Resume")}</span>
+                  </>
+                ) : (
+                  <>
+                    <Volume2 size={15} />
+                    <span>{txt("સાંભળો", "सुनें", "Listen")}</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            <div
+              ref={sanskritRef}
+              className={`sanskrit formatted-content ${(speakingType === "sanskrit" || (pausedType === "sanskrit" && pausedShlokaIndexRef.current === currentShloka)) ? "tts-section-active" : ""}`}
+              style={{
+                fontSize: `${sanskritFontSize}px`,
+              }}
+            >
+              {renderSanskritWords()}
+            </div>
 
             {/* WORD MEANING INFO */}
 
