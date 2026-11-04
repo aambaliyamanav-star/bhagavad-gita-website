@@ -1,10 +1,25 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-
+const nodemailer = require("nodemailer");
 
 // =====================================================
-// BREVO EMAIL API
+// EMAIL TRANSPORTER (GMAIL SMTP FALLBACK)
+// =====================================================
+
+const transporter =
+  process.env.EMAIL_USER && process.env.EMAIL_PASS
+    ? nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.EMAIL_USER,
+          pass: process.env.EMAIL_PASS,
+        },
+      })
+    : null;
+
+// =====================================================
+// DUAL-PROVIDER EMAIL SENDER (BREVO API + NODEMAILER FALLBACK)
 // =====================================================
 
 const sendEmail = async ({
@@ -12,52 +27,103 @@ const sendEmail = async ({
   subject,
   html,
 }) => {
-  const response = await fetch(
-    "https://api.brevo.com/v3/smtp/email",
-    {
-      method: "POST",
+  let brevoError = null;
 
-      headers: {
-        accept: "application/json",
-        "api-key":
-          process.env.BREVO_API_KEY,
-        "content-type":
-          "application/json",
-      },
+  // 1. Try Brevo REST API first (if API key is present)
+  if (process.env.BREVO_API_KEY) {
+    try {
+      const response = await fetch(
+        "https://api.brevo.com/v3/smtp/email",
+        {
+          method: "POST",
 
-      body: JSON.stringify({
-        sender: {
-          name:
-            process.env.BREVO_SENDER_NAME ||
-            "Bhagavad Gita",
-
-          email:
-            process.env.BREVO_SENDER_EMAIL,
-        },
-
-        to: [
-          {
-            email: to,
+          headers: {
+            accept: "application/json",
+            "api-key": process.env.BREVO_API_KEY,
+            "content-type": "application/json",
           },
-        ],
 
-        subject,
+          body: JSON.stringify({
+            sender: {
+              name:
+                process.env.BREVO_SENDER_NAME ||
+                "Bhagavad Gita",
 
-        htmlContent: html,
-      }),
+              email:
+                process.env.BREVO_SENDER_EMAIL ||
+                process.env.EMAIL_USER,
+            },
+
+            to: [
+              {
+                email: to,
+              },
+            ],
+
+            subject,
+
+            htmlContent: html,
+          }),
+        }
+      );
+
+      if (response.ok) {
+        console.log(`✅ Email sent to ${to} via Brevo API`);
+        return await response.json();
+      }
+
+      const errorText = await response.text();
+      brevoError = new Error(
+        `Brevo API Error ${response.status}: ${errorText}`
+      );
+      console.warn(
+        "⚠️ Brevo API failed, trying Nodemailer fallback:",
+        brevoError.message
+      );
+    } catch (err) {
+      brevoError = err;
+      console.warn(
+        "⚠️ Brevo request threw error, trying Nodemailer fallback:",
+        err.message
+      );
     }
-  );
-
-  if (!response.ok) {
-    const errorText =
-      await response.text();
-
-    throw new Error(
-      `Brevo API Error ${response.status}: ${errorText}`
-    );
   }
 
-  return response.json();
+  // 2. Fallback to Gmail SMTP via Nodemailer
+  if (transporter) {
+    try {
+      const info = await transporter.sendMail({
+        from: `"Bhagavad Gita" <${process.env.EMAIL_USER}>`,
+        to,
+        subject,
+        html,
+      });
+      console.log(
+        `✅ Email sent to ${to} via Nodemailer (Gmail):`,
+        info.messageId
+      );
+      return { messageId: info.messageId, provider: "nodemailer" };
+    } catch (smtpErr) {
+      console.error(
+        "❌ Nodemailer fallback also failed:",
+        smtpErr.message
+      );
+      if (brevoError) {
+        throw new Error(
+          `${brevoError.message} | SMTP Error: ${smtpErr.message}`
+        );
+      }
+      throw smtpErr;
+    }
+  }
+
+  if (brevoError) {
+    throw brevoError;
+  }
+
+  throw new Error(
+    "No email service configured (missing BREVO_API_KEY and EMAIL_USER/EMAIL_PASS)"
+  );
 };
 
 
@@ -553,9 +619,13 @@ await sendEmail({
       error
     );
 
+    const isBrevoIpBlock =
+      error.message && error.message.includes("authorised_ips");
+
     return res.status(500).json({
-      message:
-        "OTP મોકલવામાં સમસ્યા આવી.",
+      message: isBrevoIpBlock
+        ? "Brevo ઈમેલ સર્વિસમાં IP બ્લોક છે. એડમિન કૃપા કરીને Brevo સેટિંગ્સમાં IP whitelist બંધ કરો."
+        : (error.message || "OTP મોકલવામાં સમસ્યા આવી."),
       error:
         error.message,
     });

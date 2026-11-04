@@ -24,6 +24,15 @@ import { useLanguage } from "../context/LanguageContext.jsx";
 import { getLocalizedStates, getCitiesForState } from "../utils/indiaLocations.js";
 import "./Register.css";
 
+const isLocal =
+  typeof window !== "undefined" &&
+  (window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1");
+
+const AUTH_API_URL = isLocal
+  ? "http://localhost:5000/api/auth"
+  : "https://bhagavad-gita-website.onrender.com/api/auth";
+
 function Register() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -413,7 +422,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
       setMessageType("");
 
       const response = await fetch(
-        "https://bhagavad-gita-website.onrender.com/api/auth/send-otp",
+        `${AUTH_API_URL}/send-otp`,
         {
           method: "POST",
 
@@ -508,7 +517,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
       setMessageType("");
 
       const response = await fetch(
-        "https://bhagavad-gita-website.onrender.com/api/auth/verify-otp",
+        `${AUTH_API_URL}/verify-otp`,
         {
           method: "POST",
 
@@ -627,7 +636,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
       setMessageType("");
 
       const response = await fetch(
-        "https://bhagavad-gita-website.onrender.com/api/auth/register",
+        `${AUTH_API_URL}/register`,
         {
           method: "POST",
 

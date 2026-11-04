@@ -4,6 +4,15 @@ import { useNavigate } from "react-router-dom";
 import { useLanguage } from "../context/LanguageContext.jsx";
 import "./ForgotPassword.css";
 
+const isLocal =
+  typeof window !== "undefined" &&
+  (window.location.hostname === "localhost" ||
+    window.location.hostname === "127.0.0.1");
+
+const AUTH_API_URL = isLocal
+  ? "http://localhost:5000/api/auth"
+  : "https://bhagavad-gita-website.onrender.com/api/auth";
+
 function ForgotPassword() {
   const navigate = useNavigate();
   const { isHindi, isEnglish, isGujarati, txt } = useLanguage();
@@ -53,7 +62,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
 
     try {
       const response = await fetch(
-        "https://bhagavad-gita-website.onrender.com/api/auth/forgot-password/send-otp",
+        `${AUTH_API_URL}/forgot-password/send-otp`,
         {
           method: "POST",
 
@@ -124,7 +133,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
 
     try {
       const response = await fetch(
-        "https://bhagavad-gita-website.onrender.com/api/auth/forgot-password/verify-otp",
+        `${AUTH_API_URL}/forgot-password/verify-otp`,
         {
           method: "POST",
 
@@ -209,7 +218,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
 
     try {
       const response = await fetch(
-        "https://bhagavad-gita-website.onrender.com/api/auth/forgot-password/reset-password",
+        `${AUTH_API_URL}/forgot-password/reset-password`,
         {
           method: "POST",
 
