@@ -54,6 +54,16 @@ const sendEmail = async ({
                 process.env.EMAIL_USER,
             },
 
+            replyTo: {
+              name:
+                process.env.BREVO_SENDER_NAME ||
+                "Bhagavad Gita",
+
+              email:
+                process.env.BREVO_SENDER_EMAIL ||
+                process.env.EMAIL_USER,
+            },
+
             to: [
               {
                 email: to,
