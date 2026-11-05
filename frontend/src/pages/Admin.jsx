@@ -196,6 +196,7 @@ function Admin() {
 
       let success = false;
       let resData = null;
+      let lastErrorMessage = "";
 
       for (const url of urls) {
         try {
@@ -210,13 +211,32 @@ function Admin() {
               permissions: selectedPermissions,
             }),
           });
-          resData = await res.json();
-          if (res.ok && resData.success) {
-            success = true;
-            break;
+
+          if (res.status === 404) {
+            lastErrorMessage = txt(
+              "Render backend પર નવો કોડ હજુ deploy થઈ રહ્યો છે. કૃપા કરીને 2 મિનિટ પછી ફરી પ્રયાસ કરો.",
+              "Render backend पर नया कोड अभी डिप्लॉय हो रहा है। कृपया 2 मिनट बाद पुनः प्रयास करें।",
+              "Backend deployment in progress on Render. Please try again in 2 minutes."
+            );
+            continue;
           }
-        } catch {
-          // try next
+
+          let data = null;
+          try {
+            data = await res.json();
+          } catch {
+            data = null;
+          }
+
+          if (res.ok && data?.success) {
+            success = true;
+            resData = data;
+            break;
+          } else {
+            lastErrorMessage = data?.message || `Server responded with status ${res.status}`;
+          }
+        } catch (netErr) {
+          lastErrorMessage = netErr.message;
         }
       }
 
@@ -241,11 +261,11 @@ function Admin() {
         );
         setPermissionModalUser(null);
       } else {
-        alert(resData?.message || "Error saving permissions.");
+        alert(lastErrorMessage || resData?.message || "Error saving permissions.");
       }
     } catch (err) {
       console.error("Error saving permissions:", err);
-      alert("Error saving permissions.");
+      alert(err.message || "Error saving permissions.");
     } finally {
       setSavingPermissions(false);
     }
@@ -279,6 +299,7 @@ function Admin() {
 
       let success = false;
       let resData = null;
+      let lastErrorMessage = "";
 
       for (const url of urls) {
         try {
@@ -293,13 +314,32 @@ function Admin() {
               permissions: [],
             }),
           });
-          resData = await res.json();
-          if (res.ok && resData.success) {
-            success = true;
-            break;
+
+          if (res.status === 404) {
+            lastErrorMessage = txt(
+              "Render backend પર નવો કોડ હજુ deploy થઈ રહ્યો છે. કૃપા કરીને 2 મિનિટ પછી ફરી પ્રયાસ કરો.",
+              "Render backend पर नया कोड अभी डिप्लॉय हो रहा है। कृपया 2 मिनट बाद पुनः प्रयास करें।",
+              "Backend deployment in progress on Render. Please try again in 2 minutes."
+            );
+            continue;
           }
-        } catch {
-          // try next
+
+          let data = null;
+          try {
+            data = await res.json();
+          } catch {
+            data = null;
+          }
+
+          if (res.ok && data?.success) {
+            success = true;
+            resData = data;
+            break;
+          } else {
+            lastErrorMessage = data?.message || `Server responded with status ${res.status}`;
+          }
+        } catch (netErr) {
+          lastErrorMessage = netErr.message;
         }
       }
 
@@ -323,11 +363,11 @@ function Admin() {
           )
         );
       } else {
-        alert(resData?.message || "Error revoking admin access.");
+        alert(lastErrorMessage || resData?.message || "Error revoking admin access.");
       }
     } catch (err) {
       console.error("Error revoking admin:", err);
-      alert("Error revoking admin access.");
+      alert(err.message || "Error revoking admin access.");
     }
   };
 

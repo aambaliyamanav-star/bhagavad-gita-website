@@ -2,6 +2,11 @@
 // BHAGAVAD GITA - ROLE & PERMISSIONS HELPER
 // =====================================================
 
+export const SUPER_ADMIN_EMAILS = [
+  "gitagyanm700@gmail.com",
+  "aambaliyamanav@gmail.com",
+];
+
 export const SUPER_ADMIN_EMAIL = "gitagyanm700@gmail.com";
 
 export const PERMISSION_KEYS = {
@@ -100,7 +105,12 @@ export const ALL_PERMISSIONS = [
 export function isSuperAdminUser(user) {
   if (!user) return false;
   if (user.isSuperAdmin === true) return true;
-  if (user.email && user.email.toLowerCase() === SUPER_ADMIN_EMAIL.toLowerCase()) {
+  if (
+    user.email &&
+    SUPER_ADMIN_EMAILS.some(
+      (em) => em.toLowerCase() === user.email.toLowerCase()
+    )
+  ) {
     return true;
   }
   return false;

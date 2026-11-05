@@ -118,7 +118,10 @@ const optionalAuth = async (req, res, next) => {
 };
 
 
-const SUPER_ADMIN_EMAILS = ["gitagyanm700@gmail.com"];
+const SUPER_ADMIN_EMAILS = [
+  "gitagyanm700@gmail.com",
+  "aambaliyamanav@gmail.com",
+];
 
 const isSuperAdmin = (user) => {
   if (!user) return false;
