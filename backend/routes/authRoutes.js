@@ -43,6 +43,17 @@ const {
 
 const router = express.Router();
 
+router.get("/email-config-status", (req, res) => {
+  const key = process.env.BREVO_API_KEY || "";
+  res.json({
+    hasBrevoKey: !!key,
+    keyPrefix: key ? key.substring(0, 12) + "..." : "none",
+    keySuffix: key ? "..." + key.slice(-6) : "none",
+    senderEmail: process.env.BREVO_SENDER_EMAIL || "default",
+    senderName: process.env.BREVO_SENDER_NAME || "default",
+  });
+});
+
 // =====================================================
 // SEND REGISTRATION EMAIL OTP
 // POST /api/auth/send-otp
