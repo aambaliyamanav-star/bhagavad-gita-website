@@ -26,11 +26,15 @@ import {
   Sparkles
 } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext.jsx";
+import { useAuth } from "../context/AuthContext.jsx";
+import { hasPermission } from "../utils/permissionHelper.js";
 import "./QuizManagement.css";
 
 function QuizManagement() {
   const navigate = useNavigate();
   const { isHindi, isEnglish, isGujarati, txt } = useLanguage();
+  const { user } = useAuth();
+  const canDeleteQuiz = hasPermission(user, "delete_quiz");
   // =====================================================
   // API
   // =====================================================
@@ -2422,6 +2426,7 @@ function QuizManagement() {
                 <RefreshCw className="btn-icon" size={15} /> Refresh
               </button>
 
+              {canDeleteQuiz && (
               <button
                 type="button"
                 className="quiz-delete-all-button"
@@ -2452,6 +2457,7 @@ function QuizManagement() {
                   </>
                 )}
               </button>
+              )}
             </div>
 
           </div>
@@ -2868,6 +2874,7 @@ function QuizManagement() {
                             <Edit3 className="btn-icon" size={15} /> Edit
                           </button>
 
+                          {canDeleteQuiz && (
                           <button
                             type="button"
                             className="quiz-delete-button"
@@ -2879,6 +2886,7 @@ function QuizManagement() {
                           >
                             <Trash2 className="btn-icon" size={16} /> Delete
                           </button>
+                          )}
 
                         </div>
 

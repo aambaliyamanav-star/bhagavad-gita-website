@@ -32,11 +32,11 @@ router.get(
   getAllUsers
 );
 
-// Delete user (Protected: requires manage_users permission)
+// Delete user (Protected: requires delete_users permission)
 router.delete(
   "/users/:id",
   protect,
-  requirePermission("manage_users"),
+  requirePermission("delete_users"),
   deleteUser
 );
 

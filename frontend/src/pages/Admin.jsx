@@ -119,10 +119,14 @@ function Admin() {
 
   const isSuperAdmin = isSuperAdminUser(user);
   const canManageShloks = hasPermission(user, "manage_shloks");
+  const canDeleteShloks = hasPermission(user, "delete_shloks");
   const canManageQuiz = hasPermission(user, "manage_quiz");
+  const canDeleteQuiz = hasPermission(user, "delete_quiz");
   const canViewAnalytics = hasPermission(user, "view_analytics");
   const canManageFeedbacks = hasPermission(user, "manage_feedbacks");
+  const canDeleteFeedbacks = hasPermission(user, "delete_feedbacks");
   const canManageUsers = hasPermission(user, "manage_users");
+  const canDeleteUsers = hasPermission(user, "delete_users");
   const canManageAdmins = isSuperAdmin || hasPermission(user, "manage_admins");
 
   // Admin Role & Permissions modal state
@@ -143,12 +147,13 @@ function Admin() {
     if (Array.isArray(targetUser.permissions) && targetUser.permissions.length > 0) {
       setSelectedPermissions([...targetUser.permissions]);
     } else {
-      // Default: select first 4 core permissions
+      // Default: select safe non-delete permissions
       setSelectedPermissions([
         "manage_shloks",
         "manage_quiz",
         "view_analytics",
         "manage_feedbacks",
+        "manage_users",
       ]);
     }
   };
@@ -2064,6 +2069,7 @@ function Admin() {
               </div>
 
               <div className="admin-modal-footer">
+                {canDeleteFeedbacks && (
                 <button
                   type="button"
                   className="admin-modal-del-btn"
@@ -2080,6 +2086,7 @@ function Admin() {
                       : txt("પ્રતિસાદ ડિલીટ કરો", "प्रतिक्रिया डिलीट करें", "Delete Feedback")}
                   </span>
                 </button>
+                )}
 
                 <button
                   type="button"
@@ -2345,7 +2352,7 @@ function Admin() {
                                   </>
                                 )}
 
-                                {canManageUsers && user.role !== "admin" && (
+                                {canDeleteUsers && user.role !== "admin" && (
                                   <button
                                     className="delete-user-btn"
                                     onClick={() => deleteUser(user._id, user.name)}
@@ -2467,7 +2474,7 @@ function Admin() {
                     return (
                       <div
                         key={perm.id}
-                        className={`admin-perm-card ${isChecked ? "is-selected" : ""}`}
+                        className={`admin-perm-card ${isChecked ? "is-selected" : ""} ${perm.isDanger ? "is-danger-card" : ""}`}
                         onClick={() => togglePermission(perm.id)}
                       >
                         <div className="admin-perm-card-check">
@@ -2480,10 +2487,6 @@ function Admin() {
                         <div className="admin-perm-card-content">
                           <div className="admin-perm-card-title">
                             {isHindi ? perm.nameHi : isEnglish ? perm.nameEn : perm.nameGu}
-                            <span className="admin-perm-id-tag">({perm.id})</span>
-                          </div>
-                          <div className="admin-perm-card-desc">
-                            {isHindi ? perm.descHi : isEnglish ? perm.descEn : perm.descGu}
                           </div>
                         </div>
                       </div>

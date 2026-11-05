@@ -36,6 +36,19 @@ const getAllUsers = async (req, res) => {
       }
     });
 
+    const ALL_PERMS = [
+      "manage_shloks",
+      "delete_shloks",
+      "manage_quiz",
+      "delete_quiz",
+      "view_analytics",
+      "manage_feedbacks",
+      "delete_feedbacks",
+      "manage_users",
+      "delete_users",
+      "manage_admins",
+    ];
+
     const usersWithVisits = users.map((u) => {
       const isSuper =
         u.isSuperAdmin ||
@@ -44,12 +57,7 @@ const getAllUsers = async (req, res) => {
       return {
         ...u,
         isSuperAdmin: isSuper,
-        permissions: u.permissions || (u.role === "admin" ? [
-          "manage_shloks",
-          "manage_quiz",
-          "view_analytics",
-          "manage_feedbacks",
-        ] : []),
+        permissions: isSuper ? ALL_PERMS : (u.permissions || []),
         visitCount: visitMap[String(u._id)] || 0,
       };
     });
@@ -188,10 +196,14 @@ const updateUserRole = async (req, res) => {
 
     const validPermissions = [
       "manage_shloks",
+      "delete_shloks",
       "manage_quiz",
+      "delete_quiz",
       "view_analytics",
       "manage_feedbacks",
+      "delete_feedbacks",
       "manage_users",
+      "delete_users",
       "manage_admins",
     ];
 
@@ -207,6 +219,7 @@ const updateUserRole = async (req, res) => {
           "manage_quiz",
           "view_analytics",
           "manage_feedbacks",
+          "manage_users",
         ];
       }
     }
@@ -248,62 +261,76 @@ const getAdminPermissionsList = async (req, res) => {
   const permissions = [
     {
       id: "manage_shloks",
-      nameGu: "શ્લોક સંચાલન",
-      nameHi: "श्लोक प्रबंधन",
-      nameEn: "Manage Shlokas",
-      descriptionGu: "નવા શ્લોક ઉમેરવા, સુધારવા, ડિલીટ કરવા અને સંસ્કૃત ઑડિયો જનરેટ કરવો.",
-      descriptionHi: "नए श्लोक जोड़ना, संपादित करना, हटाना और संस्कृत ऑडियो जनरेट करना।",
-      descriptionEn: "Add, edit, delete shlokas and generate Sanskrit neural recitation audio.",
-      category: "content",
+      nameGu: "શ્લોક સંચાલન (ઉમેરો / સુધારો)",
+      nameHi: "श्लोक प्रबंधन (जोड़ें / संपादित करें)",
+      nameEn: "Manage Shlokas (Add / Edit)",
+      category: "shloks",
+    },
+    {
+      id: "delete_shloks",
+      nameGu: "શ્લોક ડિલીટ",
+      nameHi: "श्लोक डिलीट",
+      nameEn: "Delete Shlokas",
+      category: "shloks",
+      isDanger: true,
     },
     {
       id: "manage_quiz",
-      nameGu: "ક્વિઝ સંચાલન",
-      nameHi: "क्विज़ प्रबंधन",
-      nameEn: "Manage Quiz",
-      descriptionGu: "ક્વિઝ પ્રશ્નો ઉમેરવા, સુધારવા અને યુઝર્સના પ્રશ્નો મંજૂર કરવા.",
-      descriptionHi: "क्विज़ प्रश्न जोड़ना, संपादित करना और उपयोगकर्ताओं के प्रश्न स्वीकृत करना।",
-      descriptionEn: "Add, edit, delete quiz questions and approve user community submissions.",
-      category: "content",
+      nameGu: "ક્વિઝ સંચાલન (ઉમેરો / સુધારો)",
+      nameHi: "क्विज़ प्रबंधन (जोड़ें / संपादित करें)",
+      nameEn: "Manage Quiz (Add / Edit)",
+      category: "quiz",
+    },
+    {
+      id: "delete_quiz",
+      nameGu: "ક્વિઝ ડિલીટ",
+      nameHi: "क्विज़ डिलीट",
+      nameEn: "Delete Quiz",
+      category: "quiz",
+      isDanger: true,
     },
     {
       id: "view_analytics",
       nameGu: "ટ્રાફિક અને એનાલિટિક્સ",
       nameHi: "ट्रैफ़िक और एनालिटिक्स",
       nameEn: "Traffic & Analytics",
-      descriptionGu: "વેબસાઇટ & એપ મુલાકાતીઓ, લાઈવ યુઝર્સ અને ડિવાઇસ આંકડા જોવા.",
-      descriptionHi: "वेबसाइट और ऐप विज़िटर्स, लाइव उपयोगकर्ता और डिवाइस आंकड़े देखना।",
-      descriptionEn: "View website & mobile app traffic, live visitors, devices, and retention trends.",
       category: "analytics",
     },
     {
       id: "manage_feedbacks",
       nameGu: "યુઝર પ્રતિસાદ (Feedbacks)",
-      nameHi: "उपयोगकर्ता फ़ीडबैक",
-      nameEn: "User Feedbacks",
-      descriptionGu: "યુઝર્સના રિવ્યુ, રેટિંગ્સ અને સંદેશા વાંચવા તથા ડિલીટ કરવા.",
-      descriptionHi: "उपयोगकर्ताओं की समीक्षाएं, रेटिंग और संदेश पढ़ना तथा हटाना।",
-      descriptionEn: "Read user reviews, star ratings, and delete inappropriate feedbacks.",
-      category: "community",
+      nameHi: "उपयोगकर्ता फ़ीडबैक देखें",
+      nameEn: "View Feedbacks",
+      category: "feedbacks",
+    },
+    {
+      id: "delete_feedbacks",
+      nameGu: "પ્રતિસાદ ડિલીટ",
+      nameHi: "फ़ीडबैक डिलीट",
+      nameEn: "Delete Feedbacks",
+      category: "feedbacks",
+      isDanger: true,
     },
     {
       id: "manage_users",
-      nameGu: "યુઝર્સ સંચાલન",
-      nameHi: "उपयोगकर्ता प्रबंधन",
-      nameEn: "Manage Users",
-      descriptionGu: "રજીસ્ટર્ડ યુઝર્સની યાદી જોવી અને યુઝર એકાઉન્ટ ડિલીટ કરવું.",
-      descriptionHi: "पंजीकृत उपयोगकर्ताओं की सूची देखना और खाता हटाना।",
-      descriptionEn: "View registered user details and delete registered accounts.",
+      nameGu: "યુઝર્સ લિસ્ટ (જુઓ)",
+      nameHi: "उपयोगकर्ता सूची देखें",
+      nameEn: "View Users List",
       category: "users",
+    },
+    {
+      id: "delete_users",
+      nameGu: "યુઝર ડિલીટ",
+      nameHi: "उपयोगकर्ता डिलीट",
+      nameEn: "Delete Users",
+      category: "users",
+      isDanger: true,
     },
     {
       id: "manage_admins",
       nameGu: "એડમિન પરમિશન્સ સંચાલન",
       nameHi: "एडमिन अनुमति प्रबंधन",
       nameEn: "Manage Admins & Roles",
-      descriptionGu: "અન્ય યુઝર્સને એડમિન બનાવવા અને તેમની પરમિશન કંટ્રોલ કરવી.",
-      descriptionHi: "अन्य उपयोगकर्ताओं को एडमिन बनाना और उनकी अनुमतियाँ नियंत्रित करना।",
-      descriptionEn: "Grant admin access to other users and configure granular permissions.",
       category: "security",
     },
   ];

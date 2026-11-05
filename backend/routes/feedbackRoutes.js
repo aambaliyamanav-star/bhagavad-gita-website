@@ -21,8 +21,8 @@ router.post("/", optionalAuth, submitFeedback);
 router.get("/stats", getFeedbackStats);
 router.get("/my-rating", optionalAuth, getMyRating);
 
-// Admin routes (Protected: requires manage_feedbacks permission)
+// Admin routes (Protected: requires manage_feedbacks / delete_feedbacks)
 router.get("/admin", protect, requirePermission("manage_feedbacks"), getAdminFeedbacks);
-router.delete("/:id", protect, requirePermission("manage_feedbacks"), deleteFeedback);
+router.delete("/:id", protect, requirePermission("delete_feedbacks"), deleteFeedback);
 
 module.exports = router;

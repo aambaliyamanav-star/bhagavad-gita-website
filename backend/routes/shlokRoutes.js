@@ -92,14 +92,14 @@ router.put(
 );
 
 // -----------------------------------------------------
-// DELETE SHLOK (ADMIN ONLY - manage_shloks)
+// DELETE SHLOK (ADMIN ONLY - delete_shloks)
 // DELETE /api/shloks/:id
 // -----------------------------------------------------
 
 router.delete(
   "/:id",
   protect,
-  requirePermission("manage_shloks"),
+  requirePermission("delete_shloks"),
   deleteShlok
 );
 

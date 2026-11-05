@@ -6,72 +6,90 @@ export const SUPER_ADMIN_EMAIL = "gitagyanm700@gmail.com";
 
 export const PERMISSION_KEYS = {
   MANAGE_SHLOKS: "manage_shloks",
+  DELETE_SHLOKS: "delete_shloks",
   MANAGE_QUIZ: "manage_quiz",
+  DELETE_QUIZ: "delete_quiz",
   VIEW_ANALYTICS: "view_analytics",
   MANAGE_FEEDBACKS: "manage_feedbacks",
+  DELETE_FEEDBACKS: "delete_feedbacks",
   MANAGE_USERS: "manage_users",
+  DELETE_USERS: "delete_users",
   MANAGE_ADMINS: "manage_admins",
 };
 
 export const ALL_PERMISSIONS = [
   {
     id: "manage_shloks",
-    nameGu: "શ્લોક સંચાલન",
-    nameHi: "श्लोक प्रबंधन",
-    nameEn: "Manage Shlokas",
-    descGu: "નવા શ્લોક ઉમેરવા, સુધારવા, ડિલીટ કરવા અને સંસ્કૃત ઑડિયો જનરેટ કરવો.",
-    descHi: "नए श्लोक जोड़ना, संपादित करना, हटाना और संस्कृत ऑडियो जनरेट करना।",
-    descEn: "Add, edit, delete shlokas and generate Sanskrit neural recitation audio.",
-    category: "content",
+    nameGu: "શ્લોક સંચાલન (ઉમેરો / સુધારો)",
+    nameHi: "श्लोक प्रबंधन (जोड़ें / संपादित करें)",
+    nameEn: "Manage Shlokas (Add / Edit)",
+    category: "shloks",
+  },
+  {
+    id: "delete_shloks",
+    nameGu: "શ્લોક ડિલીટ",
+    nameHi: "श्लोक डिलीट",
+    nameEn: "Delete Shlokas",
+    category: "shloks",
+    isDanger: true,
   },
   {
     id: "manage_quiz",
-    nameGu: "ક્વિઝ સંચાલન",
-    nameHi: "क्विज़ प्रबंधन",
-    nameEn: "Manage Quiz",
-    descGu: "ક્વિઝ પ્રશ્નો ઉમેરવા, સુધારવા અને યુઝર્સના પ્રશ્નો મંજૂર કરવા.",
-    descHi: "क्विज़ प्रश्न जोड़ना, संपादित करना और उपयोगकर्ताओं के प्रश्न स्वीकृत करना।",
-    descEn: "Add, edit, delete quiz questions and approve user community submissions.",
-    category: "content",
+    nameGu: "ક્વિઝ સંચાલન (ઉમેરો / સુધારો)",
+    nameHi: "क्विज़ प्रबंधन (जोड़ें / संपादित करें)",
+    nameEn: "Manage Quiz (Add / Edit)",
+    category: "quiz",
+  },
+  {
+    id: "delete_quiz",
+    nameGu: "ક્વિઝ ડિલીટ",
+    nameHi: "क्विज़ डिलीट",
+    nameEn: "Delete Quiz",
+    category: "quiz",
+    isDanger: true,
   },
   {
     id: "view_analytics",
     nameGu: "ટ્રાફિક અને એનાલિટિક્સ",
     nameHi: "ट्रैफ़िक और एनालिटिक्स",
     nameEn: "Traffic & Analytics",
-    descGu: "વેબસાઇટ & એપ મુલાકાતીઓ, લાઈવ યુઝર્સ અને ડિવાઇસ આંકડા જોવા.",
-    descHi: "वेबसाइट और ऐप विज़िटर्स, लाइव उपयोगकर्ता और डिवाइस आंकड़े देखना।",
-    descEn: "View website & mobile app traffic, live visitors, devices, and retention trends.",
     category: "analytics",
   },
   {
     id: "manage_feedbacks",
     nameGu: "યુઝર પ્રતિસાદ (Feedbacks)",
-    nameHi: "उपयोगकर्ता फ़ीडबैक",
-    nameEn: "User Feedbacks",
-    descGu: "યુઝર્સના રિવ્યુ, રેટિંગ્સ અને સંદેશા વાંચવા તથા ડિલીટ કરવા.",
-    descHi: "उपयोगकर्ताओं की समीक्षाएं, रेटिंग और संदेश पढ़ना तथा हटाना।",
-    descEn: "Read user reviews, star ratings, and delete inappropriate feedbacks.",
-    category: "community",
+    nameHi: "उपयोगकर्ता फ़ीडबैक देखें",
+    nameEn: "View Feedbacks",
+    category: "feedbacks",
+  },
+  {
+    id: "delete_feedbacks",
+    nameGu: "પ્રતિસાદ ડિલીટ",
+    nameHi: "फ़ीडबैक डिलीट",
+    nameEn: "Delete Feedbacks",
+    category: "feedbacks",
+    isDanger: true,
   },
   {
     id: "manage_users",
-    nameGu: "યુઝર્સ સંચાલન",
-    nameHi: "उपयोगकर्ता प्रबंधन",
-    nameEn: "Manage Users",
-    descGu: "રજીસ્ટર્ડ યુઝર્સની યાદી જોવી અને યુઝર એકાઉન્ટ ડિલીટ કરવું.",
-    descHi: "पंजीकृत उपयोगकर्ताओं की सूची देखना और खाता हटाना।",
-    descEn: "View registered user details and delete registered accounts.",
+    nameGu: "યુઝર્સ લિસ્ટ (જુઓ)",
+    nameHi: "उपयोगकर्ता सूची देखें",
+    nameEn: "View Users List",
     category: "users",
+  },
+  {
+    id: "delete_users",
+    nameGu: "યુઝર ડિલીટ",
+    nameHi: "उपयोगकर्ता डिलीट",
+    nameEn: "Delete Users",
+    category: "users",
+    isDanger: true,
   },
   {
     id: "manage_admins",
     nameGu: "એડમિન પરમિશન્સ સંચાલન",
     nameHi: "एडमिन अनुमति प्रबंधन",
     nameEn: "Manage Admins & Roles",
-    descGu: "અન્ય યુઝર્સને એડમિન બનાવવા અને તેમની પરમિશન કંટ્રોલ કરવી.",
-    descHi: "अन्य उपयोगकर्ताओं को एडमिन बनाना और उनकी अनुमतियाँ नियंत्रित करना।",
-    descEn: "Grant admin access to other users and configure granular permissions.",
     category: "security",
   },
 ];
@@ -95,7 +113,7 @@ export function hasPermission(user, permissionKey) {
   if (!user) return false;
   if (user.role !== "admin") return false;
 
-  // Super Admin always has 100% access to all permissions
+  // Super Admin always has 100% full access to all permissions
   if (isSuperAdminUser(user)) return true;
 
   // If user has specific permissions array
@@ -104,7 +122,7 @@ export function hasPermission(user, permissionKey) {
   }
 
   // Fallback for legacy admin
-  return true;
+  return false;
 }
 
 /**

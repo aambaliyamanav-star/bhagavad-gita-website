@@ -126,7 +126,7 @@ router.put(
 router.delete(
   "/admin/question/:id",
   protect,
-  requirePermission("manage_quiz"),
+  requirePermission("delete_quiz"),
   deleteQuizQuestion
 );
 
@@ -136,14 +136,14 @@ router.delete(
 router.delete(
   "/admin/questions/bulk",
   protect,
-  requirePermission("manage_quiz"),
+  requirePermission("delete_quiz"),
   deleteQuizQuestionsBulk
 );
 
 router.post(
   "/admin/questions/delete-bulk",
   protect,
-  requirePermission("manage_quiz"),
+  requirePermission("delete_quiz"),
   deleteQuizQuestionsBulk
 );
 

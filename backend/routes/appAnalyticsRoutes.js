@@ -18,8 +18,8 @@ router.post("/record-install", recordAppInstall);
 // POST /api/app-analytics/record-uninstall (Public: marks device uninstalled)
 router.post("/record-uninstall", recordAppUninstall);
 
-// DELETE /api/app-analytics/installation/:id (Protected: requires view_analytics)
-router.delete("/installation/:id", protect, requirePermission("view_analytics"), deleteAppInstallation);
+// DELETE /api/app-analytics/installation/:id (Protected: requires delete_users)
+router.delete("/installation/:id", protect, requirePermission("delete_users"), deleteAppInstallation);
 
 // GET /api/app-analytics/stats (Protected: requires view_analytics)
 router.get("/stats", protect, requirePermission("view_analytics"), getAppStats);
