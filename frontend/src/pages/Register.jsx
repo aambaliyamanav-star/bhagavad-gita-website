@@ -447,6 +447,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
             state: finalState,
 
             city: finalCity,
+            language: currentLang,
           }),
         }
       );
@@ -661,6 +662,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
             state: finalState,
 
             city: finalCity,
+            language: currentLang,
 
             password,
 

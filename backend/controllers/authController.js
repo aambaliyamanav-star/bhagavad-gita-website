@@ -152,148 +152,286 @@ const generateOTP = () => {
 };
 
 // =====================================================
+// MULTI-LANGUAGE OTP SUBJECT HELPER
+// =====================================================
+
+const getOTPSubject = (purpose, language = "gu") => {
+  const lang = ["gu", "hi", "en"].includes(language) ? language : "gu";
+  if (purpose === "registration") {
+    return lang === "en"
+      ? "Bhagavad Gita - Account Verification OTP"
+      : lang === "hi"
+      ? "श्रीमद्भगवद्गीता - खाता सत्यापन OTP"
+      : "શ્રીમદ્ ભગવદ્ ગીતા - એકાઉન્ટ વેરિફિકેશન OTP";
+  }
+  if (purpose === "forgot_password") {
+    return lang === "en"
+      ? "Bhagavad Gita - Password Reset OTP"
+      : lang === "hi"
+      ? "श्रीमद्भगवद्गीता - पासवर्ड रीसेट OTP"
+      : "શ્રીમદ્ ભગવદ્ ગીતા - પાસવર્ડ રીસેટ OTP";
+  }
+  return lang === "en"
+    ? "Bhagavad Gita - Profile Update OTP"
+    : lang === "hi"
+    ? "श्रीमद्भगवद्गीता - प्रोफ़ाइल अपडेट OTP"
+    : "શ્રીમદ્ ભગવદ્ ગીતા - પ્રોફાઇલ અપડેટ OTP";
+};
+
+// =====================================================
+// PROFESSIONAL RESPONSIVE MULTI-LANGUAGE OTP EMAIL TEMPLATE
+// =====================================================
+
+const generateOTPEmailHtml = ({
+  name = "ભક્ત",
+  otp,
+  purpose = "registration",
+  language = "gu",
+  type = "email",
+}) => {
+  const lang = ["gu", "hi", "en"].includes(language) ? language : "gu";
+  const safeName = (name || (lang === "gu" ? "ભક્ત" : lang === "hi" ? "भक्त" : "Devotee")).trim();
+
+  const content = {
+    gu: {
+      brandTitle: "શ્રીમદ્ ભગવદ્ ગીતા",
+      brandTagline: "જીવનનું દિવ્ય માર્ગદર્શન અને અમૂલ્ય ઉપદેશ",
+      purposeBadge:
+        purpose === "registration"
+          ? "એકાઉન્ટ વેરિફિકેશન"
+          : purpose === "forgot_password"
+          ? "પાસવર્ડ રીસેટ"
+          : "પ્રોફાઇલ અપડેટ",
+      greeting: `નમસ્તે ${safeName} 🙏`,
+      intro:
+        purpose === "registration"
+          ? "શ્રીમદ્ ભગવદ્ ગીતા પરિવારમાં આપનું હાર્દિક સ્વાગત છે. આપનું એકાઉન્ટ સુરક્ષિત રીતે વેરિફાય કરવા માટે નીચે આપેલ ૬-અંકના OTP નો ઉપયોગ કરો:"
+          : purpose === "forgot_password"
+          ? "અમને આપના એકાઉન્ટનો પાસવર્ડ રીસેટ કરવાની વિનંતી મળી છે. નવો પાસવર્ડ સેટ કરવા માટે નીચે આપેલ સુરક્ષિત OTP નો ઉપયોગ કરો:"
+          : `આપની પ્રોફાઇલમાં ${type === "email" ? "Email ID" : "Mobile Number"} અપડેટ કરવા માટે નીચે આપેલ OTP નો ઉપયોગ કરો:`,
+      otpLabel: "આપનો વેરિફિકેશન કોડ (OTP)",
+      expiryText: "આ OTP <strong>૧૦ મિનિટ</strong> માટે માન્ય છે.",
+      securityTitle: "સુરક્ષા સૂચના",
+      securityText: "આ OTP કોઈની પણ સાથે શેર કરશો નહીં. અમારી ટીમ ક્યારેય આપની પાસેથી OTP માંગશે નહીં.",
+      ignoreText: "જો આપે આ વિનંતી નથી કરી, તો ચિંતા કરવાની જરૂર નથી. આપ આ ઈમેલને અવગણી શકો છો, આપનું એકાઉન્ટ સંપૂર્ણપણે સુરક્ષિત છે.",
+      btnText: "વેબસાઇટની મુલાકાત લો",
+      shloka: "॥ कर्मण्येवाधिकारस्ते मा फलेषु कदाचन ॥",
+      copyright: "© 2026 શ્રીમદ્ ભગવદ્ ગીતા. સર્વાધિકાર સુરક્ષિત.",
+    },
+    hi: {
+      brandTitle: "श्रीमद्भगवद्गीता",
+      brandTagline: "जीवन का दिव्य मार्गदर्शन एवं अमूल्य उपदेश",
+      purposeBadge:
+        purpose === "registration"
+          ? "खाता सत्यापन"
+          : purpose === "forgot_password"
+          ? "पासवर्ड रीसेट"
+          : "प्रोफ़ाइल अपडेट",
+      greeting: `नमस्ते ${safeName} 🙏`,
+      intro:
+        purpose === "registration"
+          ? "श्रीमद्भगवद्गीता परिवार में आपका हार्दिक स्वागत है। अपना खाता सुरक्षित रूप से सत्यापित करने के लिए कृपया नीचे दिए गए 6-अंकीय OTP का उपयोग करें:"
+          : purpose === "forgot_password"
+          ? "हमें आपके खाते का पासवर्ड रीसेट करने का अनुरोध प्राप्त हुआ है। नया पासवर्ड सेट करने के लिए नीचे दिए गए सुरक्षित OTP का उपयोग करें:"
+          : `अपनी प्रोफ़ाइल में ${type === "email" ? "Email ID" : "Mobile Number"} अपडेट करने के लिए नीचे दिए गए OTP का उपयोग करें:`,
+      otpLabel: "आपका सत्यापन कोड (OTP)",
+      expiryText: "यह OTP <strong>10 मिनट</strong> के लिए मान्य है।",
+      securityTitle: "सुरक्षा निर्देश",
+      securityText: "यह OTP किसी के साथ भी साझा न करें। हमारी टीम कभी भी आपसे OTP नहीं मांगेगी।",
+      ignoreText: "यदि आपने यह अनुरोध नहीं किया है, तो चिंता की कोई बात नहीं है। आप इस ईमेल को अनदेखा कर सकते हैं, आपका खाता पूरी तरह सुरक्षित है।",
+      btnText: "वेबसाइट पर जाएं",
+      shloka: "॥ कर्मण्येवाधिकारस्ते मा फलेषु कदाचन ॥",
+      copyright: "© 2026 श्रीमद्भगवद्गीता. सर्वाधिकार सुरक्षित।",
+    },
+    en: {
+      brandTitle: "Bhagavad Gita",
+      brandTagline: "Divine Wisdom & Spiritual Life Guidance",
+      purposeBadge:
+        purpose === "registration"
+          ? "Account Verification"
+          : purpose === "forgot_password"
+          ? "Password Reset"
+          : "Profile Update",
+      greeting: `Namaste ${safeName} 🙏`,
+      intro:
+        purpose === "registration"
+          ? "Welcome to the Bhagavad Gita community. Please use the 6-digit One-Time Password (OTP) below to securely verify your account:"
+          : purpose === "forgot_password"
+          ? "We received a request to reset your account password. Please use the secure OTP below to set your new password:"
+          : `Please use the OTP below to update your ${type === "email" ? "Email ID" : "Mobile Number"}:`,
+      otpLabel: "YOUR VERIFICATION CODE (OTP)",
+      expiryText: "This OTP is valid for <strong>10 minutes</strong> only.",
+      securityTitle: "Security Notice",
+      securityText: "Never share this OTP with anyone. Our team will never ask you for your verification code.",
+      ignoreText: "If you did not request this, you can safely ignore this email. Your account remains completely secure.",
+      btnText: "Visit Bhagavad Gita Website",
+      shloka: "॥ कर्मण्येवाधिकारस्ते मा फलेषु कदाचन ॥",
+      copyright: "© 2026 Bhagavad Gita. All rights reserved.",
+    },
+  };
+
+  const t = content[lang];
+  const logoUrl = "https://gita-gyan-m.vercel.app/icons/icon-192x192.png";
+  const websiteUrl = "https://gita-gyan-m.vercel.app";
+
+  return `<!DOCTYPE html>
+<html lang="${lang}">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>${t.brandTitle} - ${t.purposeBadge}</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f4ede4; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; -webkit-text-size-adjust: 100%;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f4ede4; padding: 30px 10px;">
+    <tr>
+      <td align="center">
+        <!-- Main Card Container -->
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 580px; background-color: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); border: 1px solid #e7ded0;">
+          
+          <!-- Spiritual Gradient Header -->
+          <tr>
+            <td align="center" style="background: linear-gradient(135deg, #0f2b48 0%, #173f73 50%, #b45309 100%); padding: 36px 24px 28px 24px; text-align: center;">
+              
+              <!-- App Logo with Halo Ring -->
+              <table role="presentation" align="center" cellpadding="0" cellspacing="0" border="0" style="margin: 0 auto 14px auto;">
+                <tr>
+                  <td align="center" style="background: rgba(255, 255, 255, 0.18); border-radius: 50%; padding: 5px; width: 78px; height: 78px;">
+                    <img src="${logoUrl}" alt="${t.brandTitle}" width="74" height="74" style="display: block; border-radius: 50%; border: 2px solid #fde047; box-shadow: 0 4px 14px rgba(0,0,0,0.25);" />
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Brand Name -->
+              <h1 style="margin: 0 0 6px 0; font-size: 26px; font-weight: 800; color: #ffffff; letter-spacing: 0.5px; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+                ${t.brandTitle}
+              </h1>
+
+              <!-- Tagline -->
+              <p style="margin: 0 0 16px 0; font-size: 13px; color: #fde68a; font-weight: 500; letter-spacing: 0.2px;">
+                ${t.brandTagline}
+              </p>
+
+              <!-- Purpose Pill Badge -->
+              <div style="display: inline-block; background: rgba(254, 240, 138, 0.2); border: 1px solid rgba(254, 240, 138, 0.45); border-radius: 30px; padding: 5px 16px;">
+                <span style="font-size: 12px; font-weight: 700; color: #ffffff; text-transform: uppercase; letter-spacing: 1px;">
+                  ✦ ${t.purposeBadge} ✦
+                </span>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Main Content Body -->
+          <tr>
+            <td style="padding: 34px 32px 24px 32px; background-color: #ffffff; color: #1e293b;">
+              
+              <!-- Greeting -->
+              <h2 style="margin: 0 0 14px 0; font-size: 20px; font-weight: 700; color: #0f172a;">
+                ${t.greeting}
+              </h2>
+
+              <!-- Explanatory Text -->
+              <p style="margin: 0 0 22px 0; font-size: 15px; line-height: 1.65; color: #334155;">
+                ${t.intro}
+              </p>
+
+              <!-- Hero OTP Box -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 24px 0;">
+                <tr>
+                  <td align="center" style="background: #fffbeb; border: 2px dashed #f59e0b; border-radius: 16px; padding: 22px 16px; text-align: center;">
+                    <span style="display: block; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; color: #92400e; text-transform: uppercase; margin-bottom: 8px;">
+                      ${t.otpLabel}
+                    </span>
+                    <span style="display: block; font-family: 'Consolas', 'Courier New', Courier, monospace; font-size: 38px; font-weight: 900; letter-spacing: 10px; color: #c2410c; padding-left: 10px; margin: 4px 0;">
+                      ${otp}
+                    </span>
+                    <span style="display: inline-block; font-size: 13px; color: #78350f; margin-top: 6px;">
+                      ${t.expiryText}
+                    </span>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Security Callout Box -->
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f8fafc; border-left: 4px solid #3b82f6; border-radius: 0 12px 12px 0; margin: 20px 0 24px 0;">
+                <tr>
+                  <td style="padding: 14px 16px;">
+                    <p style="margin: 0 0 6px 0; font-size: 13px; font-weight: 700; color: #1e40af;">
+                      🔒 ${t.securityTitle}
+                    </p>
+                    <p style="margin: 0; font-size: 13px; line-height: 1.55; color: #475569;">
+                      ${t.securityText}
+                    </p>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Safety ignore info -->
+              <p style="margin: 0 0 26px 0; font-size: 13px; line-height: 1.6; color: #64748b;">
+                ${t.ignoreText}
+              </p>
+
+              <!-- Call to action button -->
+              <table role="presentation" align="center" cellpadding="0" cellspacing="0" border="0" style="margin: 10px auto 20px auto;">
+                <tr>
+                  <td align="center" style="border-radius: 10px; background: linear-gradient(135deg, #173f73 0%, #0f2b48 100%);">
+                    <a href="${websiteUrl}" target="_blank" rel="noopener noreferrer" style="display: inline-block; padding: 12px 28px; font-size: 14px; font-weight: 700; color: #ffffff; text-decoration: none; border-radius: 10px; letter-spacing: 0.3px;">
+                      ${t.btnText} →
+                    </a>
+                  </td>
+                </tr>
+              </table>
+
+            </td>
+          </tr>
+
+          <!-- Sacred Footer -->
+          <tr>
+            <td align="center" style="background-color: #faf6f0; border-top: 1px solid #ebdccb; padding: 22px 24px; text-align: center;">
+              
+              <!-- Sacred Shloka -->
+              <p style="margin: 0 0 8px 0; font-size: 15px; font-weight: 700; color: #854d0e; letter-spacing: 0.5px;">
+                ${t.shloka}
+              </p>
+
+              <!-- Copyright -->
+              <p style="margin: 0; font-size: 12px; color: #78716c; line-height: 1.5;">
+                ${t.copyright}
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`;
+};
+
+// =====================================================
 // SEND PROFILE EMAIL OTP
 // =====================================================
 
 const sendProfileEmailOTP = async (
   user,
   otp,
-  type
+  type,
+  language = "gu"
 ) => {
-await sendEmail({
-  to: user.email,
+  const subject = getOTPSubject("profile_update", language);
+  const html = generateOTPEmailHtml({
+    name: user.name,
+    otp,
+    purpose: "profile_update",
+    language,
+    type,
+  });
 
-  subject:
-    "Bhagavad Gita - Profile Update OTP",
-
-
-
-    html: `
-      <!DOCTYPE html>
-
-      <html>
-
-      <head>
-        <meta charset="UTF-8" />
-        <title>Profile Update OTP</title>
-      </head>
-
-      <body style="
-        margin:0;
-        padding:0;
-        background:#f5efe6;
-        font-family:Arial,sans-serif;
-      ">
-
-        <div style="
-          max-width:600px;
-          margin:30px auto;
-          background:#ffffff;
-          border-radius:16px;
-          overflow:hidden;
-          box-shadow:0 5px 20px rgba(0,0,0,0.12);
-        ">
-
-          <div style="
-            background:linear-gradient(
-              135deg,
-              #8b4513,
-              #d35400
-            );
-            padding:30px;
-            text-align:center;
-            color:white;
-          ">
-
-            <div style="font-size:45px;">
-              ॐ
-            </div>
-
-            <h1 style="margin:10px 0;">
-              Bhagavad Gita
-            </h1>
-
-            <p>
-              Profile Update Verification
-            </p>
-
-          </div>
-
-          <div style="
-            padding:30px;
-            text-align:center;
-          ">
-
-            <h2>
-              Namaste ${user.name} 🙏
-            </h2>
-
-            <p>
-              તમારા Profile માં
-              ${
-                type === "email"
-                  ? "Email"
-                  : "Mobile Number"
-              }
-              બદલવા માટે OTP:
-            </p>
-
-            <div style="
-              display:inline-block;
-              margin:20px 0;
-              padding:18px 30px;
-              background:#fff3e0;
-              border:2px dashed #d35400;
-              border-radius:12px;
-            ">
-
-              <span style="
-                font-size:34px;
-                font-weight:bold;
-                letter-spacing:8px;
-                color:#d35400;
-              ">
-                ${otp}
-              </span>
-
-            </div>
-
-            <p>
-              આ OTP
-              <strong>10 મિનિટ</strong>
-              માટે valid છે.
-            </p>
-
-            <p style="
-              color:#777;
-              font-size:14px;
-            ">
-              જો તમે Profile update
-              request કરી નથી,
-              તો આ emailને ignore કરો.
-            </p>
-
-            <hr style="
-              border:none;
-              border-top:1px solid #eee;
-              margin:25px 0;
-            " />
-
-            <p style="
-              color:#8b4513;
-              font-size:18px;
-            ">
-              ॥ श्रीमद्भगवद्गीता ॥
-            </p>
-
-          </div>
-
-        </div>
-
-      </body>
-
-      </html>
-    `,
+  await sendEmail({
+    to: user.email,
+    subject,
+    html,
   });
 };
 
@@ -336,6 +474,7 @@ const sendOTP = async (
       birthDate,
       state,
       city,
+      language = "gu",
     } = req.body;
 
     // =================================================
@@ -477,139 +616,29 @@ const sendOTP = async (
     // SEND REGISTRATION OTP
     // =================================================
 
-await sendEmail({
-
-  to:
-    cleanEmail,
-
-  subject:
-    "Bhagavad Gita - Email Verification OTP",
-
-      html: `
-        <!DOCTYPE html>
-
-        <html>
-
-        <head>
-          <meta charset="UTF-8" />
-          <title>Bhagavad Gita OTP</title>
-        </head>
-
-        <body style="
-          margin:0;
-          padding:0;
-          background:#f5efe6;
-          font-family:Arial,sans-serif;
-        ">
-
-          <div style="
-            max-width:600px;
-            margin:30px auto;
-            background:#ffffff;
-            border-radius:16px;
-            overflow:hidden;
-            box-shadow:0 5px 20px rgba(0,0,0,0.12);
-          ">
-
-            <div style="
-              background:linear-gradient(
-                135deg,
-                #8b4513,
-                #d35400
-              );
-              padding:30px;
-              text-align:center;
-              color:white;
-            ">
-
-              <div style="font-size:45px;">
-                ॐ
-              </div>
-
-              <h1>
-                Bhagavad Gita
-              </h1>
-
-              <p>
-                Email Verification
-              </p>
-
-            </div>
-
-            <div style="
-              padding:30px;
-              text-align:center;
-            ">
-
-              <h2>
-                Namaste ${cleanName} 🙏
-              </h2>
-
-              <p>
-                તમારા Bhagavad Gita account
-                માટે Email verification OTP છે:
-              </p>
-
-              <div style="
-                display:inline-block;
-                margin:20px 0;
-                padding:18px 30px;
-                background:#fff3e0;
-                border:2px dashed #d35400;
-                border-radius:12px;
-              ">
-
-                <span style="
-                  font-size:34px;
-                  font-weight:bold;
-                  letter-spacing:8px;
-                  color:#d35400;
-                ">
-                  ${otp}
-                </span>
-
-              </div>
-
-              <p>
-                આ OTP
-                <strong>10 મિનિટ</strong>
-                માટે valid છે.
-              </p>
-
-              <p style="
-                color:#777;
-                font-size:14px;
-              ">
-                જો તમે registration કર્યું નથી,
-                તો આ emailને ignore કરો.
-              </p>
-
-              <hr style="
-                border:none;
-                border-top:1px solid #eee;
-                margin:25px 0;
-              " />
-
-              <p style="
-                color:#8b4513;
-                font-size:18px;
-              ">
-                ॥ श्रीमद्भगवद्गीता ॥
-              </p>
-
-            </div>
-
-          </div>
-
-        </body>
-
-        </html>
-      `,
+    const subject = getOTPSubject("registration", language);
+    const html = generateOTPEmailHtml({
+      name: cleanName,
+      otp,
+      purpose: "registration",
+      language,
     });
 
+    await sendEmail({
+      to: cleanEmail,
+      subject,
+      html,
+    });
+
+    const successMsg =
+      language === "en"
+        ? "Verification OTP has been sent to your Email."
+        : language === "hi"
+        ? "आपके Email पर सत्यापन OTP भेज दिया गया है।"
+        : "તમારા Email પર OTP મોકલવામાં આવ્યો છે.";
+
     return res.status(200).json({
-      message:
-        "તમારા Email પર OTP મોકલવામાં આવ્યો છે.",
+      message: successMsg,
     });
 
   } catch (error) {
@@ -1167,6 +1196,7 @@ const sendProfileOTP = async (
     const {
       type,
       value,
+      language = "gu",
     } = req.body;
 
     if (
@@ -1315,17 +1345,26 @@ const sendProfileOTP = async (
     await sendProfileEmailOTP(
       user,
       otp,
-      type
+      type,
+      language
     );
 
-    return res.status(200).json({
-      message:
-        type === "email"
-          ? "તમારા હાલના registered Email પર Email change OTP મોકલવામાં આવ્યો છે."
-          : "તમારા હાલના registered Email પર Mobile change OTP મોકલવામાં આવ્યો છે.",
+    const profileSuccessMsg =
+      language === "en"
+        ? (type === "email"
+            ? "Email change OTP has been sent to your registered Email."
+            : "Mobile change OTP has been sent to your registered Email.")
+        : language === "hi"
+        ? (type === "email"
+            ? "आपके पंजीकृत Email पर ईमेल परिवर्तन OTP भेज दिया गया है।"
+            : "आपके पंजीकृत Email पर मोबाइल परिवर्तन OTP भेज दिया गया है।")
+        : (type === "email"
+            ? "તમારા હાલના registered Email પર Email change OTP મોકલવામાં આવ્યો છે."
+            : "તમારા હાલના registered Email પર Mobile change OTP મોકલવામાં આવ્યો છે.");
 
-      otpSent:
-        true,
+    return res.status(200).json({
+      message: profileSuccessMsg,
+      otpSent: true,
     });
 
   } catch (error) {
@@ -1999,6 +2038,7 @@ const sendForgotPasswordOTP = async (
 
     const {
       email,
+      language = "gu",
     } = req.body;
 
     // =================================================
@@ -2109,171 +2149,34 @@ const sendForgotPasswordOTP = async (
     // SEND EMAIL
     // =================================================
 
-await sendEmail({
+    const subject = getOTPSubject("forgot_password", language);
+    const html = generateOTPEmailHtml({
+      name: user.name,
+      otp,
+      purpose: "forgot_password",
+      language,
+    });
 
-  to:
-    cleanEmail,
-
-  subject:
-    "Bhagavad Gita - Password Reset OTP",
-
-      html: `
-        <!DOCTYPE html>
-
-        <html>
-
-        <head>
-
-          <meta charset="UTF-8" />
-
-          <title>
-            Password Reset OTP
-          </title>
-
-        </head>
-
-        <body style="
-          margin:0;
-          padding:0;
-          background:#f5efe6;
-          font-family:Arial,sans-serif;
-        ">
-
-          <div style="
-            max-width:600px;
-            margin:30px auto;
-            background:#ffffff;
-            border-radius:16px;
-            overflow:hidden;
-            box-shadow:0 5px 20px rgba(0,0,0,0.12);
-          ">
-
-            <!-- HEADER -->
-
-            <div style="
-              background:linear-gradient(
-                135deg,
-                #8b4513,
-                #d35400
-              );
-              padding:30px;
-              text-align:center;
-              color:white;
-            ">
-
-              <div style="
-                font-size:45px;
-              ">
-                ॐ
-              </div>
-
-              <h1 style="
-                margin:10px 0;
-              ">
-                Bhagavad Gita
-              </h1>
-
-              <p>
-                Password Reset
-              </p>
-
-            </div>
-
-
-            <!-- CONTENT -->
-
-            <div style="
-              padding:30px;
-              text-align:center;
-            ">
-
-              <h2>
-                Namaste ${user.name} 🙏
-              </h2>
-
-              <p>
-                તમારા Bhagavad Gita account
-                નો password reset કરવા માટે
-                નીચેનો OTP ઉપયોગ કરો:
-              </p>
-
-
-              <!-- OTP -->
-
-              <div style="
-                display:inline-block;
-                margin:20px 0;
-                padding:18px 30px;
-                background:#fff3e0;
-                border:2px dashed #d35400;
-                border-radius:12px;
-              ">
-
-                <span style="
-                  font-size:34px;
-                  font-weight:bold;
-                  letter-spacing:8px;
-                  color:#d35400;
-                ">
-                  ${otp}
-                </span>
-
-              </div>
-
-
-              <p>
-                આ OTP
-                <strong>
-                  10 મિનિટ
-                </strong>
-                માટે valid છે.
-              </p>
-
-
-              <p style="
-                color:#777;
-                font-size:14px;
-              ">
-                જો તમે password reset request
-                કરી નથી, તો આ emailને ignore કરો.
-              </p>
-
-
-              <hr style="
-                border:none;
-                border-top:1px solid #eee;
-                margin:25px 0;
-              " />
-
-
-              <p style="
-                color:#8b4513;
-                font-size:18px;
-              ">
-                ॥ श्रीमद्भगवद्गीता ॥
-              </p>
-
-            </div>
-
-          </div>
-
-        </body>
-
-        </html>
-      `,
+    await sendEmail({
+      to: cleanEmail,
+      subject,
+      html,
     });
 
     // =================================================
     // SUCCESS
     // =================================================
 
+    const forgotSuccessMsg =
+      language === "en"
+        ? "Password reset OTP has been sent to your Email."
+        : language === "hi"
+        ? "पासवर्ड रीसेट के लिए आपके Email पर OTP भेज दिया गया है।"
+        : "Password reset માટે તમારા Email પર OTP મોકલવામાં આવ્યો છે.";
+
     return res.status(200).json({
-
-      message:
-        "Password reset માટે તમારા Email પર OTP મોકલવામાં આવ્યો છે.",
-
-      otpSent:
-        true,
+      message: forgotSuccessMsg,
+      otpSent: true,
     });
 
   } catch (error) {

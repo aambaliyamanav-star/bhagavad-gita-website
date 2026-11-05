@@ -399,6 +399,7 @@ const [showNewPassword, setShowNewPassword] =
           body: JSON.stringify({
             type,
             value: target,
+            language: currentLang,
           }),
         }
       );

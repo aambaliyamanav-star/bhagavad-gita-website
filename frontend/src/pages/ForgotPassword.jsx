@@ -72,6 +72,7 @@ const [showConfirmPassword, setShowConfirmPassword] =
 
           body: JSON.stringify({
             email: email.trim().toLowerCase(),
+            language: isEnglish ? "en" : isHindi ? "hi" : "gu",
           }),
         }
       );
