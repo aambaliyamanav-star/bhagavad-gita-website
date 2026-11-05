@@ -74,13 +74,23 @@ const userSchema = new mongoose.Schema(
     },
 
     // ===================================================
-    // ROLE
+    // ROLE & PERMISSIONS
     // ===================================================
 
     role: {
       type: String,
       enum: ["user", "admin"],
       default: "user",
+    },
+
+    isSuperAdmin: {
+      type: Boolean,
+      default: false,
+    },
+
+    permissions: {
+      type: [String],
+      default: [],
     },
 
     // ===================================================

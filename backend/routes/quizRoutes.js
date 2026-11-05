@@ -21,6 +21,7 @@ const {
 const {
   protect,
   adminOnly,
+  requirePermission,
 } = require("../middleware/authMiddleware");
 
 const router = express.Router();
@@ -95,7 +96,7 @@ router.get(
 router.get(
   "/admin/questions",
   protect,
-  adminOnly,
+  requirePermission("manage_quiz"),
   getAllQuizQuestionsAdmin
 );
 
@@ -105,7 +106,7 @@ router.get(
 router.post(
   "/admin/question",
   protect,
-  adminOnly,
+  requirePermission("manage_quiz"),
   addQuizQuestion
 );
 
@@ -115,7 +116,7 @@ router.post(
 router.put(
   "/admin/question/:id",
   protect,
-  adminOnly,
+  requirePermission("manage_quiz"),
   updateQuizQuestion
 );
 
@@ -125,7 +126,7 @@ router.put(
 router.delete(
   "/admin/question/:id",
   protect,
-  adminOnly,
+  requirePermission("manage_quiz"),
   deleteQuizQuestion
 );
 
@@ -135,14 +136,14 @@ router.delete(
 router.delete(
   "/admin/questions/bulk",
   protect,
-  adminOnly,
+  requirePermission("manage_quiz"),
   deleteQuizQuestionsBulk
 );
 
 router.post(
   "/admin/questions/delete-bulk",
   protect,
-  adminOnly,
+  requirePermission("manage_quiz"),
   deleteQuizQuestionsBulk
 );
 
@@ -152,14 +153,14 @@ router.post(
 router.post(
   "/admin/auto-translate",
   protect,
-  adminOnly,
+  requirePermission("manage_quiz"),
   autoTranslateQuizQuestion
 );
 
 router.post(
   "/auto-translate",
   protect,
-  adminOnly,
+  requirePermission("manage_quiz"),
   autoTranslateQuizQuestion
 );
 

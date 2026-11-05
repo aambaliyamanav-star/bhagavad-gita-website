@@ -4763,3 +4763,381 @@ html[data-theme='dark'] .analytics-hub-card-btn .management-content p,
 
 
 
+
+/* =====================================================
+   ADMIN ROLES & PERMISSIONS SYSTEM STYLES
+===================================================== */
+
+.admin-header-super-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  color: #92400e;
+  border: 1px solid #fcd34d;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 20px;
+  box-shadow: 0 2px 6px rgba(217, 119, 6, 0.15);
+  letter-spacing: 0.2px;
+}
+
+.role.super-admin-role {
+  background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+  color: #b45309;
+  border: 1px solid #fde68a;
+  font-weight: 700;
+  box-shadow: 0 1px 3px rgba(217, 119, 6, 0.1);
+}
+
+.admin-role-badge-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.admin-perm-pill {
+  background: #eff6ff;
+  color: #1d4ed8;
+  border: 1px solid #bfdbfe;
+  font-size: 0.73rem;
+  padding: 2px 7px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: help;
+  transition: all 0.2s ease;
+}
+
+.admin-perm-pill:hover {
+  background: #dbeafe;
+  border-color: #93c5fd;
+}
+
+.user-action-buttons {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.user-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 8px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.user-action-btn:hover {
+  transform: translateY(-1px);
+}
+
+.make-admin-btn {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+}
+
+.make-admin-btn:hover {
+  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.35);
+  background: linear-gradient(135deg, #1d4ed8, #1e40af);
+}
+
+.edit-perm-btn {
+  background: #f0f7ff;
+  color: #1d4ed8;
+  border-color: #bfdbfe;
+}
+
+.edit-perm-btn:hover {
+  background: #dbeafe;
+  border-color: #93c5fd;
+}
+
+.revoke-admin-btn {
+  background: #fff1f2;
+  color: #be123c;
+  border-color: #fecdd3;
+}
+
+.revoke-admin-btn:hover {
+  background: #ffe4e6;
+  border-color: #fda4af;
+}
+
+/* =====================================================
+   ADMIN PERMISSIONS MODAL
+===================================================== */
+
+.admin-modal-content.admin-permissions-modal {
+  max-width: 680px;
+  width: 95%;
+  border-radius: 20px;
+  background: #ffffff;
+  overflow: hidden;
+  box-shadow: 0 24px 48px rgba(15, 23, 42, 0.25);
+}
+
+.admin-perm-modal-title-area {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-perm-icon-bubble {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #eff6ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid #bfdbfe;
+}
+
+.admin-perm-modal-body {
+  padding: 20px 24px;
+  max-height: 65vh;
+  overflow-y: auto;
+}
+
+.admin-perm-selection-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.admin-perm-count-chip {
+  background: #f1f5f9;
+  color: #334155;
+  font-size: 0.82rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 12px;
+}
+
+.admin-perm-select-all-btn {
+  background: transparent;
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 5px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-perm-select-all-btn:hover {
+  background: #eff6ff;
+  border-color: #93c5fd;
+}
+
+.admin-perm-help-text {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.admin-perm-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+}
+
+.admin-perm-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1.5px solid #e2e8f0;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.admin-perm-card:hover {
+  border-color: #cbd5e1;
+  background: #f8fafc;
+  transform: translateY(-1px);
+}
+
+.admin-perm-card.is-selected {
+  border-color: #3b82f6;
+  background: #f0f7ff;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.12);
+}
+
+.admin-perm-card-check {
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.admin-perm-card-check input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #2563eb;
+  cursor: pointer;
+}
+
+.admin-perm-card-content {
+  flex: 1;
+}
+
+.admin-perm-card-title {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.admin-perm-id-tag {
+  font-size: 0.72rem;
+  font-weight: 500;
+  color: #64748b;
+  font-family: monospace;
+}
+
+.admin-perm-card-desc {
+  font-size: 0.78rem;
+  color: #64748b;
+  line-height: 1.45;
+  margin-top: 4px;
+}
+
+.admin-perm-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 16px 24px;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+}
+
+.admin-perm-cancel-btn {
+  background: #ffffff;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+  padding: 9px 18px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-perm-cancel-btn:hover {
+  background: #f1f5f9;
+  color: #334155;
+}
+
+.admin-perm-save-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: linear-gradient(135deg, #175bb5, #114285);
+  color: #ffffff;
+  border: none;
+  padding: 9px 20px;
+  border-radius: 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(23, 91, 181, 0.25);
+  transition: all 0.2s ease;
+}
+
+.admin-perm-save-btn:hover:not(:disabled) {
+  box-shadow: 0 6px 16px rgba(23, 91, 181, 0.35);
+  transform: translateY(-1px);
+}
+
+.admin-perm-save-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* =====================================================
+   ROLE TOAST NOTIFICATION
+===================================================== */
+
+.admin-role-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 10000;
+  background: #0f172a;
+  color: #ffffff;
+  padding: 12px 20px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  animation: slideToastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.toast-sparkle-icon {
+  color: #f59e0b;
+  flex-shrink: 0;
+}
+
+.toast-close-btn {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0 2px;
+  margin-left: 6px;
+  transition: color 0.2s ease;
+}
+
+.toast-close-btn:hover {
+  color: #ffffff;
+}
+
+@keyframes slideToastIn {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-perm-grid {
+    grid-template-columns: 1fr;
+  }
+  .admin-role-toast {
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+  }
+}

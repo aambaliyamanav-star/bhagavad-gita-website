@@ -2,33 +2,50 @@ const express = require("express");
 
 const {
   getAllUsers,
-  deleteUser
+  deleteUser,
+  updateUserRole,
+  getAdminPermissionsList,
 } = require("../controllers/adminController");
 
 const {
   protect,
-  adminOnly
+  adminOnly,
+  requirePermission,
+  superAdminOnly,
 } = require("../middleware/authMiddleware");
 
 const router = express.Router();
 
+// Get available permissions list metadata
+router.get(
+  "/permissions",
+  protect,
+  adminOnly,
+  getAdminPermissionsList
+);
 
-// Get all users
+// Get all users (Protected: requires manage_users permission)
 router.get(
   "/users",
   protect,
-  adminOnly,
+  requirePermission("manage_users"),
   getAllUsers
 );
 
-
-// Delete user
+// Delete user (Protected: requires manage_users permission)
 router.delete(
   "/users/:id",
   protect,
-  adminOnly,
+  requirePermission("manage_users"),
   deleteUser
 );
 
+// Update user role and permissions (Super Admin or manage_admins permission)
+router.put(
+  "/users/:id/role",
+  protect,
+  superAdminOnly,
+  updateUserRole
+);
 
 module.exports = router;

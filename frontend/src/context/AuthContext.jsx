@@ -48,6 +48,58 @@ export function AuthProvider({ children }) {
   });
 
   // ===================================================
+  // REFRESH PROFILE FROM SERVER (PERMISSIONS SYNC)
+  // ===================================================
+
+  const refreshProfile = async () => {
+    try {
+      const savedToken = localStorage.getItem("token");
+      if (!savedToken || isTokenExpired(savedToken)) return null;
+
+      const isLocal =
+        typeof window !== "undefined" &&
+        (window.location.hostname === "localhost" ||
+          window.location.hostname === "127.0.0.1");
+
+      const endpoints = isLocal
+        ? [
+            "http://localhost:5000/api/auth/profile",
+            "https://bhagavad-gita-website.onrender.com/api/auth/profile",
+          ]
+        : ["https://bhagavad-gita-website.onrender.com/api/auth/profile"];
+
+      for (const ep of endpoints) {
+        try {
+          const res = await fetch(ep, {
+            headers: {
+              Authorization: `Bearer ${savedToken}`,
+            },
+          });
+          if (res.ok) {
+            const data = await res.json();
+            if (data && data.user) {
+              localStorage.setItem("user", JSON.stringify(data.user));
+              setUser(data.user);
+              return data.user;
+            }
+          }
+        } catch {
+          // try next
+        }
+      }
+    } catch (err) {
+      console.warn("Could not refresh profile:", err);
+    }
+    return null;
+  };
+
+  useEffect(() => {
+    if (token && !isTokenExpired(token)) {
+      refreshProfile();
+    }
+  }, [token]);
+
+  // ===================================================
   // LISTEN FOR GLOBAL AUTH EXPIRATION
   // ===================================================
 
@@ -110,6 +162,7 @@ export function AuthProvider({ children }) {
         isLoggedIn,
         login,
         logout,
+        refreshProfile,
         setUser,
         setToken,
       }}

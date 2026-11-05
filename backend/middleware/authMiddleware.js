@@ -118,14 +118,27 @@ const optionalAuth = async (req, res, next) => {
 };
 
 
+const SUPER_ADMIN_EMAILS = ["gitagyanm700@gmail.com"];
+
+const isSuperAdmin = (user) => {
+  if (!user) return false;
+  if (user.isSuperAdmin === true) return true;
+  if (user.email && SUPER_ADMIN_EMAILS.includes(user.email.toLowerCase())) return true;
+  return false;
+};
+
+const hasPermission = (user, permissionKey) => {
+  if (!user || user.role !== "admin") return false;
+  if (isSuperAdmin(user)) return true;
+  if (Array.isArray(user.permissions)) {
+    return user.permissions.includes(permissionKey);
+  }
+  return true; // legacy admin fallback
+};
+
 const adminOnly = async (req, res, next) => {
   try {
     const user = await User.findById(req.userId);
-
-    console.log("Admin Check:", {
-      userId: req.userId,
-      role: user ? user.role : "USER NOT FOUND"
-    });
 
     if (!user) {
       return res.status(404).json({
@@ -139,6 +152,7 @@ const adminOnly = async (req, res, next) => {
       });
     }
 
+    req.user = user;
     next();
 
   } catch (error) {
@@ -150,9 +164,80 @@ const adminOnly = async (req, res, next) => {
   }
 };
 
+const requirePermission = (permissionKey) => {
+  return async (req, res, next) => {
+    try {
+      const user = await User.findById(req.userId);
+
+      if (!user) {
+        return res.status(404).json({
+          message: "User મળ્યો નથી."
+        });
+      }
+
+      if (user.role !== "admin") {
+        return res.status(403).json({
+          message: "Admin access required."
+        });
+      }
+
+      if (!hasPermission(user, permissionKey)) {
+        return res.status(403).json({
+          success: false,
+          code: "PERMISSION_DENIED",
+          message: `તમારી પાસે આ સુવિધા (${permissionKey}) નો ઉપયોગ કરવાની પરમિશન નથી. મુખ્ય એડમિનનો સંપર્ક કરો.`
+        });
+      }
+
+      req.user = user;
+      next();
+
+    } catch (error) {
+      console.error("RequirePermission Error:", error);
+
+      return res.status(500).json({
+        message: "Authorization error."
+      });
+    }
+  };
+};
+
+const superAdminOnly = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.userId);
+
+    if (!user || user.role !== "admin") {
+      return res.status(403).json({
+        message: "Admin access required."
+      });
+    }
+
+    if (!isSuperAdmin(user) && !hasPermission(user, "manage_admins")) {
+      return res.status(403).json({
+        success: false,
+        code: "SUPER_ADMIN_REQUIRED",
+        message: "માત્ર મુખ્ય એડમિન (Super Admin) જ એડમિન બનાવી અથવા પરમિશન બદલી શકે છે."
+      });
+    }
+
+    req.user = user;
+    next();
+
+  } catch (error) {
+    console.error("Super Admin Check Error:", error);
+
+    return res.status(500).json({
+      message: "Authorization error."
+    });
+  }
+};
 
 module.exports = {
   protect,
   optionalAuth,
-  adminOnly
+  adminOnly,
+  requirePermission,
+  superAdminOnly,
+  isSuperAdmin,
+  hasPermission,
 };

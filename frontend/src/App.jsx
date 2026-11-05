@@ -1,6 +1,7 @@
 
 import { useEffect } from "react";
-import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useNavigate, Link } from "react-router-dom";
+import { hasPermission } from "./utils/permissionHelper.js";
 
 import { AuthProvider, useAuth } from "./context/AuthContext.jsx";
 import { ThemeProvider } from "./context/ThemeContext.jsx";
@@ -128,7 +129,7 @@ function ProtectedRoute({ children, message, messageHi, messageEn }) {
 // ADMIN ROUTE COMPONENT
 // =====================================================
 
-function AdminRoute({ children }) {
+function AdminRoute({ children, permission }) {
   const { user, token, logout } = useAuth();
   const { isHindi, isEnglish, txt } = useLanguage();
   const location = useLocation();
@@ -169,6 +170,91 @@ function AdminRoute({ children }) {
 
   if (user.role !== "admin") {
     return <Navigate to="/" replace />;
+  }
+
+  if (permission && !hasPermission(user, permission)) {
+    return (
+      <div
+        style={{
+          minHeight: "75vh",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          padding: "40px 20px",
+          textAlign: "center",
+        }}
+      >
+        <div
+          style={{
+            background: "#ffffff",
+            border: "1px solid #fee2e2",
+            borderRadius: "24px",
+            padding: "40px 32px",
+            maxWidth: "480px",
+            width: "100%",
+            boxShadow: "0 14px 34px rgba(220, 38, 38, 0.08)",
+          }}
+        >
+          <div
+            style={{
+              width: "64px",
+              height: "64px",
+              background: "#fef2f2",
+              color: "#dc2626",
+              borderRadius: "50%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              margin: "0 auto 18px auto",
+              fontSize: "30px",
+            }}
+          >
+            🔒
+          </div>
+          <h2
+            style={{
+              fontSize: "1.35rem",
+              fontWeight: "700",
+              color: "#1e293b",
+              marginBottom: "10px",
+            }}
+          >
+            {txt("ઍક્સેસ પ્રતિબંધિત છે", "पहुंच प्रतिबंधित है", "Access Restricted")}
+          </h2>
+          <p
+            style={{
+              color: "#64748b",
+              fontSize: "0.95rem",
+              lineHeight: "1.6",
+              marginBottom: "24px",
+            }}
+          >
+            {txt(
+              "તમારી પાસે આ વિભાગનો ઉપયોગ કરવાની પરમિશન નથી. જો તમારે આ અધિકાર જોઈતો હોય તો મુખ્ય સુપર એડમિનનો સંપર્ક કરો.",
+              "आपके पास इस अनुभाग का उपयोग करने की अनुमति नहीं है। मुख्य सुपर एडमिन से संपर्क करें।",
+              "You do not have permission to access this section. Please contact the Super Admin."
+            )}
+          </p>
+          <Link
+            to="/admin"
+            style={{
+              display: "inline-block",
+              background: "linear-gradient(135deg, #175bb5, #114285)",
+              color: "#ffffff",
+              padding: "12px 28px",
+              borderRadius: "12px",
+              fontWeight: "600",
+              textDecoration: "none",
+              fontSize: "0.95rem",
+              boxShadow: "0 4px 14px rgba(23, 91, 181, 0.3)",
+            }}
+          >
+            {txt("મુખ્ય Admin Panel પર પાછા જાઓ", "मुख्य एडमिन पैनल पर लौटें", "Return to Admin Panel")}
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   return children;
@@ -392,7 +478,7 @@ function AnimatedRoutes() {
             <Route
               path="/admin/shloks"
               element={
-                <AdminRoute>
+                <AdminRoute permission="manage_shloks">
                   <ShlokManagement />
                 </AdminRoute>
               }
@@ -406,7 +492,7 @@ function AnimatedRoutes() {
             <Route
               path="/admin/quiz"
               element={
-                <AdminRoute>
+                <AdminRoute permission="manage_quiz">
                   <QuizManagement />
                 </AdminRoute>
               }

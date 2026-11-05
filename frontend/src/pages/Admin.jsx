@@ -36,7 +36,17 @@ import {
   Zap,
   CheckCircle2,
   XCircle,
+  UserMinus,
+  CheckSquare,
+  Square,
+  Key,
 } from "lucide-react";
+import {
+  isSuperAdminUser,
+  hasPermission,
+  ALL_PERMISSIONS,
+  getPermissionLabel,
+} from "../utils/permissionHelper.js";
 import "./Admin.css";
 
 function formatTimeAgo(dateStr) {
@@ -105,7 +115,216 @@ function Admin() {
 
   const navigate = useNavigate();
 
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
+
+  const isSuperAdmin = isSuperAdminUser(user);
+  const canManageShloks = hasPermission(user, "manage_shloks");
+  const canManageQuiz = hasPermission(user, "manage_quiz");
+  const canViewAnalytics = hasPermission(user, "view_analytics");
+  const canManageFeedbacks = hasPermission(user, "manage_feedbacks");
+  const canManageUsers = hasPermission(user, "manage_users");
+  const canManageAdmins = isSuperAdmin || hasPermission(user, "manage_admins");
+
+  // Admin Role & Permissions modal state
+  const [permissionModalUser, setPermissionModalUser] = useState(null);
+  const [selectedPermissions, setSelectedPermissions] = useState([]);
+  const [savingPermissions, setSavingPermissions] = useState(false);
+  const [roleToastMessage, setRoleToastMessage] = useState("");
+
+  // Dismiss role toast automatically after 4.5 seconds
+  useEffect(() => {
+    if (!roleToastMessage) return;
+    const timer = setTimeout(() => setRoleToastMessage(""), 4500);
+    return () => clearTimeout(timer);
+  }, [roleToastMessage]);
+
+  const openPermissionModal = (targetUser) => {
+    setPermissionModalUser(targetUser);
+    if (Array.isArray(targetUser.permissions) && targetUser.permissions.length > 0) {
+      setSelectedPermissions([...targetUser.permissions]);
+    } else {
+      // Default: select first 4 core permissions
+      setSelectedPermissions([
+        "manage_shloks",
+        "manage_quiz",
+        "view_analytics",
+        "manage_feedbacks",
+      ]);
+    }
+  };
+
+  const togglePermission = (permId) => {
+    setSelectedPermissions((prev) =>
+      prev.includes(permId)
+        ? prev.filter((p) => p !== permId)
+        : [...prev, permId]
+    );
+  };
+
+  const handleSelectAllPermissions = () => {
+    if (selectedPermissions.length === ALL_PERMISSIONS.length) {
+      setSelectedPermissions([]);
+    } else {
+      setSelectedPermissions(ALL_PERMISSIONS.map((p) => p.id));
+    }
+  };
+
+  const handleSavePermissions = async () => {
+    if (!permissionModalUser) return;
+    setSavingPermissions(true);
+    const token = getValidToken();
+
+    try {
+      const isLocal =
+        typeof window !== "undefined" &&
+        (window.location.hostname === "localhost" ||
+          window.location.hostname === "127.0.0.1");
+
+      const urls = isLocal
+        ? [
+            `http://localhost:5000/api/admin/users/${permissionModalUser._id}/role`,
+            `https://bhagavad-gita-website.onrender.com/api/admin/users/${permissionModalUser._id}/role`,
+          ]
+        : [
+            `https://bhagavad-gita-website.onrender.com/api/admin/users/${permissionModalUser._id}/role`,
+          ];
+
+      let success = false;
+      let resData = null;
+
+      for (const url of urls) {
+        try {
+          const res = await fetch(url, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              role: "admin",
+              permissions: selectedPermissions,
+            }),
+          });
+          resData = await res.json();
+          if (res.ok && resData.success) {
+            success = true;
+            break;
+          }
+        } catch {
+          // try next
+        }
+      }
+
+      if (success) {
+        setUsers((prev) =>
+          prev.map((u) =>
+            u._id === permissionModalUser._id
+              ? {
+                  ...u,
+                  role: "admin",
+                  permissions: selectedPermissions,
+                }
+              : u
+          )
+        );
+        setRoleToastMessage(
+          txt(
+            `${permissionModalUser.name} ને Admin બનાવવામાં આવ્યા અને પરમિશન્સ સેટ થઈ ગઈ ✅`,
+            `${permissionModalUser.name} को Admin बनाया गया और अनुमतियां सेट हो गईं ✅`,
+            `${permissionModalUser.name} has been granted Admin access with custom permissions ✅`
+          )
+        );
+        setPermissionModalUser(null);
+      } else {
+        alert(resData?.message || "Error saving permissions.");
+      }
+    } catch (err) {
+      console.error("Error saving permissions:", err);
+      alert("Error saving permissions.");
+    } finally {
+      setSavingPermissions(false);
+    }
+  };
+
+  const handleRevokeAdmin = async (targetUser) => {
+    if (!targetUser) return;
+    const confirmMsg = txt(
+      `શું તમે ખરેખર "${targetUser.name}" પાસેથી Admin અધિકારો પાછા લઈને સામાન્ય User બનાવવા માંગો છો?`,
+      `क्या आप वाकई "${targetUser.name}" से Admin अधिकार वापस लेकर सामान्य User बनाना चाहते हैं?`,
+      `Are you sure you want to revoke Admin rights from "${targetUser.name}" and make them a regular user?`
+    );
+
+    if (!window.confirm(confirmMsg)) return;
+
+    const token = getValidToken();
+    try {
+      const isLocal =
+        typeof window !== "undefined" &&
+        (window.location.hostname === "localhost" ||
+          window.location.hostname === "127.0.0.1");
+
+      const urls = isLocal
+        ? [
+            `http://localhost:5000/api/admin/users/${targetUser._id}/role`,
+            `https://bhagavad-gita-website.onrender.com/api/admin/users/${targetUser._id}/role`,
+          ]
+        : [
+            `https://bhagavad-gita-website.onrender.com/api/admin/users/${targetUser._id}/role`,
+          ];
+
+      let success = false;
+      let resData = null;
+
+      for (const url of urls) {
+        try {
+          const res = await fetch(url, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              role: "user",
+              permissions: [],
+            }),
+          });
+          resData = await res.json();
+          if (res.ok && resData.success) {
+            success = true;
+            break;
+          }
+        } catch {
+          // try next
+        }
+      }
+
+      if (success) {
+        setUsers((prev) =>
+          prev.map((u) =>
+            u._id === targetUser._id
+              ? {
+                  ...u,
+                  role: "user",
+                  permissions: [],
+                }
+              : u
+          )
+        );
+        setRoleToastMessage(
+          txt(
+            `${targetUser.name} હવે સામાન્ય User બની ગયા છે.`,
+            `${targetUser.name} अब सामान्य User बन गए हैं।`,
+            `${targetUser.name} has been changed to a regular User.`
+          )
+        );
+      } else {
+        alert(resData?.message || "Error revoking admin access.");
+      }
+    } catch (err) {
+      console.error("Error revoking admin:", err);
+      alert("Error revoking admin access.");
+    }
+  };
 
   const fetchAppStats = async (isManual = false) => {
     const token = getValidToken();
@@ -347,10 +566,25 @@ function Admin() {
   };
 
   useEffect(() => {
-    fetchUsers();
-    fetchVisitorStats();
-    fetchAppStats();
-    fetchFeedbacks();
+    if (canManageUsers) {
+      fetchUsers();
+    } else {
+      setLoading(false);
+    }
+
+    if (canViewAnalytics) {
+      fetchVisitorStats();
+      fetchAppStats();
+    } else {
+      setLoadingVisitors(false);
+      setLoadingAppStats(false);
+    }
+
+    if (canManageFeedbacks) {
+      fetchFeedbacks();
+    } else {
+      setLoadingFeedbacks(false);
+    }
 
     const handleKeyDown = (e) => {
       if (e.key === "Escape") {
@@ -507,9 +741,16 @@ function Admin() {
         <div className="admin-header">
 
           <div>
-            <h1>
-              <Shield className="btn-icon" size={28} /> Admin Dashboard
-            </h1>
+            <div style={{ display: "flex", alignItems: "center", gap: "12px", flexWrap: "wrap" }}>
+              <h1>
+                <Shield className="btn-icon" size={28} /> Admin Dashboard
+              </h1>
+              {isSuperAdmin && (
+                <span className="admin-header-super-badge" title="મુખ્ય સુપર એડમિન એકાઉન્ટ">
+                  👑 Super Admin
+                </span>
+              )}
+            </div>
           </div>
 
           <div className="admin-header-actions">
@@ -527,59 +768,46 @@ function Admin() {
             ADMIN MANAGEMENT CARDS
         ================================================= */}
 
-        {!loading && !message && (
+        {!loading && !message && (canManageShloks || canManageQuiz) && (
           <div className="admin-management">
 
             {/* =================================================
                 SHLOK MANAGEMENT
             ================================================= */}
 
-            <Link
-              to="/admin/shloks"
-              className="management-card shlok-management-card"
-            >
-
-              <div className="management-icon">
-                <BookOpen size={48} color="#175bb5" strokeWidth={1.5} />
-              </div>
-
-              <div className="management-content">
-
-                <h2>
-                  Manage Shlokas
-                </h2>
-
-              </div>
-
-              <div className="management-arrow"><ArrowRight size={22} className="management-arrow-icon" /></div>
-
-            </Link>
-
+            {canManageShloks && (
+              <Link
+                to="/admin/shloks"
+                className="management-card shlok-management-card"
+              >
+                <div className="management-icon">
+                  <BookOpen size={48} color="#175bb5" strokeWidth={1.5} />
+                </div>
+                <div className="management-content">
+                  <h2>Manage Shlokas</h2>
+                </div>
+                <div className="management-arrow"><ArrowRight size={22} className="management-arrow-icon" /></div>
+              </Link>
+            )}
 
             {/* =================================================
                 QUIZ MANAGEMENT
             ================================================= */}
 
-            <Link
-              to="/admin/quiz"
-              className="management-card quiz-management-card"
-            >
-
-              <div className="management-icon">
-                <BrainCircuit size={48} color="#175bb5" strokeWidth={1.5} />
-              </div>
-
-              <div className="management-content">
-
-                <h2>
-                  Manage Quiz
-                </h2>
-
-              </div>
-
-              <div className="management-arrow"><ArrowRight size={22} className="management-arrow-icon" /></div>
-
-            </Link>
+            {canManageQuiz && (
+              <Link
+                to="/admin/quiz"
+                className="management-card quiz-management-card"
+              >
+                <div className="management-icon">
+                  <BrainCircuit size={48} color="#175bb5" strokeWidth={1.5} />
+                </div>
+                <div className="management-content">
+                  <h2>Manage Quiz</h2>
+                </div>
+                <div className="management-arrow"><ArrowRight size={22} className="management-arrow-icon" /></div>
+              </Link>
+            )}
 
           </div>
         )}
@@ -589,7 +817,7 @@ function Admin() {
             STATISTICS
         ================================================= */}
 
-        {!loading && !message && (
+        {!loading && !message && canViewAnalytics && (
           <div className="admin-stats">
 
             <div className="stat-card">
@@ -1490,6 +1718,7 @@ function Admin() {
         {/* =================================================
             USER FEEDBACKS & STAR RATINGS SECTION
         ================================================= */}
+        {canManageFeedbacks && (
         <section className="feedback-section-box" aria-label="User Feedbacks">
           <div className="section-header feedback-section-header">
             <div className="visitor-title-wrap">
@@ -1664,6 +1893,7 @@ function Admin() {
             </>
           )}
         </section>
+        )}
 
         {/* =================================================
             FEEDBACK DETAIL VIEW MODAL (PORTAL DIRECTLY TO BODY)
@@ -1868,6 +2098,7 @@ function Admin() {
             USERS
         ================================================= */}
 
+        {canManageUsers && (
         <div className="users-section">
 
           <div className="section-header">
@@ -2016,18 +2247,33 @@ function Admin() {
 
 
                           <td>
-
-                            <span
-                              className={
-                                user.role ===
-                                "admin"
-                                  ? "role admin-role"
-                                  : "role user-role"
-                              }
-                            >
-                              {user.role}
-                            </span>
-
+                            {user.isSuperAdmin || (user.email && user.email.toLowerCase() === "gitagyanm700@gmail.com") ? (
+                              <span className="role super-admin-role" title="મુખ્ય સુપર એડમિન (Super Admin)">
+                                👑 Super Admin
+                              </span>
+                            ) : user.role === "admin" ? (
+                              <div className="admin-role-badge-group">
+                                <span className="role admin-role">
+                                  🛡️ Admin
+                                </span>
+                                <span
+                                  className="admin-perm-pill"
+                                  title={
+                                    Array.isArray(user.permissions) && user.permissions.length > 0
+                                      ? user.permissions
+                                          .map((p) => getPermissionLabel(p, isHindi ? "hi" : isEnglish ? "en" : "gu"))
+                                          .join(", ")
+                                      : "બધા અધિકારો"
+                                  }
+                                >
+                                  {user.permissions?.length || 0} {txt("પરમિશન", "अनुमति", "perms")}
+                                </span>
+                              </div>
+                            ) : (
+                              <span className="role user-role">
+                                {user.role}
+                              </span>
+                            )}
                           </td>
 
 
@@ -2055,39 +2301,66 @@ function Admin() {
 
 
                           <td>
-
-                            {user.role ===
-                            "admin" ? (
-
+                            {user.isSuperAdmin || (user.email && user.email.toLowerCase() === "gitagyanm700@gmail.com") ? (
                               <span className="protected-user">
-                                <Lock className="btn-icon" size={16} /> Protected
+                                <Lock className="btn-icon" size={15} /> Owner
                               </span>
-
                             ) : (
+                              <div className="user-action-buttons">
+                                {canManageAdmins && (
+                                  <>
+                                    {user.role === "admin" ? (
+                                      <>
+                                        <button
+                                          type="button"
+                                          className="user-action-btn edit-perm-btn"
+                                          onClick={() => openPermissionModal(user)}
+                                          title={txt("પરમિશન્સ બદલો", "अनुमतियाँ बदलें", "Edit Permissions")}
+                                        >
+                                          <Shield size={13} />
+                                          <span>{txt("પરમિશન", "अनुमति", "Perms")}</span>
+                                        </button>
 
-                              <button
-                                className="delete-user-btn"
-                                onClick={() =>
-                                  deleteUser(
-                                    user._id,
-                                    user.name
-                                  )
-                                }
-                                disabled={
-                                  deletingId ===
-                                  user._id
-                                }
-                              >
+                                        <button
+                                          type="button"
+                                          className="user-action-btn revoke-admin-btn"
+                                          onClick={() => handleRevokeAdmin(user)}
+                                          title={txt("Admin હટાવો / User બનાવો", "Admin हटाएं / User बनाएं", "Make User")}
+                                        >
+                                          <UserMinus size={13} />
+                                          <span>{txt("User", "User", "User")}</span>
+                                        </button>
+                                      </>
+                                    ) : (
+                                      <button
+                                        type="button"
+                                        className="user-action-btn make-admin-btn"
+                                        onClick={() => openPermissionModal(user)}
+                                        title={txt("આ યુઝરને Admin બનાવો", "इस यूजर को Admin बनाएं", "Make Admin")}
+                                      >
+                                        <Shield size={13} />
+                                        <span>{txt("Admin બનાવો", "Admin बनाएं", "Make Admin")}</span>
+                                      </button>
+                                    )}
+                                  </>
+                                )}
 
-                                {deletingId ===
-                                user._id
-                                  ? "Deleting..."
-                                  : <span><Trash2 className="btn-icon" size={16} /> Delete</span>}
-
-                              </button>
-
+                                {canManageUsers && user.role !== "admin" && (
+                                  <button
+                                    className="delete-user-btn"
+                                    onClick={() => deleteUser(user._id, user.name)}
+                                    disabled={deletingId === user._id}
+                                    title={txt("યુઝર ડિલીટ કરો", "उपयोगकर्ता हटाएं", "Delete User")}
+                                  >
+                                    {deletingId === user._id ? (
+                                      "..."
+                                    ) : (
+                                      <span><Trash2 className="btn-icon" size={14} /> Delete</span>
+                                    )}
+                                  </button>
+                                )}
+                              </div>
                             )}
-
                           </td>
 
                         </tr>
@@ -2119,6 +2392,154 @@ function Admin() {
             )}
 
         </div>
+        )}
+
+        {/* =================================================
+            ADMIN ROLE & PERMISSIONS MODAL (PORTAL)
+        ================================================= */}
+        {permissionModalUser && typeof document !== "undefined" && createPortal(
+          <div
+            className="admin-modal-overlay"
+            onClick={() => !savingPermissions && setPermissionModalUser(null)}
+          >
+            <div
+              className="admin-modal-content admin-permissions-modal"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="admin-modal-header">
+                <div className="admin-perm-modal-title-area">
+                  <div className="admin-perm-icon-bubble">
+                    <Shield size={24} color="#175bb5" />
+                  </div>
+                  <div>
+                    <h3 className="admin-modal-user-name">
+                      {permissionModalUser.role === "admin"
+                        ? txt("એડમિન પરમિશન્સ સંપાદિત કરો", "एडमिन अनुमतियां संपादित करें", "Edit Admin Permissions")
+                        : txt("નવા Admin બનાવો & પરમિશન્સ આપો", "नया Admin बनाएं और अनुमतियां दें", "Make Admin & Grant Permissions")}
+                    </h3>
+                    <span className="admin-modal-user-email">
+                      {permissionModalUser.name} ({permissionModalUser.email})
+                    </span>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  className="admin-modal-close-btn"
+                  onClick={() => !savingPermissions && setPermissionModalUser(null)}
+                  title="બંધ કરો"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div className="admin-modal-body admin-perm-modal-body">
+                <div className="admin-perm-selection-bar">
+                  <div className="admin-perm-count-chip">
+                    {txt(
+                      `${selectedPermissions.length} / ${ALL_PERMISSIONS.length} પરમિશન પસંદ કરેલ છે`,
+                      `${selectedPermissions.length} / ${ALL_PERMISSIONS.length} अनुमतियां चुनी गईं`,
+                      `${selectedPermissions.length} of ${ALL_PERMISSIONS.length} permissions granted`
+                    )}
+                  </div>
+                  <button
+                    type="button"
+                    className="admin-perm-select-all-btn"
+                    onClick={handleSelectAllPermissions}
+                  >
+                    {selectedPermissions.length === ALL_PERMISSIONS.length
+                      ? txt("બધી હટાવો (Deselect All)", "सभी हटाएं (Deselect All)", "Deselect All")
+                      : txt("બધી પસંદ કરો (Select All)", "सभी चुनें (Select All)", "Select All")}
+                  </button>
+                </div>
+
+                <p className="admin-perm-help-text">
+                  {txt(
+                    "આ યુઝરને એડમિન પેનલમાં જે સુવિધાઓની મંજૂરી આપવી હોય તેની સામેના બોક્સ પર ટીક કરો:",
+                    "इस उपयोगकर्ता को एडमिन पैनल में जिन सुविधाओं की अनुमति देनी हो उन्हें चुनें:",
+                    "Select the features and privileges this administrator should have access to:"
+                  )}
+                </p>
+
+                <div className="admin-perm-grid">
+                  {ALL_PERMISSIONS.map((perm) => {
+                    const isChecked = selectedPermissions.includes(perm.id);
+                    return (
+                      <div
+                        key={perm.id}
+                        className={`admin-perm-card ${isChecked ? "is-selected" : ""}`}
+                        onClick={() => togglePermission(perm.id)}
+                      >
+                        <div className="admin-perm-card-check">
+                          <input
+                            type="checkbox"
+                            checked={isChecked}
+                            onChange={() => {}}
+                          />
+                        </div>
+                        <div className="admin-perm-card-content">
+                          <div className="admin-perm-card-title">
+                            {isHindi ? perm.nameHi : isEnglish ? perm.nameEn : perm.nameGu}
+                            <span className="admin-perm-id-tag">({perm.id})</span>
+                          </div>
+                          <div className="admin-perm-card-desc">
+                            {isHindi ? perm.descHi : isEnglish ? perm.descEn : perm.descGu}
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div className="admin-modal-footer admin-perm-modal-footer">
+                <button
+                  type="button"
+                  className="admin-perm-cancel-btn"
+                  disabled={savingPermissions}
+                  onClick={() => setPermissionModalUser(null)}
+                >
+                  {txt("રદ કરો", "रद्द करें", "Cancel")}
+                </button>
+
+                <button
+                  type="button"
+                  className="admin-perm-save-btn"
+                  disabled={savingPermissions || selectedPermissions.length === 0}
+                  onClick={handleSavePermissions}
+                >
+                  {savingPermissions ? (
+                    <>
+                      <RefreshCw size={16} className="spin-icon" /> {txt("સેવ થઈ રહ્યું છે...", "सेव हो रहा है...", "Saving...")}
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 size={16} /> {txt("પરમિશન સેવ કરો", "अनुमति सेव करें", "Save Permissions")}
+                    </>
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>,
+          document.body
+        )}
+
+        {/* =================================================
+            ROLE CHANGE TOAST NOTIFICATION
+        ================================================= */}
+        {roleToastMessage && (
+          <div className="admin-role-toast">
+            <Sparkles size={18} className="toast-sparkle-icon" />
+            <span>{roleToastMessage}</span>
+            <button
+              type="button"
+              className="toast-close-btn"
+              onClick={() => setRoleToastMessage("")}
+            >
+              ×
+            </button>
+          </div>
+        )}
 
       </div>
 

@@ -999,6 +999,23 @@ const registerUser = async (
 
         role:
           user.role,
+
+        isSuperAdmin:
+          user.isSuperAdmin ||
+          (user.email && user.email.toLowerCase() === "gitagyanm700@gmail.com"),
+
+        permissions:
+          user.permissions ||
+          (user.role === "admin"
+            ? [
+                "manage_shloks",
+                "manage_quiz",
+                "view_analytics",
+                "manage_feedbacks",
+                "manage_users",
+                "manage_admins",
+              ]
+            : []),
       },
     });
 
@@ -1128,6 +1145,23 @@ const loginUser = async (
 
         role:
           user.role,
+
+        isSuperAdmin:
+          user.isSuperAdmin ||
+          (user.email && user.email.toLowerCase() === "gitagyanm700@gmail.com"),
+
+        permissions:
+          user.permissions ||
+          (user.role === "admin"
+            ? [
+                "manage_shloks",
+                "manage_quiz",
+                "view_analytics",
+                "manage_feedbacks",
+                "manage_users",
+                "manage_admins",
+              ]
+            : []),
       },
     });
 
@@ -1173,8 +1207,29 @@ const getProfile = async (
       });
     }
 
+    const isSuper =
+      user.isSuperAdmin ||
+      (user.email && user.email.toLowerCase() === "gitagyanm700@gmail.com");
+
+    const userObj = user.toObject ? user.toObject() : user;
+
     return res.status(200).json({
-      user,
+      user: {
+        ...userObj,
+        isSuperAdmin: isSuper,
+        permissions:
+          user.permissions ||
+          (user.role === "admin"
+            ? [
+                "manage_shloks",
+                "manage_quiz",
+                "view_analytics",
+                "manage_feedbacks",
+                "manage_users",
+                "manage_admins",
+              ]
+            : []),
+      },
     });
 
   } catch (error) {

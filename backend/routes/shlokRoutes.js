@@ -14,6 +14,7 @@ const {
   protect,
   optionalAuth,
   adminOnly,
+  requirePermission,
 } = require("../middleware/authMiddleware");
 
 const router = express.Router();
@@ -23,26 +24,26 @@ const router = express.Router();
 // =====================================================
 
 // -----------------------------------------------------
-// AUTO-TRANSLATE SHLOK TO HINDI (ADMIN ONLY)
+// AUTO-TRANSLATE SHLOK TO HINDI (ADMIN ONLY - manage_shloks)
 // POST /api/shloks/auto-translate
 // -----------------------------------------------------
 
 router.post(
   "/auto-translate",
   protect,
-  adminOnly,
+  requirePermission("manage_shloks"),
   autoTranslateShlok
 );
 
 // -----------------------------------------------------
-// ADD NEW SHLOK (ADMIN ONLY)
+// ADD NEW SHLOK (ADMIN ONLY - manage_shloks)
 // POST /api/shloks
 // -----------------------------------------------------
 
 router.post(
   "/",
   protect,
-  adminOnly,
+  requirePermission("manage_shloks"),
   addShlok
 );
 
@@ -79,26 +80,26 @@ router.get(
 );
 
 // -----------------------------------------------------
-// UPDATE SHLOK (ADMIN ONLY)
+// UPDATE SHLOK (ADMIN ONLY - manage_shloks)
 // PUT /api/shloks/:id
 // -----------------------------------------------------
 
 router.put(
   "/:id",
   protect,
-  adminOnly,
+  requirePermission("manage_shloks"),
   updateShlok
 );
 
 // -----------------------------------------------------
-// DELETE SHLOK (ADMIN ONLY)
+// DELETE SHLOK (ADMIN ONLY - manage_shloks)
 // DELETE /api/shloks/:id
 // -----------------------------------------------------
 
 router.delete(
   "/:id",
   protect,
-  adminOnly,
+  requirePermission("manage_shloks"),
   deleteShlok
 );
 

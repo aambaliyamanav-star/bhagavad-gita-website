@@ -13,6 +13,7 @@ const {
   protect,
   optionalAuth,
   adminOnly,
+  requirePermission,
 } = require("../middleware/authMiddleware");
 
 // Public / User routes
@@ -20,8 +21,8 @@ router.post("/", optionalAuth, submitFeedback);
 router.get("/stats", getFeedbackStats);
 router.get("/my-rating", optionalAuth, getMyRating);
 
-// Admin routes
-router.get("/admin", protect, adminOnly, getAdminFeedbacks);
-router.delete("/:id", protect, adminOnly, deleteFeedback);
+// Admin routes (Protected: requires manage_feedbacks permission)
+router.get("/admin", protect, requirePermission("manage_feedbacks"), getAdminFeedbacks);
+router.delete("/:id", protect, requirePermission("manage_feedbacks"), deleteFeedback);
 
 module.exports = router;

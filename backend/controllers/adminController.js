@@ -1,7 +1,11 @@
 const User = require("../models/User");
 const Visitor = require("../models/Visitor");
 
+const SUPER_ADMIN_EMAIL = "gitagyanm700@gmail.com";
+
+// =====================================================
 // GET ALL USERS
+// =====================================================
 const getAllUsers = async (req, res) => {
   try {
     const users = await User.find()
@@ -32,17 +36,32 @@ const getAllUsers = async (req, res) => {
       }
     });
 
-    const usersWithVisits = users.map((user) => ({
-      ...user,
-      visitCount: visitMap[String(user._id)] || 0,
-    }));
+    const usersWithVisits = users.map((u) => {
+      const isSuper =
+        u.isSuperAdmin ||
+        (u.email && u.email.toLowerCase() === SUPER_ADMIN_EMAIL);
+
+      return {
+        ...u,
+        isSuperAdmin: isSuper,
+        permissions: u.permissions || (u.role === "admin" ? [
+          "manage_shloks",
+          "manage_quiz",
+          "view_analytics",
+          "manage_feedbacks",
+        ] : []),
+        visitCount: visitMap[String(u._id)] || 0,
+      };
+    });
 
     res.json({
+      success: true,
       count: usersWithVisits.length,
       users: usersWithVisits,
     });
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: "Users મેળવવામાં error આવ્યો.",
       error: error.message,
     });
@@ -50,49 +69,255 @@ const getAllUsers = async (req, res) => {
 };
 
 
+// =====================================================
 // DELETE USER
+// =====================================================
 const deleteUser = async (req, res) => {
   try {
     const userId = req.params.id;
 
-    // Admin પોતાને delete કરી શકે નહીં
+    // Admin cannot delete themselves
     if (userId === req.userId.toString()) {
       return res.status(400).json({
-        message: "તમે તમારા પોતાના Admin accountને delete કરી શકતા નથી."
+        message: "તમે તમારા પોતાના Admin accountને delete કરી શકતા નથી.",
       });
     }
 
-    const user = await User.findById(userId);
+    const targetUser = await User.findById(userId);
 
-    if (!user) {
+    if (!targetUser) {
       return res.status(404).json({
-        message: "User મળ્યો નથી."
+        message: "User મળ્યો નથી.",
       });
     }
 
-    // બીજા Adminને પણ delete કરી શકાશે નહીં
-    if (user.role === "admin") {
+    // Super Admin cannot be deleted
+    if (
+      targetUser.isSuperAdmin ||
+      (targetUser.email && targetUser.email.toLowerCase() === SUPER_ADMIN_EMAIL)
+    ) {
       return res.status(403).json({
-        message: "બીજા Admin accountને delete કરી શકાતું નથી."
+        message: "મુખ્ય સુપર એડમિન (Super Admin) એકાઉન્ટને ડિલીટ કરી શકાતું નથી.",
       });
+    }
+
+    // Deleting another admin requires Super Admin privilege
+    if (targetUser.role === "admin") {
+      const requester = await User.findById(req.userId);
+      const isRequesterSuper =
+        requester &&
+        (requester.isSuperAdmin ||
+          (requester.email && requester.email.toLowerCase() === SUPER_ADMIN_EMAIL));
+
+      if (!isRequesterSuper) {
+        return res.status(403).json({
+          message: "બીજા Admin accountને ફક્ત મુખ્ય Super Admin જ ડિલીટ કરી શકે છે.",
+        });
+      }
     }
 
     await User.findByIdAndDelete(userId);
 
     res.json({
-      message: "User successfully deleted. ✅"
+      success: true,
+      message: "User successfully deleted. ✅",
     });
-
   } catch (error) {
     res.status(500).json({
+      success: false,
       message: "User delete કરવામાં error આવ્યો.",
-      error: error.message
+      error: error.message,
     });
   }
 };
 
 
+// =====================================================
+// UPDATE USER ROLE & PERMISSIONS
+// =====================================================
+const updateUserRole = async (req, res) => {
+  try {
+    const targetUserId = req.params.id;
+    const { role, permissions } = req.body;
+
+    if (!role || !["user", "admin"].includes(role)) {
+      return res.status(400).json({
+        success: false,
+        message: "અમાન્ય રોલ (Role). ફક્ત 'user' અથવા 'admin' હોઈ શકે છે.",
+      });
+    }
+
+    const targetUser = await User.findById(targetUserId);
+    if (!targetUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User મળ્યો નથી.",
+      });
+    }
+
+    const requester = await User.findById(req.userId);
+    const isRequesterSuper =
+      requester &&
+      (requester.isSuperAdmin ||
+        (requester.email && requester.email.toLowerCase() === SUPER_ADMIN_EMAIL));
+
+    // Target is Super Admin -> Nobody can demote or alter their permissions
+    if (
+      targetUser.isSuperAdmin ||
+      (targetUser.email && targetUser.email.toLowerCase() === SUPER_ADMIN_EMAIL)
+    ) {
+      return res.status(403).json({
+        success: false,
+        message: "મુખ્ય સુપર એડમિન (Super Admin) ના રોલ કે પરમિશન બદલી શકાતા નથી.",
+      });
+    }
+
+    // Only Super Admin or someone with explicit manage_admins can modify roles
+    const requesterCanManageAdmins =
+      isRequesterSuper ||
+      (requester.role === "admin" &&
+        Array.isArray(requester.permissions) &&
+        requester.permissions.includes("manage_admins"));
+
+    if (!requesterCanManageAdmins) {
+      return res.status(403).json({
+        success: false,
+        message: "તમારી પાસે એડમિન રોલ અથવા પરમિશન બદલવાનો અધિકાર નથી.",
+      });
+    }
+
+    const validPermissions = [
+      "manage_shloks",
+      "manage_quiz",
+      "view_analytics",
+      "manage_feedbacks",
+      "manage_users",
+      "manage_admins",
+    ];
+
+    let cleanPermissions = [];
+    if (role === "admin") {
+      if (Array.isArray(permissions)) {
+        cleanPermissions = permissions.filter((p) =>
+          validPermissions.includes(p)
+        );
+      } else {
+        cleanPermissions = [
+          "manage_shloks",
+          "manage_quiz",
+          "view_analytics",
+          "manage_feedbacks",
+        ];
+      }
+    }
+
+    targetUser.role = role;
+    targetUser.permissions = cleanPermissions;
+    await targetUser.save();
+
+    return res.status(200).json({
+      success: true,
+      message:
+        role === "admin"
+          ? `${targetUser.name} ને Admin બનાવવામાં આવ્યા અને પરમિશન્સ સેટ થઈ ગઈ ✅`
+          : `${targetUser.name} પાસેથી Admin અધિકાર હટાવીને સામાન્ય User બનાવવામાં આવ્યા ✅`,
+      user: {
+        _id: targetUser._id,
+        name: targetUser.name,
+        email: targetUser.email,
+        role: targetUser.role,
+        isSuperAdmin: targetUser.isSuperAdmin,
+        permissions: targetUser.permissions,
+      },
+    });
+  } catch (error) {
+    console.error("Update User Role Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "રોલ કે પરમિશન અપડેટ કરવામાં error આવ્યો.",
+      error: error.message,
+    });
+  }
+};
+
+
+// =====================================================
+// GET ADMIN PERMISSIONS METADATA
+// =====================================================
+const getAdminPermissionsList = async (req, res) => {
+  const permissions = [
+    {
+      id: "manage_shloks",
+      nameGu: "શ્લોક સંચાલન",
+      nameHi: "श्लोक प्रबंधन",
+      nameEn: "Manage Shlokas",
+      descriptionGu: "નવા શ્લોક ઉમેરવા, સુધારવા, ડિલીટ કરવા અને સંસ્કૃત ઑડિયો જનરેટ કરવો.",
+      descriptionHi: "नए श्लोक जोड़ना, संपादित करना, हटाना और संस्कृत ऑडियो जनरेट करना।",
+      descriptionEn: "Add, edit, delete shlokas and generate Sanskrit neural recitation audio.",
+      category: "content",
+    },
+    {
+      id: "manage_quiz",
+      nameGu: "ક્વિઝ સંચાલન",
+      nameHi: "क्विज़ प्रबंधन",
+      nameEn: "Manage Quiz",
+      descriptionGu: "ક્વિઝ પ્રશ્નો ઉમેરવા, સુધારવા અને યુઝર્સના પ્રશ્નો મંજૂર કરવા.",
+      descriptionHi: "क्विज़ प्रश्न जोड़ना, संपादित करना और उपयोगकर्ताओं के प्रश्न स्वीकृत करना।",
+      descriptionEn: "Add, edit, delete quiz questions and approve user community submissions.",
+      category: "content",
+    },
+    {
+      id: "view_analytics",
+      nameGu: "ટ્રાફિક અને એનાલિટિક્સ",
+      nameHi: "ट्रैफ़िक और एनालिटिक्स",
+      nameEn: "Traffic & Analytics",
+      descriptionGu: "વેબસાઇટ & એપ મુલાકાતીઓ, લાઈવ યુઝર્સ અને ડિવાઇસ આંકડા જોવા.",
+      descriptionHi: "वेबसाइट और ऐप विज़िटर्स, लाइव उपयोगकर्ता और डिवाइस आंकड़े देखना।",
+      descriptionEn: "View website & mobile app traffic, live visitors, devices, and retention trends.",
+      category: "analytics",
+    },
+    {
+      id: "manage_feedbacks",
+      nameGu: "યુઝર પ્રતિસાદ (Feedbacks)",
+      nameHi: "उपयोगकर्ता फ़ीडबैक",
+      nameEn: "User Feedbacks",
+      descriptionGu: "યુઝર્સના રિવ્યુ, રેટિંગ્સ અને સંદેશા વાંચવા તથા ડિલીટ કરવા.",
+      descriptionHi: "उपयोगकर्ताओं की समीक्षाएं, रेटिंग और संदेश पढ़ना तथा हटाना।",
+      descriptionEn: "Read user reviews, star ratings, and delete inappropriate feedbacks.",
+      category: "community",
+    },
+    {
+      id: "manage_users",
+      nameGu: "યુઝર્સ સંચાલન",
+      nameHi: "उपयोगकर्ता प्रबंधन",
+      nameEn: "Manage Users",
+      descriptionGu: "રજીસ્ટર્ડ યુઝર્સની યાદી જોવી અને યુઝર એકાઉન્ટ ડિલીટ કરવું.",
+      descriptionHi: "पंजीकृत उपयोगकर्ताओं की सूची देखना और खाता हटाना।",
+      descriptionEn: "View registered user details and delete registered accounts.",
+      category: "users",
+    },
+    {
+      id: "manage_admins",
+      nameGu: "એડમિન પરમિશન્સ સંચાલન",
+      nameHi: "एडमिन अनुमति प्रबंधन",
+      nameEn: "Manage Admins & Roles",
+      descriptionGu: "અન્ય યુઝર્સને એડમિન બનાવવા અને તેમની પરમિશન કંટ્રોલ કરવી.",
+      descriptionHi: "अन्य उपयोगकर्ताओं को एडमिन बनाना और उनकी अनुमतियाँ नियंत्रित करना।",
+      descriptionEn: "Grant admin access to other users and configure granular permissions.",
+      category: "security",
+    },
+  ];
+
+  return res.status(200).json({
+    success: true,
+    permissions,
+  });
+};
+
+
 module.exports = {
   getAllUsers,
-  deleteUser
+  deleteUser,
+  updateUserRole,
+  getAdminPermissionsList,
 };
