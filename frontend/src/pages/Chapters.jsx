@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BookOpen } from "lucide-react";
+import { BookOpen, Download, CheckCircle2, Loader2 } from "lucide-react";
 import { useLanguage } from "../context/LanguageContext.jsx";
+import { downloadAllChaptersOffline, getOfflineStatusSummary } from "../utils/offlineStorage.js";
 import "./Chapters.css";
 
 const chapterNamesHi = {
@@ -73,6 +74,37 @@ function Chapters() {
 
   const [shlokCounts, setShlokCounts] = useState({});
   const [loading, setLoading] = useState(true);
+  const [offlineStatus, setOfflineStatus] = useState(() => getOfflineStatusSummary());
+  const [downloadingOffline, setDownloadingOffline] = useState(false);
+  const [downloadProgress, setDownloadProgress] = useState(0);
+
+  const handleDownloadOffline = async () => {
+    if (!navigator.onLine) {
+      alert(
+        txt(
+          "ડાઉનલોડ કરવા માટે કૃપા કરીને ઇન્ટરનેટ ચાલુ કરો.",
+          "डाउनलोड करने के लिए कृपया इंटरनेट चालू करें।",
+          "Please connect to the internet to download."
+        )
+      );
+      return;
+    }
+    setDownloadingOffline(true);
+    setDownloadProgress(5);
+    try {
+      const res = await downloadAllChaptersOffline((prog) => {
+        setDownloadProgress(prog.percent);
+      });
+      if (res.success) {
+        setOfflineStatus(getOfflineStatusSummary());
+      }
+    } catch (e) {
+      console.warn("Offline download error:", e);
+    } finally {
+      setDownloadingOffline(false);
+      setDownloadProgress(0);
+    }
+  };
 
   useEffect(() => {
     const fetchChapterData = async () => {
@@ -147,6 +179,60 @@ function Chapters() {
         <h1>
           {txt("ભગવદ્ ગીતાના 18 અધ્યાય", "भगवद् गीता के 18 अध्याय", "18 Chapters of Bhagavad Gita")}
         </h1>
+
+        <div className="offline-download-bar">
+          {offlineStatus.isFullyCached ? (
+            <div className="offline-ready-badge">
+              <CheckCircle2 size={16} />
+              <span>
+                {txt(
+                  "તમામ ૧૮ અધ્યાય ઑફલાઇન સેવ કરેલા છે (નેટ વગર વાંચી શકાશે)",
+                  "सभी 18 अध्याय ऑफ़लाइन सहेजे गए हैं (बिना इंटरनेट पढ़ सकते हैं)",
+                  "All 18 chapters saved offline (accessible without internet)"
+                )}
+              </span>
+            </div>
+          ) : downloadingOffline ? (
+            <div className="offline-downloading-box">
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <Loader2 size={16} className="spinner" />
+                <span>
+                  {txt(
+                    `ઑફલાઇન ડાઉનલોડ થઈ રહ્યું છે... ${downloadProgress}%`,
+                    `ऑफ़लाइन डाउनलोड हो रहा है... ${downloadProgress}%`,
+                    `Downloading offline... ${downloadProgress}%`
+                  )}
+                </span>
+              </div>
+              <div className="offline-progress-track">
+                <div
+                  className="offline-progress-bar"
+                  style={{ width: `${downloadProgress}%` }}
+                />
+              </div>
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="offline-download-btn"
+              onClick={handleDownloadOffline}
+              title={txt(
+                "બધા ૧૮ અધ્યાય નેટ વગર વાંચવા માટે ફોનમાં સેવ કરો",
+                "सभी 18 अध्याय बिना इंटरनेट पढ़ने के लिए फोन में सहेजें",
+                "Save all 18 chapters offline for instant access"
+              )}
+            >
+              <Download size={15} />
+              <span>
+                {txt(
+                  "બધા ૧૮ અધ્યાય ઑફલાઇન ડાઉનલોડ કરો",
+                  "सभी 18 अध्याय ऑफ़लाइन डाउनलोड करें",
+                  "Download All 18 Chapters Offline"
+                )}
+              </span>
+            </button>
+          )}
+        </div>
       </section>
 
 

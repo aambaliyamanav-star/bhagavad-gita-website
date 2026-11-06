@@ -2994,3 +2994,42 @@ button:focus-visible {
   color: var(--reader-sanskrit-word);
   user-select: none;
 }
+
+/* =====================================================
+   OFFLINE MODE PILL BADGE
+===================================================== */
+.cr-offline-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  color: #10b981;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 999px;
+  margin-top: 8px;
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
+}
+
+.cr-offline-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 6px #10b981;
+  animation: crPulseDot 1.8s infinite;
+}
+
+@keyframes crPulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.85); }
+}
+
+html.dark .cr-offline-pill,
+body.dark .cr-offline-pill {
+  background: rgba(52, 211, 153, 0.15);
+  border-color: rgba(52, 211, 153, 0.4);
+  color: #6ee7b7;
+}

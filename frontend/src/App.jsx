@@ -43,6 +43,7 @@ import MobileLanguageModal from "./components/MobileLanguageModal.jsx";
 import AppSplashScreen from "./components/AppSplashScreen.jsx";
 import About from "./pages/About.jsx";
 import { trackVisit } from "./utils/visitorTracker.js";
+import { autoSyncOfflineChaptersQuietly } from "./utils/offlineStorage.js";
 
 // =====================================================
 import { isTokenExpired, getValidToken } from "./utils/authHelper.js";
@@ -320,6 +321,14 @@ function AnimatedRoutes() {
     window.scrollTo({ top: 0, left: 0, behavior: "instant" });
     trackVisit(location.pathname);
   }, [location.pathname, user]);
+
+  useEffect(() => {
+    // Quietly pre-cache chapters in the background for 100% offline reliability
+    const timer = setTimeout(() => {
+      autoSyncOfflineChaptersQuietly();
+    }, 3500);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <>

@@ -14,6 +14,7 @@ import {
 import { useAuth } from "../context/AuthContext.jsx";
 import { useLanguage } from "../context/LanguageContext.jsx";
 import { trackShlokaRead, getFirstUnreadShloka, getLocalProgress } from "../utils/readingTracker.js";
+import { saveChapterOffline, getChapterOffline } from "../utils/offlineStorage.js";
 
 function ChapterReader() {
   const { chapterNumber } = useParams();
@@ -41,6 +42,7 @@ function ChapterReader() {
   const [currentShloka, setCurrentShloka] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isOfflineMode, setIsOfflineMode] = useState(false);
 
   // Currently clicked Sanskrit word
   const [activeWordIndex, setActiveWordIndex] = useState(null);
@@ -292,173 +294,164 @@ useEffect(() => {
 // =====================================================
 
 useEffect(() => {
-  const fetchChapterShlokas =
-    async () => {
+  const applyLoadedShlokas = (loadedShlokas, chName, isOffline = false) => {
+    setShlokas(loadedShlokas);
+    setIsOfflineMode(isOffline);
+    if (loadedShlokas.length > 0) {
+      setChapterName(
+        chName ||
+          loadedShlokas[0].chapterName ||
+          chapterNames[currentChapterNumber] ||
+          (isHindi ? `अध्याय ${currentChapterNumber}` : `અધ્યાય ${currentChapterNumber}`)
+      );
+    } else {
+      setChapterName(
+        chapterNames[currentChapterNumber] || `અધ્યાય ${currentChapterNumber}`
+      );
+    }
+
+    let targetShlokaNum = requestedShloka;
+    if (!targetShlokaNum) {
       try {
-        setLoading(true);
-        setError("");
-        setActiveWordIndex(null);
-
-const token =
-  getValidToken();
-
-const response = await fetch(
-  `${API_URL}/chapter/${currentChapterNumber}`,
-  {
-    headers: token
-      ? {
-          Authorization:
-            `Bearer ${token}`,
-        }
-      : {},
-  }
-);
-
-        const data =
-          await response.json();
-
-        if (!response.ok) {
-          throw new Error(
-            data.message ||
-              (isHindi ? "श्लोक लोड नहीं हो सके।" : "Shlokas load થઈ શક્યા નથી.")
-          );
-        }
-
-        const fetchedShlokas =
-          data.shlokas || [];
-
-        // =================================================
-        // SORT SHLOKAS
-        // =================================================
-
-        fetchedShlokas.sort(
-          (a, b) =>
-            Number(a.shlokNumber) -
-            Number(b.shlokNumber)
+        const localProgress = getLocalProgress();
+        const firstUnread = getFirstUnreadShloka(
+          localProgress.readShlokas,
+          currentChapterNumber,
+          loadedShlokas.length
         );
-
-        setShlokas(fetchedShlokas);
-
-        // =================================================
-        // CHAPTER NAME
-        // =================================================
-
-        if (
-          fetchedShlokas.length > 0
-        ) {
-          setChapterName(
-            fetchedShlokas[0]
-              .chapterName ||
-              chapterNames[
-                currentChapterNumber
-              ] ||
-              isHindi ? `अध्याय ${currentChapterNumber}` : `અધ્યાય ${currentChapterNumber}`
-          );
-        } else {
-          setChapterName(
-            chapterNames[
-              currentChapterNumber
-            ] ||
-              `અધ્યાય ${currentChapterNumber}`
-          );
-        }
-
-        // =================================================
-        // RESOLVE INITIAL SHLOKA (URL PARAM -> PERSISTED STORAGE -> DEFAULT 1)
-        // =================================================
-
-        let targetShlokaNum = requestedShloka;
-        if (!targetShlokaNum) {
-          try {
-            const localProgress = getLocalProgress();
-            const firstUnread = getFirstUnreadShloka(
-              localProgress.readShlokas,
-              currentChapterNumber,
-              fetchedShlokas.length
-            );
-            targetShlokaNum = firstUnread || 1;
-          } catch (e) {
-            targetShlokaNum = 1;
-          }
-        }
-
-        if (targetShlokaNum) {
-          if (
-            !user &&
-            targetShlokaNum > 5
-          ) {
-            const redirectPath = `/chapter/${currentChapterNumber}?shloka=${targetShlokaNum}`;
-            const redirectMsg = isHindi ? `अध्याय ${currentChapterNumber} के श्लोक ${targetShlokaNum} पढ़ने के लिए Login करना आवश्यक है।` : `અધ્યાય ${currentChapterNumber} ના શ્લોક ${targetShlokaNum} વાંચવા માટે Login કરવું જરૂરી છે.`;
-
-            localStorage.setItem(
-              "pendingChapter",
-              String(
-                currentChapterNumber
-              )
-            );
-
-            localStorage.setItem(
-              "pendingShloka",
-              String(
-                targetShlokaNum
-              )
-            );
-
-            sessionStorage.setItem(
-              "authRedirect",
-              JSON.stringify({
-                from: redirectPath,
-                message: redirectMsg,
-              })
-            );
-
-            navigate("/login", {
-              replace: true,
-              state: {
-                from: redirectPath,
-                message: redirectMsg,
-              },
-            });
-            return;
-          }
-
-          const shlokaIndex =
-            fetchedShlokas.findIndex(
-              (item) =>
-                Number(
-                  item.shlokNumber
-                ) === targetShlokaNum
-            );
-
-          if (shlokaIndex !== -1) {
-            setCurrentShloka(
-              shlokaIndex
-            );
-          } else {
-            setCurrentShloka(0);
-          }
-
-        } else {
-          setCurrentShloka(0);
-        }
-
-      } catch (err) {
-        console.error(
-          "Fetch Chapter Shlokas Error:",
-          err
-        );
-
-        setError(
-          err.message ||
-            (isHindi ? "श्लोक लोड करने में त्रुटि आई।" : "Shlokas load કરવામાં error આવ્યો.")
-        );
-
-        setShlokas([]);
-
-      } finally {
-        setLoading(false);
+        targetShlokaNum = firstUnread || 1;
+      } catch (e) {
+        targetShlokaNum = 1;
       }
-    };
+    }
+
+    if (targetShlokaNum) {
+      // In offline mode, do not block users who have cached shlokas
+      if (!user && targetShlokaNum > 5 && !isOffline) {
+        const redirectPath = `/chapter/${currentChapterNumber}?shloka=${targetShlokaNum}`;
+        const redirectMsg = isHindi
+          ? `अध्याय ${currentChapterNumber} के श्लोक ${targetShlokaNum} पढ़ने के लिए Login करना आवश्यक है।`
+          : `અધ્યાય ${currentChapterNumber} ના શ્લોક ${targetShlokaNum} વાંચવા માટે Login કરવું જરૂરી છે.`;
+
+        localStorage.setItem("pendingChapter", String(currentChapterNumber));
+        localStorage.setItem("pendingShloka", String(targetShlokaNum));
+
+        sessionStorage.setItem(
+          "authRedirect",
+          JSON.stringify({
+            from: redirectPath,
+            message: redirectMsg,
+          })
+        );
+
+        navigate("/login", {
+          replace: true,
+          state: {
+            from: redirectPath,
+            message: redirectMsg,
+          },
+        });
+        return;
+      }
+
+      const shlokaIndex = loadedShlokas.findIndex(
+        (item) => Number(item.shlokNumber) === targetShlokaNum
+      );
+
+      if (shlokaIndex !== -1) {
+        setCurrentShloka(shlokaIndex);
+      } else {
+        setCurrentShloka(0);
+      }
+    } else {
+      setCurrentShloka(0);
+    }
+  };
+
+  const fetchChapterShlokas = async () => {
+    try {
+      setLoading(true);
+      setError("");
+      setActiveWordIndex(null);
+
+      // 1. If device is explicitly offline, check offline storage first
+      if (typeof navigator !== "undefined" && !navigator.onLine) {
+        const offlineData = getChapterOffline(currentChapterNumber);
+        if (offlineData && Array.isArray(offlineData.shlokas) && offlineData.shlokas.length > 0) {
+          applyLoadedShlokas(offlineData.shlokas, offlineData.chapterName, true);
+          setLoading(false);
+          return;
+        }
+      }
+
+      const token = getValidToken();
+
+      const response = await fetch(
+        `${API_URL}/chapter/${currentChapterNumber}`,
+        {
+          headers: token
+            ? {
+                Authorization: `Bearer ${token}`,
+              }
+            : {},
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(
+          data.message ||
+            (isHindi ? "श्लोक लोड नहीं हो सके।" : "Shlokas load થઈ શક્યા નથી.")
+        );
+      }
+
+      const fetchedShlokas = data.shlokas || [];
+
+      fetchedShlokas.sort(
+        (a, b) =>
+          Number(a.shlokNumber) -
+          Number(b.shlokNumber)
+      );
+
+      const resolvedChapterName =
+        fetchedShlokas[0]?.chapterName ||
+        chapterNames[currentChapterNumber] ||
+        (isHindi ? `अध्याय ${currentChapterNumber}` : `અધ્યાય ${currentChapterNumber}`);
+
+      // Cache immediately for future 100% offline access
+      saveChapterOffline(currentChapterNumber, fetchedShlokas, resolvedChapterName);
+
+      applyLoadedShlokas(fetchedShlokas, resolvedChapterName, false);
+
+    } catch (err) {
+      console.error("Fetch Chapter Shlokas Error:", err);
+
+      // 2. Offline fallback if network failed (no internet, Failed to fetch, etc.)
+      const offlineData = getChapterOffline(currentChapterNumber);
+      if (offlineData && Array.isArray(offlineData.shlokas) && offlineData.shlokas.length > 0) {
+        applyLoadedShlokas(offlineData.shlokas, offlineData.chapterName, true);
+        return;
+      }
+
+      const isNetworkErr =
+        (typeof navigator !== "undefined" && !navigator.onLine) ||
+        String(err.message || "").toLowerCase().includes("fetch");
+
+      setError(
+        isNetworkErr
+          ? (isHindi
+              ? "आप ऑफ़लाइन हैं और यह अध्याय पहले सहेजा नहीं गया है। कृपया एक बार इंटरनेट चालू करके इस अध्याय को खोलें ताकि यह ऑफ़लाइन सहेज लिया जाए।"
+              : "તમે હાલમાં ઑફલાઇન છો અને આ અધ્યાય અગાઉ સેવ થયેલ નથી. એકવાર ઇન્ટરનેટ ચાલુ કરીને આ અધ્યાય ખોલો જેથી તે ઑફલાઇન સેવ થઈ જાય.")
+          : (err.message || (isHindi ? "श्लोक लोड करने में त्रुटि आई।" : "Shlokas load કરવામાં error આવ્યો."))
+      );
+
+      setShlokas([]);
+
+    } finally {
+      setLoading(false);
+    }
+  };
 
   if (
     currentChapterNumber >= 1 &&
@@ -1450,6 +1443,12 @@ if (
     scrollToSection(type);
 
     try {
+      // If device is offline, immediately play using device native Web Speech engine!
+      if (typeof navigator !== "undefined" && !navigator.onLine) {
+        playWebSpeechFallback(textToSpeak, langCode, type, targetIdx);
+        return;
+      }
+
       const blob = await fetchNeuralAudioBlob(textToSpeak, langCode, customRate);
       const audioBlobUrl = URL.createObjectURL(blob);
 
@@ -2350,6 +2349,13 @@ const prepareSanskritLines = () => {
         <h2>
           {currentChapterTitle}
         </h2>
+
+        {isOfflineMode && (
+          <div className="cr-offline-pill" title={txt("ઑફલાઇન મોડમાં વાંચી રહ્યા છો", "ऑफ़लाइन मोड में पढ़ रहे हैं", "Reading in Offline Mode")}>
+            <span className="cr-offline-dot"></span>
+            {txt("ઑફલાઇન વાંચન", "ऑफ़लाइन पठन", "Offline Reading")}
+          </div>
+        )}
       </section>
 
       {/* =================================================
