@@ -46,6 +46,7 @@ export default function FeedbackModal() {
   const { isHindi, isEnglish, isGujarati, txt } = useLanguage();
 
   const [isOpen, setIsOpen] = useState(false);
+  const [isAutoPrompt, setIsAutoPrompt] = useState(false);
   const [rating, setRating] = useState(5);
   const [existingRating, setExistingRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
@@ -201,6 +202,7 @@ export default function FeedbackModal() {
   // Listen to manual open-feedback-modal event
   useEffect(() => {
     const handleOpenEvent = () => {
+      setIsAutoPrompt(false);
       setIsOpen(true);
       setError("");
       fetchUserRating();
@@ -238,6 +240,7 @@ export default function FeedbackModal() {
 
       // 3. Gentle delay before displaying
       const timer = setTimeout(() => {
+        setIsAutoPrompt(true);
         setIsOpen(true);
         setError("");
         fetchUserRating();
@@ -348,14 +351,15 @@ export default function FeedbackModal() {
   };
 
   const handleClose = () => {
-    // If closing/skipping before submitting or locking, set 2-day cooldown
-    if (!isLocked && !hasRated && !submitted) {
+    // If closing/skipping before submitting or locking, set 2-day cooldown only if auto-prompted
+    if (isAutoPrompt && !isLocked && !hasRated && !submitted) {
       localStorage.setItem("gita_rating_skipped_time", Date.now().toString());
     }
     setIsOpen(false);
     setTimeout(() => {
       setSubmitted(false);
       setError("");
+      setIsAutoPrompt(false);
     }, 300);
     try {
       window.dispatchEvent(new CustomEvent("feedback-modal-closed"));
@@ -372,6 +376,7 @@ export default function FeedbackModal() {
         type="button"
         className={`feedback-fab-trigger ${isLabelExpanded ? "label-expanded" : ""}`}
         onClick={() => {
+          setIsAutoPrompt(false);
           setIsOpen(true);
           setError("");
           fetchUserRating();
@@ -591,13 +596,15 @@ export default function FeedbackModal() {
                       )}
                     </button>
 
-                    <button
-                      type="button"
-                      className="feedback-skip-btn"
-                      onClick={handleClose}
-                    >
-                      Skip
-                    </button>
+                    {isAutoPrompt && (
+                      <button
+                        type="button"
+                        className="feedback-skip-btn"
+                        onClick={handleClose}
+                      >
+                        Skip
+                      </button>
+                    )}
                   </div>
                 </form>
               </>

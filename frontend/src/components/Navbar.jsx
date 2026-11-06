@@ -699,7 +699,7 @@ function Navbar() {
     localStorage.removeItem("pendingShloka");
 
     navigate("/login", {
-      state: null,
+      state: { fromMenu: true },
     });
   };
 
@@ -1245,7 +1245,11 @@ function Navbar() {
             className="side-menu-item side-menu-button"
             onClick={() => {
               setMenuOpen(false);
-              window.dispatchEvent(new CustomEvent("open-feedback-modal"));
+              window.dispatchEvent(
+                new CustomEvent("open-feedback-modal", {
+                  detail: { fromMenu: true },
+                })
+              );
             }}
           >
             <span className="side-menu-icon" style={{ color: "#f59e0b" }}>

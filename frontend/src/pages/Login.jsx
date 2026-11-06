@@ -99,6 +99,20 @@ function Login() {
   });
 
   // =====================================================
+  // SKIP BUTTON VISIBILITY
+  // =====================================================
+  // Only show Skip when user reached Login because of an action/feature click (or startup prompt)
+  // If user opened Login directly from the 3-dot menu or typed /login, do NOT show Skip!
+  const isFromMenu = location.state?.fromMenu === true;
+  const isFromActionOrRedirect = Boolean(
+    location.state?.from ||
+    location.state?.fromStartup ||
+    location.state?.message ||
+    authNotice
+  );
+  const showSkip = !isFromMenu && isFromActionOrRedirect;
+
+  // =====================================================
   // LOADING
   // =====================================================
 
@@ -544,18 +558,20 @@ setTimeout(() => {
 
 
         {/* =================================================
-            SKIP FOR NOW ACTION
+            SKIP FOR NOW ACTION (Only shown when redirected by an action/feature/startup)
         ================================================= */}
 
-        <div className="auth-skip-action">
-          <button
-            type="button"
-            className="auth-skip-btn"
-            onClick={handleSkip}
-          >
-            Skip
-          </button>
-        </div>
+        {showSkip && (
+          <div className="auth-skip-action">
+            <button
+              type="button"
+              className="auth-skip-btn"
+              onClick={handleSkip}
+            >
+              Skip
+            </button>
+          </div>
+        )}
 
 
         {/* =================================================
