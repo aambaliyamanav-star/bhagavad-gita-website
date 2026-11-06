@@ -622,56 +622,71 @@ body {
 
 /* SIDE MENU DRAWER SEGMENTED PILLS */
 .side-menu-lang-group {
-  margin: 10px 14px 6px;
-  padding: 10px 12px;
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 14px;
+  margin: 6px 8px 4px;
+  padding: 8px 10px;
+  background: rgba(255, 255, 255, 0.70);
+  border: 1px solid rgba(255, 255, 255, 0.90);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(20, 80, 180, 0.06);
 }
 
 [data-theme="dark"] .side-menu-lang-group {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(80, 150, 255, 0.18);
+  box-shadow: none;
 }
 
 .side-menu-lang-header {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
 }
 
 .side-lang-segmented-bar {
   display: flex;
   gap: 6px;
-  background: rgba(0, 0, 0, 0.12);
-  padding: 4px;
+  background: rgba(14, 64, 142, 0.08);
+  padding: 3px;
   border-radius: 10px;
+}
+
+[data-theme="dark"] .side-lang-segmented-bar {
+  background: rgba(0, 0, 0, 0.25);
 }
 
 .side-lang-seg-btn {
   flex: 1;
-  padding: 6px 4px;
+  padding: 5px 4px;
   font-size: 11.5px;
   font-weight: 600;
-  color: rgba(255, 255, 255, 0.75);
+  color: #1e3a8a;
   background: transparent;
   border: none;
-  border-radius: 8px;
+  border-radius: 7px;
   cursor: pointer;
   text-align: center;
   transition: all 0.2s ease;
   white-space: nowrap;
 }
 
+[data-theme="dark"] .side-lang-seg-btn {
+  color: #cbd5e1;
+}
+
 .side-lang-seg-btn:hover {
+  color: #1e40af;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+[data-theme="dark"] .side-lang-seg-btn:hover {
   color: #ffffff;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.10);
 }
 
 .side-lang-seg-btn.active {
-  background: #f59e0b;
-  color: #ffffff;
+  background: #f59e0b !important;
+  color: #ffffff !important;
   font-weight: 700;
   box-shadow: 0 2px 6px rgba(245, 158, 11, 0.35);
 }
@@ -1078,44 +1093,49 @@ body {
    CLOSE BUTTON â€” GLASS
    ========================================================= */
 
+.side-menu-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.side-menu-theme-btn,
 .side-menu-close {
   width: 42px;
   height: 42px;
-
   flex: 0 0 42px;
-
   border-radius: 12px;
-
-  border:
-    1px solid
-    rgba(255, 255, 255, 0.25);
-
-  background:
-    rgba(255, 255, 255, 0.10);
-
-  color: white;
-
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
   display: flex;
   align-items: center;
   justify-content: center;
-
   cursor: pointer;
-
+  padding: 0;
   transition:
-    transform 0.25s ease,
-    background 0.20s ease;
+    transform 0.24s cubic-bezier(0.16, 1, 0.3, 1),
+    background 0.20s ease,
+    box-shadow 0.20s ease;
 }
 
+.side-menu-theme-btn svg,
 .side-menu-close svg {
   display: block;
   flex-shrink: 0;
 }
 
-.side-menu-close:hover {
-  transform: rotate(90deg);
+.side-menu-theme-btn:hover {
+  transform: scale(1.10);
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
 
-  background:
-    rgba(255, 255, 255, 0.20);
+.side-menu-close:hover {
+  transform: rotate(90deg) scale(1.05);
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
 }
 
 
@@ -1980,6 +2000,7 @@ a:focus-visible {
     font-size: 18px;
   }
 
+  .side-menu-theme-btn,
   .side-menu-close {
     width: 38px;
     height: 38px;
@@ -2240,23 +2261,59 @@ a:focus-visible {
   max-width: 160px !important;
 }
 
+.side-menu-header-actions {
+  gap: 5px !important;
+}
+
+.side-menu-theme-btn,
 .side-menu-close {
   width: 26px !important;
   height: 26px !important;
   flex: 0 0 26px !important;
   border-radius: 7px !important;
   cursor: pointer !important;
+  padding: 0 !important;
   transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1), background 0.18s ease !important;
 }
 
+.side-menu-theme-btn svg,
 .side-menu-close svg {
   width: 14px !important;
   height: 14px !important;
 }
 
+.side-menu-theme-btn:hover {
+  transform: scale(1.12) !important;
+  background: rgba(255, 255, 255, 0.28) !important;
+}
+
 .side-menu-close:hover {
   transform: rotate(90deg) scale(1.1) !important;
   background: rgba(255, 255, 255, 0.25) !important;
+}
+
+/* Compact Language Group */
+.side-menu-lang-group {
+  margin: 1px 0 2px !important;
+  padding: 4px 6px !important;
+  border-radius: 8px !important;
+}
+
+.side-menu-lang-header {
+  margin-bottom: 3px !important;
+  gap: 6px !important;
+}
+
+.side-lang-segmented-bar {
+  padding: 2px !important;
+  gap: 3px !important;
+  border-radius: 6px !important;
+}
+
+.side-lang-seg-btn {
+  padding: 3px 2px !important;
+  font-size: 11px !important;
+  border-radius: 5px !important;
 }
 
 /* Content: naturally fits all options and auto-expands while centered */

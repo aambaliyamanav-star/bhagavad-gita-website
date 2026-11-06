@@ -964,19 +964,34 @@ function Navbar() {
           </div>
 
 
-          {/* CLOSE */}
+          {/* HEADER ACTIONS: THEME TOGGLE & CLOSE */}
+          <div className="side-menu-header-actions">
+            <button
+              type="button"
+              className="side-menu-theme-btn"
+              onClick={toggleTheme}
+              aria-label={theme === "light" ? "Switch to Dark Mode" : "Switch to Light Mode"}
+              title={theme === "light" ? txt("ડાર્ક મોડ", "ડાર્ક મોડ", "Dark Mode") : txt("લાઇટ મોડ", "લાઈટ મોડ", "Light Mode")}
+            >
+              {theme === "light" ? (
+                <Moon size={19} strokeWidth={2} />
+              ) : (
+                <Sun size={19} strokeWidth={2} />
+              )}
+            </button>
 
-          <button
-            type="button"
-            className="side-menu-close"
-            onClick={() =>
-              setMenuOpen(false)
-            }
-            aria-label={txt("મેનુ બંધ કરો", "मेनू बंद करें", "Close Menu")}
-            title={txt("બંધ કરો", "बंद करें", "Close")}
-          >
-            <X size={20} strokeWidth={2.2} />
-          </button>
+            <button
+              type="button"
+              className="side-menu-close"
+              onClick={() =>
+                setMenuOpen(false)
+              }
+              aria-label={txt("મેનુ બંધ કરો", "मेनू बंद करें", "Close Menu")}
+              title={txt("બંધ કરો", "बंद करें", "Close")}
+            >
+              <X size={20} strokeWidth={2.2} />
+            </button>
+          </div>
 
         </div>
 
@@ -988,455 +1003,14 @@ function Navbar() {
         <div className="side-menu-content">
 
           {/* =================================================
-              HOME
-          ================================================= */}
-
-          <Link
-            to="/"
-            className="side-menu-item"
-            onClick={
-              handleNormalNavigation
-            }
-          >
-
-            <span className="side-menu-icon">
-              <Home size={20} strokeWidth={1.8} />
-            </span>
-
-            <span className="side-menu-text">
-              <strong>
-                {txt("હોમ", "होम", "Home")}
-              </strong>
-            </span>
-
-            <span className="side-menu-arrow">
-              <ChevronRight size={18} strokeWidth={2} />
-            </span>
-
-          </Link>
-
-
-          {/* =================================================
-              18 CHAPTERS
-          ================================================= */}
-
-          <Link
-            to="/chapters"
-            className="side-menu-item"
-            onClick={
-              handleNormalNavigation
-            }
-          >
-
-            <span className="side-menu-icon">
-              <BookOpen size={20} strokeWidth={1.8} />
-            </span>
-
-            <span className="side-menu-text">
-              <strong>
-                {txt("18 અધ્યાય", "18 अध्याय", "18 Chapters")}
-              </strong>
-            </span>
-
-            <span className="side-menu-arrow">
-              <ChevronRight size={18} strokeWidth={2} />
-            </span>
-
-          </Link>
-
-
-          {/* =================================================
-              LIFE GUIDANCE
-          ================================================= */}
-
-          <button
-            type="button"
-            className="side-menu-item side-menu-button"
-            onClick={handleGuidanceNavigation}
-          >
-            <span className="side-menu-icon">
-              <Compass size={20} strokeWidth={1.8} />
-            </span>
-
-            <span className="side-menu-text">
-              <strong>
-                {txt("જીવન માર્ગદર્શન", "जीवन मार्गदर्शन", "Life Guidance")}
-              </strong>
-            </span>
-
-            <span className="side-menu-arrow">
-              <ChevronRight size={18} strokeWidth={2} />
-            </span>
-          </button>
-
-
-
-          {/* =================================================
-              FAVOURITES
-          ================================================= */}
-
-          <button
-            type="button"
-            className="side-menu-item side-menu-button"
-            onClick={() =>
-              handleProtectedNavigation(
-                "/favorites",
-                txt(
-                  "મનપસંદ શ્લોક જોવા માટે Login કરવું જરૂરી છે.",
-                  "पसंदीदा श्लोक देखने के लिए Login करना आवश्यक है।",
-                  "Login is required to view favorite shlokas."
-                )
-              )
-            }
-          >
-            <span className="side-menu-icon">
-              <Heart size={20} strokeWidth={1.8} />
-            </span>
-
-            <span className="side-menu-text">
-              <strong>
-                {txt("મનપસંદ શ્લોક", "पसंदीदा श्लोक", "Favorite Shlokas")}
-              </strong>
-            </span>
-
-            <span className="side-menu-arrow">
-              <ChevronRight size={18} strokeWidth={2} />
-            </span>
-          </button>
-
-
-          {/* =================================================
-              QUIZ
-          ================================================= */}
-
-          <button
-            type="button"
-            className="side-menu-item side-menu-button"
-            onClick={() =>
-              handleProtectedNavigation(
-                "/quiz-category",
-                txt(
-                  "Quiz રમવા માટે Login કરવું જરૂરી છે.",
-                  "Quiz खेलने के लिए Login करना आवश्यक है।",
-                  "Login is required to play the Quiz."
-                )
-              )
-            }
-          >
-            <span className="side-menu-icon">
-              <Brain size={20} strokeWidth={1.8} />
-            </span>
-
-            <span className="side-menu-text">
-              <strong>
-                {txt("ક્વિઝ (Quiz)", "क्विज़ (Quiz)", "Gita Quiz")}
-              </strong>
-            </span>
-
-            <span className="side-menu-arrow">
-              <ChevronRight size={18} strokeWidth={2} />
-            </span>
-          </button>
-
-
-          {/* =================================================
-              HISTORY
-          ================================================= */}
-
-          <button
-            type="button"
-            className="side-menu-item side-menu-button"
-            onClick={() =>
-              handleProtectedNavigation(
-                "/history",
-                txt(
-                  "તમારી History જોવા માટે Login કરવું જરૂરી છે.",
-                  "अपनी History देखने के लिए Login करना आवश्यक है।",
-                  "Login is required to view your reading history."
-                )
-              )
-            }
-          >
-            <span className="side-menu-icon">
-              <Clock size={20} strokeWidth={1.8} />
-            </span>
-
-            <span className="side-menu-text">
-              <strong>
-                {txt("ઇતિહાસ (History)", "इतिहास (History)", "Reading History")}
-              </strong>
-            </span>
-
-            <span className="side-menu-arrow">
-              <ChevronRight size={18} strokeWidth={2} />
-            </span>
-          </button>
-
-
-          {/* =================================================
-              PROFILE
-          ================================================= */}
-
-          <button
-            type="button"
-            className="side-menu-item side-menu-button"
-            onClick={() =>
-              handleProtectedNavigation(
-                "/profile",
-                txt(
-                  "તમારી Profile જોવા માટે Login કરવું જરૂરી છે.",
-                  "अपनी Profile देखने के लिए Login करना आवश्यक है।",
-                  "Login is required to view your profile."
-                )
-              )
-            }
-          >
-            <span className="side-menu-icon">
-              <CircleUser size={20} strokeWidth={1.8} />
-            </span>
-
-            <span className="side-menu-text">
-              <strong>
-                {txt("પ્રોફાઇલ (Profile)", "प्रोफ़ाइल (Profile)", "My Profile")}
-              </strong>
-            </span>
-
-            <span className="side-menu-arrow">
-              <ChevronRight size={18} strokeWidth={2} />
-            </span>
-          </button>
-
-
-          {/* =================================================
-              FEEDBACK & RATING
-          ================================================= */}
-
-          <button
-            type="button"
-            className="side-menu-item side-menu-button"
-            onClick={() => {
-              setMenuOpen(false);
-              window.dispatchEvent(new CustomEvent("open-feedback-modal"));
-            }}
-          >
-            <span className="side-menu-icon" style={{ color: "#f59e0b" }}>
-              <Star size={20} strokeWidth={1.8} fill="#f59e0b" />
-            </span>
-
-            <span className="side-menu-text">
-              <strong>
-                {txt("પ્રતિસાદ અને રેટિંગ", "प्रतिक्रिया और रेटिंग", "Feedback & Rating")}
-              </strong>
-            </span>
-
-            <span className="side-menu-arrow">
-              <ChevronRight size={18} strokeWidth={2} />
-            </span>
-          </button>
-
-
-          {/* =================================================
-              ABOUT US (અમારા વિશે)
-          ================================================= */}
-
-          <Link
-            to="/about"
-            className="side-menu-item"
-            onClick={handleNormalNavigation}
-          >
-            <span className="side-menu-icon" style={{ color: "#0284c7" }}>
-              <Info size={20} strokeWidth={1.8} />
-            </span>
-
-            <span className="side-menu-text">
-              <strong>
-                {txt("અમારા વિશે (About Us)", "हमारे बारे में (About Us)", "About Us")}
-              </strong>
-            </span>
-
-            <span className="side-menu-arrow">
-              <ChevronRight size={18} strokeWidth={2} />
-            </span>
-          </Link>
-
-
-          {/* =================================================
-              INSTALL APP (PWA) - Show in any browser outside standalone app
-          ================================================= */}
-
-          {!isStandaloneApp && (
-            <button
-              type="button"
-              className="side-menu-item side-menu-button install-app-menu-btn"
-              onClick={async () => {
-                setMenuOpen(false);
-                const res = await promptInstallApp();
-                if (res.alreadyInstalled) {
-                  alert(res.message);
-                  return;
-                }
-                if (!res.success) {
-                  // If not native prompt or iOS, open the install banner/guide modal
-                  window.dispatchEvent(new CustomEvent("open-pwa-install-banner"));
-                }
-              }}
-            >
-              <span className="side-menu-icon" style={{ color: "#10b981" }}>
-                <Download size={20} strokeWidth={1.8} />
-              </span>
-
-              <span className="side-menu-text">
-                <strong>
-                  {txt("એપ ઇન્સ્ટોલ કરો (Install App)", "ऐप इंस्टॉल करें (Install App)", "Install App")}
-                </strong>
-              </span>
-
-              <span className="side-menu-arrow">
-                <ChevronRight size={18} strokeWidth={2} />
-              </span>
-            </button>
-          )}
-
-          {/* =================================================
-              NOTIFICATION TOGGLE (Inside App Only)
-          ================================================= */}
-
-          {isStandaloneApp && (
-            <button
-              type="button"
-              className="side-menu-theme side-menu-notif-btn"
-              onClick={handleToggleNotification}
-              disabled={notifLoading}
-              aria-label="Toggle App Notifications"
-            >
-              <span className="theme-left">
-                <span
-                  className="theme-icon"
-                  style={{
-                    background: notifEnabled
-                      ? "rgba(16, 185, 129, 0.15)"
-                      : "rgba(148, 163, 184, 0.15)",
-                    color: notifEnabled ? "#10b981" : "#64748b",
-                  }}
-                >
-                  <Bell size={18} strokeWidth={1.8} />
-                </span>
-
-                <span className="side-menu-text">
-                  <strong>
-                    {notifEnabled
-                      ? txt("નોટિફિકેશન (ચાલુ)", "सूचना (चालू)", "Notifications (On)")
-                      : txt("નોટિફિકેશન (બંધ)", "सूचना (बंद)", "Notifications (Off)")}
-                  </strong>
-                </span>
-              </span>
-
-              <span className={`theme-switch ${notifEnabled ? "active-notif" : ""}`}>
-                <span
-                  className={`theme-switch-dot ${notifEnabled ? "active-notif" : ""}`}
-                />
-              </span>
-            </button>
-          )}
-
-
-
-          {/* =================================================
-              ADMIN
-          ================================================= */}
-
-          {user?.role === "admin" && (
-            <Link
-              to="/admin"
-              className="side-menu-item admin-menu-item"
-              onClick={
-                handleNormalNavigation
-              }
-            >
-              <span className="side-menu-icon">
-                <ShieldCheck size={20} strokeWidth={1.8} />
-              </span>
-
-              <span className="side-menu-text">
-                <strong>
-                  {txt("એડમિન પેનલ", "व्यवस्थापक (Admin)", "Admin Panel")}
-                </strong>
-              </span>
-
-              <span className="side-menu-arrow">
-                <ChevronRight size={18} strokeWidth={2} />
-              </span>
-            </Link>
-          )}
-
-
-          {/* =================================================
-              LOGIN
-          ================================================= */}
-
-          {!user && (
-            <button
-              type="button"
-              className="side-menu-item side-menu-button"
-              onClick={handleDirectLogin}
-            >
-              <span className="side-menu-icon">
-                <LogIn size={20} strokeWidth={1.8} />
-              </span>
-
-              <span className="side-menu-text">
-                <strong>
-                  {txt("લોગિન", "लॉगिन", "Login")}
-                </strong>
-              </span>
-
-              <span className="side-menu-arrow">
-                <ChevronRight size={18} strokeWidth={2} />
-              </span>
-            </button>
-          )}
-
-
-          {/* =================================================
-              REGISTER
-          ================================================= */}
-
-          {!user && (
-            <Link
-              to="/register"
-              className="side-menu-item"
-              onClick={
-                handleNormalNavigation
-              }
-            >
-
-              <span className="side-menu-icon">
-                <UserPlus size={20} strokeWidth={1.8} />
-              </span>
-
-              <span className="side-menu-text">
-                <strong>
-                  {txt("રજીસ્ટર", "रजिस्टर", "Register")}
-                </strong>
-              </span>
-
-              <span className="side-menu-arrow">
-                <ChevronRight size={18} strokeWidth={2} />
-              </span>
-
-            </Link>
-          )}
-
-
-          {/* =================================================
-              LANGUAGE SWITCH (3 OPTIONS)
+              1. LANGUAGE SWITCH (3 OPTIONS)
           ================================================= */}
 
           <div className="side-menu-lang-group">
             <div className="side-menu-lang-header">
               <span className="theme-left">
                 <span className="theme-icon">
-                  <Globe size={20} strokeWidth={1.8} />
+                  <Globe size={18} strokeWidth={1.8} />
                 </span>
 
                 <span className="side-menu-text">
@@ -1483,46 +1057,434 @@ function Navbar() {
 
 
           {/* =================================================
-              THEME
+              2. HOME
           ================================================= */}
 
-          <button
-            type="button"
-            className="side-menu-theme"
-            onClick={toggleTheme}
+          <Link
+            to="/"
+            className="side-menu-item"
+            onClick={
+              handleNormalNavigation
+            }
           >
 
-            <span className="theme-left">
+            <span className="side-menu-icon">
+              <Home size={20} strokeWidth={1.8} />
+            </span>
 
-              <span className="theme-icon">
-                {theme === "light"
-                  ? <Moon size={20} strokeWidth={1.8} />
-                  : <Sun size={20} strokeWidth={1.8} />}
+            <span className="side-menu-text">
+              <strong>
+                {txt("હોમ", "होम", "Home")}
+              </strong>
+            </span>
+
+            <span className="side-menu-arrow">
+              <ChevronRight size={18} strokeWidth={2} />
+            </span>
+
+          </Link>
+
+
+          {/* =================================================
+              3. 18 CHAPTERS
+          ================================================= */}
+
+          <Link
+            to="/chapters"
+            className="side-menu-item"
+            onClick={
+              handleNormalNavigation
+            }
+          >
+
+            <span className="side-menu-icon">
+              <BookOpen size={20} strokeWidth={1.8} />
+            </span>
+
+            <span className="side-menu-text">
+              <strong>
+                {txt("18 અધ્યાય", "18 अध्याय", "18 Chapters")}
+              </strong>
+            </span>
+
+            <span className="side-menu-arrow">
+              <ChevronRight size={18} strokeWidth={2} />
+            </span>
+
+          </Link>
+
+
+          {/* =================================================
+              4. ADMIN PANEL (Only for Admin)
+          ================================================= */}
+
+          {user?.role === "admin" && (
+            <Link
+              to="/admin"
+              className="side-menu-item admin-menu-item"
+              onClick={
+                handleNormalNavigation
+              }
+            >
+              <span className="side-menu-icon">
+                <ShieldCheck size={20} strokeWidth={1.8} />
               </span>
 
               <span className="side-menu-text">
                 <strong>
-                  {theme === "light"
-                    ? txt("ડાર્ક થીમ (Dark)", "डार्क थीम (Dark)", "Dark Theme")
-                    : txt("લાઇટ થીમ (Light)", "लाइट थीम (Light)", "Light Theme")}
+                  {txt("એડમિન પેનલ", "व्यवस्थापक (Admin)", "Admin Panel")}
                 </strong>
               </span>
 
+              <span className="side-menu-arrow">
+                <ChevronRight size={18} strokeWidth={2} />
+              </span>
+            </Link>
+          )}
+
+
+          {/* =================================================
+              5. FAVOURITES
+          ================================================= */}
+
+          <button
+            type="button"
+            className="side-menu-item side-menu-button"
+            onClick={() =>
+              handleProtectedNavigation(
+                "/favorites",
+                txt(
+                  "મનપસંદ શ્લોક જોવા માટે Login કરવું જરૂરી છે.",
+                  "पसंदीदा श्लोक देखने के लिए Login करना आवश्यक है।",
+                  "Login is required to view favorite shlokas."
+                )
+              )
+            }
+          >
+            <span className="side-menu-icon">
+              <Heart size={20} strokeWidth={1.8} />
             </span>
 
-            <span className="theme-switch">
-
-              <span
-                className={
-                  theme === "dark"
-                    ? "theme-switch-dot dark"
-                    : "theme-switch-dot"
-                }
-              />
-
+            <span className="side-menu-text">
+              <strong>
+                {txt("મનપસંદ શ્લોક", "पसंदीदा श्लोक", "Favorite Shlokas")}
+              </strong>
             </span>
 
+            <span className="side-menu-arrow">
+              <ChevronRight size={18} strokeWidth={2} />
+            </span>
           </button>
+
+
+          {/* =================================================
+              6. LIFE GUIDANCE
+          ================================================= */}
+
+          <button
+            type="button"
+            className="side-menu-item side-menu-button"
+            onClick={handleGuidanceNavigation}
+          >
+            <span className="side-menu-icon">
+              <Compass size={20} strokeWidth={1.8} />
+            </span>
+
+            <span className="side-menu-text">
+              <strong>
+                {txt("જીવન માર્ગદર્શન", "जीवन मार्गदर्शन", "Life Guidance")}
+              </strong>
+            </span>
+
+            <span className="side-menu-arrow">
+              <ChevronRight size={18} strokeWidth={2} />
+            </span>
+          </button>
+
+
+          {/* =================================================
+              7. QUIZ
+          ================================================= */}
+
+          <button
+            type="button"
+            className="side-menu-item side-menu-button"
+            onClick={() =>
+              handleProtectedNavigation(
+                "/quiz-category",
+                txt(
+                  "Quiz રમવા માટે Login કરવું જરૂરી છે.",
+                  "Quiz खेलने के लिए Login करना आवश्यक है।",
+                  "Login is required to play the Quiz."
+                )
+              )
+            }
+          >
+            <span className="side-menu-icon">
+              <Brain size={20} strokeWidth={1.8} />
+            </span>
+
+            <span className="side-menu-text">
+              <strong>
+                {txt("ક્વિઝ (Quiz)", "क्विज़ (Quiz)", "Gita Quiz")}
+              </strong>
+            </span>
+
+            <span className="side-menu-arrow">
+              <ChevronRight size={18} strokeWidth={2} />
+            </span>
+          </button>
+
+
+          {/* =================================================
+              8. FEEDBACK & RATING
+          ================================================= */}
+
+          <button
+            type="button"
+            className="side-menu-item side-menu-button"
+            onClick={() => {
+              setMenuOpen(false);
+              window.dispatchEvent(new CustomEvent("open-feedback-modal"));
+            }}
+          >
+            <span className="side-menu-icon" style={{ color: "#f59e0b" }}>
+              <Star size={20} strokeWidth={1.8} fill="#f59e0b" />
+            </span>
+
+            <span className="side-menu-text">
+              <strong>
+                {txt("પ્રતિસાદ અને રેટિંગ", "प्रतिक्रिया और रेटिंग", "Feedback & Rating")}
+              </strong>
+            </span>
+
+            <span className="side-menu-arrow">
+              <ChevronRight size={18} strokeWidth={2} />
+            </span>
+          </button>
+
+
+          {/* =================================================
+              9. INSTALL APP (PWA)
+          ================================================= */}
+
+          {!isStandaloneApp && (
+            <button
+              type="button"
+              className="side-menu-item side-menu-button install-app-menu-btn"
+              onClick={async () => {
+                setMenuOpen(false);
+                const res = await promptInstallApp();
+                if (res.alreadyInstalled) {
+                  alert(res.message);
+                  return;
+                }
+                if (!res.success) {
+                  // If not native prompt or iOS, open the install banner/guide modal
+                  window.dispatchEvent(new CustomEvent("open-pwa-install-banner"));
+                }
+              }}
+            >
+              <span className="side-menu-icon" style={{ color: "#10b981" }}>
+                <Download size={20} strokeWidth={1.8} />
+              </span>
+
+              <span className="side-menu-text">
+                <strong>
+                  {txt("એપ ઇન્સ્ટોલ કરો (Install App)", "ऐप इंस्टॉल करें (Install App)", "Install App")}
+                </strong>
+              </span>
+
+              <span className="side-menu-arrow">
+                <ChevronRight size={18} strokeWidth={2} />
+              </span>
+            </button>
+          )}
+
+          {/* Standalone Notification Toggle (Inside App Only) */}
+          {isStandaloneApp && (
+            <button
+              type="button"
+              className="side-menu-theme side-menu-notif-btn"
+              onClick={handleToggleNotification}
+              disabled={notifLoading}
+              aria-label="Toggle App Notifications"
+            >
+              <span className="theme-left">
+                <span
+                  className="theme-icon"
+                  style={{
+                    background: notifEnabled
+                      ? "rgba(16, 185, 129, 0.15)"
+                      : "rgba(148, 163, 184, 0.15)",
+                    color: notifEnabled ? "#10b981" : "#64748b",
+                  }}
+                >
+                  <Bell size={18} strokeWidth={1.8} />
+                </span>
+
+                <span className="side-menu-text">
+                  <strong>
+                    {notifEnabled
+                      ? txt("નોટિફિકેશન (ચાલુ)", "सूचना (चालू)", "Notifications (On)")
+                      : txt("નોટિફિકેશન (બંધ)", "सूचना (बंद)", "Notifications (Off)")}
+                  </strong>
+                </span>
+              </span>
+
+              <span className={`theme-switch ${notifEnabled ? "active-notif" : ""}`}>
+                <span
+                  className={`theme-switch-dot ${notifEnabled ? "active-notif" : ""}`}
+                />
+              </span>
+            </button>
+          )}
+
+
+          {/* =================================================
+              10. ABOUT US (અમારા વિશે)
+          ================================================= */}
+
+          <Link
+            to="/about"
+            className="side-menu-item"
+            onClick={handleNormalNavigation}
+          >
+            <span className="side-menu-icon" style={{ color: "#0284c7" }}>
+              <Info size={20} strokeWidth={1.8} />
+            </span>
+
+            <span className="side-menu-text">
+              <strong>
+                {txt("અમારા વિશે (About Us)", "हमारे बारे में (About Us)", "About Us")}
+              </strong>
+            </span>
+
+            <span className="side-menu-arrow">
+              <ChevronRight size={18} strokeWidth={2} />
+            </span>
+          </Link>
+
+
+          {/* =================================================
+              11. HISTORY
+          ================================================= */}
+
+          <button
+            type="button"
+            className="side-menu-item side-menu-button"
+            onClick={() =>
+              handleProtectedNavigation(
+                "/history",
+                txt(
+                  "તમારી History જોવા માટે Login કરવું જરૂરી છે.",
+                  "अपनी History देखने के लिए Login करना आवश्यक है।",
+                  "Login is required to view your reading history."
+                )
+              )
+            }
+          >
+            <span className="side-menu-icon">
+              <Clock size={20} strokeWidth={1.8} />
+            </span>
+
+            <span className="side-menu-text">
+              <strong>
+                {txt("ઇતિહાસ (History)", "इतिहास (History)", "Reading History")}
+              </strong>
+            </span>
+
+            <span className="side-menu-arrow">
+              <ChevronRight size={18} strokeWidth={2} />
+            </span>
+          </button>
+
+
+          {/* =================================================
+              12. PROFILE
+          ================================================= */}
+
+          <button
+            type="button"
+            className="side-menu-item side-menu-button"
+            onClick={() =>
+              handleProtectedNavigation(
+                "/profile",
+                txt(
+                  "તમારી Profile જોવા માટે Login કરવું જરૂરી છે.",
+                  "अपनी Profile देखने के लिए Login करना आवश्यक है।",
+                  "Login is required to view your profile."
+                )
+              )
+            }
+          >
+            <span className="side-menu-icon">
+              <CircleUser size={20} strokeWidth={1.8} />
+            </span>
+
+            <span className="side-menu-text">
+              <strong>
+                {txt("પ્રોફાઇલ (Profile)", "प्रोफ़ाइल (Profile)", "My Profile")}
+              </strong>
+            </span>
+
+            <span className="side-menu-arrow">
+              <ChevronRight size={18} strokeWidth={2} />
+            </span>
+          </button>
+
+
+          {/* =================================================
+              LOGIN & REGISTER (For Guest Users)
+          ================================================= */}
+
+          {!user && (
+            <button
+              type="button"
+              className="side-menu-item side-menu-button"
+              onClick={handleDirectLogin}
+            >
+              <span className="side-menu-icon">
+                <LogIn size={20} strokeWidth={1.8} />
+              </span>
+
+              <span className="side-menu-text">
+                <strong>
+                  {txt("લોગિન", "लॉगिन", "Login")}
+                </strong>
+              </span>
+
+              <span className="side-menu-arrow">
+                <ChevronRight size={18} strokeWidth={2} />
+              </span>
+            </button>
+          )}
+
+          {!user && (
+            <Link
+              to="/register"
+              className="side-menu-item"
+              onClick={
+                handleNormalNavigation
+              }
+            >
+
+              <span className="side-menu-icon">
+                <UserPlus size={20} strokeWidth={1.8} />
+              </span>
+
+              <span className="side-menu-text">
+                <strong>
+                  {txt("રજીસ્ટર", "रजिस्टर", "Register")}
+                </strong>
+              </span>
+
+              <span className="side-menu-arrow">
+                <ChevronRight size={18} strokeWidth={2} />
+              </span>
+
+            </Link>
+          )}
 
 
           {/* =================================================
@@ -1548,7 +1510,6 @@ function Navbar() {
           )}
 
         </div>
-
 
         {/* =================================================
             MENU FOOTER
