@@ -16,6 +16,7 @@ import { useLanguage } from "../context/LanguageContext.jsx";
 import { trackShlokaRead, getFirstUnreadShloka, getLocalProgress } from "../utils/readingTracker.js";
 import { saveChapterOffline, getChapterOffline } from "../utils/offlineStorage.js";
 import { saveAudioToCache, getAudioFromCache, isAudioInCache, autoSyncChapterAudios, stopAudioSync } from "../utils/audioCache.js";
+import { isRunningInStandaloneApp } from "../utils/pwaManager.js";
 
 function ChapterReader() {
   const { chapterNumber } = useParams();
@@ -1821,10 +1822,11 @@ if (
     userRef.current = user;
   }, [user]);
 
-  // Quiet background auto-download of Neural TTS audios for this chapter into IndexedDB
+  // Quiet background auto-download of Neural TTS audios for this chapter into IndexedDB (In App Only!)
   // Automatically saves audio in background so the user does NOT need to listen to it online!
   useEffect(() => {
     if (typeof window === "undefined" || !navigator.onLine) return;
+    if (!isRunningInStandaloneApp()) return;
     if (!shlokas || shlokas.length === 0) return;
 
     const currentLang = isEnglish ? "en" : isHindi ? "hi" : "gu";
@@ -2500,7 +2502,7 @@ const prepareSanskritLines = () => {
             <span className="cr-offline-dot"></span>
             {txt("ઑફલાઇન વાંચન", "ऑफ़लाइन पठन", "Offline Reading")}
           </div>
-        ) : audioSyncProgress.total > 0 ? (
+        ) : typeof window !== "undefined" && isRunningInStandaloneApp() && audioSyncProgress.total > 0 ? (
           <div
             className={`cr-audio-sync-pill ${audioSyncProgress.done ? "ready" : "syncing"}`}
             title={
@@ -2510,21 +2512,15 @@ const prepareSanskritLines = () => {
             }
           >
             {audioSyncProgress.done ? (
-              <>
-                <CheckCircle2 size={12} />
-                <span>{txt("ઑડિયો ઑફલાઇન તૈયાર", "ऑडियो ऑफ़लाइन तैयार", "Audio Offline Ready")}</span>
-              </>
+              <span>{txt("ઑડિયો ઑફલાઇન તૈયાર", "ऑडियो ऑफ़लाइन तैयार", "Audio Offline Ready")}</span>
             ) : (
-              <>
-                <Loader2 size={12} className="spin" />
-                <span>
-                  {txt(
-                    `ઑડિયો સેવ થાય છે (${audioSyncProgress.current}/${audioSyncProgress.total})`,
-                    `ऑडियो सहेजा जा रहा है (${audioSyncProgress.current}/${audioSyncProgress.total})`,
-                    `Saving Audio (${audioSyncProgress.current}/${audioSyncProgress.total})`
-                  )}
-                </span>
-              </>
+              <span>
+                {txt(
+                  `ઑડિયો સેવ થાય છે (${audioSyncProgress.current}/${audioSyncProgress.total})`,
+                  `ऑडियो सहेजा जा रहा है (${audioSyncProgress.current}/${audioSyncProgress.total})`,
+                  `Saving Audio (${audioSyncProgress.current}/${audioSyncProgress.total})`
+                )}
+              </span>
             )}
           </div>
         ) : null}

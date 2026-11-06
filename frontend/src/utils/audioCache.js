@@ -3,6 +3,8 @@
 // Automatically downloads & saves Neural TTS audio for 100% offline playback
 // =========================================================
 
+import { isRunningInStandaloneApp } from "./pwaManager.js";
+
 const DB_NAME = "GitaAudioCacheDB";
 const DB_VERSION = 1;
 const STORE_NAME = "audio_blobs";
@@ -51,10 +53,11 @@ export function buildAudioKey(chapterNumber, shlokNumber, type, lang) {
 }
 
 /**
- * Save an audio Blob into IndexedDB
+ * Save an audio Blob into IndexedDB (In App Only!)
  */
 export async function saveAudioToCache(chapterNumber, shlokNumber, type, lang, blob) {
   if (!chapterNumber || !shlokNumber || !type || !blob) return false;
+  if (typeof window === "undefined" || !isRunningInStandaloneApp()) return false;
   try {
     const db = await openDB();
     const id = buildAudioKey(chapterNumber, shlokNumber, type, lang);
@@ -313,10 +316,11 @@ export async function getChapterCachedAudioCount(chapterNumber, shlokas, lang = 
 }
 
 /**
- * Pre-cache Sanskrit, Translation, and Message audio for a single shloka
+ * Pre-cache Sanskrit, Translation, and Message audio for a single shloka (In App Only!)
  */
 export async function cacheSingleShlokaAudio(chapterNumber, shlokaObj, lang = "gu") {
   if (!chapterNumber || !shlokaObj || typeof window === "undefined" || !navigator.onLine) return false;
+  if (!isRunningInStandaloneApp()) return false;
   const sNum = Number(shlokaObj.shlokNumber);
   if (!sNum) return false;
 
@@ -397,6 +401,7 @@ export async function autoSyncChapterAudios(
   onProgress = null
 ) {
   if (typeof window === "undefined" || !navigator.onLine) return;
+  if (!isRunningInStandaloneApp()) return;
   if (!Array.isArray(shlokas) || shlokas.length === 0) return;
 
   if (activeSyncController) {

@@ -6,6 +6,7 @@
 
 import { getValidToken } from "./authHelper.js";
 import { autoSyncChapterAudios } from "./audioCache.js";
+import { isRunningInStandaloneApp } from "./pwaManager.js";
 
 const API_BASE = "https://bhagavad-gita-backend-jy1a.onrender.com/api/shloks";
 
@@ -210,15 +211,17 @@ export async function downloadAllChaptersOffline(onProgress = null) {
     await new Promise((r) => setTimeout(r, 60));
   }
 
-  // After saving shlokas text, automatically start background audio sync for Chapter 1
-  try {
-    const ch1 = getChapterOffline(1);
-    if (ch1 && Array.isArray(ch1.shlokas)) {
-      setTimeout(() => {
-        autoSyncChapterAudios(1, ch1.shlokas, "gu");
-      }, 600);
-    }
-  } catch (e) {}
+  // After saving shlokas text, automatically start background audio sync for Chapter 1 (in App only)
+  if (isRunningInStandaloneApp()) {
+    try {
+      const ch1 = getChapterOffline(1);
+      if (ch1 && Array.isArray(ch1.shlokas)) {
+        setTimeout(() => {
+          autoSyncChapterAudios(1, ch1.shlokas, "gu");
+        }, 600);
+      }
+    } catch (e) {}
+  }
 
   return {
     success: results.length > 0,

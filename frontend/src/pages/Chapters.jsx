@@ -5,6 +5,7 @@ import { useAuth } from "../context/AuthContext.jsx";
 import { getValidToken } from "../utils/authHelper.js";
 import { useLanguage } from "../context/LanguageContext.jsx";
 import { downloadAllChaptersOffline, getOfflineStatusSummary } from "../utils/offlineStorage.js";
+import { isRunningInStandaloneApp } from "../utils/pwaManager.js";
 import "./Chapters.css";
 
 const chapterNamesHi = {
@@ -80,6 +81,13 @@ function Chapters() {
   const [offlineStatus, setOfflineStatus] = useState(() => getOfflineStatusSummary());
   const [downloadingOffline, setDownloadingOffline] = useState(false);
   const [downloadProgress, setDownloadProgress] = useState(0);
+  const [isStandaloneApp, setIsStandaloneApp] = useState(() =>
+    typeof window !== "undefined" ? isRunningInStandaloneApp() : false
+  );
+
+  useEffect(() => {
+    setIsStandaloneApp(isRunningInStandaloneApp());
+  }, []);
 
   const handleDownloadOffline = async () => {
     const token = getValidToken();
@@ -123,7 +131,8 @@ function Chapters() {
         setDownloadProgress(prog.percent);
       });
       if (res.success) {
-        setOfflineStatus(getOfflineStatusSummary());
+        const updated = getOfflineStatusSummary();
+        setOfflineStatus({ ...updated, isFullyCached: true });
       } else if (res.requireLogin) {
         navigate("/login");
       }
@@ -209,68 +218,59 @@ function Chapters() {
           {txt("ભગવદ્ ગીતાના 18 અધ્યાય", "भगवद् गीता के 18 अध्याय", "18 Chapters of Bhagavad Gita")}
         </h1>
 
-        <div className="offline-download-bar">
-          {offlineStatus.isFullyCached ? (
-            <div className="offline-ready-badge">
-              <CheckCircle2 size={16} />
-              <span>
-                {txt(
-                  "તમામ ૧૮ અધ્યાય ઑફલાઇન સેવ કરેલા છે (નેટ વગર વાંચી શકાશે)",
-                  "सभी 18 अध्याय ऑफ़लाइन सहेजे गए हैं (बिना इंटरनेट पढ़ सकते हैं)",
-                  "All 18 chapters saved offline (accessible without internet)"
-                )}
-              </span>
-            </div>
-          ) : downloadingOffline ? (
-            <div className="offline-downloading-box">
-              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                <Loader2 size={16} className="spinner" />
+        {isStandaloneApp && !offlineStatus.isFullyCached && (
+          <div className="offline-download-bar">
+            {downloadingOffline ? (
+              <div className="offline-downloading-box">
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <Loader2 size={16} className="spinner" />
+                  <span>
+                    {txt(
+                      `ઑફલાઇન ડાઉનલોડ થઈ રહ્યું છે... ${downloadProgress}%`,
+                      `ऑफ़लाइन डाउनलोड हो रहा है... ${downloadProgress}%`,
+                      `Downloading offline... ${downloadProgress}%`
+                    )}
+                  </span>
+                </div>
+                <div className="offline-progress-track">
+                  <div
+                    className="offline-progress-bar"
+                    style={{ width: `${downloadProgress}%` }}
+                  />
+                </div>
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="offline-download-btn"
+                onClick={handleDownloadOffline}
+                title={
+                  !user
+                    ? txt("Login જરૂરી છે", "Login आवश्यक है", "Login required")
+                    : txt(
+                        "બધા ૧૮ અધ્યાય નેટ વગર વાંચવા માટે ફોનમાં સેવ કરો",
+                        "सभी 18 अध्याय बिना इंटरनेट पढ़ने के लिए फोन में सहेजें",
+                        "Save all 18 chapters offline for instant access"
+                      )
+                }
+              >
+                {!user ? <Lock size={15} /> : <Download size={15} />}
                 <span>
                   {txt(
-                    `ઑફલાઇન ડાઉનલોડ થઈ રહ્યું છે... ${downloadProgress}%`,
-                    `ऑफ़लाइन डाउनलोड हो रहा है... ${downloadProgress}%`,
-                    `Downloading offline... ${downloadProgress}%`
+                    "બધા ૧૮ અધ્યાય ઑફલાઇન ડાઉનલોડ કરો",
+                    "सभी 18 अध्याय ऑफ़लाइन डाउनलोड करें",
+                    "Download All 18 Chapters Offline"
+                  )}
+                  {!user && (
+                    <span style={{ fontSize: "11px", opacity: 0.88, marginLeft: "6px" }}>
+                      ({txt("Login જરૂરી", "Login आवश्यक", "Login required")})
+                    </span>
                   )}
                 </span>
-              </div>
-              <div className="offline-progress-track">
-                <div
-                  className="offline-progress-bar"
-                  style={{ width: `${downloadProgress}%` }}
-                />
-              </div>
-            </div>
-          ) : (
-            <button
-              type="button"
-              className="offline-download-btn"
-              onClick={handleDownloadOffline}
-              title={
-                !user
-                  ? txt("Login જરૂરી છે", "Login आवश्यक है", "Login required")
-                  : txt(
-                      "બધા ૧૮ અધ્યાય નેટ વગર વાંચવા માટે ફોનમાં સેવ કરો",
-                      "सभी 18 अध्याय बिना इंटरनेट पढ़ने के लिए फोन में सहेजें",
-                      "Save all 18 chapters offline for instant access"
-                    )
-              }
-            >
-              {!user ? <Lock size={15} /> : <Download size={15} />}
-              <span>
-                {txt(
-                  "બધા ૧૮ અધ્યાય ઑફલાઇન ડાઉનલોડ કરો",
-                  "सभी 18 अध्याय ऑफ़लाइन डाउनलोड करें",
-                  "Download All 18 Chapters Offline"
-                )}
-                {!user && (
-                  <span style={{ fontSize: "11px", opacity: 0.88, marginLeft: "6px" }}>
-                    ({txt("Login જરૂરી", "Login आवश्यक", "Login required")})
-                  </span>
-                )}
-              </span>
-            </button>
-          )}
-        </div>
+              </button>
+            )}
+          </div>
+        )}
       </section>
 
 
