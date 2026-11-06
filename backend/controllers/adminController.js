@@ -75,6 +75,36 @@ const getAllUsers = async (req, res) => {
       };
     });
 
+    const getSuperAdminRank = (u) => {
+      const email = (u.email || "").toLowerCase().trim();
+      if (email === "gitagyanm700@gmail.com") return 1;
+      if (email === "aambaliyamanav@gmail.com") return 2;
+      if (u.isSuperAdmin) return 3;
+      return 99;
+    };
+
+    usersWithVisits.sort((a, b) => {
+      const rankA = getSuperAdminRank(a);
+      const rankB = getSuperAdminRank(b);
+
+      // 1. Super Admins always come first in fixed order (#1 gitagyanm700, #2 aambaliyamanav)
+      if (rankA !== rankB) {
+        return rankA - rankB;
+      }
+
+      // 2. Sub-admins come next before regular users
+      const isSubAdminA = a.role === "admin" && rankA === 99;
+      const isSubAdminB = b.role === "admin" && rankB === 99;
+
+      if (isSubAdminA && !isSubAdminB) return -1;
+      if (!isSubAdminA && isSubAdminB) return 1;
+
+      // 3. Within sub-admins OR within regular users, sort alphabetically A-Z by name
+      const nameA = (a.name || "").trim().toLowerCase();
+      const nameB = (b.name || "").trim().toLowerCase();
+      return nameA.localeCompare(nameB, "gu", { sensitivity: "base" });
+    });
+
     res.json({
       success: true,
       count: usersWithVisits.length,

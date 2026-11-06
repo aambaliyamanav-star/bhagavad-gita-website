@@ -6,6 +6,7 @@ import { useAuth } from "../context/AuthContext.jsx";
 import { useLanguage } from "../context/LanguageContext.jsx";
 import {
   Shield,
+  Crown,
   LogOut,
   BookOpen,
   BrainCircuit,
@@ -778,6 +779,14 @@ function Admin() {
   // SEARCH + ADMIN ALWAYS #1
   // =====================================================
 
+  const getSuperAdminRank = (user) => {
+    const email = (user?.email || "").toLowerCase().trim();
+    if (email === "gitagyanm700@gmail.com") return 1;
+    if (email === "aambaliyamanav@gmail.com") return 2;
+    if (isSuperAdminUser(user)) return 3;
+    return 99;
+  };
+
   const filteredUsers = users
     .filter((user) => {
       const searchText =
@@ -808,23 +817,25 @@ function Admin() {
       );
     })
     .sort((a, b) => {
-      // Admin always comes first
-      if (
-        a.role === "admin" &&
-        b.role !== "admin"
-      ) {
-        return -1;
+      const rankA = getSuperAdminRank(a);
+      const rankB = getSuperAdminRank(b);
+
+      // 1. Super Admins always come first in fixed order (#1 gitagyanm700, #2 aambaliyamanav)
+      if (rankA !== rankB) {
+        return rankA - rankB;
       }
 
-      if (
-        a.role !== "admin" &&
-        b.role === "admin"
-      ) {
-        return 1;
-      }
+      // 2. Sub-admins come next before regular users
+      const isSubAdminA = a.role === "admin" && rankA === 99;
+      const isSubAdminB = b.role === "admin" && rankB === 99;
 
-      // Keep remaining users in their original order
-      return 0;
+      if (isSubAdminA && !isSubAdminB) return -1;
+      if (!isSubAdminA && isSubAdminB) return 1;
+
+      // 3. Within sub-admins OR within regular users, sort alphabetically A-Z by name
+      const nameA = (a.name || "").trim().toLowerCase();
+      const nameB = (b.name || "").trim().toLowerCase();
+      return nameA.localeCompare(nameB, "gu", { sensitivity: "base" });
     });
 
   return (
@@ -2298,18 +2309,43 @@ function Admin() {
 
                   <tbody>
 
-                    {filteredUsers.map(
-                      (user, index) => (
+                    {filteredUsers.map((user, index) => {
+                      const isSuper = isSuperAdminUser(user);
+                      const isSubAdmin = user.role === "admin" && !isSuper;
+                      const isMainSuper = (user.email || "").toLowerCase() === "gitagyanm700@gmail.com";
+                      const isCoSuper = (user.email || "").toLowerCase() === "aambaliyamanav@gmail.com";
 
-                        <tr key={user._id}>
-
-                          <td>
-                            {index + 1}
+                      return (
+                        <tr
+                          key={user._id}
+                          className={`user-row ${
+                            isSuper
+                              ? "user-row-super-admin"
+                              : isSubAdmin
+                              ? "user-row-admin"
+                              : "user-row-regular"
+                          }`}
+                        >
+                          <td className="user-index-cell">
+                            {isSuper ? (
+                              <span className="super-admin-index-pill" title={isMainSuper ? "મુખ્ય સુપર એડમિન (#1)" : "સુપર એડમિન (#2)"}>
+                                <Crown size={12} className="super-admin-crown-icon" />
+                                {index + 1}
+                              </span>
+                            ) : (
+                              index + 1
+                            )}
                           </td>
 
-
                           <td className="user-name">
-                            {user.name}
+                            <div className="user-name-wrapper">
+                              <span>{user.name}</span>
+                              {isSuper && (
+                                <span className="super-admin-name-tag" title="મુખ્ય સંચાલક (Owner)">
+                                  👑 {isMainSuper ? "Master Owner" : "Co-Owner"}
+                                </span>
+                              )}
+                            </div>
                           </td>
 
 
@@ -2349,10 +2385,15 @@ function Admin() {
 
 
                           <td>
-                            {isSuperAdminUser(user) ? (
-                              <span className="role super-admin-role" title="મુખ્ય સુપર એડમિન (Super Admin)">
-                                👑 Super Admin
-                              </span>
+                            {isSuper ? (
+                              <div className="super-admin-role-box">
+                                <span className="role super-admin-role" title="સર્વોચ્ચ સુપર એડમિન (Super Admin)">
+                                  👑 Super Admin
+                                </span>
+                                <span className="super-admin-sub-tag">
+                                  {isMainSuper ? "સર્વોચ્ચ સંચાલક" : "સહ-સંચાલક"}
+                                </span>
+                              </div>
                             ) : user.role === "admin" ? (
                               <div className="admin-role-badge-group">
                                 <span className="role admin-role">
@@ -2403,9 +2444,9 @@ function Admin() {
 
 
                           <td>
-                            {isSuperAdminUser(user) ? (
-                              <span className="protected-user">
-                                <Lock className="btn-icon" size={15} /> Owner
+                            {isSuper ? (
+                              <span className="protected-user super-admin-protected-badge" title="મુખ્ય ઓનર - સુરક્ષિત એકાઉન્ટ">
+                                <Lock className="btn-icon" size={14} /> Owner
                               </span>
                             ) : (user._id === loggedInUser?._id || user._id === loggedInUser?.id) ? (
                               <span className="protected-user" style={{ color: "#3b82f6" }}>
@@ -2470,9 +2511,8 @@ function Admin() {
                           </td>
 
                         </tr>
-
-                      )
-                    )}
+                      );
+                    })}
 
                   </tbody>
 
