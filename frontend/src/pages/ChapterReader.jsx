@@ -728,33 +728,18 @@ const response = await fetch(
       }
     };
 
-    // Main timer: fires silently after 50s to record the read
+    // Main timer: fires silently ONLY after full 50 seconds to record the read
     mainTimerId = setTimeout(() => {
       if (document.visibilityState === "visible") {
         markAsRead();
       }
     }, READ_TIME_MS);
 
-    // Save on tab close or page hide if user stayed at least 10 seconds
-    const handleBeforeUnloadOrHide = () => {
-      const elapsed = Date.now() - startTime;
-      if (elapsed >= 10_000) {
-        markAsRead();
-      }
-    };
-
-    window.addEventListener("pagehide", handleBeforeUnloadOrHide);
-    window.addEventListener("beforeunload", handleBeforeUnloadOrHide);
-
     // Pause timer when tab is hidden; resume when visible again
     const handleVisibilityChange = () => {
       if (document.hidden) {
         pausedAt = Date.now();
         clearTimeout(mainTimerId);
-        const elapsed = Date.now() - startTime;
-        if (elapsed >= 10_000) {
-          markAsRead();
-        }
       } else {
         if (pausedAt !== null) {
           const elapsedBeforePause = pausedAt - startTime;
@@ -772,17 +757,10 @@ const response = await fetch(
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
-    // Cleanup: user moved away
+    // Cleanup: user moved away before 50 seconds → cancel timer (does NOT mark as read)
     return () => {
       clearTimeout(mainTimerId);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
-      window.removeEventListener("pagehide", handleBeforeUnloadOrHide);
-      window.removeEventListener("beforeunload", handleBeforeUnloadOrHide);
-      // If user spent at least 8 seconds reading this shloka before advancing, mark as read
-      const elapsed = Date.now() - startTime;
-      if (elapsed >= 8_000) {
-        markAsRead();
-      }
     };
   }, [
     currentShloka,
