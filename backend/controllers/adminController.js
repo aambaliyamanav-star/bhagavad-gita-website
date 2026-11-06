@@ -1,7 +1,15 @@
 const User = require("../models/User");
 const Visitor = require("../models/Visitor");
 
-const SUPER_ADMIN_EMAIL = "gitagyanm700@gmail.com";
+const SUPER_ADMIN_EMAILS = [
+  "gitagyanm700@gmail.com",
+  "aambaliyamanav@gmail.com",
+];
+
+const isSuperAdminEmail = (email) => {
+  if (!email) return false;
+  return SUPER_ADMIN_EMAILS.includes(email.toLowerCase());
+};
 
 // =====================================================
 // GET ALL USERS
@@ -52,7 +60,7 @@ const getAllUsers = async (req, res) => {
     const usersWithVisits = users.map((u) => {
       const isSuper =
         u.isSuperAdmin ||
-        (u.email && u.email.toLowerCase() === SUPER_ADMIN_EMAIL);
+        isSuperAdminEmail(u.email);
 
       return {
         ...u,
@@ -102,7 +110,7 @@ const deleteUser = async (req, res) => {
     // Super Admin cannot be deleted
     if (
       targetUser.isSuperAdmin ||
-      (targetUser.email && targetUser.email.toLowerCase() === SUPER_ADMIN_EMAIL)
+      isSuperAdminEmail(targetUser.email)
     ) {
       return res.status(403).json({
         message: "મુખ્ય સુપર એડમિન (Super Admin) એકાઉન્ટને ડિલીટ કરી શકાતું નથી.",
@@ -115,7 +123,7 @@ const deleteUser = async (req, res) => {
       const isRequesterSuper =
         requester &&
         (requester.isSuperAdmin ||
-          (requester.email && requester.email.toLowerCase() === SUPER_ADMIN_EMAIL));
+          isSuperAdminEmail(requester.email));
 
       if (!isRequesterSuper) {
         return res.status(403).json({
@@ -167,12 +175,12 @@ const updateUserRole = async (req, res) => {
     const isRequesterSuper =
       requester &&
       (requester.isSuperAdmin ||
-        (requester.email && requester.email.toLowerCase() === SUPER_ADMIN_EMAIL));
+        isSuperAdminEmail(requester.email));
 
     // Target is Super Admin -> Nobody can demote or alter their permissions
     if (
       targetUser.isSuperAdmin ||
-      (targetUser.email && targetUser.email.toLowerCase() === SUPER_ADMIN_EMAIL)
+      isSuperAdminEmail(targetUser.email)
     ) {
       return res.status(403).json({
         success: false,

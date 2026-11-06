@@ -411,6 +411,8 @@ const createWordId = () => {
 function ShlokManagement() {
   const navigate = useNavigate();
   const { isHindi, isEnglish, isGujarati, txt } = useLanguage();
+  const { user } = useAuth();
+  const canDeleteShloks = hasPermission(user, "delete_shloks");
 
   /* =====================================================
      STATE
@@ -1640,6 +1642,17 @@ function ShlokManagement() {
       id,
       number
     ) => {
+      if (!canDeleteShloks) {
+        alert(
+          txt(
+            "તમારી પાસે શ્લોક ડિલીટ કરવાની પરમિશન નથી. મુખ્ય એડમિનનો સંપર્ક કરો.",
+            "आपके पास श्लोक डिलीट करने की अनुमति नहीं है। मुख्य एडमिन से संपर्क करें।",
+            "You do not have permission to delete shlokas. Contact Super Admin."
+          )
+        );
+        return;
+      }
+
       const confirmed =
         window.confirm(
           `શું તમે Shlok ${number} ને delete કરવા માંગો છો?`
@@ -2804,18 +2817,20 @@ function ShlokManagement() {
                                 ✏️ Edit
                               </button>
 
-                              <button
-                                type="button"
-                                className="delete-shlok-btn"
-                                onClick={() =>
-                                  handleDelete(
-                                    shlok._id,
-                                    shlok.shlokNumber
-                                  )
-                                }
-                              >
-                                <Trash2 className="btn-icon" size={16} /> Delete
-                              </button>
+                              {canDeleteShloks && (
+                                <button
+                                  type="button"
+                                  className="delete-shlok-btn"
+                                  onClick={() =>
+                                    handleDelete(
+                                      shlok._id,
+                                      shlok.shlokNumber
+                                    )
+                                  }
+                                >
+                                  <Trash2 className="btn-icon" size={16} /> Delete
+                                </button>
+                              )}
 
                             </div>
 

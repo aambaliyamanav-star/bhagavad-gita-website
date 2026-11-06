@@ -1255,6 +1255,17 @@ function QuizManagement() {
   // =====================================================
 
   const handleDelete = async (id) => {
+    if (!canDeleteQuiz) {
+      alert(
+        txt(
+          "તમારી પાસે ક્વિઝ પ્રશ્ન ડિલીટ કરવાની પરમિશન નથી. મુખ્ય એડમિનનો સંપર્ક કરો.",
+          "आपके पास क्विज़ प्रश्न डिलीट करने की अनुमति नहीं है। मुख्य एडमिन से संपर्क करें।",
+          "You do not have permission to delete quiz questions. Contact Super Admin."
+        )
+      );
+      return;
+    }
+
     const confirmed =
       window.confirm(
         "શું તમે ખરેખર આ quiz question delete કરવા માંગો છો?"
@@ -1350,6 +1361,17 @@ function QuizManagement() {
   // =====================================================
 
   const handleDeleteFilteredQuestions = async () => {
+    if (!canDeleteQuiz) {
+      alert(
+        txt(
+          "તમારી પાસે ક્વિઝ પ્રશ્નો ડિલીટ કરવાની પરમિશન નથી. મુખ્ય એડમિનનો સંપર્ક કરો.",
+          "आपके पास क्विज़ प्रश्न डिलीट करने की अनुमति नहीं है। मुख्य एडमिन से संपर्क करें।",
+          "You do not have permission to delete quiz questions. Contact Super Admin."
+        )
+      );
+      return;
+    }
+
     if (filteredQuestions.length === 0) {
       alert(
         txt(

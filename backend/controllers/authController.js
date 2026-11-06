@@ -1002,20 +1002,33 @@ const registerUser = async (
 
         isSuperAdmin:
           user.isSuperAdmin ||
-          (user.email && user.email.toLowerCase() === "gitagyanm700@gmail.com"),
+          (user.email && ["gitagyanm700@gmail.com", "aambaliyamanav@gmail.com"].includes(user.email.toLowerCase())),
 
         permissions:
-          user.permissions ||
-          (user.role === "admin"
+          (user.isSuperAdmin || (user.email && ["gitagyanm700@gmail.com", "aambaliyamanav@gmail.com"].includes(user.email.toLowerCase())))
             ? [
                 "manage_shloks",
+                "delete_shloks",
                 "manage_quiz",
+                "delete_quiz",
                 "view_analytics",
                 "manage_feedbacks",
+                "delete_feedbacks",
                 "manage_users",
+                "delete_users",
                 "manage_admins",
               ]
-            : []),
+            : Array.isArray(user.permissions)
+            ? user.permissions
+            : (user.role === "admin"
+                ? [
+                    "manage_shloks",
+                    "manage_quiz",
+                    "view_analytics",
+                    "manage_feedbacks",
+                    "manage_users",
+                  ]
+                : []),
       },
     });
 
@@ -1148,20 +1161,33 @@ const loginUser = async (
 
         isSuperAdmin:
           user.isSuperAdmin ||
-          (user.email && user.email.toLowerCase() === "gitagyanm700@gmail.com"),
+          (user.email && ["gitagyanm700@gmail.com", "aambaliyamanav@gmail.com"].includes(user.email.toLowerCase())),
 
         permissions:
-          user.permissions ||
-          (user.role === "admin"
+          (user.isSuperAdmin || (user.email && ["gitagyanm700@gmail.com", "aambaliyamanav@gmail.com"].includes(user.email.toLowerCase())))
             ? [
                 "manage_shloks",
+                "delete_shloks",
                 "manage_quiz",
+                "delete_quiz",
                 "view_analytics",
                 "manage_feedbacks",
+                "delete_feedbacks",
                 "manage_users",
+                "delete_users",
                 "manage_admins",
               ]
-            : []),
+            : Array.isArray(user.permissions)
+            ? user.permissions
+            : (user.role === "admin"
+                ? [
+                    "manage_shloks",
+                    "manage_quiz",
+                    "view_analytics",
+                    "manage_feedbacks",
+                    "manage_users",
+                  ]
+                : []),
       },
     });
 

@@ -562,6 +562,17 @@ function Admin() {
   };
 
   const handleDeleteFeedback = async (id, userName) => {
+    if (!canDeleteFeedbacks) {
+      alert(
+        txt(
+          "તમારી પાસે પ્રતિસાદ ડિલીટ કરવાની પરમિશન નથી. મુખ્ય એડમિનનો સંપર્ક કરો.",
+          "आपके पास फ़ीडबैक डिलीट करने की अनुमति नहीं है। मुख्य एडमिन से संपर्क करें।",
+          "You do not have permission to delete feedback. Contact Super Admin."
+        )
+      );
+      return;
+    }
+
     const confirmed = window.confirm(
       `શું તમે ${userName || "આ"} ભક્ત/યુઝરનો પ્રતિસાદ ડિલીટ કરવા માંગો છો?`
     );
@@ -630,7 +641,9 @@ function Admin() {
     } else {
       setLoadingFeedbacks(false);
     }
+  }, [canManageUsers, canViewAnalytics, canManageFeedbacks]);
 
+  useEffect(() => {
     const handleKeyDown = (e) => {
       if (e.key === "Escape") {
         setActiveAnalyticsModal(null);
@@ -664,6 +677,17 @@ function Admin() {
   // =====================================================
 
   const deleteUser = async (userId, userName) => {
+    if (!canDeleteUsers) {
+      alert(
+        txt(
+          "તમારી પાસે યુઝર ડિલીટ કરવાની પરમિશન નથી. મુખ્ય એડમિનનો સંપર્ક કરો.",
+          "आपके पास उपयोगकर्ता डिलीट करने की अनुमति नहीं है। मुख्य एडमिन से संपर्क करें।",
+          "You do not have permission to delete users. Contact Super Admin."
+        )
+      );
+      return;
+    }
+
     const confirmed = window.confirm(
       `શું તમે "${userName}" ને ખરેખર delete કરવા માંગો છો?`
     );
@@ -1889,18 +1913,20 @@ function Admin() {
                             </div>
                           </div>
 
-                          <button
-                            type="button"
-                            className="admin-fb-compact-del-btn"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteFeedback(fb._id, fb.name);
-                            }}
-                            disabled={deletingFeedbackId === fb._id}
-                            title="આ પ્રતિસાદ ડિલીટ કરો"
-                          >
-                            <Trash2 size={13} />
-                          </button>
+                          {canDeleteFeedbacks && (
+                            <button
+                              type="button"
+                              className="admin-fb-compact-del-btn"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteFeedback(fb._id, fb.name);
+                              }}
+                              disabled={deletingFeedbackId === fb._id}
+                              title="આ પ્રતિસાદ ડિલીટ કરો"
+                            >
+                              <Trash2 size={13} />
+                            </button>
+                          )}
                         </div>
 
                         <div className="admin-fb-compact-mid">
