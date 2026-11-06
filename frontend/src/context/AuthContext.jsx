@@ -117,6 +117,20 @@ export function AuthProvider({ children }) {
   // ===================================================
 
   const login = (userData, userToken) => {
+    const previousUserId = localStorage.getItem("gita_registered_user_id");
+    const currentUserId = userData?._id || userData?.email;
+
+    if (previousUserId && currentUserId && previousUserId !== currentUserId) {
+      // Switched to a different account: clean previous user's general local reading cache
+      localStorage.removeItem("gita_continue_reading");
+      localStorage.removeItem("gita_reading_progress_v2");
+      localStorage.removeItem("gita_reading_tracker");
+      for (let ch = 1; ch <= 18; ch++) {
+        sessionStorage.removeItem(`gita_last_shloka_ch_${ch}`);
+        localStorage.removeItem(`gita_last_shloka_ch_${ch}`);
+      }
+    }
+
     localStorage.setItem(
       "user",
       JSON.stringify(userData)
@@ -139,6 +153,15 @@ export function AuthProvider({ children }) {
   const logout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
+    localStorage.removeItem("gita_continue_reading");
+    localStorage.removeItem("gita_reading_progress_v2");
+    localStorage.removeItem("gita_reading_tracker");
+    sessionStorage.removeItem("authRedirect");
+
+    for (let ch = 1; ch <= 18; ch++) {
+      sessionStorage.removeItem(`gita_last_shloka_ch_${ch}`);
+      localStorage.removeItem(`gita_last_shloka_ch_${ch}`);
+    }
 
     setUser(null);
     setToken(null);

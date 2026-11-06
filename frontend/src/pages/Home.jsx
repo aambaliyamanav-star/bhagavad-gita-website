@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import "./Home.css";
 import ShareShlokaModal from "../components/ShareShlokaModal.jsx";
-import { getLocalProgress } from "../utils/readingTracker.js";
+import { getLocalProgress, getCombinedReadingProgress } from "../utils/readingTracker.js";
 import { useLanguage } from "../context/LanguageContext.jsx";
 import { getValidToken } from "../utils/authHelper.js";
 
@@ -101,15 +101,50 @@ function Home() {
   });
 
   useEffect(() => {
-    try {
-      const p = getLocalProgress();
-      setReadingStats({
-        readCount: (p.readShlokas || []).length,
-        currentStreak: p.currentStreak || 0,
-        badgesCount: (p.unlockedBadges || []).length,
-      });
-    } catch (e) {}
-  }, []);
+    let isCancelled = false;
+
+    const loadReadingStats = async () => {
+      // If user is not logged in, reset stats immediately (no streak chip, 0 count)
+      if (!user) {
+        if (!isCancelled) {
+          setReadingStats({
+            readCount: 0,
+            currentStreak: 0,
+            badgesCount: 0,
+          });
+        }
+        return;
+      }
+
+      try {
+        const token = getValidToken();
+        const data = await getCombinedReadingProgress(token);
+        if (!isCancelled && data) {
+          setReadingStats({
+            readCount: data.readCount || (data.readShlokas || []).length,
+            currentStreak: data.currentStreak || 0,
+            badgesCount: (data.unlockedBadges || []).length,
+          });
+        }
+      } catch (e) {
+        if (!isCancelled) {
+          try {
+            const p = getLocalProgress();
+            setReadingStats({
+              readCount: (p.readShlokas || []).length,
+              currentStreak: p.currentStreak || 0,
+              badgesCount: (p.unlockedBadges || []).length,
+            });
+          } catch (err) {}
+        }
+      }
+    };
+
+    loadReadingStats();
+    return () => {
+      isCancelled = true;
+    };
+  }, [user]);
 
   // =====================================================
   // TODAY'S SHLOK STATE
@@ -347,36 +382,56 @@ useEffect(() => {
   // =====================================================
 
   useEffect(() => {
+    let isCancelled = false;
+
     const loadContinueReading = async () => {
-      // 1. Instant local restore
+      // 1. If not logged in, reset continue reading immediately
+      if (!user) {
+        if (!isCancelled) {
+          setContinueReading(null);
+          setContinueReadingLoading(false);
+        }
+        return;
+      }
+
+      // 2. User is logged in: read ONLY this user's scoped local cache
+      const uid = user._id || user.email;
+      const userKey = `gita_continue_reading_${uid}`;
       let localSaved = null;
+
       try {
-        const raw = localStorage.getItem("gita_continue_reading");
+        const raw = localStorage.getItem(userKey);
         if (raw) {
           const parsed = JSON.parse(raw);
           if (parsed && parsed.chapterNumber && parsed.shlokNumber) {
             localSaved = parsed;
-            setContinueReading(parsed);
+            if (!isCancelled) setContinueReading(parsed);
           }
         }
       } catch (e) {}
 
-      if (!user) {
-        if (!localSaved) {
-          setContinueReading(null);
-        }
-        setContinueReadingLoading(false);
-        return;
+      // Check legacy key ONLY if it explicitly matches this user's ID
+      if (!localSaved) {
+        try {
+          const legacyRaw = localStorage.getItem("gita_continue_reading");
+          if (legacyRaw) {
+            const parsed = JSON.parse(legacyRaw);
+            if (parsed && parsed.userId === uid && parsed.chapterNumber && parsed.shlokNumber) {
+              localSaved = parsed;
+              if (!isCancelled) setContinueReading(parsed);
+            }
+          }
+        } catch (e) {}
       }
 
       const token = getValidToken();
       if (!token) {
-        setContinueReadingLoading(false);
+        if (!isCancelled) setContinueReadingLoading(false);
         return;
       }
 
       try {
-        setContinueReadingLoading(true);
+        if (!isCancelled) setContinueReadingLoading(true);
 
         const response = await fetch(
           CONTINUE_READING_API_URL,
@@ -401,15 +456,24 @@ useEffect(() => {
             const localTime = new Date(localSaved.updatedAt).getTime();
             const serverTime = new Date(serverData.updatedAt).getTime();
             if (localTime > serverTime) {
-              setContinueReading(localSaved);
+              if (!isCancelled) setContinueReading(localSaved);
             } else {
-              setContinueReading(serverData);
+              if (!isCancelled) setContinueReading(serverData);
+              try {
+                localStorage.setItem(userKey, JSON.stringify(serverData));
+              } catch (e) {}
             }
           } else {
-            setContinueReading(serverData);
+            if (!isCancelled) setContinueReading(serverData);
+            try {
+              localStorage.setItem(userKey, JSON.stringify(serverData));
+            } catch (e) {}
           }
-        } else if (!localSaved) {
-          setContinueReading(null);
+        } else if (localSaved) {
+          if (!isCancelled) setContinueReading(localSaved);
+        } else {
+          // New or fresh user with no continue reading
+          if (!isCancelled) setContinueReading(null);
         }
       } catch (error) {
         console.error(
@@ -417,13 +481,14 @@ useEffect(() => {
           error
         );
       } finally {
-        setContinueReadingLoading(false);
+        if (!isCancelled) setContinueReadingLoading(false);
       }
     };
 
     loadContinueReading();
     window.addEventListener("focus", loadContinueReading);
     return () => {
+      isCancelled = true;
       window.removeEventListener("focus", loadContinueReading);
     };
   }, [user]);

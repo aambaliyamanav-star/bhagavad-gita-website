@@ -515,11 +515,22 @@ const response = await fetch(
         `gita_last_shloka_ch_${currentChapterNumber}`,
         String(shlokNum)
       );
+      const uid = user?._id || user?.email;
+      const userKey = uid ? `gita_continue_reading_${uid}` : "gita_continue_reading_guest";
+      localStorage.setItem(
+        userKey,
+        JSON.stringify({
+          chapterNumber: currentChapterNumber,
+          shlokNumber: shlokNum,
+          updatedAt: new Date().toISOString(),
+        })
+      );
       localStorage.setItem(
         "gita_continue_reading",
         JSON.stringify({
           chapterNumber: currentChapterNumber,
           shlokNumber: shlokNum,
+          userId: uid || null,
           updatedAt: new Date().toISOString(),
         })
       );

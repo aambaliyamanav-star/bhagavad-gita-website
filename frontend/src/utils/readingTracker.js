@@ -235,13 +235,28 @@ function getYesterdayString() {
 }
 
 // ==========================================================================
-// LOCAL STORAGE MANAGEMENT (For Guest Mode / Offline Resilience)
+// LOCAL STORAGE MANAGEMENT (User-Scoped for Multi-Account & Offline Resilience)
 // ==========================================================================
-const STORAGE_KEY = "gita_reading_progress_v2";
+export function getCurrentUserId() {
+  try {
+    const rawUser = localStorage.getItem("user");
+    if (rawUser) {
+      const u = JSON.parse(rawUser);
+      return u?._id || u?.email || null;
+    }
+  } catch (e) {}
+  return null;
+}
+
+export function getStorageKey() {
+  const uid = getCurrentUserId();
+  return uid ? `gita_reading_progress_${uid}` : "gita_reading_progress_guest";
+}
 
 export function getLocalProgress() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const key = getStorageKey();
+    const raw = localStorage.getItem(key);
     if (!raw) {
       return {
         readShlokas: [],
@@ -266,7 +281,8 @@ export function getLocalProgress() {
 
 export function saveLocalProgress(data) {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    const key = getStorageKey();
+    localStorage.setItem(key, JSON.stringify(data));
   } catch (err) {
     console.error("Error saving local reading progress:", err);
   }
@@ -397,9 +413,12 @@ export async function getCombinedReadingProgress(token = null) {
     if (res.ok) {
       const data = await res.json();
       if (data.success && data.data) {
-        // Merge remote readShlokas with local readShlokas so nothing is lost
+        // Authoritative server data for this specific user
+        const serverShlokas = data.data.readShlokas || [];
+
+        // Merge only this user's OWN local offline reads (from user-scoped storage)
         const mergedMap = new Map();
-        (data.data.readShlokas || []).forEach((s) => {
+        serverShlokas.forEach((s) => {
           mergedMap.set(`${s.chapterNumber}-${s.shlokNumber}`, s);
         });
         (local.readShlokas || []).forEach((s) => {
@@ -410,8 +429,9 @@ export async function getCombinedReadingProgress(token = null) {
         });
         const mergedList = Array.from(mergedMap.values());
         data.data.readShlokas = mergedList;
+        data.data.readCount = mergedList.length;
 
-        // Also cache to local storage
+        // Also cache strictly into THIS user's scoped local storage
         saveLocalProgress({
           readShlokas: mergedList,
           currentStreak: data.data.currentStreak || 0,
