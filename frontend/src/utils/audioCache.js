@@ -294,21 +294,26 @@ export function extractCleanTextForSpeech(htmlString) {
 // =========================================================
 
 /**
- * Count how many shlokas in a chapter have Sanskrit audio cached
+ * Count how many shlokas in a chapter have all applicable audios (Sanskrit, Translation, and Message) cached
  */
-export async function getChapterCachedAudioCount(chapterNumber, shlokas) {
+export async function getChapterCachedAudioCount(chapterNumber, shlokas, lang = "gu") {
   if (!Array.isArray(shlokas) || shlokas.length === 0) return 0;
   let count = 0;
   for (const s of shlokas) {
     const sNum = Number(s.shlokNumber);
     const hasSa = await isAudioInCache(chapterNumber, sNum, "sanskrit", "sa");
-    if (hasSa) count++;
+    const hasTr = await isAudioInCache(chapterNumber, sNum, "translation", lang);
+    const rawMsg =
+      (lang === "en" ? s.messageEn : lang === "hi" ? s.messageHi : s.message) || s.message;
+    const msgText = extractCleanTextForSpeech(rawMsg);
+    const hasMsg = msgText ? await isAudioInCache(chapterNumber, sNum, "message", lang) : true;
+    if (hasSa && hasTr && hasMsg) count++;
   }
   return count;
 }
 
 /**
- * Pre-cache Sanskrit and Translation audio for a single shloka
+ * Pre-cache Sanskrit, Translation, and Message audio for a single shloka
  */
 export async function cacheSingleShlokaAudio(chapterNumber, shlokaObj, lang = "gu") {
   if (!chapterNumber || !shlokaObj || typeof window === "undefined" || !navigator.onLine) return false;
@@ -344,6 +349,24 @@ export async function cacheSingleShlokaAudio(chapterNumber, shlokaObj, lang = "g
         const trBlob = await fetchNeuralAudioBlob(trText, lang, "-2%");
         if (trBlob) {
           await saveAudioToCache(chapterNumber, sNum, "translation", lang, trBlob);
+          savedAny = true;
+        }
+      } catch (err) {}
+    }
+  }
+
+  // 3. Pre-cache Message (સંદેશ / તાત્પર્ય)
+  const rawMsg =
+    (lang === "en" ? shlokaObj.messageEn : lang === "hi" ? shlokaObj.messageHi : shlokaObj.message) ||
+    shlokaObj.message;
+  const msgText = extractCleanTextForSpeech(rawMsg);
+  if (msgText) {
+    const hasMsg = await isAudioInCache(chapterNumber, sNum, "message", lang);
+    if (!hasMsg) {
+      try {
+        const msgBlob = await fetchNeuralAudioBlob(msgText, lang, "-2%");
+        if (msgBlob) {
+          await saveAudioToCache(chapterNumber, sNum, "message", lang, msgBlob);
           savedAny = true;
         }
       } catch (err) {}
@@ -390,7 +413,7 @@ export async function autoSyncChapterAudios(
     for (let i = startFromIndex; i < len; i++) indices.push(i);
     for (let i = 0; i < startFromIndex; i++) indices.push(i);
 
-    let completed = await getChapterCachedAudioCount(chapterNumber, shlokas);
+    let completed = await getChapterCachedAudioCount(chapterNumber, shlokas, lang);
     if (typeof onProgress === "function") {
       onProgress({
         current: completed,
@@ -407,7 +430,7 @@ export async function autoSyncChapterAudios(
         await cacheSingleShlokaAudio(chapterNumber, shlok, lang);
       }
 
-      completed = await getChapterCachedAudioCount(chapterNumber, shlokas);
+      completed = await getChapterCachedAudioCount(chapterNumber, shlokas, lang);
       if (typeof onProgress === "function") {
         onProgress({
           current: completed,
