@@ -86,6 +86,8 @@ const [sanskritFontSize, setSanskritFontSize] = useState(21);
   const lastActiveWordIdxRef = useRef(-1);
   const lastActiveWordElRef = useRef(null);
   const lastScrollTimeRef = useRef(0);
+  const audioModeActiveRef = useRef(false);
+  const mainTimerIdRef = useRef(null);
 
   // =====================================================
   // API URL
@@ -708,11 +710,14 @@ const response = await fetch(
     // If already counted this session, no need to re-run
     if (alreadyTracked) return;
 
+    audioModeActiveRef.current = false;
     const startTime = Date.now();
     let mainTimerId;
     let pausedAt = null;
 
     const markAsRead = () => {
+      // If user switched to audio mode, silent 50s reading timer MUST NOT count!
+      if (audioModeActiveRef.current) return;
       if (trackedInSessionRef.current.has(sessionKey)) return;
       const token = getValidToken();
       trackShlokaRead(currentChapterNumber, current.shlokNumber, token);
@@ -728,12 +733,13 @@ const response = await fetch(
       }
     };
 
-    // Main timer: fires silently ONLY after full 50 seconds to record the read
+    // Main timer: fires silently ONLY after full 50 seconds IF reading without audio
     mainTimerId = setTimeout(() => {
-      if (document.visibilityState === "visible") {
+      if (document.visibilityState === "visible" && !audioModeActiveRef.current) {
         markAsRead();
       }
     }, READ_TIME_MS);
+    mainTimerIdRef.current = mainTimerId;
 
     // Pause timer when tab is hidden; resume when visible again
     const handleVisibilityChange = () => {
@@ -741,16 +747,17 @@ const response = await fetch(
         pausedAt = Date.now();
         clearTimeout(mainTimerId);
       } else {
-        if (pausedAt !== null) {
+        if (pausedAt !== null && !audioModeActiveRef.current) {
           const elapsedBeforePause = pausedAt - startTime;
           const remainingMs = Math.max(0, READ_TIME_MS - elapsedBeforePause);
           pausedAt = null;
 
           mainTimerId = setTimeout(() => {
-            if (document.visibilityState === "visible") {
+            if (document.visibilityState === "visible" && !audioModeActiveRef.current) {
               markAsRead();
             }
           }, remainingMs);
+          mainTimerIdRef.current = mainTimerId;
         }
       }
     };
@@ -760,6 +767,7 @@ const response = await fetch(
     // Cleanup: user moved away before 50 seconds → cancel timer (does NOT mark as read)
     return () => {
       clearTimeout(mainTimerId);
+      mainTimerIdRef.current = null;
       document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [
@@ -1204,12 +1212,39 @@ if (
     throw lastFetchErr || new Error("Failed to fetch audio from all endpoints");
   };
 
+  // Marks shloka as read strictly when the full audio sequence completes
+  const markShlokaAsReadAudio = (shlokaObj) => {
+    if (!shlokaObj || !shlokaObj.shlokNumber) return;
+    const sessionKey = `${currentChapterNumber}-${shlokaObj.shlokNumber}`;
+    if (trackedInSessionRef.current.has(sessionKey)) return;
+
+    const token = getValidToken();
+    trackShlokaRead(currentChapterNumber, shlokaObj.shlokNumber, token);
+    trackedInSessionRef.current.add(sessionKey);
+    try {
+      localStorage.setItem(
+        `gita_last_shloka_ch_${currentChapterNumber}`,
+        String(shlokaObj.shlokNumber)
+      );
+    } catch (e) {}
+    if (user) {
+      saveContinueReading(currentChapterNumber, shlokaObj.shlokNumber);
+    }
+  };
+
   // Browser native Web Speech API fallback if server-side neural TTS is unavailable
   const playWebSpeechFallback = (text, lang, type, targetIdx) => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
       setSpeakingType(null);
       setAudioLoading(false);
       return;
+    }
+
+    // User is now listening to audio: activate audio mode and disable 50s reading timer immediately
+    audioModeActiveRef.current = true;
+    if (mainTimerIdRef.current) {
+      clearTimeout(mainTimerIdRef.current);
+      mainTimerIdRef.current = null;
     }
 
     try {
@@ -1233,32 +1268,32 @@ if (
         pausedShlokaIndexRef.current = null;
         setAudioLoading(false);
 
-        // Mark shloka as read because user listened
         const list = shlokasRef.current || shlokas;
         const targetShlokaObj = list[targetIdx];
-        if (targetShlokaObj && targetShlokaObj.shlokNumber) {
-          const sessionKey = `${currentChapterNumber}-${targetShlokaObj.shlokNumber}`;
-          const token = getValidToken();
-          trackShlokaRead(currentChapterNumber, targetShlokaObj.shlokNumber, token);
-          trackedInSessionRef.current.add(sessionKey);
-          if (user) {
-            saveContinueReading(currentChapterNumber, targetShlokaObj.shlokNumber);
-          }
-        }
+        const targetLoc = getLocalizedShlok(targetShlokaObj || {});
+        const hasTranslation = Boolean(extractCleanTextForSpeech(targetLoc.translation || targetShlokaObj?.translation));
+        const hasMessage = Boolean(extractCleanTextForSpeech(targetLoc.message || targetShlokaObj?.message));
 
-        // Auto-advance
-        if (type === "sanskrit") {
+        if (type === "sanskrit" && hasTranslation) {
+          if (autoPlayTimerRef.current) clearTimeout(autoPlayTimerRef.current);
           autoPlayTimerRef.current = setTimeout(() => {
             startSpeech("translation", targetIdx);
           }, 1000);
-        } else if (type === "translation") {
+        } else if ((type === "sanskrit" || type === "translation") && hasMessage) {
+          if (autoPlayTimerRef.current) clearTimeout(autoPlayTimerRef.current);
           autoPlayTimerRef.current = setTimeout(() => {
             startSpeech("message", targetIdx);
           }, 1000);
-        } else if (type === "message" && isContinuousPlayRef.current) {
-          autoPlayTimerRef.current = setTimeout(() => {
-            advanceToNextShloka();
-          }, 2000);
+        } else {
+          // Whole audio of this shloka has completed!
+          markShlokaAsReadAudio(targetShlokaObj);
+
+          if (isContinuousPlayRef.current) {
+            if (autoPlayTimerRef.current) clearTimeout(autoPlayTimerRef.current);
+            autoPlayTimerRef.current = setTimeout(() => {
+              advanceToNextShloka();
+            }, 2000);
+          }
         }
       };
 
@@ -1329,7 +1364,14 @@ if (
       pausedTypeRef.current = null;
       setSpeakingType(type);
       setPausedType(null);
-      isContinuousPlayRef.current = true;
+      // User is now listening to audio: activate audio mode and disable 50s reading timer immediately
+    audioModeActiveRef.current = true;
+    if (mainTimerIdRef.current) {
+      clearTimeout(mainTimerIdRef.current);
+      mainTimerIdRef.current = null;
+    }
+
+    isContinuousPlayRef.current = true;
       scrollToSection(type);
       try {
         await audioPlayerRef.current.play();
@@ -1362,6 +1404,13 @@ if (
     setPausedType(null);
     setSpeakingType(type);
     setAudioLoading(true);
+
+    // User is now listening to audio: activate audio mode and disable 50s reading timer immediately
+    audioModeActiveRef.current = true;
+    if (mainTimerIdRef.current) {
+      clearTimeout(mainTimerIdRef.current);
+      mainTimerIdRef.current = null;
+    }
 
     isContinuousPlayRef.current = true;
 
@@ -1495,48 +1544,33 @@ if (
           URL.revokeObjectURL(audioBlobUrl);
         } catch (e) {}
 
-        // Mark shloka as read because the user listened to the audio!
-        const targetShlokaObj = shlokas[targetIdx];
-        if (targetShlokaObj && targetShlokaObj.shlokNumber) {
-          const sessionKey = `${currentChapterNumber}-${targetShlokaObj.shlokNumber}`;
-          const token = getValidToken();
-          trackShlokaRead(currentChapterNumber, targetShlokaObj.shlokNumber, token);
-          trackedInSessionRef.current.add(sessionKey);
-          try {
-            localStorage.setItem(
-              `gita_last_shloka_ch_${currentChapterNumber}`,
-              String(targetShlokaObj.shlokNumber)
-            );
-          } catch (e) {}
-          if (user) {
-            saveContinueReading(currentChapterNumber, targetShlokaObj.shlokNumber);
-          }
-        }
+        const list = shlokasRef.current || shlokas;
+        const targetShlokaObj = list[targetIdx];
+        const targetLoc = getLocalizedShlok(targetShlokaObj || {});
+        const hasTranslation = Boolean(extractCleanTextForSpeech(targetLoc.translation || targetShlokaObj?.translation));
+        const hasMessage = Boolean(extractCleanTextForSpeech(targetLoc.message || targetShlokaObj?.message));
 
-        // If sanskrit just ended, wait 1 second and automatically play translation!
-        if (type === "sanskrit") {
-          if (autoPlayTimerRef.current) {
-            clearTimeout(autoPlayTimerRef.current);
-          }
+        // If continuous audio sequence has more parts for this shloka, continue without marking as read yet
+        if (type === "sanskrit" && hasTranslation) {
+          if (autoPlayTimerRef.current) clearTimeout(autoPlayTimerRef.current);
           autoPlayTimerRef.current = setTimeout(() => {
             startSpeech("translation", targetIdx);
           }, 1000);
-        } else if (type === "translation") {
-          // If translation just ended, wait 1 second and automatically play message continuously!
-          if (autoPlayTimerRef.current) {
-            clearTimeout(autoPlayTimerRef.current);
-          }
+        } else if ((type === "sanskrit" || type === "translation") && hasMessage) {
+          if (autoPlayTimerRef.current) clearTimeout(autoPlayTimerRef.current);
           autoPlayTimerRef.current = setTimeout(() => {
             startSpeech("message", targetIdx);
           }, 1000);
-        } else if (type === "message" && isContinuousPlayRef.current) {
-          // If message just ended, wait 2 seconds and automatically move to next shloka continuously!
-          if (autoPlayTimerRef.current) {
-            clearTimeout(autoPlayTimerRef.current);
+        } else {
+          // Whole audio sequence for this shloka is completed!
+          markShlokaAsReadAudio(targetShlokaObj);
+
+          if (isContinuousPlayRef.current) {
+            if (autoPlayTimerRef.current) clearTimeout(autoPlayTimerRef.current);
+            autoPlayTimerRef.current = setTimeout(() => {
+              advanceToNextShloka();
+            }, 2000);
           }
-          autoPlayTimerRef.current = setTimeout(() => {
-            advanceToNextShloka();
-          }, 2000);
         }
       };
 

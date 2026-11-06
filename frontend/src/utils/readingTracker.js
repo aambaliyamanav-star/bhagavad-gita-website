@@ -457,6 +457,16 @@ export async function getCombinedReadingProgress(token = null) {
         data.data.readShlokas = mergedList;
         data.data.readCount = mergedList.length;
 
+        // Recalculate chapter breakdown so merged reads accurately reflect on cards
+        const chapterBreakdown = {};
+        CHAPTER_METADATA.forEach((meta) => {
+          chapterBreakdown[meta.chapter] = {
+            total: meta.shlokas,
+            read: countChapterRead(mergedList, meta.chapter),
+          };
+        });
+        data.data.chapterBreakdown = chapterBreakdown;
+
         // Also cache strictly into THIS user's scoped local storage
         saveLocalProgress({
           readShlokas: mergedList,
