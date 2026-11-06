@@ -35,6 +35,7 @@ function QuizManagement() {
   const { isHindi, isEnglish, isGujarati, txt } = useLanguage();
   const { user } = useAuth();
   const canDeleteQuiz = hasPermission(user, "delete_quiz");
+  const canShareQuiz = hasPermission(user, "share_quiz");
   // =====================================================
   // API
   // =====================================================
@@ -117,6 +118,16 @@ function QuizManagement() {
   const [selectedQuestionForShare, setSelectedQuestionForShare] = useState(null);
 
   const handleOpenShareQuestion = (question) => {
+    if (!canShareQuiz) {
+      alert(
+        txt(
+          "તમારી પાસે ક્વિઝ પ્રશ્ન શેર કરવાની પરમિશન નથી.",
+          "आपके पास क्विज़ प्रश्न शेयर करने की अनुमति नहीं है।",
+          "You do not have permission to share quiz questions."
+        )
+      );
+      return;
+    }
     const qNum = shlokaQuestionNumberMap.get(String(question._id)) || 1;
     setSelectedQuestionForShare({
       ...question,
@@ -2679,18 +2690,20 @@ function QuizManagement() {
                         <span className="quiz-question-text-actual">{item.question}</span>
                       </span>
                       <span className="quiz-card-header-right-tools">
-                        <button
-                          type="button"
-                          className="quiz-quick-share-btn"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleOpenShareQuestion(item);
-                          }}
-                          title={`Share Question Card (પ્રશ્ન #${shlokaQNum})`}
-                          aria-label="Share Question Card"
-                        >
-                          <Share2 size={14} />
-                        </button>
+                        {canShareQuiz && (
+                          <button
+                            type="button"
+                            className="quiz-quick-share-btn"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleOpenShareQuestion(item);
+                            }}
+                            title={`Share Question Card (પ્રશ્ન #${shlokaQNum})`}
+                            aria-label="Share Question Card"
+                          >
+                            <Share2 size={14} />
+                          </button>
+                        )}
                         <span className="quiz-card-expand-indicator">
                           {isExpanded ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
                         </span>
@@ -2875,14 +2888,16 @@ function QuizManagement() {
 
                         <div className="quiz-question-actions">
 
-                          <button
-                            type="button"
-                            className="quiz-share-card-button"
-                            onClick={() => handleOpenShareQuestion(item)}
-                            title="આ પ્રશ્નનું સોશિયલ મીડિયા Share Card બનાવો"
-                          >
-                            <Share2 className="btn-icon" size={15} /> Share Card
-                          </button>
+                          {canShareQuiz && (
+                            <button
+                              type="button"
+                              className="quiz-share-card-button"
+                              onClick={() => handleOpenShareQuestion(item)}
+                              title="આ પ્રશ્નનું સોશિયલ મીડિયા Share Card બનાવો"
+                            >
+                              <Share2 className="btn-icon" size={15} /> Share Card
+                            </button>
+                          )}
 
                           <button
                             type="button"

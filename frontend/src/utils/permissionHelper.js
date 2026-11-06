@@ -14,6 +14,7 @@ export const PERMISSION_KEYS = {
   DELETE_SHLOKS: "delete_shloks",
   MANAGE_QUIZ: "manage_quiz",
   DELETE_QUIZ: "delete_quiz",
+  SHARE_QUIZ: "share_quiz",
   VIEW_ANALYTICS: "view_analytics",
   MANAGE_FEEDBACKS: "manage_feedbacks",
   DELETE_FEEDBACKS: "delete_feedbacks",
@@ -52,6 +53,13 @@ export const ALL_PERMISSIONS = [
     nameEn: "Delete Quiz",
     category: "quiz",
     isDanger: true,
+  },
+  {
+    id: "share_quiz",
+    nameGu: "ક્વિઝ પ્રશ્ન શેર (Share Question)",
+    nameHi: "क्विज़ प्रश्न शेयर (Share Question)",
+    nameEn: "Share Quiz Questions",
+    category: "quiz",
   },
   {
     id: "view_analytics",
