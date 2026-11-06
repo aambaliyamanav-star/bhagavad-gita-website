@@ -80,7 +80,7 @@ function Chapters() {
         setLoading(true);
 
         const response = await fetch(
-          "https://bhagavad-gita-website.onrender.com/api/shloks"
+          "https://bhagavad-gita-backend-jy1a.onrender.com/api/shloks"
         );
 
         const data = await response.json();

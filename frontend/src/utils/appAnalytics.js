@@ -14,9 +14,9 @@ function getApiUrls(path) {
   if (custom) bases.push(custom);
   if (isLocal) {
     bases.push("http://localhost:5000/api");
-    bases.push("https://bhagavad-gita-website.onrender.com/api");
+    bases.push("https://bhagavad-gita-backend-jy1a.onrender.com/api");
   } else {
-    bases.push("https://bhagavad-gita-website.onrender.com/api");
+    bases.push("https://bhagavad-gita-backend-jy1a.onrender.com/api");
     bases.push("http://localhost:5000/api");
   }
   const uniqueBases = [...new Set(bases)];

@@ -13,7 +13,7 @@ import { useLanguage } from "../context/LanguageContext.jsx";
 import { getValidToken } from "../utils/authHelper.js";
 import "./FeedbackModal.css";
 
-const PROD_API_BASE = "https://bhagavad-gita-website.onrender.com";
+const PROD_API_BASE = "https://bhagavad-gita-backend-jy1a.onrender.com";
 const LOCAL_API_BASE = "http://localhost:5000";
 
 const RATING_LABELS_GU = {

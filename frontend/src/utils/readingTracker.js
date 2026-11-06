@@ -3,7 +3,7 @@ import { getValidToken, clearAuthSession } from "./authHelper.js";
 // GITA READING TRACKER UTILITY & GAMIFICATION ENGINE
 // ==========================================================================
 
-export const API_TRACKER_URL = "https://bhagavad-gita-website.onrender.com/api/reading-tracker";
+export const API_TRACKER_URL = "https://bhagavad-gita-backend-jy1a.onrender.com/api/reading-tracker";
 
 // All 18 chapters with names and traditional shloka counts (Total: 700)
 export const CHAPTER_METADATA = [

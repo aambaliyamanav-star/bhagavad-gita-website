@@ -3,7 +3,7 @@
  * Silently records pageviews and unique visitors
  */
 
-const PROD_API_BASE = "https://bhagavad-gita-website.onrender.com";
+const PROD_API_BASE = "https://bhagavad-gita-backend-jy1a.onrender.com";
 const LOCAL_API_BASE = "http://localhost:5000";
 
 // Retrieve or generate a persistent anonymous visitor ID

@@ -11,7 +11,7 @@ const isLocal =
 
 const AUTH_API_URL = isLocal
   ? "http://localhost:5000/api/auth"
-  : "https://bhagavad-gita-website.onrender.com/api/auth";
+  : "https://bhagavad-gita-backend-jy1a.onrender.com/api/auth";
 
 function ForgotPassword() {
   const navigate = useNavigate();

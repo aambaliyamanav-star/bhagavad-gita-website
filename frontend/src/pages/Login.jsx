@@ -188,7 +188,7 @@ function Login() {
       setMessageType("");
 
       const response = await fetch(
-        "https://bhagavad-gita-website.onrender.com/api/auth/login",
+        "https://bhagavad-gita-backend-jy1a.onrender.com/api/auth/login",
         {
           method: "POST",
 

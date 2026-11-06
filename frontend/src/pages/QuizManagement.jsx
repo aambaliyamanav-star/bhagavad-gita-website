@@ -40,7 +40,7 @@ function QuizManagement() {
   // =====================================================
 
   const API_URL =
-    "https://bhagavad-gita-website.onrender.com/api/quiz";
+    "https://bhagavad-gita-backend-jy1a.onrender.com/api/quiz";
 
   // =====================================================
   // STATE

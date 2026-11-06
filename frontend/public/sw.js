@@ -176,7 +176,7 @@ self.addEventListener("notificationclick", (event) => {
           const apiBase =
             self.location.hostname === "localhost" || self.location.hostname === "127.0.0.1"
               ? "http://localhost:5000"
-              : "https://bhagavad-gita-website.onrender.com";
+              : "https://bhagavad-gita-backend-jy1a.onrender.com";
           await fetch(`${apiBase}/api/notifications/record-open`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },

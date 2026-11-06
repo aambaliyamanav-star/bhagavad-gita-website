@@ -30,7 +30,7 @@ function FavouriteShlokas() {
   // =====================================================
 
   const API_URL =
-    "https://bhagavad-gita-website.onrender.com/api/favorites";
+    "https://bhagavad-gita-backend-jy1a.onrender.com/api/favorites";
 
   // =====================================================
   // LOAD FAVOURITE SHLOKAS

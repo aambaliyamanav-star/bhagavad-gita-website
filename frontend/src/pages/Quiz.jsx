@@ -88,7 +88,7 @@ function Quiz() {
 
   const API_URL = isLocal
     ? "http://localhost:5000/api/quiz"
-    : "https://bhagavad-gita-website.onrender.com/api/quiz";
+    : "https://bhagavad-gita-backend-jy1a.onrender.com/api/quiz";
 
   // =====================================================
   // TOKEN

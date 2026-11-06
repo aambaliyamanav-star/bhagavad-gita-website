@@ -29,7 +29,7 @@ function getApiBase() {
   return window.location.hostname === "localhost" ||
     window.location.hostname === "127.0.0.1"
     ? "http://localhost:5000"
-    : "https://bhagavad-gita-website.onrender.com";
+    : "https://bhagavad-gita-backend-jy1a.onrender.com";
 }
 
 // Check if push notifications are supported and running as App

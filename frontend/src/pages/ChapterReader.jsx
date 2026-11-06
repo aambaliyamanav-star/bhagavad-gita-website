@@ -92,13 +92,13 @@ const [sanskritFontSize, setSanskritFontSize] = useState(21);
   // =====================================================
 
   const API_URL =
-    "https://bhagavad-gita-website.onrender.com/api/shloks";
+    "https://bhagavad-gita-backend-jy1a.onrender.com/api/shloks";
 
   const FAVORITE_API_URL =
-    "https://bhagavad-gita-website.onrender.com/api/favorites";
+    "https://bhagavad-gita-backend-jy1a.onrender.com/api/favorites";
 
   const CONTINUE_READING_API_URL =
-    "https://bhagavad-gita-website.onrender.com/api/continue-reading";
+    "https://bhagavad-gita-backend-jy1a.onrender.com/api/continue-reading";
 
   // =====================================================
   // CHAPTER NUMBER
@@ -1140,7 +1140,7 @@ if (
 
     const ttsBase = isLocal
       ? "http://localhost:5000"
-      : "https://bhagavad-gita-website.onrender.com";
+      : "https://bhagavad-gita-backend-jy1a.onrender.com";
 
     const payload = {
       text,

@@ -47,7 +47,7 @@ import {
 } from "../utils/gitaAiHistory";
 import "./GitaAIAssistant.css";
 
-const API_BASE = "https://bhagavad-gita-website.onrender.com";
+const API_BASE = "https://bhagavad-gita-backend-jy1a.onrender.com";
 
 const SUGGESTIONS_GU = [
   "મનને એકાગ્ર અને શાંત કેવી રીતે રાખવું?",

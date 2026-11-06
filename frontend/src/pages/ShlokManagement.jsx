@@ -499,7 +499,7 @@ function ShlokManagement() {
   ===================================================== */
 
   const API_URL =
-    "https://bhagavad-gita-website.onrender.com/api/shloks";
+    "https://bhagavad-gita-backend-jy1a.onrender.com/api/shloks";
 
   /* =====================================================
      CHAPTER NAMES

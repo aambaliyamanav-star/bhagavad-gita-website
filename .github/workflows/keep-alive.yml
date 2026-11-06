@@ -12,4 +12,4 @@ jobs:
     steps:
       - name: Ping Bhagavad Gita Backend
         run: |
-          curl -sS --max-time 60 "https://bhagavad-gita-website.onrender.com/" || true
+          curl -sS --max-time 60 "https://bhagavad-gita-backend-jy1a.onrender.com/" || true

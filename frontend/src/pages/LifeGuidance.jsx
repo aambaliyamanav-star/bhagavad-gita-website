@@ -21,7 +21,7 @@ import { useLanguage } from "../context/LanguageContext.jsx";
 import { getValidToken } from "../utils/authHelper.js";
 import "./LifeGuidance.css";
 
-const API_URL = "https://bhagavad-gita-website.onrender.com/api/shloks";
+const API_URL = "https://bhagavad-gita-backend-jy1a.onrender.com/api/shloks";
 
 const GUIDANCE_TOPICS = [
   {

@@ -166,7 +166,7 @@ const noSqlSanitizer = (req, res, next) => {
 const ALLOWED_ORIGINS = [
   "https://gita-gyan-m.vercel.app",
   "https://bhagavad-gita-website-rk1v.vercel.app",
-  "https://bhagavad-gita-website.onrender.com",
+  "https://bhagavad-gita-backend-jy1a.onrender.com",
   "http://localhost:3000",
   "http://localhost:5173",
   "http://localhost:5000",

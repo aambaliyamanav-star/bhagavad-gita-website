@@ -2,7 +2,7 @@
 // QUIZ ACHIEVEMENTS & GAMIFICATION ENGINE
 // ==========================================================================
 
-export const API_QUIZ_URL = "https://bhagavad-gita-website.onrender.com/api/quiz";
+export const API_QUIZ_URL = "https://bhagavad-gita-backend-jy1a.onrender.com/api/quiz";
 
 // ==========================================================================
 // BADGE DEFINITIONS (TOTAL: 13 BADGES)

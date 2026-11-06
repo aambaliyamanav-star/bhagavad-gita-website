@@ -5,7 +5,7 @@ import { getValidToken, clearAuthSession } from "./authHelper.js";
  * so conversations are identical across mobile, laptop, and any device for the same account.
  */
 
-const API_BASE = "https://bhagavad-gita-website.onrender.com";
+const API_BASE = "https://bhagavad-gita-backend-jy1a.onrender.com";
 const ACTIVE_CONV_KEY = "gita_ai_active_conv_id";
 
 function getUserStorageKey() {

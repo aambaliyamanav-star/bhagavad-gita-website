@@ -112,7 +112,7 @@ const [showNewPassword, setShowNewPassword] =
   // API URL
   // =====================================================
 
-  const API_URL = "https://bhagavad-gita-website.onrender.com/api/auth";
+  const API_URL = "https://bhagavad-gita-backend-jy1a.onrender.com/api/auth";
 
   // =====================================================
   // GET PROFILE

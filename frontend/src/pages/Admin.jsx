@@ -188,10 +188,10 @@ function Admin() {
       const urls = isLocal
         ? [
             `http://localhost:5000/api/admin/users/${permissionModalUser._id}/role`,
-            `https://bhagavad-gita-website.onrender.com/api/admin/users/${permissionModalUser._id}/role`,
+            `https://bhagavad-gita-backend-jy1a.onrender.com/api/admin/users/${permissionModalUser._id}/role`,
           ]
         : [
-            `https://bhagavad-gita-website.onrender.com/api/admin/users/${permissionModalUser._id}/role`,
+            `https://bhagavad-gita-backend-jy1a.onrender.com/api/admin/users/${permissionModalUser._id}/role`,
           ];
 
       let success = false;
@@ -291,10 +291,10 @@ function Admin() {
       const urls = isLocal
         ? [
             `http://localhost:5000/api/admin/users/${targetUser._id}/role`,
-            `https://bhagavad-gita-website.onrender.com/api/admin/users/${targetUser._id}/role`,
+            `https://bhagavad-gita-backend-jy1a.onrender.com/api/admin/users/${targetUser._id}/role`,
           ]
         : [
-            `https://bhagavad-gita-website.onrender.com/api/admin/users/${targetUser._id}/role`,
+            `https://bhagavad-gita-backend-jy1a.onrender.com/api/admin/users/${targetUser._id}/role`,
           ];
 
       let success = false;
@@ -387,9 +387,9 @@ function Admin() {
       const urls = isLocal
         ? [
             "http://localhost:5000/api/app-analytics/stats",
-            "https://bhagavad-gita-website.onrender.com/api/app-analytics/stats",
+            "https://bhagavad-gita-backend-jy1a.onrender.com/api/app-analytics/stats",
           ]
-        : ["https://bhagavad-gita-website.onrender.com/api/app-analytics/stats"];
+        : ["https://bhagavad-gita-backend-jy1a.onrender.com/api/app-analytics/stats"];
 
       let fetchedData = null;
       for (const url of urls) {
@@ -438,9 +438,9 @@ function Admin() {
       const urls = isLocal
         ? [
             "http://localhost:5000/api/visitors/stats",
-            "https://bhagavad-gita-website.onrender.com/api/visitors/stats",
+            "https://bhagavad-gita-backend-jy1a.onrender.com/api/visitors/stats",
           ]
-        : ["https://bhagavad-gita-website.onrender.com/api/visitors/stats"];
+        : ["https://bhagavad-gita-backend-jy1a.onrender.com/api/visitors/stats"];
 
       let fetchedData = null;
       for (const url of urls) {
@@ -483,7 +483,7 @@ function Admin() {
 
     try {
       const response = await fetch(
-        "https://bhagavad-gita-website.onrender.com/api/admin/users",
+        "https://bhagavad-gita-backend-jy1a.onrender.com/api/admin/users",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -527,9 +527,9 @@ function Admin() {
       const urls = isLocal
         ? [
             "http://localhost:5000/api/feedback/admin?limit=150",
-            "https://bhagavad-gita-website.onrender.com/api/feedback/admin?limit=150",
+            "https://bhagavad-gita-backend-jy1a.onrender.com/api/feedback/admin?limit=150",
           ]
-        : ["https://bhagavad-gita-website.onrender.com/api/feedback/admin?limit=150"];
+        : ["https://bhagavad-gita-backend-jy1a.onrender.com/api/feedback/admin?limit=150"];
 
       let fetched = null;
       for (const url of urls) {
@@ -590,9 +590,9 @@ function Admin() {
       const urls = isLocal
         ? [
             `http://localhost:5000/api/feedback/${id}`,
-            `https://bhagavad-gita-website.onrender.com/api/feedback/${id}`,
+            `https://bhagavad-gita-backend-jy1a.onrender.com/api/feedback/${id}`,
           ]
-        : [`https://bhagavad-gita-website.onrender.com/api/feedback/${id}`];
+        : [`https://bhagavad-gita-backend-jy1a.onrender.com/api/feedback/${id}`];
 
       for (const url of urls) {
         try {
@@ -702,7 +702,7 @@ function Admin() {
       setDeletingId(userId);
 
       const response = await fetch(
-        `https://bhagavad-gita-website.onrender.com/api/admin/users/${userId}`,
+        `https://bhagavad-gita-backend-jy1a.onrender.com/api/admin/users/${userId}`,
         {
           method: "DELETE",
           headers: {

@@ -64,9 +64,9 @@ export function AuthProvider({ children }) {
       const endpoints = isLocal
         ? [
             "http://localhost:5000/api/auth/profile",
-            "https://bhagavad-gita-website.onrender.com/api/auth/profile",
+            "https://bhagavad-gita-backend-jy1a.onrender.com/api/auth/profile",
           ]
-        : ["https://bhagavad-gita-website.onrender.com/api/auth/profile"];
+        : ["https://bhagavad-gita-backend-jy1a.onrender.com/api/auth/profile"];
 
       for (const ep of endpoints) {
         try {
