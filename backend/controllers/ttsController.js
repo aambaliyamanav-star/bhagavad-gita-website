@@ -37,9 +37,16 @@ const generateSpeech = async (req, res) => {
     }
 
     let cleanText = text.trim();
+    // Strip HTML tags if any were passed
+    cleanText = cleanText.replace(/<[^>]*>/g, " ");
+    // Replace non-XML entities and characters that break Microsoft Edge TTS SSML
+    cleanText = cleanText.replace(/&nbsp;/gi, " ");
+    cleanText = cleanText.replace(/&amp;/gi, " and ");
+    cleanText = cleanText.replace(/[&<>]/g, " ");
     // Ensure 1-second natural pause after speaker names / colons / point titles
     cleanText = cleanText.replace(/\s*[:：]\s*/g, ". ... ");
     cleanText = cleanText.replace(/(\.\s*\.\.\.\s*)+/g, ". ... ");
+    cleanText = cleanText.replace(/\s+/g, " ").trim();
     const voiceLang = VOICE_MAP[lang] ? lang : "gu";
     const selectedVoice = VOICE_MAP[voiceLang][voice] || VOICE_MAP[voiceLang].male;
 

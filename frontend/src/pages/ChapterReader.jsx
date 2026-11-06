@@ -1172,15 +1172,16 @@ if (
     } catch (e) {}
   };
 
-  // Resiliently fetch Microsoft Neural AI speech audio (with automatic retry)
+  // Resiliently fetch Microsoft Neural AI speech audio (with automatic fallback to Render and retry)
   const fetchNeuralAudioBlob = async (text, lang, customRate = null) => {
     const isLocal =
       typeof window !== "undefined" &&
       (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
 
-    const ttsBase = isLocal
-      ? "http://localhost:5000"
-      : "https://bhagavad-gita-backend-jy1a.onrender.com";
+    // Candidate endpoints: If on localhost, check local first, but ALWAYS fall back to Render!
+    const candidateBases = isLocal
+      ? ["http://localhost:5000", "https://bhagavad-gita-backend-jy1a.onrender.com"]
+      : ["https://bhagavad-gita-backend-jy1a.onrender.com"];
 
     const payload = {
       text,
@@ -1192,33 +1193,122 @@ if (
     }
 
     let lastFetchErr = null;
-    for (let attempt = 1; attempt <= 2; attempt++) {
-      try {
-        const response = await fetch(`${ttsBase}/api/tts/speak`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
+    for (const base of candidateBases) {
+      for (let attempt = 1; attempt <= 2; attempt++) {
+        try {
+          const controller = new AbortController();
+          const timeoutMs = base.includes("localhost") ? 2000 : 25000;
+          const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
-        if (!response.ok) {
-          throw new Error(`TTS server returned status ${response.status}`);
-        }
+          const response = await fetch(`${base}/api/tts/speak`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+            signal: controller.signal,
+          });
+          clearTimeout(timeoutId);
 
-        return await response.blob();
-      } catch (err) {
-        lastFetchErr = err;
-        if (attempt < 2) {
-          await new Promise((r) => setTimeout(r, 650));
+          if (response.ok) {
+            return await response.blob();
+          }
+        } catch (err) {
+          lastFetchErr = err;
+          // If localhost connection failed or timed out, immediately skip to Render!
+          if (base.includes("localhost")) {
+            break;
+          }
+          if (attempt < 2) {
+            await new Promise((r) => setTimeout(r, 650));
+          }
         }
       }
     }
-    throw lastFetchErr;
+    throw lastFetchErr || new Error("Failed to fetch audio from all endpoints");
+  };
+
+  // Browser native Web Speech API fallback if server-side neural TTS is unavailable
+  const playWebSpeechFallback = (text, lang, type, targetIdx) => {
+    if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+      setSpeakingType(null);
+      setAudioLoading(false);
+      return;
+    }
+
+    try {
+      window.speechSynthesis.cancel();
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = lang === "sa" ? "hi-IN" : (isEnglish ? "en-IN" : isHindi ? "hi-IN" : "gu-IN");
+      utterance.rate = type === "sanskrit" ? 0.82 : 0.95;
+
+      utterance.onstart = () => {
+        setAudioLoading(false);
+        setSpeakingType(type);
+        speakingTypeRef.current = type;
+      };
+
+      utterance.onend = () => {
+        clearTtsHighlights();
+        speakingTypeRef.current = null;
+        pausedTypeRef.current = null;
+        setSpeakingType(null);
+        setPausedType(null);
+        pausedShlokaIndexRef.current = null;
+        setAudioLoading(false);
+
+        // Mark shloka as read because user listened
+        const list = shlokasRef.current || shlokas;
+        const targetShlokaObj = list[targetIdx];
+        if (targetShlokaObj && targetShlokaObj.shlokNumber) {
+          const sessionKey = `${currentChapterNumber}-${targetShlokaObj.shlokNumber}`;
+          const token = getValidToken();
+          trackShlokaRead(currentChapterNumber, targetShlokaObj.shlokNumber, token);
+          trackedInSessionRef.current.add(sessionKey);
+          if (user) {
+            saveContinueReading(currentChapterNumber, targetShlokaObj.shlokNumber);
+          }
+        }
+
+        // Auto-advance
+        if (type === "sanskrit") {
+          autoPlayTimerRef.current = setTimeout(() => {
+            startSpeech("translation", targetIdx);
+          }, 1000);
+        } else if (type === "translation") {
+          autoPlayTimerRef.current = setTimeout(() => {
+            startSpeech("message", targetIdx);
+          }, 1000);
+        } else if (type === "message" && isContinuousPlayRef.current) {
+          autoPlayTimerRef.current = setTimeout(() => {
+            advanceToNextShloka();
+          }, 2000);
+        }
+      };
+
+      utterance.onerror = (e) => {
+        console.error("SpeechSynthesis fallback error:", e);
+        clearTtsHighlights();
+        speakingTypeRef.current = null;
+        setSpeakingType(null);
+        setAudioLoading(false);
+      };
+
+      window.speechSynthesis.speak(utterance);
+    } catch (e) {
+      console.error("SpeechSynthesis error:", e);
+      clearTtsHighlights();
+      speakingTypeRef.current = null;
+      setSpeakingType(null);
+      setAudioLoading(false);
+    }
   };
 
   // Pause currently playing speech at the exact current position without losing font highlights
   const pauseSpeech = (type) => {
     isContinuousPlayRef.current = false;
     autoPlayNextShlokaRef.current = false;
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
     if (autoPlayTimerRef.current) {
       clearTimeout(autoPlayTimerRef.current);
       autoPlayTimerRef.current = null;
@@ -1280,6 +1370,9 @@ if (
     }
 
     // Stop and reset previous audio
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
     if (audioPlayerRef.current) {
       audioPlayerRef.current.pause();
       audioPlayerRef.current.currentTime = 0;
@@ -1487,18 +1580,8 @@ if (
       await audio.play();
       setAudioLoading(false);
     } catch (err) {
-      console.error("Neural TTS error:", err);
-      clearTtsHighlights();
-      speakingTypeRef.current = null;
-      pausedTypeRef.current = null;
-      setSpeakingType(null);
-      setPausedType(null);
-      pausedShlokaIndexRef.current = null;
-      setAudioLoading(false);
-      if (autoPlayTimerRef.current) {
-        clearTimeout(autoPlayTimerRef.current);
-        autoPlayTimerRef.current = null;
-      }
+      console.warn("Neural TTS playback error, falling back to browser speech synthesis:", err);
+      playWebSpeechFallback(textToSpeak, langCode, type, targetIdx);
     }
   };
 
@@ -1545,6 +1628,9 @@ if (
       clearTimeout(autoPlayTimerRef.current);
       autoPlayTimerRef.current = null;
     }
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
     if (audioPlayerRef.current) {
       audioPlayerRef.current.pause();
       audioPlayerRef.current.currentTime = 0;
@@ -1565,6 +1651,9 @@ if (
     if (autoPlayTimerRef.current) {
       clearTimeout(autoPlayTimerRef.current);
       autoPlayTimerRef.current = null;
+    }
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
     }
     if (audioPlayerRef.current) {
       audioPlayerRef.current.pause();
