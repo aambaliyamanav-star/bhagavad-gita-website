@@ -188,6 +188,14 @@ const updateUserRole = async (req, res) => {
       });
     }
 
+    // Admins cannot alter their own role/permissions
+    if (targetUserId === req.userId.toString()) {
+      return res.status(400).json({
+        success: false,
+        message: "તમે તમારા પોતાના એડમિન રોલ કે પરમિશન બદલી શકતા નથી.",
+      });
+    }
+
     // Only Super Admin or someone with explicit manage_admins can modify roles
     const requesterCanManageAdmins =
       isRequesterSuper ||
@@ -200,6 +208,19 @@ const updateUserRole = async (req, res) => {
         success: false,
         message: "તમારી પાસે એડમિન રોલ અથવા પરમિશન બદલવાનો અધિકાર નથી.",
       });
+    }
+
+    // Non-super admin cannot alter or demote an admin who holds permissions requester lacks
+    if (!isRequesterSuper && targetUser.role === "admin") {
+      const requesterPerms = Array.isArray(requester.permissions) ? requester.permissions : [];
+      const targetPerms = Array.isArray(targetUser.permissions) ? targetUser.permissions : [];
+      const hasHigherPerms = targetPerms.some((p) => !requesterPerms.includes(p));
+      if (hasHigherPerms) {
+        return res.status(403).json({
+          success: false,
+          message: "તમે તમારા કરતાં વધુ અધિકાર ધરાવતા એડમિનની પરમિશન બદલી શકતા નથી.",
+        });
+      }
     }
 
     const validPermissions = [
@@ -229,6 +250,18 @@ const updateUserRole = async (req, res) => {
           "manage_feedbacks",
           "manage_users",
         ];
+      }
+
+      // A non-super admin can ONLY grant permissions they possess themselves!
+      if (!isRequesterSuper) {
+        const requesterPerms = Array.isArray(requester.permissions) ? requester.permissions : [];
+        const disallowedPerms = cleanPermissions.filter((p) => !requesterPerms.includes(p));
+        if (disallowedPerms.length > 0) {
+          return res.status(403).json({
+            success: false,
+            message: "તમે ફક્ત તે જ પરમિશન્સ અન્યને આપી શકો છો જે તમારી પાસે ઉપલબ્ધ છે.",
+          });
+        }
       }
     }
 

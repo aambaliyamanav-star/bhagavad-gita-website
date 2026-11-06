@@ -115,19 +115,29 @@ function Admin() {
 
   const navigate = useNavigate();
 
-  const { user, logout } = useAuth();
+  const { user: loggedInUser, logout } = useAuth();
 
-  const isSuperAdmin = isSuperAdminUser(user);
-  const canManageShloks = hasPermission(user, "manage_shloks");
-  const canDeleteShloks = hasPermission(user, "delete_shloks");
-  const canManageQuiz = hasPermission(user, "manage_quiz");
-  const canDeleteQuiz = hasPermission(user, "delete_quiz");
-  const canViewAnalytics = hasPermission(user, "view_analytics");
-  const canManageFeedbacks = hasPermission(user, "manage_feedbacks");
-  const canDeleteFeedbacks = hasPermission(user, "delete_feedbacks");
-  const canManageUsers = hasPermission(user, "manage_users");
-  const canDeleteUsers = hasPermission(user, "delete_users");
-  const canManageAdmins = isSuperAdmin || hasPermission(user, "manage_admins");
+  const isSuperAdmin = isSuperAdminUser(loggedInUser);
+  const canManageShloks = hasPermission(loggedInUser, "manage_shloks");
+  const canDeleteShloks = hasPermission(loggedInUser, "delete_shloks");
+  const canManageQuiz = hasPermission(loggedInUser, "manage_quiz");
+  const canDeleteQuiz = hasPermission(loggedInUser, "delete_quiz");
+  const canViewAnalytics = hasPermission(loggedInUser, "view_analytics");
+  const canManageFeedbacks = hasPermission(loggedInUser, "manage_feedbacks");
+  const canDeleteFeedbacks = hasPermission(loggedInUser, "delete_feedbacks");
+  const canManageUsers = hasPermission(loggedInUser, "manage_users");
+  const canDeleteUsers = hasPermission(loggedInUser, "delete_users");
+  const canManageAdmins = isSuperAdmin || hasPermission(loggedInUser, "manage_admins");
+
+  // Sub-admins with manage_admins can ONLY grant permissions they possess themselves!
+  // Options they do not possess are hidden completely.
+  const availablePermissions = isSuperAdmin
+    ? ALL_PERMISSIONS
+    : ALL_PERMISSIONS.filter(
+        (p) =>
+          Array.isArray(loggedInUser?.permissions) &&
+          loggedInUser.permissions.includes(p.id)
+      );
 
   // Admin Role & Permissions modal state
   const [permissionModalUser, setPermissionModalUser] = useState(null);
@@ -144,21 +154,30 @@ function Admin() {
 
   const openPermissionModal = (targetUser) => {
     setPermissionModalUser(targetUser);
+    const userAllowed = availablePermissions.map((p) => p.id);
+
     if (Array.isArray(targetUser.permissions) && targetUser.permissions.length > 0) {
-      setSelectedPermissions([...targetUser.permissions]);
+      // Only keep permissions that the current admin is allowed to grant
+      setSelectedPermissions(
+        targetUser.permissions.filter((p) => userAllowed.includes(p))
+      );
     } else {
-      // Default: select safe non-delete permissions
-      setSelectedPermissions([
+      // Default: select available safe permissions that this admin owns
+      const defaultSafe = [
         "manage_shloks",
         "manage_quiz",
         "view_analytics",
         "manage_feedbacks",
         "manage_users",
-      ]);
+      ];
+      setSelectedPermissions(
+        defaultSafe.filter((p) => userAllowed.includes(p))
+      );
     }
   };
 
   const togglePermission = (permId) => {
+    if (!availablePermissions.some((p) => p.id === permId)) return;
     setSelectedPermissions((prev) =>
       prev.includes(permId)
         ? prev.filter((p) => p !== permId)
@@ -167,10 +186,10 @@ function Admin() {
   };
 
   const handleSelectAllPermissions = () => {
-    if (selectedPermissions.length === ALL_PERMISSIONS.length) {
+    if (selectedPermissions.length === availablePermissions.length) {
       setSelectedPermissions([]);
     } else {
-      setSelectedPermissions(ALL_PERMISSIONS.map((p) => p.id));
+      setSelectedPermissions(availablePermissions.map((p) => p.id));
     }
   };
 
@@ -2320,7 +2339,7 @@ function Admin() {
 
 
                           <td>
-                            {user.isSuperAdmin || (user.email && user.email.toLowerCase() === "gitagyanm700@gmail.com") ? (
+                            {isSuperAdminUser(user) ? (
                               <span className="role super-admin-role" title="મુખ્ય સુપર એડમિન (Super Admin)">
                                 👑 Super Admin
                               </span>
@@ -2374,9 +2393,13 @@ function Admin() {
 
 
                           <td>
-                            {user.isSuperAdmin || (user.email && user.email.toLowerCase() === "gitagyanm700@gmail.com") ? (
+                            {isSuperAdminUser(user) ? (
                               <span className="protected-user">
                                 <Lock className="btn-icon" size={15} /> Owner
+                              </span>
+                            ) : (user._id === loggedInUser?._id || user._id === loggedInUser?.id) ? (
+                              <span className="protected-user" style={{ color: "#3b82f6" }}>
+                                <Shield className="btn-icon" size={14} /> {txt("તમે (You)", "आप (You)", "You")}
                               </span>
                             ) : (
                               <div className="user-action-buttons">
@@ -2510,9 +2533,9 @@ function Admin() {
                 <div className="admin-perm-selection-bar">
                   <div className="admin-perm-count-chip">
                     {txt(
-                      `${selectedPermissions.length} / ${ALL_PERMISSIONS.length} પરમિશન પસંદ કરેલ છે`,
-                      `${selectedPermissions.length} / ${ALL_PERMISSIONS.length} अनुमतियां चुनी गईं`,
-                      `${selectedPermissions.length} of ${ALL_PERMISSIONS.length} permissions granted`
+                      `${selectedPermissions.length} / ${availablePermissions.length} પરમિશન પસંદ કરેલ છે`,
+                      `${selectedPermissions.length} / ${availablePermissions.length} अनुमतियां चुनी गईं`,
+                      `${selectedPermissions.length} of ${availablePermissions.length} permissions granted`
                     )}
                   </div>
                   <button
@@ -2520,7 +2543,7 @@ function Admin() {
                     className="admin-perm-select-all-btn"
                     onClick={handleSelectAllPermissions}
                   >
-                    {selectedPermissions.length === ALL_PERMISSIONS.length
+                    {selectedPermissions.length === availablePermissions.length
                       ? txt("બધી હટાવો (Deselect All)", "सभी हटाएं (Deselect All)", "Deselect All")
                       : txt("બધી પસંદ કરો (Select All)", "सभी चुनें (Select All)", "Select All")}
                   </button>
@@ -2535,7 +2558,7 @@ function Admin() {
                 </p>
 
                 <div className="admin-perm-grid">
-                  {ALL_PERMISSIONS.map((perm) => {
+                  {availablePermissions.map((perm) => {
                     const isChecked = selectedPermissions.includes(perm.id);
                     return (
                       <div
