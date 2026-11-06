@@ -45,11 +45,15 @@ const getAllUsers = async (req, res) => {
     });
 
     const ALL_PERMS = [
-      "manage_shloks",
+      "add_shloks",
+      "edit_shloks",
       "delete_shloks",
-      "manage_quiz",
+      "manage_shloks",
+      "add_quiz",
+      "edit_quiz",
       "delete_quiz",
       "share_quiz",
+      "manage_quiz",
       "view_analytics",
       "manage_feedbacks",
       "delete_feedbacks",
@@ -225,11 +229,15 @@ const updateUserRole = async (req, res) => {
     }
 
     const validPermissions = [
-      "manage_shloks",
+      "add_shloks",
+      "edit_shloks",
       "delete_shloks",
-      "manage_quiz",
+      "manage_shloks",
+      "add_quiz",
+      "edit_quiz",
       "delete_quiz",
       "share_quiz",
+      "manage_quiz",
       "view_analytics",
       "manage_feedbacks",
       "delete_feedbacks",
@@ -246,8 +254,11 @@ const updateUserRole = async (req, res) => {
         );
       } else {
         cleanPermissions = [
-          "manage_shloks",
-          "manage_quiz",
+          "add_shloks",
+          "edit_shloks",
+          "add_quiz",
+          "edit_quiz",
+          "share_quiz",
           "view_analytics",
           "manage_feedbacks",
           "manage_users",
@@ -303,10 +314,17 @@ const updateUserRole = async (req, res) => {
 const getAdminPermissionsList = async (req, res) => {
   const permissions = [
     {
-      id: "manage_shloks",
-      nameGu: "શ્લોક સંચાલન (ઉમેરો / સુધારો)",
-      nameHi: "श्लोक प्रबंधन (जोड़ें / संपादित करें)",
-      nameEn: "Manage Shlokas (Add / Edit)",
+      id: "add_shloks",
+      nameGu: "શ્લોક ઉમેરો (Add Shlok)",
+      nameHi: "श्लोक जोड़ें (Add Shlok)",
+      nameEn: "Add Shlokas",
+      category: "shloks",
+    },
+    {
+      id: "edit_shloks",
+      nameGu: "શ્લોક સુધારો (Edit Shlok)",
+      nameHi: "श्लोक संपादित करें (Edit Shlok)",
+      nameEn: "Edit Shlokas",
       category: "shloks",
     },
     {
@@ -318,10 +336,17 @@ const getAdminPermissionsList = async (req, res) => {
       isDanger: true,
     },
     {
-      id: "manage_quiz",
-      nameGu: "ક્વિઝ સંચાલન (ઉમેરો / સુધારો)",
-      nameHi: "क्विज़ प्रबंधन (जोड़ें / संपादित करें)",
-      nameEn: "Manage Quiz (Add / Edit)",
+      id: "add_quiz",
+      nameGu: "ક્વિઝ પ્રશ્ન ઉમેરો (Add Question)",
+      nameHi: "क्विज़ प्रश्न जोड़ें (Add Question)",
+      nameEn: "Add Quiz Questions",
+      category: "quiz",
+    },
+    {
+      id: "edit_quiz",
+      nameGu: "ક્વિઝ પ્રશ્ન સુધારો (Edit Question)",
+      nameHi: "क्विज़ प्रश्न संपादित करें (Edit Question)",
+      nameEn: "Edit Quiz Questions",
       category: "quiz",
     },
     {

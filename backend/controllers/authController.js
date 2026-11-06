@@ -1007,8 +1007,12 @@ const registerUser = async (
         permissions:
           (user.isSuperAdmin || (user.email && ["gitagyanm700@gmail.com", "aambaliyamanav@gmail.com"].includes(user.email.toLowerCase())))
             ? [
-                "manage_shloks",
+                "add_shloks",
+                "edit_shloks",
                 "delete_shloks",
+                "manage_shloks",
+                "add_quiz",
+                "edit_quiz",
                 "manage_quiz",
                 "delete_quiz",
                 "share_quiz",
@@ -1023,8 +1027,11 @@ const registerUser = async (
             ? user.permissions
             : (user.role === "admin"
                 ? [
-                    "manage_shloks",
-                    "manage_quiz",
+                    "add_shloks",
+                    "edit_shloks",
+                    "add_quiz",
+                    "edit_quiz",
+                    "share_quiz",
                     "view_analytics",
                     "manage_feedbacks",
                     "manage_users",
@@ -1167,8 +1174,12 @@ const loginUser = async (
         permissions:
           (user.isSuperAdmin || (user.email && ["gitagyanm700@gmail.com", "aambaliyamanav@gmail.com"].includes(user.email.toLowerCase())))
             ? [
-                "manage_shloks",
+                "add_shloks",
+                "edit_shloks",
                 "delete_shloks",
+                "manage_shloks",
+                "add_quiz",
+                "edit_quiz",
                 "manage_quiz",
                 "delete_quiz",
                 "share_quiz",
@@ -1183,8 +1194,11 @@ const loginUser = async (
             ? user.permissions
             : (user.role === "admin"
                 ? [
-                    "manage_shloks",
-                    "manage_quiz",
+                    "add_shloks",
+                    "edit_shloks",
+                    "add_quiz",
+                    "edit_quiz",
+                    "share_quiz",
                     "view_analytics",
                     "manage_feedbacks",
                     "manage_users",
@@ -1249,8 +1263,11 @@ const getProfile = async (
           user.permissions ||
           (user.role === "admin"
             ? [
-                "manage_shloks",
-                "manage_quiz",
+                "add_shloks",
+                "edit_shloks",
+                "add_quiz",
+                "edit_quiz",
+                "share_quiz",
                 "view_analytics",
                 "manage_feedbacks",
                 "manage_users",

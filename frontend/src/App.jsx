@@ -478,7 +478,7 @@ function AnimatedRoutes() {
             <Route
               path="/admin/shloks"
               element={
-                <AdminRoute permission="manage_shloks">
+                <AdminRoute permission={["add_shloks", "edit_shloks", "delete_shloks", "manage_shloks"]}>
                   <ShlokManagement />
                 </AdminRoute>
               }
@@ -492,7 +492,7 @@ function AnimatedRoutes() {
             <Route
               path="/admin/quiz"
               element={
-                <AdminRoute permission="manage_quiz">
+                <AdminRoute permission={["add_quiz", "edit_quiz", "delete_quiz", "share_quiz", "manage_quiz"]}>
                   <QuizManagement />
                 </AdminRoute>
               }

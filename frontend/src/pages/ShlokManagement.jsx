@@ -412,6 +412,8 @@ function ShlokManagement() {
   const navigate = useNavigate();
   const { isHindi, isEnglish, isGujarati, txt } = useLanguage();
   const { user } = useAuth();
+  const canAddShloks = hasPermission(user, "add_shloks") || hasPermission(user, "manage_shloks");
+  const canEditShloks = hasPermission(user, "edit_shloks") || hasPermission(user, "manage_shloks");
   const canDeleteShloks = hasPermission(user, "delete_shloks");
 
   /* =====================================================
@@ -1253,6 +1255,28 @@ function ShlokManagement() {
     async (event) => {
       event.preventDefault();
 
+      if (editingId && !canEditShloks) {
+        alert(
+          txt(
+            "તમારી પાસે શ્લોક સુધારવાની (Edit) પરમિશન નથી.",
+            "आपके पास श्लोक संपादित करने (Edit) की अनुमति नहीं है।",
+            "You do not have permission to edit shlokas."
+          )
+        );
+        return;
+      }
+
+      if (!editingId && !canAddShloks) {
+        alert(
+          txt(
+            "તમારી પાસે નવો શ્લોક ઉમેરવાની (Add) પરમિશન નથી.",
+            "आपके पास नया श्लोक जोड़ने (Add) की अनुमति नहीं है।",
+            "You do not have permission to add new shlokas."
+          )
+        );
+        return;
+      }
+
       setSaving(true);
       setError("");
       setMessage("");
@@ -1510,6 +1534,17 @@ function ShlokManagement() {
   const handleEdit = (
     shlok
   ) => {
+    if (!canEditShloks) {
+      alert(
+        txt(
+          "તમારી પાસે શ્લોક સુધારવાની (Edit) પરમિશન નથી.",
+          "आपके पास श्लोक संपादित करने (Edit) की अनुमति नहीं है।",
+          "You do not have permission to edit shlokas."
+        )
+      );
+      return;
+    }
+
     setEditingId(shlok._id);
 
     setFormData({
@@ -1884,6 +1919,13 @@ function ShlokManagement() {
             ADD / EDIT FORM
         ================================================= */}
 
+        {!canAddShloks && canEditShloks && !editingId && (
+          <div style={{ margin: "20px 0", padding: "16px", borderRadius: "14px", background: "#eff6ff", color: "#1e40af", border: "1px solid #bfdbfe", textAlign: "center", fontWeight: "500" }}>
+            ℹ️ {txt("શ્લોક સુધારવા માટે નીચેની યાદીમાંથી કોઈપણ શ્લોક પર 'Edit' બટન ક્લિક કરો.", "श्लोक संपादित करने के लिए नीचे दी गई सूची में से किसी भी श्लोक पर 'Edit' बटन क्लिक करें।", "Click 'Edit' on any shloka in the list below to edit it.")}
+          </div>
+        )}
+
+        {(canAddShloks || (canEditShloks && editingId)) && (
         <section className="shlok-form-section">
 
           <div className="section-title">
@@ -2671,6 +2713,7 @@ function ShlokManagement() {
 
           </form>
         </section>
+        )}
 
         {/* =================================================
             SHLOK LIST
@@ -2805,17 +2848,19 @@ function ShlokManagement() {
 
                             <div className="shlok-actions">
 
-                              <button
-                                type="button"
-                                className="edit-shlok-btn"
-                                onClick={() =>
-                                  handleEdit(
-                                    shlok
-                                  )
-                                }
-                              >
-                                ✏️ Edit
-                              </button>
+                              {canEditShloks && (
+                                <button
+                                  type="button"
+                                  className="edit-shlok-btn"
+                                  onClick={() =>
+                                    handleEdit(
+                                      shlok
+                                    )
+                                  }
+                                >
+                                  ✏️ Edit
+                                </button>
+                              )}
 
                               {canDeleteShloks && (
                                 <button

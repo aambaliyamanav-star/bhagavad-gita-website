@@ -10,11 +10,15 @@ export const SUPER_ADMIN_EMAILS = [
 export const SUPER_ADMIN_EMAIL = "gitagyanm700@gmail.com";
 
 export const PERMISSION_KEYS = {
-  MANAGE_SHLOKS: "manage_shloks",
+  ADD_SHLOKS: "add_shloks",
+  EDIT_SHLOKS: "edit_shloks",
   DELETE_SHLOKS: "delete_shloks",
-  MANAGE_QUIZ: "manage_quiz",
+  MANAGE_SHLOKS: "manage_shloks", // backward compatibility
+  ADD_QUIZ: "add_quiz",
+  EDIT_QUIZ: "edit_quiz",
   DELETE_QUIZ: "delete_quiz",
   SHARE_QUIZ: "share_quiz",
+  MANAGE_QUIZ: "manage_quiz", // backward compatibility
   VIEW_ANALYTICS: "view_analytics",
   MANAGE_FEEDBACKS: "manage_feedbacks",
   DELETE_FEEDBACKS: "delete_feedbacks",
@@ -25,10 +29,17 @@ export const PERMISSION_KEYS = {
 
 export const ALL_PERMISSIONS = [
   {
-    id: "manage_shloks",
-    nameGu: "શ્લોક સંચાલન (ઉમેરો / સુધારો)",
-    nameHi: "श्लोक प्रबंधन (जोड़ें / संपादित करें)",
-    nameEn: "Manage Shlokas (Add / Edit)",
+    id: "add_shloks",
+    nameGu: "શ્લોક ઉમેરો (Add Shlok)",
+    nameHi: "श्लोक जोड़ें (Add Shlok)",
+    nameEn: "Add Shlokas",
+    category: "shloks",
+  },
+  {
+    id: "edit_shloks",
+    nameGu: "શ્લોક સુધારો (Edit Shlok)",
+    nameHi: "श्लोक संपादित करें (Edit Shlok)",
+    nameEn: "Edit Shlokas",
     category: "shloks",
   },
   {
@@ -40,10 +51,17 @@ export const ALL_PERMISSIONS = [
     isDanger: true,
   },
   {
-    id: "manage_quiz",
-    nameGu: "ક્વિઝ સંચાલન (ઉમેરો / સુધારો)",
-    nameHi: "क्विज़ प्रबंधन (जोड़ें / संपादित करें)",
-    nameEn: "Manage Quiz (Add / Edit)",
+    id: "add_quiz",
+    nameGu: "ક્વિઝ પ્રશ્ન ઉમેરો (Add Question)",
+    nameHi: "क्विज़ प्रश्न जोड़ें (Add Question)",
+    nameEn: "Add Quiz Questions",
+    category: "quiz",
+  },
+  {
+    id: "edit_quiz",
+    nameGu: "ક્વિઝ પ્રશ્ન સુધારો (Edit Question)",
+    nameHi: "क्विज़ प्रश्न संपादित करें (Edit Question)",
+    nameEn: "Edit Quiz Questions",
     category: "quiz",
   },
   {
@@ -78,7 +96,7 @@ export const ALL_PERMISSIONS = [
   {
     id: "delete_feedbacks",
     nameGu: "પ્રતિસાદ ડિલીટ",
-    nameHi: "फ़ीडबैक डिलीट",
+    nameHi: "फ़ीडबैक डिलीટ",
     nameEn: "Delete Feedbacks",
     category: "feedbacks",
     isDanger: true,
@@ -125,7 +143,7 @@ export function isSuperAdminUser(user) {
 }
 
 /**
- * Checks if the user has a specific permission
+ * Checks if the user has a specific permission or any of multiple permissions
  */
 export function hasPermission(user, permissionKey) {
   if (!user) return false;
@@ -134,9 +152,33 @@ export function hasPermission(user, permissionKey) {
   // Super Admin always has 100% full access to all permissions
   if (isSuperAdminUser(user)) return true;
 
+  // If checking array of permission keys (grant if user has ANY of them)
+  if (Array.isArray(permissionKey)) {
+    return permissionKey.some((k) => hasPermission(user, k));
+  }
+
   // If user has specific permissions array
   if (Array.isArray(user.permissions)) {
-    return user.permissions.includes(permissionKey);
+    if (user.permissions.includes(permissionKey)) return true;
+
+    // Backward compatibility aliases:
+    // Legacy manage_shloks gives access to add_shloks and edit_shloks
+    if (
+      (permissionKey === "add_shloks" || permissionKey === "edit_shloks") &&
+      user.permissions.includes("manage_shloks")
+    ) {
+      return true;
+    }
+
+    // Legacy manage_quiz gives access to add_quiz and edit_quiz
+    if (
+      (permissionKey === "add_quiz" || permissionKey === "edit_quiz") &&
+      user.permissions.includes("manage_quiz")
+    ) {
+      return true;
+    }
+
+    return false;
   }
 
   // Fallback for legacy admin

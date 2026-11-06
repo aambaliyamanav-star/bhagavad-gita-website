@@ -34,6 +34,8 @@ function QuizManagement() {
   const navigate = useNavigate();
   const { isHindi, isEnglish, isGujarati, txt } = useLanguage();
   const { user } = useAuth();
+  const canAddQuiz = hasPermission(user, "add_quiz") || hasPermission(user, "manage_quiz");
+  const canEditQuiz = hasPermission(user, "edit_quiz") || hasPermission(user, "manage_quiz");
   const canDeleteQuiz = hasPermission(user, "delete_quiz");
   const canShareQuiz = hasPermission(user, "share_quiz");
   // =====================================================
@@ -416,6 +418,17 @@ function QuizManagement() {
   // =====================================================
 
   const handleEdit = (question) => {
+    if (!canEditQuiz) {
+      alert(
+        txt(
+          "તમારી પાસે ક્વિઝ પ્રશ્ન સુધારવાની (Edit) પરમિશન નથી.",
+          "आपके पास क्विज़ प्रश्न संपादित करने (Edit) की अनुमति नहीं है।",
+          "You do not have permission to edit quiz questions."
+        )
+      );
+      return;
+    }
+
     let category =
       question.category || "all";
 
@@ -901,6 +914,28 @@ function QuizManagement() {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
+    if (editingId && !canEditQuiz) {
+      alert(
+        txt(
+          "તમારી પાસે ક્વિઝ પ્રશ્ન સુધારવાની (Edit) પરમિશન નથી.",
+          "आपके पास क्विज़ प्रश्न संपादित करने (Edit) की अनुमति नहीं है।",
+          "You do not have permission to edit quiz questions."
+        )
+      );
+      return;
+    }
+
+    if (!editingId && !canAddQuiz) {
+      alert(
+        txt(
+          "તમારી પાસે નવો ક્વિઝ પ્રશ્ન ઉમેરવાની (Add) પરમિશન નથી.",
+          "आपके पास नया क्विज़ प्रश्न जोड़ने (Add) की अनुमति नहीं है।",
+          "You do not have permission to add new quiz questions."
+        )
+      );
+      return;
+    }
 
     setError("");
     setSuccess("");
@@ -1760,6 +1795,13 @@ function QuizManagement() {
           FORM
       ================================================= */}
 
+      {!canAddQuiz && canEditQuiz && !editingId && (
+        <div style={{ margin: "20px 0", padding: "16px", borderRadius: "14px", background: "#eff6ff", color: "#1e40af", border: "1px solid #bfdbfe", textAlign: "center", fontWeight: "500" }}>
+          ℹ️ {txt("પ્રશ્ન સુધારવા માટે નીચેની યાદીમાંથી કોઈપણ પ્રશ્ન પર 'Edit' બટન ક્લિક કરો.", "प्रश्न संपादित करने के लिए नीचे दी गई सूची में से किसी भी प्रश्न पर 'Edit' बटन क्लिक करें।", "Click 'Edit' on any question in the list below to edit it.")}
+        </div>
+      )}
+
+      {(canAddQuiz || (canEditQuiz && editingId)) && (
       <section className="quiz-form-card">
 
         <div className="quiz-form-title">
@@ -2381,6 +2423,7 @@ function QuizManagement() {
         </form>
 
       </section>
+      )}
 
 
       {/* =================================================
@@ -2899,17 +2942,19 @@ function QuizManagement() {
                             </button>
                           )}
 
-                          <button
-                            type="button"
-                            className="quiz-edit-button"
-                            onClick={() =>
-                              handleEdit(
-                                item
-                              )
-                            }
-                          >
-                            <Edit3 className="btn-icon" size={15} /> Edit
-                          </button>
+                          {canEditQuiz && (
+                            <button
+                              type="button"
+                              className="quiz-edit-button"
+                              onClick={() =>
+                                handleEdit(
+                                  item
+                                )
+                              }
+                            >
+                              <Edit3 className="btn-icon" size={15} /> Edit
+                            </button>
+                          )}
 
                           {canDeleteQuiz && (
                           <button

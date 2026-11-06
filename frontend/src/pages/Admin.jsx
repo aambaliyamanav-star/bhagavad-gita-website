@@ -118,10 +118,17 @@ function Admin() {
   const { user: loggedInUser, logout } = useAuth();
 
   const isSuperAdmin = isSuperAdminUser(loggedInUser);
-  const canManageShloks = hasPermission(loggedInUser, "manage_shloks");
-  const canDeleteShloks = hasPermission(loggedInUser, "delete_shloks");
-  const canManageQuiz = hasPermission(loggedInUser, "manage_quiz");
-  const canDeleteQuiz = hasPermission(loggedInUser, "delete_quiz");
+  const canAccessShlokAdmin =
+    hasPermission(loggedInUser, "add_shloks") ||
+    hasPermission(loggedInUser, "edit_shloks") ||
+    hasPermission(loggedInUser, "delete_shloks") ||
+    hasPermission(loggedInUser, "manage_shloks");
+  const canAccessQuizAdmin =
+    hasPermission(loggedInUser, "add_quiz") ||
+    hasPermission(loggedInUser, "edit_quiz") ||
+    hasPermission(loggedInUser, "delete_quiz") ||
+    hasPermission(loggedInUser, "share_quiz") ||
+    hasPermission(loggedInUser, "manage_quiz");
   const canViewAnalytics = hasPermission(loggedInUser, "view_analytics");
   const canManageFeedbacks = hasPermission(loggedInUser, "manage_feedbacks");
   const canDeleteFeedbacks = hasPermission(loggedInUser, "delete_feedbacks");
@@ -164,8 +171,11 @@ function Admin() {
     } else {
       // Default: select available safe permissions that this admin owns
       const defaultSafe = [
-        "manage_shloks",
-        "manage_quiz",
+        "add_shloks",
+        "edit_shloks",
+        "add_quiz",
+        "edit_quiz",
+        "share_quiz",
         "view_analytics",
         "manage_feedbacks",
         "manage_users",
@@ -856,14 +866,14 @@ function Admin() {
             ADMIN MANAGEMENT CARDS
         ================================================= */}
 
-        {!loading && !message && (canManageShloks || canManageQuiz) && (
+        {!loading && !message && (canAccessShlokAdmin || canAccessQuizAdmin) && (
           <div className="admin-management">
 
             {/* =================================================
                 SHLOK MANAGEMENT
             ================================================= */}
 
-            {canManageShloks && (
+            {canAccessShlokAdmin && (
               <Link
                 to="/admin/shloks"
                 className="management-card shlok-management-card"
@@ -882,7 +892,7 @@ function Admin() {
                 QUIZ MANAGEMENT
             ================================================= */}
 
-            {canManageQuiz && (
+            {canAccessQuizAdmin && (
               <Link
                 to="/admin/quiz"
                 className="management-card quiz-management-card"

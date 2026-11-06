@@ -96,7 +96,7 @@ router.get(
 router.get(
   "/admin/questions",
   protect,
-  requirePermission("manage_quiz"),
+  requirePermission(["add_quiz", "edit_quiz", "delete_quiz", "share_quiz", "manage_quiz"]),
   getAllQuizQuestionsAdmin
 );
 
@@ -106,7 +106,7 @@ router.get(
 router.post(
   "/admin/question",
   protect,
-  requirePermission("manage_quiz"),
+  requirePermission(["add_quiz", "manage_quiz"]),
   addQuizQuestion
 );
 
@@ -116,7 +116,7 @@ router.post(
 router.put(
   "/admin/question/:id",
   protect,
-  requirePermission("manage_quiz"),
+  requirePermission(["edit_quiz", "manage_quiz"]),
   updateQuizQuestion
 );
 
@@ -153,14 +153,14 @@ router.post(
 router.post(
   "/admin/auto-translate",
   protect,
-  requirePermission("manage_quiz"),
+  requirePermission(["add_quiz", "edit_quiz", "manage_quiz"]),
   autoTranslateQuizQuestion
 );
 
 router.post(
   "/auto-translate",
   protect,
-  requirePermission("manage_quiz"),
+  requirePermission(["add_quiz", "edit_quiz", "manage_quiz"]),
   autoTranslateQuizQuestion
 );
 

@@ -133,8 +133,32 @@ const isSuperAdmin = (user) => {
 const hasPermission = (user, permissionKey) => {
   if (!user || user.role !== "admin") return false;
   if (isSuperAdmin(user)) return true;
+
   if (Array.isArray(user.permissions)) {
-    return user.permissions.includes(permissionKey);
+    if (Array.isArray(permissionKey)) {
+      return permissionKey.some((k) => hasPermission(user, k));
+    }
+
+    if (user.permissions.includes(permissionKey)) return true;
+
+    // Backward-compatibility aliases:
+    // Legacy manage_shloks gives access to add_shloks and edit_shloks
+    if (
+      (permissionKey === "add_shloks" || permissionKey === "edit_shloks") &&
+      user.permissions.includes("manage_shloks")
+    ) {
+      return true;
+    }
+
+    // Legacy manage_quiz gives access to add_quiz and edit_quiz
+    if (
+      (permissionKey === "add_quiz" || permissionKey === "edit_quiz") &&
+      user.permissions.includes("manage_quiz")
+    ) {
+      return true;
+    }
+
+    return false;
   }
   return true; // legacy admin fallback
 };
@@ -185,10 +209,11 @@ const requirePermission = (permissionKey) => {
       }
 
       if (!hasPermission(user, permissionKey)) {
+        const permLabel = Array.isArray(permissionKey) ? permissionKey.join(" / ") : permissionKey;
         return res.status(403).json({
           success: false,
           code: "PERMISSION_DENIED",
-          message: `તમારી પાસે આ સુવિધા (${permissionKey}) નો ઉપયોગ કરવાની પરમિશન નથી. મુખ્ય એડમિનનો સંપર્ક કરો.`
+          message: `તમારી પાસે આ સુવિધા (${permLabel}) નો ઉપયોગ કરવાની પરમિશન નથી. મુખ્ય એડમિનનો સંપર્ક કરો.`
         });
       }
 

@@ -31,7 +31,7 @@ const router = express.Router();
 router.post(
   "/auto-translate",
   protect,
-  requirePermission("manage_shloks"),
+  requirePermission(["add_shloks", "edit_shloks", "manage_shloks"]),
   autoTranslateShlok
 );
 
@@ -43,7 +43,7 @@ router.post(
 router.post(
   "/",
   protect,
-  requirePermission("manage_shloks"),
+  requirePermission(["add_shloks", "manage_shloks"]),
   addShlok
 );
 
@@ -87,7 +87,7 @@ router.get(
 router.put(
   "/:id",
   protect,
-  requirePermission("manage_shloks"),
+  requirePermission(["edit_shloks", "manage_shloks"]),
   updateShlok
 );
 
