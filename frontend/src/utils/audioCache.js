@@ -145,7 +145,7 @@ export async function clearAudioCache() {
 }
 
 /**
- * Get count of cached audio clips
+ * Get count of cached audio clips in database
  */
 export async function getCachedAudioCount() {
   try {
@@ -165,6 +165,22 @@ export async function getCachedAudioCount() {
 // =========================================================
 // NEURAL TTS FETCH & TEXT FORMATTING UTILITIES
 // =========================================================
+
+/**
+ * Clean HTML preserving line breaks
+ */
+export function removeHtml(text) {
+  if (!text) return "";
+  return String(text)
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<\/(div|p|li|blockquote|h[1-6]|tr)>/gi, "\n")
+    .replace(/<(div|p|li|blockquote|h[1-6]|tr)[^>]*>/gi, "\n")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/\r\n/g, "\n")
+    .replace(/\r/g, "\n")
+    .trim();
+}
 
 /**
  * Resiliently fetch Microsoft Neural AI speech audio
@@ -217,13 +233,11 @@ export const fetchNeuralAudioBlob = async (text, lang, customRate = null) => {
 };
 
 /**
- * Format Sanskrit text with natural pauses
+ * Format Sanskrit text with natural poetic meter (rag/chandas pauses) for authentic recitation
  */
 export function formatSanskritForSpeech(shlokObj) {
   if (!shlokObj) return "";
-  let plain = String(shlokObj.sanskrit || "")
-    .replace(/<[^>]*>/g, "")
-    .replace(/&nbsp;/gi, " ");
+  let plain = removeHtml(shlokObj.sanskrit || "");
   if (!plain && (shlokObj.sanskritLine1 || shlokObj.sanskritLine2)) {
     plain = [shlokObj.sanskritLine1, shlokObj.sanskritLine2].filter(Boolean).join("\n");
   }
@@ -280,12 +294,28 @@ export function extractCleanTextForSpeech(htmlString) {
 // =========================================================
 
 /**
+ * Count how many shlokas in a chapter have Sanskrit audio cached
+ */
+export async function getChapterCachedAudioCount(chapterNumber, shlokas) {
+  if (!Array.isArray(shlokas) || shlokas.length === 0) return 0;
+  let count = 0;
+  for (const s of shlokas) {
+    const sNum = Number(s.shlokNumber);
+    const hasSa = await isAudioInCache(chapterNumber, sNum, "sanskrit", "sa");
+    if (hasSa) count++;
+  }
+  return count;
+}
+
+/**
  * Pre-cache Sanskrit and Translation audio for a single shloka
  */
 export async function cacheSingleShlokaAudio(chapterNumber, shlokaObj, lang = "gu") {
-  if (!chapterNumber || !shlokaObj || typeof window === "undefined" || !navigator.onLine) return;
-  const sNum = shlokaObj.shlokNumber;
-  if (!sNum) return;
+  if (!chapterNumber || !shlokaObj || typeof window === "undefined" || !navigator.onLine) return false;
+  const sNum = Number(shlokaObj.shlokNumber);
+  if (!sNum) return false;
+
+  let savedAny = false;
 
   // 1. Pre-cache Sanskrit
   const hasSa = await isAudioInCache(chapterNumber, sNum, "sanskrit", "sa");
@@ -296,6 +326,7 @@ export async function cacheSingleShlokaAudio(chapterNumber, shlokaObj, lang = "g
         const saBlob = await fetchNeuralAudioBlob(saText, "sa", "-22%");
         if (saBlob) {
           await saveAudioToCache(chapterNumber, sNum, "sanskrit", "sa", saBlob);
+          savedAny = true;
         }
       } catch (err) {}
     }
@@ -313,21 +344,27 @@ export async function cacheSingleShlokaAudio(chapterNumber, shlokaObj, lang = "g
         const trBlob = await fetchNeuralAudioBlob(trText, lang, "-2%");
         if (trBlob) {
           await saveAudioToCache(chapterNumber, sNum, "translation", lang, trBlob);
+          savedAny = true;
         }
       } catch (err) {}
     }
   }
+
+  return savedAny;
 }
 
-let cancelAudioSyncFlag = false;
+let activeSyncController = null;
 
 export function stopAudioSync() {
-  cancelAudioSyncFlag = true;
+  if (activeSyncController) {
+    activeSyncController.abort();
+    activeSyncController = null;
+  }
 }
 
 /**
  * Quietly pre-cache all shlokas in a chapter in background
- * Prioritizes starting from startFromIndex outwards
+ * Prioritizes starting from startFromIndex outwards (current shloka first!)
  */
 export async function autoSyncChapterAudios(
   chapterNumber,
@@ -339,7 +376,11 @@ export async function autoSyncChapterAudios(
   if (typeof window === "undefined" || !navigator.onLine) return;
   if (!Array.isArray(shlokas) || shlokas.length === 0) return;
 
-  cancelAudioSyncFlag = false;
+  if (activeSyncController) {
+    activeSyncController.abort();
+  }
+  const controller = new AbortController();
+  activeSyncController = controller;
 
   try {
     const len = shlokas.length;
@@ -349,15 +390,24 @@ export async function autoSyncChapterAudios(
     for (let i = startFromIndex; i < len; i++) indices.push(i);
     for (let i = 0; i < startFromIndex; i++) indices.push(i);
 
-    let completed = 0;
+    let completed = await getChapterCachedAudioCount(chapterNumber, shlokas);
+    if (typeof onProgress === "function") {
+      onProgress({
+        current: completed,
+        total: len,
+        percent: Math.round((completed / len) * 100),
+      });
+    }
+
     for (const idx of indices) {
-      if (cancelAudioSyncFlag || !navigator.onLine) break;
+      if (controller.signal.aborted || !navigator.onLine) break;
 
       const shlok = shlokas[idx];
       if (shlok) {
         await cacheSingleShlokaAudio(chapterNumber, shlok, lang);
       }
-      completed++;
+
+      completed = await getChapterCachedAudioCount(chapterNumber, shlokas);
       if (typeof onProgress === "function") {
         onProgress({
           current: completed,
@@ -367,9 +417,13 @@ export async function autoSyncChapterAudios(
       }
 
       // Small delay between shlokas to prevent server spike
-      await new Promise((r) => setTimeout(r, 120));
+      await new Promise((r) => setTimeout(r, 100));
     }
   } catch (e) {
-    console.warn("Background audio sync error:", e);
+    // ignore abort
+  } finally {
+    if (activeSyncController === controller) {
+      activeSyncController = null;
+    }
   }
 }

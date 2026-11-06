@@ -1,6 +1,6 @@
 import { getValidToken } from "../utils/authHelper.js";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { BookOpen, Heart, Mic, Sparkles, AlertCircle, ChevronLeft, ChevronRight, Share2, Volume2, Square, Play } from "lucide-react";
+import { BookOpen, Heart, Mic, Sparkles, AlertCircle, ChevronLeft, ChevronRight, Share2, Volume2, Square, Play, CheckCircle2, Loader2 } from "lucide-react";
 import "./ChapterReader.css";
 import ShareShlokaModal from "../components/ShareShlokaModal.jsx";
 import SudarshanShimmerLoader from "../components/SudarshanShimmerLoader.jsx";
@@ -15,7 +15,7 @@ import { useAuth } from "../context/AuthContext.jsx";
 import { useLanguage } from "../context/LanguageContext.jsx";
 import { trackShlokaRead, getFirstUnreadShloka, getLocalProgress } from "../utils/readingTracker.js";
 import { saveChapterOffline, getChapterOffline } from "../utils/offlineStorage.js";
-import { saveAudioToCache, getAudioFromCache, isAudioInCache, autoSyncChapterAudios } from "../utils/audioCache.js";
+import { saveAudioToCache, getAudioFromCache, isAudioInCache, autoSyncChapterAudios, stopAudioSync } from "../utils/audioCache.js";
 
 function ChapterReader() {
   const { chapterNumber } = useParams();
@@ -44,6 +44,15 @@ function ChapterReader() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [isOfflineMode, setIsOfflineMode] = useState(false);
+  const [audioSyncProgress, setAudioSyncProgress] = useState({ current: 0, total: 0, done: false });
+  const [audioToast, setAudioToast] = useState("");
+
+  const showAudioToast = (msg) => {
+    setAudioToast(msg);
+    setTimeout(() => {
+      setAudioToast("");
+    }, 4500);
+  };
 
   // Currently clicked Sanskrit word
   const [activeWordIndex, setActiveWordIndex] = useState(null);
@@ -1252,11 +1261,11 @@ if (
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
       setSpeakingType(null);
       setAudioLoading(false);
-      alert(
+      showAudioToast(
         txt(
-          "તમારા બ્રાઉઝરમાં ઑફલાઇન સ્પીચ સપોર્ટ નથી. ઑડિયો સાંભળવા માટે કૃપા કરીને ઇન્ટરનેટ ચાલુ કરો.",
-          "आपके ब्राउज़र में ऑफ़लाइन स्पीच सपोर्ट नहीं है। कृपया इंटरनेट चालू करें।",
-          "Offline speech is not supported in your browser. Please connect to the internet."
+          "આ શ્લોકનો ઑડિયો હજુ ઑફલાઇન સેવ થયો નથી. કૃપા કરીને થોડી સેકન્ડ ઇન્ટરનેટ ચાલુ રાખીને ઑડિયો સેવ થવા દો.",
+          "यह ऑडियो अभी ऑफ़लाइन सेव नहीं हुआ है। कृपया कुछ सेकंड इंटरनेट चालू रखकर इसे सेव होने दें।",
+          "Audio is not yet cached offline. Please keep internet on for a few seconds to cache it."
         )
       );
       return;
@@ -1359,11 +1368,11 @@ if (
             setSpeakingType(null);
             setAudioLoading(false);
 
-            alert(
+            showAudioToast(
               txt(
-                "આ શ્લોકનો ઑડિયો ઑફલાઇન ઉપલબ્ધ નથી. એકવાર ઇન્ટરનેટ ચાલુ રાખીને શ્લોકનો ઑડિયો સાંભળો, જેથી તે કાયમ માટે ઑફલાઇન સેવ થઈ જાય.",
-                "यह ऑडियो ऑफ़लाइन उपलब्ध नहीं है। कृपया एक बार इंटरनेट चालू रखकर सुनें ताकि यह हमेशा के लिए ऑफ़लाइन सेव हो जाए।",
-                "This audio is not cached for offline. Please listen once while online so it gets saved offline permanently."
+                "આ શ્લોકનો ઑડિયો હજુ ઑફલાઇન સેવ થયો નથી. કૃપા કરીને થોડી સેકન્ડ ઇન્ટરનેટ ચાલુ રાખીને ઑડિયો સેવ થવા દો.",
+                "यह ऑडियो अभी ऑफ़लाइन सेव नहीं हुआ है। कृपया कुछ सेकंड इंटरनेट चालू रखकर इसे सेव होने दें।",
+                "Audio is not yet cached offline. Please keep internet on for a few seconds to cache it."
               )
             );
           };
@@ -1818,13 +1827,25 @@ if (
     if (typeof window === "undefined" || !navigator.onLine) return;
     if (!shlokas || shlokas.length === 0) return;
 
-    const timer = setTimeout(() => {
-      const currentLang = isEnglish ? "en" : isHindi ? "hi" : "gu";
-      autoSyncChapterAudios(currentChapterNumber, shlokas, currentLang, currentShloka);
-    }, 1200);
+    const currentLang = isEnglish ? "en" : isHindi ? "hi" : "gu";
+    autoSyncChapterAudios(
+      currentChapterNumber,
+      shlokas,
+      currentLang,
+      currentShloka,
+      (prog) => {
+        setAudioSyncProgress({
+          current: prog.current,
+          total: prog.total,
+          done: prog.current >= prog.total,
+        });
+      }
+    );
 
-    return () => clearTimeout(timer);
-  }, [currentShloka, shlokas, currentChapterNumber, language]);
+    return () => {
+      stopAudioSync();
+    };
+  }, [currentChapterNumber, shlokas.length, language]);
 
   const currentShlok = shlokas[currentShloka] || {};
   const currentLocalized = getLocalizedShlok(currentShlok);
@@ -2474,12 +2495,39 @@ const prepareSanskritLines = () => {
           {currentChapterTitle}
         </h2>
 
-        {isOfflineMode && (
+        {isOfflineMode ? (
           <div className="cr-offline-pill" title={txt("ઑફલાઇન મોડમાં વાંચી રહ્યા છો", "ऑफ़लाइन मोड में पढ़ रहे हैं", "Reading in Offline Mode")}>
             <span className="cr-offline-dot"></span>
             {txt("ઑફલાઇન વાંચન", "ऑफ़लाइन पठन", "Offline Reading")}
           </div>
-        )}
+        ) : audioSyncProgress.total > 0 ? (
+          <div
+            className={`cr-audio-sync-pill ${audioSyncProgress.done ? "ready" : "syncing"}`}
+            title={
+              audioSyncProgress.done
+                ? txt("બધા શ્લોકનો ઑડિયો ઑફલાઇન તૈયાર છે", "सभी श्लोकों का ऑडियो ऑफ़लाइन तैयार है", "All audio cached offline")
+                : txt("ઑડિયો ઑફલાઇન સેવ થઈ રહ્યો છે", "ऑडियो ऑफ़लाइन सहेजा जा रहा है", "Saving audio offline")
+            }
+          >
+            {audioSyncProgress.done ? (
+              <>
+                <CheckCircle2 size={12} />
+                <span>{txt("ઑડિયો ઑફલાઇન તૈયાર", "ऑडियो ऑफ़लाइन तैयार", "Audio Offline Ready")}</span>
+              </>
+            ) : (
+              <>
+                <Loader2 size={12} className="spin" />
+                <span>
+                  {txt(
+                    `ઑડિયો સેવ થાય છે (${audioSyncProgress.current}/${audioSyncProgress.total})`,
+                    `ऑडियो सहेजा जा रहा है (${audioSyncProgress.current}/${audioSyncProgress.total})`,
+                    `Saving Audio (${audioSyncProgress.current}/${audioSyncProgress.total})`
+                  )}
+                </span>
+              </>
+            )}
+          </div>
+        ) : null}
       </section>
 
       {/* =================================================
@@ -3010,6 +3058,13 @@ const prepareSanskritLines = () => {
             message: localized.message || shloka.message,
           }}
         />
+      )}
+
+      {/* Floating gentle non-blocking audio toast */}
+      {audioToast && (
+        <div className="cr-audio-toast" role="alert">
+          {audioToast}
+        </div>
       )}
 
     </main>
