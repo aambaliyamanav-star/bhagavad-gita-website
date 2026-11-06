@@ -1,6 +1,7 @@
 // =========================================================
 // BHAGAVAD GITA - OFFLINE STORAGE & PRE-CACHE ENGINE
 // Enables 100% offline reading and device-speech playback
+// Full offline access requires user login
 // =========================================================
 
 import { getValidToken } from "./authHelper.js";
@@ -9,13 +10,21 @@ const API_BASE = "https://bhagavad-gita-backend-jy1a.onrender.com/api/shloks";
 
 /**
  * Save a single chapter and its shlokas to offline storage
+ * NOTE: Only full chapters (shlokas with sanskrit) are saved.
+ * Stripped shlokas from logged-out users are NOT saved offline.
  */
 export function saveChapterOffline(chapterNumber, shlokas, chapterName = "") {
   if (!chapterNumber || !Array.isArray(shlokas) || shlokas.length === 0) return false;
   try {
     const key = `gita_offline_ch_${chapterNumber}`;
 
-    // Prevent overwriting full content with stripped content
+    // Never save stripped shlokas (from guest users) to offline storage
+    const isStripped = shlokas.some((s) => Number(s.shlokNumber) > 5 && !s.sanskrit);
+    if (isStripped) {
+      return false;
+    }
+
+    // Prevent overwriting full content with empty content
     const rawExisting = localStorage.getItem(key);
     if (rawExisting) {
       try {
@@ -24,9 +33,7 @@ export function saveChapterOffline(chapterNumber, shlokas, chapterName = "") {
           parsedExisting &&
           Array.isArray(parsedExisting.shlokas) &&
           parsedExisting.shlokas.some((s) => Number(s.shlokNumber) > 5 && Boolean(s.sanskrit));
-        const isNewStripped = shlokas.some((s) => Number(s.shlokNumber) > 5 && !s.sanskrit);
-        if (hasFullExisting && isNewStripped) {
-          console.warn(`Prevented overwriting full Chapter ${chapterNumber} with stripped content`);
+        if (hasFullExisting && isStripped) {
           return false;
         }
       } catch (e) {}
@@ -82,7 +89,6 @@ export function isChapterOfflineAvailable(chapterNumber) {
       (s) => Number(s.shlokNumber) > 5 && Boolean(s.sanskrit)
     );
     if (!hasFullAbove5) {
-      // It is an old stripped cache from guest session, needs full re-download!
       return false;
     }
   }
@@ -102,6 +108,18 @@ function updateOfflineCatalog(chapterNumber, count) {
       savedAt: Date.now(),
     };
     localStorage.setItem("gita_offline_catalog", JSON.stringify(catalog));
+  } catch (e) {}
+}
+
+/**
+ * Clear all offline chapters (called on logout)
+ */
+export function clearAllOfflineChapters() {
+  try {
+    for (let ch = 1; ch <= 18; ch++) {
+      localStorage.removeItem(`gita_offline_ch_${ch}`);
+    }
+    localStorage.removeItem("gita_offline_catalog");
   } catch (e) {}
 }
 
@@ -138,6 +156,7 @@ export function getOfflineStatusSummary() {
 
 /**
  * Download and cache all 18 chapters with progress callbacks
+ * REQUIRES USER LOGIN (valid auth token)
  */
 export async function downloadAllChaptersOffline(onProgress = null) {
   if (typeof window === "undefined" || !navigator.onLine) {
@@ -148,7 +167,15 @@ export async function downloadAllChaptersOffline(onProgress = null) {
   }
 
   const token = getValidToken();
-  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+  if (!token) {
+    return {
+      success: false,
+      requireLogin: true,
+      error: "ઑફલાઇન ડાઉનલોડ કરવા માટે Login કરવું જરૂરી છે.",
+    };
+  }
+
+  const headers = { Authorization: `Bearer ${token}` };
   const results = [];
   let totalSavedShlokas = 0;
 
@@ -191,16 +218,19 @@ export async function downloadAllChaptersOffline(onProgress = null) {
 
 /**
  * Quietly pre-cache missing chapters in background when online and idle
+ * ONLY runs for logged-in users
  */
 let isAutoSyncing = false;
 export async function autoSyncOfflineChaptersQuietly() {
   if (isAutoSyncing) return;
   if (typeof window === "undefined" || !navigator.onLine) return;
 
+  const token = getValidToken();
+  if (!token) return; // Do not auto-cache full content for guests
+
   isAutoSyncing = true;
   try {
-    const token = getValidToken();
-    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+    const headers = { Authorization: `Bearer ${token}` };
 
     for (let ch = 1; ch <= 18; ch++) {
       if (!isChapterOfflineAvailable(ch)) {

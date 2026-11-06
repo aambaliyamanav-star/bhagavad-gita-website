@@ -458,7 +458,48 @@ const getAllShlokas = async (
         })
         .lean();
 
-    return res.status(200).json({
+    // =====================================================
+    // LOGGED-OUT USER: RESTRICT CONTENT FOR SHLOKAS 6+
+    // =====================================================
+
+    if (!req.user) {
+      // Calculate today's index in IST so Aaj no shlok is NEVER stripped
+      const today = new Intl.DateTimeFormat("en-CA", {
+        timeZone: "Asia/Kolkata",
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      }).format(new Date());
+
+      const dateNumber = Number(today.replace(/-/g, ""));
+      const todayIndex = shlokas.length > 0 ? dateNumber % shlokas.length : -1;
+
+      const publicShlokas = shlokas.map((shloka, index) => {
+        // Shlok 1–5 OR Today's Shlok → Full content
+        if (Number(shloka.shlokNumber) <= 5 || index === todayIndex) {
+          return shloka;
+        }
+
+        // Shlok 6+ → Only metadata (safe for chapter counts / shlok selectors)
+        return {
+          _id: shloka._id,
+          chapterNumber: shloka.chapterNumber,
+          chapterName: shloka.chapterName,
+          shlokNumber: shloka.shlokNumber,
+        };
+      });
+
+      return res.status(200).json({
+        success: true,
+        shlokas: publicShlokas,
+      });
+    }
+
+    // =====================================================
+    // LOGGED-IN USER: FULL ACCESS
+    // =====================================================
+
+    res.status(200).json({
       success: true,
       shlokas,
     });
@@ -515,6 +556,45 @@ const getChapterShlokas = async (
           shlokNumber: 1,
         })
         .lean();
+
+    // =====================================================
+    // LOGGED-OUT USER
+    // =====================================================
+
+    if (!req.user) {
+      const publicShlokas =
+        shlokas.map((shloka) => {
+          // Shlok 1–5 → Full content
+          if (
+            Number(
+              shloka.shlokNumber
+            ) <= 5
+          ) {
+            return shloka;
+          }
+
+          // Shlok 6+ → Only button information
+          return {
+            _id: shloka._id,
+            chapterNumber:
+              shloka.chapterNumber,
+            chapterName:
+              shloka.chapterName,
+            shlokNumber:
+              shloka.shlokNumber,
+          };
+        });
+
+      return res.status(200).json({
+        success: true,
+        shlokas:
+          publicShlokas,
+      });
+    }
+
+    // =====================================================
+    // LOGGED-IN USER
+    // =====================================================
 
     return res.status(200).json({
       success: true,

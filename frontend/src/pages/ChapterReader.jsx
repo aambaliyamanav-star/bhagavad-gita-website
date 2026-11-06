@@ -326,8 +326,19 @@ useEffect(() => {
     }
 
     if (targetShlokaNum) {
-      // In offline mode, do not block users who have cached shlokas
-      if (!user && targetShlokaNum > 5 && !isOffline) {
+      if (!user && targetShlokaNum > 5) {
+        if (isOffline || !navigator.onLine) {
+          alert(
+            txt(
+              "ઑફલાઇનમાં ૫ થી વધુ શ્લોક વાંચવા માટે Login કરવું જરૂરી છે. કૃપા કરીને ઇન્ટરનેટ ચાલુ કરીને Login કરો.",
+              "ऑफ़लाइन में 5 से अधिक श्लोक पढ़ने के लिए Login करना आवश्यक है। कृपया इंटरनेट चालू करके Login करें।",
+              "Login is required to read more than 5 shlokas offline. Please connect to the internet and login."
+            )
+          );
+          setCurrentShloka(0);
+          return;
+        }
+
         const redirectPath = `/chapter/${currentChapterNumber}?shloka=${targetShlokaNum}`;
         const redirectMsg = isHindi
           ? `अध्याय ${currentChapterNumber} के श्लोक ${targetShlokaNum} पढ़ने के लिए Login करना आवश्यक है।`
@@ -916,6 +927,16 @@ if (
   !user &&
   Number(selectedShlok?.shlokNumber) > 5
 ) {
+  if (isOfflineMode || !navigator.onLine) {
+    alert(
+      txt(
+        "ઑફલાઇનમાં ૫ થી વધુ શ્લોક વાંચવા માટે Login કરવું જરૂરી છે. કૃપા કરીને ઇન્ટરનેટ ચાલુ કરીને Login કરો.",
+        "ऑफ़लाइन में 5 से अधिक श्लोक पढ़ने के लिए Login करना आवश्यक है। कृपया इंटरनेट चालू करके Login करें।",
+        "Login is required to read more than 5 shlokas offline. Please connect to the internet and login."
+      )
+    );
+    return;
+  }
   const redirectPath = `/chapter/${currentChapterNumber}?shloka=${selectedShlok.shlokNumber}`;
   const redirectMsg = txt(
     `અધ્યાય ${currentChapterNumber} ના શ્લોક ${selectedShlok.shlokNumber} વાંચવા માટે Login કરવું જરૂરી છે.`,
@@ -1908,6 +1929,16 @@ if (
   !user &&
   Number(next?.shlokNumber) > 5
 ) {
+  if (isOfflineMode || !navigator.onLine) {
+    alert(
+      txt(
+        "ઑફલાઇનમાં ૫ થી વધુ શ્લોક વાંચવા માટે Login કરવું જરૂરી છે. કૃપા કરીને ઇન્ટરનેટ ચાલુ કરીને Login કરો.",
+        "ऑफ़लाइन में 5 से अधिक श्लोक पढ़ने के लिए Login करना आवश्यक है। कृपया इंटरनेट चालू करके Login करें।",
+        "Login is required to read more than 5 shlokas offline. Please connect to the internet and login."
+      )
+    );
+    return;
+  }
   const redirectPath = `/chapter/${currentChapterNumber}?shloka=${next.shlokNumber}`;
   const redirectMsg = txt(
     `અધ્યાય ${currentChapterNumber} ના શ્લોક ${next.shlokNumber} વાંચવા માટે Login કરવું જરૂરી છે.`,

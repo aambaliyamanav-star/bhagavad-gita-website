@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { BookOpen, Download, CheckCircle2, Loader2 } from "lucide-react";
+import { BookOpen, Download, CheckCircle2, Loader2, Lock } from "lucide-react";
+import { useAuth } from "../context/AuthContext.jsx";
+import { getValidToken } from "../utils/authHelper.js";
 import { useLanguage } from "../context/LanguageContext.jsx";
 import { downloadAllChaptersOffline, getOfflineStatusSummary } from "../utils/offlineStorage.js";
 import "./Chapters.css";
@@ -70,6 +72,7 @@ const chapters = [
 
 function Chapters() {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const { isHindi, isEnglish, txt, CHAPTER_NAMES } = useLanguage();
 
   const [shlokCounts, setShlokCounts] = useState({});
@@ -79,6 +82,30 @@ function Chapters() {
   const [downloadProgress, setDownloadProgress] = useState(0);
 
   const handleDownloadOffline = async () => {
+    const token = getValidToken();
+    if (!user || !token) {
+      const redirectPath = "/chapters";
+      const redirectMsg = txt(
+        "બધા ૧૮ અધ્યાય ઑફલાઇન ડાઉનલોડ કરવા માટે Login કરવું જરૂરી છે. કૃપા કરીને પહેલાં Login કરો.",
+        "सभी 18 अध्याय ऑफ़लाइन डाउनलोड करने के लिए Login करना आवश्यक है। कृपया पहले Login करें।",
+        "Login is required to download all 18 chapters offline. Please login first."
+      );
+      sessionStorage.setItem(
+        "authRedirect",
+        JSON.stringify({
+          from: redirectPath,
+          message: redirectMsg,
+        })
+      );
+      navigate("/login", {
+        state: {
+          from: redirectPath,
+          message: redirectMsg,
+        },
+      });
+      return;
+    }
+
     if (!navigator.onLine) {
       alert(
         txt(
@@ -97,6 +124,8 @@ function Chapters() {
       });
       if (res.success) {
         setOfflineStatus(getOfflineStatusSummary());
+      } else if (res.requireLogin) {
+        navigate("/login");
       }
     } catch (e) {
       console.warn("Offline download error:", e);
@@ -216,18 +245,27 @@ function Chapters() {
               type="button"
               className="offline-download-btn"
               onClick={handleDownloadOffline}
-              title={txt(
-                "બધા ૧૮ અધ્યાય નેટ વગર વાંચવા માટે ફોનમાં સેવ કરો",
-                "सभी 18 अध्याय बिना इंटरनेट पढ़ने के लिए फोन में सहेजें",
-                "Save all 18 chapters offline for instant access"
-              )}
+              title={
+                !user
+                  ? txt("Login જરૂરી છે", "Login आवश्यक है", "Login required")
+                  : txt(
+                      "બધા ૧૮ અધ્યાય નેટ વગર વાંચવા માટે ફોનમાં સેવ કરો",
+                      "सभी 18 अध्याय बिना इंटरनेट पढ़ने के लिए फोन में सहेजें",
+                      "Save all 18 chapters offline for instant access"
+                    )
+              }
             >
-              <Download size={15} />
+              {!user ? <Lock size={15} /> : <Download size={15} />}
               <span>
                 {txt(
                   "બધા ૧૮ અધ્યાય ઑફલાઇન ડાઉનલોડ કરો",
                   "सभी 18 अध्याय ऑफ़लाइन डाउनलोड करें",
                   "Download All 18 Chapters Offline"
+                )}
+                {!user && (
+                  <span style={{ fontSize: "11px", opacity: 0.88, marginLeft: "6px" }}>
+                    ({txt("Login જરૂરી", "Login आवश्यक", "Login required")})
+                  </span>
                 )}
               </span>
             </button>

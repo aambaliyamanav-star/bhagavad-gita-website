@@ -161,7 +161,9 @@ export function AuthProvider({ children }) {
     for (let ch = 1; ch <= 18; ch++) {
       sessionStorage.removeItem(`gita_last_shloka_ch_${ch}`);
       localStorage.removeItem(`gita_last_shloka_ch_${ch}`);
+      localStorage.removeItem(`gita_offline_ch_${ch}`);
     }
+    localStorage.removeItem("gita_offline_catalog");
 
     setUser(null);
     setToken(null);
