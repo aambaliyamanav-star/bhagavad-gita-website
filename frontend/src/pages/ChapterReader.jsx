@@ -15,6 +15,7 @@ import { useAuth } from "../context/AuthContext.jsx";
 import { useLanguage } from "../context/LanguageContext.jsx";
 import { trackShlokaRead, getFirstUnreadShloka, getLocalProgress } from "../utils/readingTracker.js";
 import { saveChapterOffline, getChapterOffline } from "../utils/offlineStorage.js";
+import { saveAudioToCache, getAudioFromCache, isAudioInCache } from "../utils/audioCache.js";
 
 function ChapterReader() {
   const { chapterNumber } = useParams();
@@ -1246,11 +1247,18 @@ if (
     }
   };
 
-  // Browser native Web Speech API fallback if server-side neural TTS is unavailable
+  // Browser native Web Speech API fallback if server-side neural TTS is unavailable or offline
   const playWebSpeechFallback = (text, lang, type, targetIdx) => {
     if (typeof window === "undefined" || !("speechSynthesis" in window)) {
       setSpeakingType(null);
       setAudioLoading(false);
+      alert(
+        txt(
+          "તમારા બ્રાઉઝરમાં ઑફલાઇન સ્પીચ સપોર્ટ નથી. ઑડિયો સાંભળવા માટે કૃપા કરીને ઇન્ટરનેટ ચાલુ કરો.",
+          "आपके ब्राउज़र में ऑफ़लाइन स्पीच सपोर्ट नहीं है। कृपया इंटरनेट चालू करें।",
+          "Offline speech is not supported in your browser. Please connect to the internet."
+        )
+      );
       return;
     }
 
@@ -1263,63 +1271,110 @@ if (
 
     try {
       window.speechSynthesis.cancel();
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = lang === "sa" ? "hi-IN" : (isEnglish ? "en-IN" : isHindi ? "hi-IN" : "gu-IN");
-      utterance.rate = type === "sanskrit" ? 0.82 : 0.95;
 
-      utterance.onstart = () => {
-        setAudioLoading(false);
-        setSpeakingType(type);
-        speakingTypeRef.current = type;
-      };
+      setTimeout(() => {
+        try {
+          const utterance = new SpeechSynthesisUtterance(text);
 
-      utterance.onend = () => {
-        clearTtsHighlights();
-        speakingTypeRef.current = null;
-        pausedTypeRef.current = null;
-        setSpeakingType(null);
-        setPausedType(null);
-        pausedShlokaIndexRef.current = null;
-        setAudioLoading(false);
+          // Find best local/offline voice from device
+          const voices = window.speechSynthesis.getVoices() || [];
+          const targetLangPrefix = lang === "sa" ? "hi" : (isEnglish ? "en" : isHindi ? "hi" : "gu");
 
-        const list = shlokasRef.current || shlokas;
-        const targetShlokaObj = list[targetIdx];
-        const targetLoc = getLocalizedShlok(targetShlokaObj || {});
-        const hasTranslation = Boolean(extractCleanTextForSpeech(targetLoc.translation || targetShlokaObj?.translation));
-        const hasMessage = Boolean(extractCleanTextForSpeech(targetLoc.message || targetShlokaObj?.message));
+          let chosenVoice = voices.find(
+            (v) => (v.lang.toLowerCase().startsWith(targetLangPrefix) || v.lang.toLowerCase().replace("_", "-").startsWith(targetLangPrefix)) && v.localService
+          );
 
-        if (type === "sanskrit" && hasTranslation) {
-          if (autoPlayTimerRef.current) clearTimeout(autoPlayTimerRef.current);
-          autoPlayTimerRef.current = setTimeout(() => {
-            startSpeech("translation", targetIdx);
-          }, 1000);
-        } else if ((type === "sanskrit" || type === "translation") && hasMessage) {
-          if (autoPlayTimerRef.current) clearTimeout(autoPlayTimerRef.current);
-          autoPlayTimerRef.current = setTimeout(() => {
-            startSpeech("message", targetIdx);
-          }, 1000);
-        } else {
-          // Whole audio of this shloka has completed!
-          markShlokaAsReadAudio(targetShlokaObj);
-
-          if (isContinuousPlayRef.current) {
-            if (autoPlayTimerRef.current) clearTimeout(autoPlayTimerRef.current);
-            autoPlayTimerRef.current = setTimeout(() => {
-              advanceToNextShloka();
-            }, 2000);
+          if (!chosenVoice) {
+            chosenVoice = voices.find((v) =>
+              v.lang.toLowerCase().startsWith(targetLangPrefix) || v.lang.toLowerCase().replace("_", "-").startsWith(targetLangPrefix)
+            );
           }
+
+          if (!chosenVoice && targetLangPrefix === "gu") {
+            chosenVoice = voices.find((v) => v.lang.toLowerCase().startsWith("hi") && v.localService) ||
+              voices.find((v) => v.lang.toLowerCase().startsWith("hi"));
+          }
+
+          if (!chosenVoice) {
+            chosenVoice = voices.find((v) => v.lang.toLowerCase().includes("-in"));
+          }
+
+          if (chosenVoice) {
+            utterance.voice = chosenVoice;
+            utterance.lang = chosenVoice.lang;
+          } else {
+            utterance.lang = lang === "sa" ? "hi-IN" : (isEnglish ? "en-IN" : isHindi ? "hi-IN" : "gu-IN");
+          }
+
+          utterance.rate = type === "sanskrit" ? 0.82 : 0.95;
+
+          utterance.onstart = () => {
+            setAudioLoading(false);
+            setSpeakingType(type);
+            speakingTypeRef.current = type;
+          };
+
+          utterance.onend = () => {
+            clearTtsHighlights();
+            speakingTypeRef.current = null;
+            pausedTypeRef.current = null;
+            setSpeakingType(null);
+            setPausedType(null);
+            pausedShlokaIndexRef.current = null;
+            setAudioLoading(false);
+
+            const list = shlokasRef.current || shlokas;
+            const targetShlokaObj = list[targetIdx];
+            const targetLoc = getLocalizedShlok(targetShlokaObj || {});
+            const hasTranslation = Boolean(extractCleanTextForSpeech(targetLoc.translation || targetShlokaObj?.translation));
+            const hasMessage = Boolean(extractCleanTextForSpeech(targetLoc.message || targetShlokaObj?.message));
+
+            if (type === "sanskrit" && hasTranslation) {
+              if (autoPlayTimerRef.current) clearTimeout(autoPlayTimerRef.current);
+              autoPlayTimerRef.current = setTimeout(() => {
+                startSpeech("translation", targetIdx);
+              }, 1000);
+            } else if ((type === "sanskrit" || type === "translation") && hasMessage) {
+              if (autoPlayTimerRef.current) clearTimeout(autoPlayTimerRef.current);
+              autoPlayTimerRef.current = setTimeout(() => {
+                startSpeech("message", targetIdx);
+              }, 1000);
+            } else {
+              // Whole audio of this shloka has completed!
+              markShlokaAsReadAudio(targetShlokaObj);
+
+              if (isContinuousPlayRef.current) {
+                if (autoPlayTimerRef.current) clearTimeout(autoPlayTimerRef.current);
+                autoPlayTimerRef.current = setTimeout(() => {
+                  advanceToNextShloka();
+                }, 2000);
+              }
+            }
+          };
+
+          utterance.onerror = (e) => {
+            console.error("SpeechSynthesis fallback error:", e);
+            clearTtsHighlights();
+            speakingTypeRef.current = null;
+            setSpeakingType(null);
+            setAudioLoading(false);
+
+            alert(
+              txt(
+                "આ શ્લોકનો ઑડિયો ઑફલાઇન ઉપલબ્ધ નથી. એકવાર ઇન્ટરનેટ ચાલુ રાખીને શ્લોકનો ઑડિયો સાંભળો, જેથી તે કાયમ માટે ઑફલાઇન સેવ થઈ જાય.",
+                "यह ऑडियो ऑफ़लाइन उपलब्ध नहीं है। कृपया एक बार इंटरनेट चालू रखकर सुनें ताकि यह हमेशा के लिए ऑफ़लाइन सेव हो जाए।",
+                "This audio is not cached for offline. Please listen once while online so it gets saved offline permanently."
+              )
+            );
+          };
+
+          window.speechSynthesis.speak(utterance);
+        } catch (innerErr) {
+          console.error("Inner SpeechSynthesis error:", innerErr);
+          setAudioLoading(false);
+          setSpeakingType(null);
         }
-      };
-
-      utterance.onerror = (e) => {
-        console.error("SpeechSynthesis fallback error:", e);
-        clearTtsHighlights();
-        speakingTypeRef.current = null;
-        setSpeakingType(null);
-        setAudioLoading(false);
-      };
-
-      window.speechSynthesis.speak(utterance);
+      }, 60);
     } catch (e) {
       console.error("SpeechSynthesis error:", e);
       clearTtsHighlights();
@@ -1464,15 +1519,39 @@ if (
     scrollToSection(type);
 
     try {
-      // If device is offline, immediately play using device native Web Speech engine!
-      if (typeof navigator !== "undefined" && !navigator.onLine) {
+      // 1. FIRST check IndexedDB offline audio cache (works 100% offline and online!)
+      let blob = await getAudioFromCache(
+        currentChapterNumber,
+        targetShlok?.shlokNumber,
+        type,
+        langCode
+      );
+
+      // 2. If not in cache and device is online, fetch from backend neural TTS and cache immediately
+      if (!blob && typeof navigator !== "undefined" && navigator.onLine) {
+        try {
+          blob = await fetchNeuralAudioBlob(textToSpeak, langCode, customRate);
+          if (blob) {
+            saveAudioToCache(
+              currentChapterNumber,
+              targetShlok?.shlokNumber,
+              type,
+              langCode,
+              blob
+            );
+          }
+        } catch (fetchErr) {
+          console.warn("Backend TTS fetch failed:", fetchErr);
+        }
+      }
+
+      // 3. If still no blob (device is offline and audio not yet cached), fallback to device speech
+      if (!blob) {
         playWebSpeechFallback(textToSpeak, langCode, type, targetIdx);
         return;
       }
 
-      const blob = await fetchNeuralAudioBlob(textToSpeak, langCode, customRate);
       const audioBlobUrl = URL.createObjectURL(blob);
-
       const audio = new Audio(audioBlobUrl);
       audioPlayerRef.current = audio;
 
@@ -1732,6 +1811,58 @@ if (
   useEffect(() => {
     userRef.current = user;
   }, [user]);
+
+  // Quiet background pre-caching of Neural TTS audio for current and upcoming shlokas into IndexedDB
+  useEffect(() => {
+    if (typeof window === "undefined" || !navigator.onLine) return;
+    if (!shlokas || shlokas.length === 0) return;
+
+    const timer = setTimeout(async () => {
+      try {
+        const currentObj = shlokas[currentShloka];
+        const nextObj = shlokas[currentShloka + 1];
+        const langCode = isEnglish ? "en" : isHindi ? "hi" : "gu";
+
+        const preCacheOne = async (shlokaObj) => {
+          if (!shlokaObj || !shlokaObj.shlokNumber) return;
+          const sNum = shlokaObj.shlokNumber;
+          const loc = getLocalizedShlok(shlokaObj);
+
+          // Pre-cache Sanskrit audio if missing in IndexedDB
+          const hasSa = await isAudioInCache(currentChapterNumber, sNum, "sanskrit", "sa");
+          if (!hasSa) {
+            const saText = formatSanskritForSpeech(shlokaObj);
+            if (saText) {
+              try {
+                const saBlob = await fetchNeuralAudioBlob(saText, "sa", "-22%");
+                if (saBlob) await saveAudioToCache(currentChapterNumber, sNum, "sanskrit", "sa", saBlob);
+              } catch (e) {}
+            }
+          }
+
+          // Pre-cache Translation audio if missing in IndexedDB
+          const hasTr = await isAudioInCache(currentChapterNumber, sNum, "translation", langCode);
+          if (!hasTr) {
+            const rawText = loc.translation || shlokaObj.translation;
+            const trText = extractCleanTextForSpeech(rawText);
+            if (trText) {
+              try {
+                const trBlob = await fetchNeuralAudioBlob(trText, langCode, "-2%");
+                if (trBlob) await saveAudioToCache(currentChapterNumber, sNum, "translation", langCode, trBlob);
+              } catch (e) {}
+            }
+          }
+        };
+
+        if (currentObj) await preCacheOne(currentObj);
+        if (nextObj) await preCacheOne(nextObj);
+      } catch (err) {
+        // Ignore background pre-cache error
+      }
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [currentShloka, shlokas, currentChapterNumber, language]);
 
   const currentShlok = shlokas[currentShloka] || {};
   const currentLocalized = getLocalizedShlok(currentShlok);

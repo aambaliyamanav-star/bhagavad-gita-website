@@ -1,6 +1,7 @@
 
 import { createContext, useContext, useState, useEffect } from "react";
 import { isTokenExpired } from "../utils/authHelper.js";
+import { clearAudioCache } from "../utils/audioCache.js";
 
 // =====================================================
 // AUTH CONTEXT
@@ -164,6 +165,7 @@ export function AuthProvider({ children }) {
       localStorage.removeItem(`gita_offline_ch_${ch}`);
     }
     localStorage.removeItem("gita_offline_catalog");
+    clearAudioCache();
 
     setUser(null);
     setToken(null);
