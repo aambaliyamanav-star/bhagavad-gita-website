@@ -3,6 +3,8 @@
 // Enables 100% offline reading and device-speech playback
 // =========================================================
 
+import { getValidToken } from "./authHelper.js";
+
 const API_BASE = "https://bhagavad-gita-backend-jy1a.onrender.com/api/shloks";
 
 /**
@@ -12,6 +14,24 @@ export function saveChapterOffline(chapterNumber, shlokas, chapterName = "") {
   if (!chapterNumber || !Array.isArray(shlokas) || shlokas.length === 0) return false;
   try {
     const key = `gita_offline_ch_${chapterNumber}`;
+
+    // Prevent overwriting full content with stripped content
+    const rawExisting = localStorage.getItem(key);
+    if (rawExisting) {
+      try {
+        const parsedExisting = JSON.parse(rawExisting);
+        const hasFullExisting =
+          parsedExisting &&
+          Array.isArray(parsedExisting.shlokas) &&
+          parsedExisting.shlokas.some((s) => Number(s.shlokNumber) > 5 && Boolean(s.sanskrit));
+        const isNewStripped = shlokas.some((s) => Number(s.shlokNumber) > 5 && !s.sanskrit);
+        if (hasFullExisting && isNewStripped) {
+          console.warn(`Prevented overwriting full Chapter ${chapterNumber} with stripped content`);
+          return false;
+        }
+      } catch (e) {}
+    }
+
     const payload = {
       chapterNumber: Number(chapterNumber),
       chapterName: chapterName || `અધ્યાય ${chapterNumber}`,
@@ -50,11 +70,23 @@ export function getChapterOffline(chapterNumber) {
 }
 
 /**
- * Check if a chapter is available offline
+ * Check if a chapter is available offline with full content
  */
 export function isChapterOfflineAvailable(chapterNumber) {
   const data = getChapterOffline(chapterNumber);
-  return Boolean(data && data.shlokas && data.shlokas.length > 0);
+  if (!data || !Array.isArray(data.shlokas) || data.shlokas.length === 0) return false;
+  // If the chapter has shlokas after shloka 5, ensure at least one shloka > 5 has sanskrit!
+  const hasShlokasAbove5 = data.shlokas.some((s) => Number(s.shlokNumber) > 5);
+  if (hasShlokasAbove5) {
+    const hasFullAbove5 = data.shlokas.some(
+      (s) => Number(s.shlokNumber) > 5 && Boolean(s.sanskrit)
+    );
+    if (!hasFullAbove5) {
+      // It is an old stripped cache from guest session, needs full re-download!
+      return false;
+    }
+  }
+  return true;
 }
 
 /**
@@ -78,13 +110,15 @@ function updateOfflineCatalog(chapterNumber, count) {
  */
 export function getOfflineStatusSummary() {
   try {
-    const raw = localStorage.getItem("gita_offline_catalog");
-    const catalog = raw ? JSON.parse(raw) : {};
-    const cachedChapters = Object.keys(catalog).map(Number).sort((a, b) => a - b);
+    const cachedChapters = [];
     let totalShlokas = 0;
-    cachedChapters.forEach((ch) => {
-      totalShlokas += catalog[ch]?.count || 0;
-    });
+    for (let ch = 1; ch <= 18; ch++) {
+      if (isChapterOfflineAvailable(ch)) {
+        cachedChapters.push(ch);
+        const data = getChapterOffline(ch);
+        totalShlokas += data?.shlokas?.length || 0;
+      }
+    }
 
     return {
       cachedChapters,
@@ -113,12 +147,14 @@ export async function downloadAllChaptersOffline(onProgress = null) {
     };
   }
 
+  const token = getValidToken();
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
   const results = [];
   let totalSavedShlokas = 0;
 
   for (let ch = 1; ch <= 18; ch++) {
     try {
-      const res = await fetch(`${API_BASE}/chapter/${ch}`);
+      const res = await fetch(`${API_BASE}/chapter/${ch}`, { headers });
       if (res.ok) {
         const data = await res.json();
         const shlokas = data.shlokas || [];
@@ -163,10 +199,13 @@ export async function autoSyncOfflineChaptersQuietly() {
 
   isAutoSyncing = true;
   try {
+    const token = getValidToken();
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
     for (let ch = 1; ch <= 18; ch++) {
       if (!isChapterOfflineAvailable(ch)) {
         try {
-          const res = await fetch(`${API_BASE}/chapter/${ch}`);
+          const res = await fetch(`${API_BASE}/chapter/${ch}`, { headers });
           if (res.ok) {
             const data = await res.json();
             const shlokas = data.shlokas || [];
