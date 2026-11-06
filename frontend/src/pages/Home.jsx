@@ -1210,7 +1210,9 @@ useEffect(() => {
             <div className="search-field-wrapper search-chapter-wrapper">
               <input
                 type="number"
-                placeholder={txt("અધ્યાય નંબર", "अध्याय संख्या", "Chapter No.")}
+                inputMode="numeric"
+                pattern="[0-9]*"
+                placeholder={txt("અધ્યાય (1-18)", "अध्याय (1-18)", "Chapter (1-18)")}
                 value={chapterNumber}
                 onChange={handleChapterChange}
                 onKeyDown={handleKeyDown}
@@ -1249,16 +1251,18 @@ useEffect(() => {
             >
               <input
                 type="number"
+                inputMode="numeric"
+                pattern="[0-9]*"
                 placeholder={
                   chapterNumber
                     ? getChapterMaxShloka(chapterNumber) === 0
-                      ? txt("શ્લોક નંબર (0)", "श्लोक संख्या (0)", "Shloka No. (0)")
+                      ? txt("શ્લોક (0)", "श्लोक (0)", "Shloka (0)")
                       : txt(
-                          `શ્લોક નંબર (1-${getChapterMaxShloka(chapterNumber)})`,
-                          `श्लोक संख्या (1-${getChapterMaxShloka(chapterNumber)})`,
-                          `Shloka No. (1-${getChapterMaxShloka(chapterNumber)})`
+                          `શ્લોક (1-${getChapterMaxShloka(chapterNumber)})`,
+                          `श्लोक (1-${getChapterMaxShloka(chapterNumber)})`,
+                          `Shloka (1-${getChapterMaxShloka(chapterNumber)})`
                         )
-                    : txt("શ્લોક નંબર (1-78)", "श्लोक संख्या (1-78)", "Shloka No. (1-78)")
+                    : txt("શ્લોક (1-78)", "श्लोक (1-78)", "Shloka (1-78)")
                 }
                 value={shlokaNumber}
                 onChange={handleShlokaChange}
