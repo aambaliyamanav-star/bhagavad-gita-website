@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { Link } from "react-router-dom";
 import {
   BookOpen,
@@ -523,15 +524,18 @@ function About() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Lock body scroll only when modal is open so background doesn't scroll
+  // Lock body and html scroll only when modal is open so background doesn't scroll
   useEffect(() => {
     if (selectedFeature) {
       document.body.style.overflow = "hidden";
+      document.documentElement.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
     }
     return () => {
       document.body.style.overflow = "";
+      document.documentElement.style.overflow = "";
     };
   }, [selectedFeature]);
 
@@ -625,9 +629,9 @@ function About() {
       </div>
 
       {/* =====================================================
-          CENTERED MODAL POPUP FOR FEATURE DETAILS
+          CENTERED MODAL POPUP FOR FEATURE DETAILS (PORTAL TO SCREEN CENTER)
       ===================================================== */}
-      {selectedFeature && (
+      {selectedFeature && typeof document !== "undefined" && createPortal(
         <div
           className="about-modal-backdrop"
           onClick={() => setSelectedFeature(null)}
@@ -722,7 +726,8 @@ function About() {
               )}
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </main>
   );
