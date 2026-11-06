@@ -1,6 +1,6 @@
 // =========================================================
-// BHAGAVAD GITA - INDEXEDDB AUDIO CACHE ENGINE
-// Stores high-quality Neural TTS audio for 100% offline playback
+// BHAGAVAD GITA - INDEXEDDB AUDIO CACHE & BACKGROUND SYNC ENGINE
+// Automatically downloads & saves Neural TTS audio for 100% offline playback
 // =========================================================
 
 const DB_NAME = "GitaAudioCacheDB";
@@ -159,5 +159,217 @@ export async function getCachedAudioCount() {
     });
   } catch (e) {
     return 0;
+  }
+}
+
+// =========================================================
+// NEURAL TTS FETCH & TEXT FORMATTING UTILITIES
+// =========================================================
+
+/**
+ * Resiliently fetch Microsoft Neural AI speech audio
+ */
+export const fetchNeuralAudioBlob = async (text, lang, customRate = null) => {
+  const isLocal =
+    typeof window !== "undefined" &&
+    (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
+
+  const candidateBases = isLocal
+    ? ["http://localhost:5000", "https://bhagavad-gita-backend-jy1a.onrender.com"]
+    : ["https://bhagavad-gita-backend-jy1a.onrender.com"];
+
+  const payload = {
+    text,
+    lang,
+    voice: "male",
+  };
+  if (customRate) {
+    payload.rate = customRate;
+  }
+
+  let lastFetchErr = null;
+  for (const base of candidateBases) {
+    for (let attempt = 1; attempt <= 2; attempt++) {
+      try {
+        const controller = new AbortController();
+        const timeoutMs = base.includes("localhost") ? 2000 : 25000;
+        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+        const response = await fetch(`${base}/api/tts/speak`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+          signal: controller.signal,
+        });
+        clearTimeout(timeoutId);
+
+        if (response.ok) {
+          return await response.blob();
+        }
+      } catch (err) {
+        lastFetchErr = err;
+        if (base.includes("localhost")) break;
+        if (attempt < 2) await new Promise((r) => setTimeout(r, 650));
+      }
+    }
+  }
+  throw lastFetchErr || new Error("Failed to fetch audio from all endpoints");
+};
+
+/**
+ * Format Sanskrit text with natural pauses
+ */
+export function formatSanskritForSpeech(shlokObj) {
+  if (!shlokObj) return "";
+  let plain = String(shlokObj.sanskrit || "")
+    .replace(/<[^>]*>/g, "")
+    .replace(/&nbsp;/gi, " ");
+  if (!plain && (shlokObj.sanskritLine1 || shlokObj.sanskritLine2)) {
+    plain = [shlokObj.sanskritLine1, shlokObj.sanskritLine2].filter(Boolean).join("\n");
+  }
+  plain = plain.replace(/[॥\|]\s*[\d\.\-०-९]+\s*[॥\|]/g, "।");
+  const rawLines = plain
+    .split(/\n+/)
+    .map((l) => l.replace(/\s+/g, " ").trim())
+    .filter(Boolean);
+
+  const rhythmLines = rawLines
+    .map((line) => {
+      let cleanLine = line.replace(/[|।॥]+$/g, "").trim();
+      const words = cleanLine.split(/\s+/).filter((w) => !/^[|।॥\d\.\-०-९]+$/.test(w));
+      if (words.length >= 4) {
+        const half = Math.ceil(words.length / 2);
+        const pada1 = words.slice(0, half).join(" ");
+        const pada2 = words.slice(half).join(" ");
+        return `${pada1}, ${pada2} ।`;
+      } else if (words.length > 0) {
+        return `${words.join(" ")} ।`;
+      }
+      return "";
+    })
+    .filter(Boolean);
+
+  return rhythmLines.join("\n\n");
+}
+
+/**
+ * Extract clean spoken text from HTML translation
+ */
+export function extractCleanTextForSpeech(htmlString) {
+  if (!htmlString) return "";
+  try {
+    let preprocessed = String(htmlString)
+      .replace(/<br\s*\/?>/gi, " ")
+      .replace(/<\/(p|div|li|h[1-6])>/gi, " . ")
+      .replace(/&nbsp;/gi, " ")
+      .replace(/&amp;/gi, "&");
+    let text = preprocessed.replace(/<[^>]*>/g, "");
+    text = text.replace(/\s*[:：]\s*/g, " . ... ");
+    text = text.replace(/[•\-\*]/g, " ");
+    text = text.replace(/\s+/g, " ").trim();
+    text = text.replace(/(\.\s*\.\.\.\s*)+/g, ". ... ");
+    return text;
+  } catch (e) {
+    return String(htmlString).replace(/<[^>]*>/g, " ").trim();
+  }
+}
+
+// =========================================================
+// AUTOMATIC BACKGROUND AUDIO PRE-CACHING ENGINE
+// Saves audio without requiring the user to listen to it
+// =========================================================
+
+/**
+ * Pre-cache Sanskrit and Translation audio for a single shloka
+ */
+export async function cacheSingleShlokaAudio(chapterNumber, shlokaObj, lang = "gu") {
+  if (!chapterNumber || !shlokaObj || typeof window === "undefined" || !navigator.onLine) return;
+  const sNum = shlokaObj.shlokNumber;
+  if (!sNum) return;
+
+  // 1. Pre-cache Sanskrit
+  const hasSa = await isAudioInCache(chapterNumber, sNum, "sanskrit", "sa");
+  if (!hasSa) {
+    const saText = formatSanskritForSpeech(shlokaObj);
+    if (saText) {
+      try {
+        const saBlob = await fetchNeuralAudioBlob(saText, "sa", "-22%");
+        if (saBlob) {
+          await saveAudioToCache(chapterNumber, sNum, "sanskrit", "sa", saBlob);
+        }
+      } catch (err) {}
+    }
+  }
+
+  // 2. Pre-cache Translation
+  const hasTr = await isAudioInCache(chapterNumber, sNum, "translation", lang);
+  if (!hasTr) {
+    const rawText =
+      (lang === "en" ? shlokaObj.translationEn : lang === "hi" ? shlokaObj.translationHi : shlokaObj.translation) ||
+      shlokaObj.translation;
+    const trText = extractCleanTextForSpeech(rawText);
+    if (trText) {
+      try {
+        const trBlob = await fetchNeuralAudioBlob(trText, lang, "-2%");
+        if (trBlob) {
+          await saveAudioToCache(chapterNumber, sNum, "translation", lang, trBlob);
+        }
+      } catch (err) {}
+    }
+  }
+}
+
+let cancelAudioSyncFlag = false;
+
+export function stopAudioSync() {
+  cancelAudioSyncFlag = true;
+}
+
+/**
+ * Quietly pre-cache all shlokas in a chapter in background
+ * Prioritizes starting from startFromIndex outwards
+ */
+export async function autoSyncChapterAudios(
+  chapterNumber,
+  shlokas,
+  lang = "gu",
+  startFromIndex = 0,
+  onProgress = null
+) {
+  if (typeof window === "undefined" || !navigator.onLine) return;
+  if (!Array.isArray(shlokas) || shlokas.length === 0) return;
+
+  cancelAudioSyncFlag = false;
+
+  try {
+    const len = shlokas.length;
+    const indices = [];
+
+    // Prioritize current shloka and upcoming shlokas first
+    for (let i = startFromIndex; i < len; i++) indices.push(i);
+    for (let i = 0; i < startFromIndex; i++) indices.push(i);
+
+    let completed = 0;
+    for (const idx of indices) {
+      if (cancelAudioSyncFlag || !navigator.onLine) break;
+
+      const shlok = shlokas[idx];
+      if (shlok) {
+        await cacheSingleShlokaAudio(chapterNumber, shlok, lang);
+      }
+      completed++;
+      if (typeof onProgress === "function") {
+        onProgress({
+          current: completed,
+          total: len,
+          percent: Math.round((completed / len) * 100),
+        });
+      }
+
+      // Small delay between shlokas to prevent server spike
+      await new Promise((r) => setTimeout(r, 120));
+    }
+  } catch (e) {
+    console.warn("Background audio sync error:", e);
   }
 }

@@ -15,7 +15,7 @@ import { useAuth } from "../context/AuthContext.jsx";
 import { useLanguage } from "../context/LanguageContext.jsx";
 import { trackShlokaRead, getFirstUnreadShloka, getLocalProgress } from "../utils/readingTracker.js";
 import { saveChapterOffline, getChapterOffline } from "../utils/offlineStorage.js";
-import { saveAudioToCache, getAudioFromCache, isAudioInCache } from "../utils/audioCache.js";
+import { saveAudioToCache, getAudioFromCache, isAudioInCache, autoSyncChapterAudios } from "../utils/audioCache.js";
 
 function ChapterReader() {
   const { chapterNumber } = useParams();
@@ -1812,54 +1812,16 @@ if (
     userRef.current = user;
   }, [user]);
 
-  // Quiet background pre-caching of Neural TTS audio for current and upcoming shlokas into IndexedDB
+  // Quiet background auto-download of Neural TTS audios for this chapter into IndexedDB
+  // Automatically saves audio in background so the user does NOT need to listen to it online!
   useEffect(() => {
     if (typeof window === "undefined" || !navigator.onLine) return;
     if (!shlokas || shlokas.length === 0) return;
 
-    const timer = setTimeout(async () => {
-      try {
-        const currentObj = shlokas[currentShloka];
-        const nextObj = shlokas[currentShloka + 1];
-        const langCode = isEnglish ? "en" : isHindi ? "hi" : "gu";
-
-        const preCacheOne = async (shlokaObj) => {
-          if (!shlokaObj || !shlokaObj.shlokNumber) return;
-          const sNum = shlokaObj.shlokNumber;
-          const loc = getLocalizedShlok(shlokaObj);
-
-          // Pre-cache Sanskrit audio if missing in IndexedDB
-          const hasSa = await isAudioInCache(currentChapterNumber, sNum, "sanskrit", "sa");
-          if (!hasSa) {
-            const saText = formatSanskritForSpeech(shlokaObj);
-            if (saText) {
-              try {
-                const saBlob = await fetchNeuralAudioBlob(saText, "sa", "-22%");
-                if (saBlob) await saveAudioToCache(currentChapterNumber, sNum, "sanskrit", "sa", saBlob);
-              } catch (e) {}
-            }
-          }
-
-          // Pre-cache Translation audio if missing in IndexedDB
-          const hasTr = await isAudioInCache(currentChapterNumber, sNum, "translation", langCode);
-          if (!hasTr) {
-            const rawText = loc.translation || shlokaObj.translation;
-            const trText = extractCleanTextForSpeech(rawText);
-            if (trText) {
-              try {
-                const trBlob = await fetchNeuralAudioBlob(trText, langCode, "-2%");
-                if (trBlob) await saveAudioToCache(currentChapterNumber, sNum, "translation", langCode, trBlob);
-              } catch (e) {}
-            }
-          }
-        };
-
-        if (currentObj) await preCacheOne(currentObj);
-        if (nextObj) await preCacheOne(nextObj);
-      } catch (err) {
-        // Ignore background pre-cache error
-      }
-    }, 2000);
+    const timer = setTimeout(() => {
+      const currentLang = isEnglish ? "en" : isHindi ? "hi" : "gu";
+      autoSyncChapterAudios(currentChapterNumber, shlokas, currentLang, currentShloka);
+    }, 1200);
 
     return () => clearTimeout(timer);
   }, [currentShloka, shlokas, currentChapterNumber, language]);
