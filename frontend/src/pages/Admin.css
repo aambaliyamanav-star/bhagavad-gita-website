@@ -817,12 +817,56 @@
    USERS TABLE WRAPPER
 ========================================================= */
 
+/* =========================================================
+   USERS TABLE WRAPPER (LIMIT 5 USERS VISIBLE + VERTICAL SCROLL)
+========================================================= */
+
 .users-table-wrapper {
   width: 100%;
-
+  max-height: 445px;
+  overflow-y: auto;
   overflow-x: auto;
+  padding: 0 4px 10px 4px;
+  border-radius: 14px;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
 
-  padding: 3px;
+.users-table-wrapper::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.users-table-wrapper::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.04);
+  border-radius: 8px;
+}
+
+.users-table-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.35);
+  border-radius: 8px;
+}
+
+.users-table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.60);
+}
+
+.dark-theme .users-table-wrapper::-webkit-scrollbar-track,
+.dark-mode .users-table-wrapper::-webkit-scrollbar-track,
+[data-theme="dark"] .users-table-wrapper::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.dark-theme .users-table-wrapper::-webkit-scrollbar-thumb,
+.dark-mode .users-table-wrapper::-webkit-scrollbar-thumb,
+[data-theme="dark"] .users-table-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(96, 165, 250, 0.40);
+}
+
+.dark-theme .users-table-wrapper::-webkit-scrollbar-thumb:hover,
+.dark-mode .users-table-wrapper::-webkit-scrollbar-thumb:hover,
+[data-theme="dark"] .users-table-wrapper::-webkit-scrollbar-thumb:hover {
+  background: rgba(96, 165, 250, 0.65);
 }
 
 
@@ -845,7 +889,7 @@
 
 
 /* =========================================================
-   TABLE HEADER
+   TABLE HEADER (STICKY HEADER)
 ========================================================= */
 
 .users-table thead tr {
@@ -859,6 +903,9 @@
 
 
 .users-table th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   padding: 13px 15px;
 
   color: #50708f;
@@ -873,52 +920,61 @@
 
   text-align: left;
 
+  background: #eff6ff;
+
   border-top:
-    1px solid rgba(37, 99, 235, 0.08);
+    1px solid rgba(37, 99, 235, 0.12);
 
   border-bottom:
-    1px solid rgba(37, 99, 235, 0.08);
+    2px solid rgba(37, 99, 235, 0.18);
+
+  box-shadow: 0 3px 6px rgba(37, 99, 235, 0.05);
 }
 
 
 .users-table th:first-child {
+  border-left: 1px solid rgba(37, 99, 235, 0.12);
   border-radius: 12px 0 0 12px;
+  text-align: center;
 }
 
 
 .users-table th:last-child {
+  border-right: 1px solid rgba(37, 99, 235, 0.12);
   border-radius: 0 12px 12px 0;
 }
 
 
 /* =========================================================
-   NORMAL USER ROW
+   NORMAL USER ROW (SEPARATE DISTINCT CARD BOX DESIGN)
 ========================================================= */
 
-.users-table tbody tr {
+.users-table tbody tr,
+.users-table tbody tr.user-row-regular {
   position: relative;
 
   background: #ffffff;
 
   box-shadow:
-    0 6px 18px rgba(30, 64, 175, 0.07);
+    0 6px 18px rgba(30, 64, 175, 0.08),
+    0 0 0 1.5px rgba(59, 130, 246, 0.35);
 
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 
-.users-table tbody tr:hover {
-  transform: translateY(-3px);
+.users-table tbody tr:hover,
+.users-table tbody tr.user-row-regular:hover {
+  transform: translateY(-2px);
 
   box-shadow:
-    0 12px 25px rgba(30, 64, 175, 0.12);
+    0 12px 26px rgba(30, 64, 175, 0.16),
+    0 0 0 2px rgba(59, 130, 246, 0.55);
 }
 
 
 .users-table td {
-  padding: 16px 15px;
+  padding: 14px 15px;
 
   color: #526d88;
 
@@ -927,10 +983,10 @@
   font-weight: 500;
 
   border-top:
-    1px solid rgba(37, 99, 235, 0.07);
+    1.5px solid rgba(59, 130, 246, 0.32);
 
   border-bottom:
-    1px solid rgba(37, 99, 235, 0.07);
+    1.5px solid rgba(59, 130, 246, 0.22);
 
   background: #ffffff;
 }
@@ -938,21 +994,72 @@
 
 .users-table td:first-child {
   border-left:
-    1px solid rgba(37, 99, 235, 0.07);
+    5px solid #3b82f6;
 
-  border-radius: 14px 0 0 14px;
+  border-top:
+    1.5px solid rgba(59, 130, 246, 0.32);
 
-  color: #3b82f6;
+  border-bottom:
+    1.5px solid rgba(59, 130, 246, 0.22);
+
+  border-radius: 16px 0 0 16px;
+
+  color: #1d4ed8;
 
   font-weight: 800;
+
+  text-align: center;
+
+  background:
+    linear-gradient(
+      135deg,
+      #eff6ff 0%,
+      #e0edff 100%
+    );
 }
 
 
 .users-table td:last-child {
   border-right:
-    1px solid rgba(37, 99, 235, 0.07);
+    1.5px solid rgba(59, 130, 246, 0.32);
 
-  border-radius: 0 14px 14px 0;
+  border-radius: 0 16px 16px 0;
+}
+
+
+.user-index-cell {
+  text-align: center;
+  width: 60px;
+}
+
+.regular-user-index-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 5px rgba(37, 99, 235, 0.15);
+  color: #1d4ed8;
+  font-weight: 800;
+  font-size: 12.5px;
+}
+
+.admin-user-index-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 26px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 5px rgba(16, 185, 129, 0.20);
+  color: #047857;
+  font-weight: 800;
+  font-size: 12.5px;
 }
 
 
@@ -1156,10 +1263,11 @@
     );
 
   box-shadow:
-    0 9px 24px rgba(30, 64, 175, 0.13),
-    0 0 0 1px rgba(245, 158, 11, 0.20);
+    0 8px 22px rgba(16, 185, 129, 0.12),
+    0 0 0 1.5px rgba(16, 185, 129, 0.38);
 
   position: relative;
+  transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 
@@ -1168,17 +1276,17 @@
   background:
     linear-gradient(
       135deg,
-      #fffdf8,
-      #f5f9ff
+      #fafffa,
+      #f4f9ff
     );
 
   border-top:
-    1px solid rgba(245, 158, 11, 0.18);
+    1.5px solid rgba(16, 185, 129, 0.32);
 
   border-bottom:
-    1px solid rgba(37, 99, 235, 0.10);
+    1.5px solid rgba(16, 185, 129, 0.22);
 
-  color: #3f5d78;
+  color: #14532d;
 
   font-weight: 600;
 }
@@ -1188,7 +1296,7 @@
 .users-table tbody tr:has(.admin-role) td:first-child {
   position: relative;
 
-  color: #d97706 !important;
+  color: #047857 !important;
 
   font-size: 15px;
 
@@ -1197,14 +1305,21 @@
   background:
     linear-gradient(
       135deg,
-      #fff8df,
-      #eef6ff
+      #dcfce7 0%,
+      #bbf7d0 100%
     );
 
   border-left:
-    3.5px solid #f59e0b;
+    5px solid #10b981;
 
-  border-radius: 15px 0 0 15px;
+  border-top:
+    1.5px solid rgba(16, 185, 129, 0.32);
+
+  border-bottom:
+    1.5px solid rgba(16, 185, 129, 0.22);
+
+  border-radius: 16px 0 0 16px;
+  text-align: center;
 }
 
 
@@ -1222,20 +1337,20 @@
 
 .users-table tbody tr.user-row-admin:hover,
 .users-table tbody tr:has(.admin-role):hover {
-  transform: translateY(-4px);
+  transform: translateY(-2px);
 
   box-shadow:
-    0 15px 30px rgba(30, 64, 175, 0.16),
-    0 0 0 1px rgba(245, 158, 11, 0.28);
+    0 14px 28px rgba(16, 185, 129, 0.18),
+    0 0 0 2px rgba(16, 185, 129, 0.55);
 }
 
 
 .users-table tbody tr.user-row-admin td:last-child,
 .users-table tbody tr:has(.admin-role) td:last-child {
   border-right:
-    1px solid rgba(37, 99, 235, 0.10);
+    1.5px solid rgba(16, 185, 129, 0.32);
 
-  border-radius: 0 15px 15px 0;
+  border-radius: 0 16px 16px 0;
 }
 
 
@@ -2203,7 +2318,7 @@ a:focus-visible {
 
 
 /* =========================================================
-   DARK TABLE
+   DARK TABLE (STICKY HEADER)
 ========================================================= */
 
 .dark-theme .users-table thead tr,
@@ -2221,35 +2336,68 @@ a:focus-visible {
 .dark-theme .users-table th,
 .dark-mode .users-table th,
 [data-theme="dark"] .users-table th {
-  color: #9fb6ce;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: #132e48 !important;
+  color: #9fb6ce !important;
 
-  border-top-color:
-    rgba(96, 165, 250, 0.12);
+  border-top:
+    1px solid rgba(96, 165, 250, 0.18) !important;
 
-  border-bottom-color:
-    rgba(96, 165, 250, 0.12);
+  border-bottom:
+    2px solid rgba(96, 165, 250, 0.25) !important;
+
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35) !important;
+}
+
+.dark-theme .users-table th:first-child,
+.dark-mode .users-table th:first-child,
+[data-theme="dark"] .users-table th:first-child {
+  border-left: 1px solid rgba(96, 165, 250, 0.18) !important;
+  text-align: center;
+}
+
+.dark-theme .users-table th:last-child,
+.dark-mode .users-table th:last-child,
+[data-theme="dark"] .users-table th:last-child {
+  border-right: 1px solid rgba(96, 165, 250, 0.18) !important;
 }
 
 
 /* =========================================================
-   DARK NORMAL ROW
+   DARK NORMAL ROW (SEPARATE DISTINCT CARD BOX DESIGN)
 ========================================================= */
 
 .dark-theme .users-table tbody tr,
 .dark-mode .users-table tbody tr,
-[data-theme="dark"] .users-table tbody tr {
-  background: #102a43;
+[data-theme="dark"] .users-table tbody tr,
+.dark-theme .users-table tbody tr.user-row-regular,
+.dark-mode .users-table tbody tr.user-row-regular,
+[data-theme="dark"] .users-table tbody tr.user-row-regular {
+  background:
+    linear-gradient(
+      135deg,
+      #132e4d 0%,
+      #0d2238 100%
+    );
 
   box-shadow:
-    0 6px 18px rgba(0, 0, 0, 0.25);
+    0 8px 22px rgba(0, 0, 0, 0.45),
+    0 0 0 1.5px rgba(59, 130, 246, 0.40);
 }
 
 
 .dark-theme .users-table tbody tr:hover,
 .dark-mode .users-table tbody tr:hover,
-[data-theme="dark"] .users-table tbody tr:hover {
+[data-theme="dark"] .users-table tbody tr:hover,
+.dark-theme .users-table tbody tr.user-row-regular:hover,
+.dark-mode .users-table tbody tr.user-row-regular:hover,
+[data-theme="dark"] .users-table tbody tr.user-row-regular:hover {
+  transform: translateY(-2px);
   box-shadow:
-    0 12px 25px rgba(0, 0, 0, 0.38);
+    0 14px 28px rgba(0, 0, 0, 0.65),
+    0 0 0 2px rgba(96, 165, 250, 0.60);
 }
 
 
@@ -2258,31 +2406,72 @@ a:focus-visible {
 [data-theme="dark"] .users-table td {
   color: #9db2c8;
 
-  background: #102a43;
+  background:
+    linear-gradient(
+      135deg,
+      #132e4d 0%,
+      #0d2238 100%
+    );
 
-  border-top-color:
-    rgba(96, 165, 250, 0.10);
+  border-top:
+    1.5px solid rgba(59, 130, 246, 0.35) !important;
 
-  border-bottom-color:
-    rgba(96, 165, 250, 0.10);
+  border-bottom:
+    1.5px solid rgba(59, 130, 246, 0.25) !important;
 }
 
 
 .dark-theme .users-table td:first-child,
 .dark-mode .users-table td:first-child,
 [data-theme="dark"] .users-table td:first-child {
-  border-left-color:
-    rgba(96, 165, 250, 0.10);
+  border-left:
+    5px solid #3b82f6 !important;
 
-  color: #60a5fa;
+  border-top:
+    1.5px solid rgba(59, 130, 246, 0.35) !important;
+
+  border-bottom:
+    1.5px solid rgba(59, 130, 246, 0.25) !important;
+
+  border-radius: 16px 0 0 16px !important;
+
+  background:
+    linear-gradient(
+      135deg,
+      #1e3a5f 0%,
+      #132e4d 100%
+    ) !important;
+
+  color: #93c5fd !important;
+  text-align: center;
 }
 
 
 .dark-theme .users-table td:last-child,
 .dark-mode .users-table td:last-child,
 [data-theme="dark"] .users-table td:last-child {
-  border-right-color:
-    rgba(96, 165, 250, 0.10);
+  border-right:
+    1.5px solid rgba(59, 130, 246, 0.35) !important;
+
+  border-radius: 0 16px 16px 0 !important;
+}
+
+.dark-theme .regular-user-index-pill,
+.dark-mode .regular-user-index-pill,
+[data-theme="dark"] .regular-user-index-pill {
+  background: rgba(23, 49, 78, 0.95);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  color: #93c5fd;
+  border: 1px solid rgba(59, 130, 246, 0.35);
+}
+
+.dark-theme .admin-user-index-pill,
+.dark-mode .admin-user-index-pill,
+[data-theme="dark"] .admin-user-index-pill {
+  background: rgba(14, 53, 39, 0.95);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  color: #6ee7b7;
+  border: 1px solid rgba(16, 185, 129, 0.40);
 }
 
 
@@ -2416,6 +2605,13 @@ body.dark .admin-header-super-badge {
     0 0 0 2px rgba(245, 158, 11, 0.60);
 }
 
+.dark-theme .users-table tbody tr.user-row-super-admin td:last-child,
+.dark-mode .users-table tbody tr.user-row-super-admin td:last-child,
+[data-theme="dark"] .users-table tbody tr.user-row-super-admin td:last-child {
+  border-right: 1.5px solid rgba(245, 158, 11, 0.35) !important;
+  border-radius: 0 16px 16px 0 !important;
+}
+
 
 /* =========================================================
    DARK SUB-ADMIN ROW
@@ -2430,14 +2626,13 @@ body.dark .admin-header-super-badge {
   background:
     linear-gradient(
       135deg,
-      #263044 0%,
-      #172d46 45%,
-      #102a43 100%
+      #0e382b 0%,
+      #0d2238 100%
     );
 
   box-shadow:
-    0 9px 24px rgba(0, 0, 0, 0.32),
-    0 0 0 1px rgba(245, 158, 11, 0.22);
+    0 8px 22px rgba(0, 0, 0, 0.45),
+    0 0 0 1.5px rgba(16, 185, 129, 0.45);
 }
 
 
@@ -2450,15 +2645,15 @@ body.dark .admin-header-super-badge {
   background:
     linear-gradient(
       135deg,
-      #263044,
-      #142a42
+      #0e382b 0%,
+      #0d2238 100%
     );
 
-  border-top-color:
-    rgba(245, 158, 11, 0.22);
+  border-top:
+    1.5px solid rgba(16, 185, 129, 0.35) !important;
 
-  border-bottom-color:
-    rgba(96, 165, 250, 0.12);
+  border-bottom:
+    1.5px solid rgba(16, 185, 129, 0.25) !important;
 
   color: #a9bbce;
 }
@@ -2470,16 +2665,31 @@ body.dark .admin-header-super-badge {
 .dark-mode .users-table tbody tr:has(.admin-role) td:first-child,
 [data-theme="dark"] .users-table tbody tr.user-row-admin td:first-child,
 [data-theme="dark"] .users-table tbody tr:has(.admin-role) td:first-child {
-  color: #fbbf24 !important;
+  color: #6ee7b7 !important;
 
   background:
     linear-gradient(
       135deg,
-      #3a3524,
-      #17304a
-    );
+      #134e3a,
+      #0d2238
+    ) !important;
 
-  border-left-color: #f59e0b;
+  border-left: 5px solid #10b981 !important;
+  border-top: 1.5px solid rgba(16, 185, 129, 0.35) !important;
+  border-bottom: 1.5px solid rgba(16, 185, 129, 0.25) !important;
+  border-radius: 16px 0 0 16px !important;
+  text-align: center;
+}
+
+
+.dark-theme .users-table tbody tr.user-row-admin td:last-child,
+.dark-theme .users-table tbody tr:has(.admin-role) td:last-child,
+.dark-mode .users-table tbody tr.user-row-admin td:last-child,
+.dark-mode .users-table tbody tr:has(.admin-role) td:last-child,
+[data-theme="dark"] .users-table tbody tr.user-row-admin td:last-child,
+[data-theme="dark"] .users-table tbody tr:has(.admin-role) td:last-child {
+  border-right: 1.5px solid rgba(16, 185, 129, 0.35) !important;
+  border-radius: 0 16px 16px 0 !important;
 }
 
 
@@ -2499,9 +2709,10 @@ body.dark .admin-header-super-badge {
 .dark-mode .users-table tbody tr:has(.admin-role):hover,
 [data-theme="dark"] .users-table tbody tr.user-row-admin:hover,
 [data-theme="dark"] .users-table tbody tr:has(.admin-role):hover {
+  transform: translateY(-2px);
   box-shadow:
-    0 15px 30px rgba(0, 0, 0, 0.40),
-    0 0 0 1px rgba(245, 158, 11, 0.32);
+    0 14px 28px rgba(0, 0, 0, 0.65),
+    0 0 0 2px rgba(16, 185, 129, 0.65);
 }
 
 

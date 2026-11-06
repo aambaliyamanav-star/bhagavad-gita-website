@@ -2332,8 +2332,14 @@ function Admin() {
                                 <Crown size={12} className="super-admin-crown-icon" />
                                 {index + 1}
                               </span>
+                            ) : isSubAdmin ? (
+                              <span className="admin-user-index-pill" title="એડમિન">
+                                {index + 1}
+                              </span>
                             ) : (
-                              index + 1
+                              <span className="regular-user-index-pill">
+                                {index + 1}
+                              </span>
                             )}
                           </td>
 
