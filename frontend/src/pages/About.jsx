@@ -523,18 +523,17 @@ function About() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, []);
 
-  // Lock window and body scrolling to guarantee 100% zero-scroll on About page
+  // Lock body scroll only when modal is open so background doesn't scroll
   useEffect(() => {
-    const origHtmlOverflow = document.documentElement.style.overflow;
-    const origBodyOverflow = document.body.style.overflow;
-    document.documentElement.style.overflow = "hidden";
-    document.body.style.overflow = "hidden";
-
+    if (selectedFeature) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
     return () => {
-      document.documentElement.style.overflow = origHtmlOverflow;
-      document.body.style.overflow = origBodyOverflow;
+      document.body.style.overflow = "";
     };
-  }, []);
+  }, [selectedFeature]);
 
   const openAiAssistant = () => {
     setSelectedFeature(null);
