@@ -713,47 +713,76 @@ const response = await fetch(
     let pausedAt = null;
 
     const markAsRead = () => {
-      if (document.visibilityState === "visible") {
-        const token = getValidToken();
-        trackShlokaRead(currentChapterNumber, current.shlokNumber, token);
-        trackedInSessionRef.current.add(sessionKey);
-        try {
-          localStorage.setItem(
-            `gita_last_shloka_ch_${currentChapterNumber}`,
-            String(current.shlokNumber)
-          );
-        } catch (e) {}
-        if (user) {
-          saveContinueReading(currentChapterNumber, current.shlokNumber);
-        }
+      if (trackedInSessionRef.current.has(sessionKey)) return;
+      const token = getValidToken();
+      trackShlokaRead(currentChapterNumber, current.shlokNumber, token);
+      trackedInSessionRef.current.add(sessionKey);
+      try {
+        localStorage.setItem(
+          `gita_last_shloka_ch_${currentChapterNumber}`,
+          String(current.shlokNumber)
+        );
+      } catch (e) {}
+      if (user) {
+        saveContinueReading(currentChapterNumber, current.shlokNumber);
       }
     };
 
     // Main timer: fires silently after 50s to record the read
-    mainTimerId = setTimeout(markAsRead, READ_TIME_MS);
+    mainTimerId = setTimeout(() => {
+      if (document.visibilityState === "visible") {
+        markAsRead();
+      }
+    }, READ_TIME_MS);
+
+    // Save on tab close or page hide if user stayed at least 10 seconds
+    const handleBeforeUnloadOrHide = () => {
+      const elapsed = Date.now() - startTime;
+      if (elapsed >= 10_000) {
+        markAsRead();
+      }
+    };
+
+    window.addEventListener("pagehide", handleBeforeUnloadOrHide);
+    window.addEventListener("beforeunload", handleBeforeUnloadOrHide);
 
     // Pause timer when tab is hidden; resume when visible again
     const handleVisibilityChange = () => {
       if (document.hidden) {
         pausedAt = Date.now();
         clearTimeout(mainTimerId);
+        const elapsed = Date.now() - startTime;
+        if (elapsed >= 10_000) {
+          markAsRead();
+        }
       } else {
         if (pausedAt !== null) {
           const elapsedBeforePause = pausedAt - startTime;
           const remainingMs = Math.max(0, READ_TIME_MS - elapsedBeforePause);
           pausedAt = null;
 
-          mainTimerId = setTimeout(markAsRead, remainingMs);
+          mainTimerId = setTimeout(() => {
+            if (document.visibilityState === "visible") {
+              markAsRead();
+            }
+          }, remainingMs);
         }
       }
     };
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
-    // Cleanup: user moved away before 50s → cancel timer
+    // Cleanup: user moved away
     return () => {
       clearTimeout(mainTimerId);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("pagehide", handleBeforeUnloadOrHide);
+      window.removeEventListener("beforeunload", handleBeforeUnloadOrHide);
+      // If user spent at least 8 seconds reading this shloka before advancing, mark as read
+      const elapsed = Date.now() - startTime;
+      if (elapsed >= 8_000) {
+        markAsRead();
+      }
     };
   }, [
     currentShloka,

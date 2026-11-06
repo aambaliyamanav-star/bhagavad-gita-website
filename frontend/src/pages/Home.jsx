@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import "./Home.css";
 import ShareShlokaModal from "../components/ShareShlokaModal.jsx";
-import { getLocalProgress, getCombinedReadingProgress } from "../utils/readingTracker.js";
+import { getLocalProgress, getCombinedReadingProgress, getNextSequentialUnread } from "../utils/readingTracker.js";
 import { useLanguage } from "../context/LanguageContext.jsx";
 import { getValidToken } from "../utils/authHelper.js";
 
@@ -379,13 +379,15 @@ useEffect(() => {
 
   // =====================================================
   // LOAD CONTINUE READING
+  // Driven strictly by sequential unread shlokas from Reading Tracker
+  // (starts at Chapter 1 Shloka 1, advances sequentially, never skips)
   // =====================================================
 
   useEffect(() => {
     let isCancelled = false;
 
     const loadContinueReading = async () => {
-      // 1. If not logged in, reset continue reading immediately
+      // 1. If not logged in, reset continue reading
       if (!user) {
         if (!isCancelled) {
           setContinueReading(null);
@@ -394,36 +396,16 @@ useEffect(() => {
         return;
       }
 
-      // 2. User is logged in: read ONLY this user's scoped local cache
-      const uid = user._id || user.email;
-      const userKey = `gita_continue_reading_${uid}`;
-      let localSaved = null;
-
+      // 2. User is logged in: compute from local progress immediately (zero lag)
       try {
-        const raw = localStorage.getItem(userKey);
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          if (parsed && parsed.chapterNumber && parsed.shlokNumber) {
-            localSaved = parsed;
-            if (!isCancelled) setContinueReading(parsed);
-          }
+        const local = getLocalProgress();
+        const nextLocal = getNextSequentialUnread(local?.readShlokas || []);
+        if (!isCancelled) {
+          setContinueReading(nextLocal);
         }
       } catch (e) {}
 
-      // Check legacy key ONLY if it explicitly matches this user's ID
-      if (!localSaved) {
-        try {
-          const legacyRaw = localStorage.getItem("gita_continue_reading");
-          if (legacyRaw) {
-            const parsed = JSON.parse(legacyRaw);
-            if (parsed && parsed.userId === uid && parsed.chapterNumber && parsed.shlokNumber) {
-              localSaved = parsed;
-              if (!isCancelled) setContinueReading(parsed);
-            }
-          }
-        } catch (e) {}
-      }
-
+      // 3. Sync authoritative reading progress from backend
       const token = getValidToken();
       if (!token) {
         if (!isCancelled) setContinueReadingLoading(false);
@@ -432,54 +414,13 @@ useEffect(() => {
 
       try {
         if (!isCancelled) setContinueReadingLoading(true);
-
-        const response = await fetch(
-          CONTINUE_READING_API_URL,
-          {
-            method: "GET",
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        const data = await response.json();
-
-        if (
-          response.ok &&
-          data.continueReading &&
-          data.continueReading.chapterNumber &&
-          data.continueReading.shlokNumber
-        ) {
-          const serverData = data.continueReading;
-          if (localSaved && localSaved.updatedAt && serverData.updatedAt) {
-            const localTime = new Date(localSaved.updatedAt).getTime();
-            const serverTime = new Date(serverData.updatedAt).getTime();
-            if (localTime > serverTime) {
-              if (!isCancelled) setContinueReading(localSaved);
-            } else {
-              if (!isCancelled) setContinueReading(serverData);
-              try {
-                localStorage.setItem(userKey, JSON.stringify(serverData));
-              } catch (e) {}
-            }
-          } else {
-            if (!isCancelled) setContinueReading(serverData);
-            try {
-              localStorage.setItem(userKey, JSON.stringify(serverData));
-            } catch (e) {}
-          }
-        } else if (localSaved) {
-          if (!isCancelled) setContinueReading(localSaved);
-        } else {
-          // New or fresh user with no continue reading
-          if (!isCancelled) setContinueReading(null);
+        const data = await getCombinedReadingProgress(token);
+        if (!isCancelled && data && data.readShlokas) {
+          const nextSequential = getNextSequentialUnread(data.readShlokas);
+          setContinueReading(nextSequential);
         }
       } catch (error) {
-        console.error(
-          "❌ Continue Reading Load Error:",
-          error
-        );
+        console.error("❌ Continue Reading Load Error:", error);
       } finally {
         if (!isCancelled) setContinueReadingLoading(false);
       }
@@ -498,11 +439,11 @@ useEffect(() => {
   // =====================================================
 
   const handleContinueReading = () => {
+    const ch = continueReading?.chapterNumber || 1;
+    const shl = continueReading?.shlokNumber || 1;
+
     if (!user) {
-      const target =
-        continueReading?.chapterNumber && continueReading?.shlokNumber
-          ? `/chapter/${continueReading.chapterNumber}?shloka=${continueReading.shlokNumber}`
-          : "/chapters";
+      const target = `/chapter/${ch}?shloka=${shl}`;
 
       const loginMsg = txt(
         "વાંચન ચાલુ રાખવા માટે Login કરવું જરૂરી છે.",
@@ -527,27 +468,16 @@ useEffect(() => {
       return;
     }
 
-    if (
-      !continueReading ||
-      !continueReading.chapterNumber ||
-      !continueReading.shlokNumber
-    ) {
-      navigate("/chapters");
-      return;
-    }
-
-    // Go directly to the exact chapter and shloka the user was last at!
-    navigate(
-      `/chapter/${continueReading.chapterNumber}?shloka=${continueReading.shlokNumber}`
-    );
+    // Go directly to the exact sequential unread chapter and shloka
+    navigate(`/chapter/${ch}?shloka=${shl}`);
   };
 
   // =====================================================
-  // START READING
+  // START READING (Starts from Chapter 1 Shloka 1)
   // =====================================================
 
   const handleStartReading = () => {
-    navigate("/chapters");
+    navigate("/chapter/1?shloka=1");
   };
 
   // =====================================================
@@ -1098,7 +1028,7 @@ useEffect(() => {
 
   const renderReadingButton = () => {
     if (user) {
-      if (continueReadingLoading) {
+      if (continueReadingLoading && !continueReading) {
         return (
           <button
             type="button"
@@ -1110,43 +1040,20 @@ useEffect(() => {
         );
       }
 
-      if (
-        continueReading &&
-        continueReading.chapterNumber &&
-        continueReading.shlokNumber
-      ) {
-        return (
-          <button
-            type="button"
-            className="continue-reading-button"
-            onClick={
-              handleContinueReading
-            }
-          >
-            <BookOpen className="btn-icon" size={20} /> {txt("Continue Reading", "पढ़ना जारी रखें", "Continue Reading")}
-            {" • "}
-            {txt("અધ્યાય", "अध्याय", "Chapter")}{" "}
-            {
-              continueReading.chapterNumber
-            }
-            {" • "}
-            {txt("શ્લોક", "श्लोक", "Shloka")}{" "}
-            {
-              continueReading.shlokNumber
-            }
-          </button>
-        );
-      }
+      const ch = continueReading?.chapterNumber || 1;
+      const shl = continueReading?.shlokNumber || 1;
 
       return (
         <button
           type="button"
           className="continue-reading-button"
-          onClick={
-            handleStartReading
-          }
+          onClick={handleContinueReading}
         >
-          <BookOpen className="btn-icon" size={20} /> {txt("ગીતા વાંચવાનું શરૂ કરો", "गीता पढ़ना शुरू करें", "Start Reading Gita")}
+          <BookOpen className="btn-icon" size={20} /> {txt("Continue Reading", "पढ़ना जारी रखें", "Continue Reading")}
+          {" • "}
+          {txt("અધ્યાય", "अध्याय", "Chapter")} {ch}
+          {" • "}
+          {txt("શ્લોક", "श्लोक", "Shloka")} {shl}
         </button>
       );
     }

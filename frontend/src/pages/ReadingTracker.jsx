@@ -36,6 +36,7 @@ import {
   getCombinedReadingProgress,
   countChapterRead,
   getFirstUnreadShloka,
+  getNextSequentialUnread,
   syncLocalToCloud,
 } from "../utils/readingTracker.js";
 import "./ReadingTracker.css";
@@ -169,33 +170,7 @@ function ReadingTracker() {
   const nextToReadInfo = useMemo(() => {
     const list = progressData.readShlokas || [];
     if (list.length === 0) return null;
-
-    // The most recently read shloka indicates which chapter the user was reading
-    const lastRead = list[list.length - 1];
-    const chMeta = CHAPTER_METADATA.find((m) => m.chapter === lastRead.chapterNumber);
-    const totalInCh = chMeta ? chMeta.shlokas : 47;
-    const firstUnreadInCh = getFirstUnreadShloka(list, lastRead.chapterNumber, totalInCh);
-    const readInCh = countChapterRead(list, lastRead.chapterNumber);
-
-    if (readInCh < totalInCh) {
-      return {
-        chapterNumber: lastRead.chapterNumber,
-        shlokNumber: firstUnreadInCh,
-      };
-    }
-
-    // If that chapter is completed, find the next chapter with unread shlokas
-    for (const m of CHAPTER_METADATA) {
-      const readCount = countChapterRead(list, m.chapter);
-      if (readCount < m.shlokas) {
-        return {
-          chapterNumber: m.chapter,
-          shlokNumber: getFirstUnreadShloka(list, m.chapter, m.shlokas),
-        };
-      }
-    }
-
-    return { chapterNumber: 1, shlokNumber: 1 };
+    return getNextSequentialUnread(list);
   }, [progressData.readShlokas]);
 
   const filteredChapters = useMemo(() => {

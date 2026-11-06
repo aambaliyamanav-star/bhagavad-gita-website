@@ -217,6 +217,32 @@ export function getFirstUnreadShloka(readShlokas = [], chapterNum, totalShlokas 
   return 1;
 }
 
+export function getNextSequentialUnread(readShlokas = []) {
+  const readSet = new Set(
+    (readShlokas || []).map((s) => `${Number(s.chapterNumber)}-${Number(s.shlokNumber)}`)
+  );
+
+  for (const meta of CHAPTER_METADATA) {
+    const ch = meta.chapter;
+    const total = meta.shlokas;
+    for (let s = 1; s <= total; s++) {
+      if (!readSet.has(`${ch}-${s}`)) {
+        return {
+          chapterNumber: ch,
+          shlokNumber: s,
+          isCompleted: false,
+        };
+      }
+    }
+  }
+
+  return {
+    chapterNumber: 1,
+    shlokNumber: 1,
+    isCompleted: true,
+  };
+}
+
 function getTodayString() {
   const now = new Date();
   const year = now.getFullYear();

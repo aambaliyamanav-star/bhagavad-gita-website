@@ -1,5 +1,35 @@
 const User = require("../models/User");
 
+const CHAPTER_LENGTHS = {
+  1: 47, 2: 72, 3: 43, 4: 42, 5: 29, 6: 47, 7: 30, 8: 28, 9: 34,
+  10: 42, 11: 55, 12: 20, 13: 35, 14: 27, 15: 20, 16: 24, 17: 28, 18: 78,
+};
+
+function getNextSequentialUnread(readShlokas = []) {
+  const readSet = new Set(
+    (readShlokas || []).map((s) => `${Number(s.chapterNumber)}-${Number(s.shlokNumber)}`)
+  );
+
+  for (let ch = 1; ch <= 18; ch++) {
+    const total = CHAPTER_LENGTHS[ch] || 47;
+    for (let s = 1; s <= total; s++) {
+      if (!readSet.has(`${ch}-${s}`)) {
+        return {
+          chapterNumber: ch,
+          shlokNumber: s,
+          isCompleted: false,
+        };
+      }
+    }
+  }
+
+  return {
+    chapterNumber: 1,
+    shlokNumber: 1,
+    isCompleted: true,
+  };
+}
+
 // =====================================================
 // GET CONTINUE READING
 // =====================================================
@@ -16,30 +46,18 @@ const getContinueReading = async (req, res) => {
       });
     }
 
-    // No Continue Reading Yet
-    if (
-      !user.continueReading ||
-      !user.continueReading.chapterNumber ||
-      !user.continueReading.shlokNumber
-    ) {
-      return res.status(200).json({
-        success: true,
-        continueReading: null,
-      });
-    }
+    // Always compute strictly sequential next unread shloka across 18 chapters
+    const readShlokas = user.readingProgress?.readShlokas || [];
+    const nextSequential = getNextSequentialUnread(readShlokas);
 
     // Return Continue Reading
     res.status(200).json({
       success: true,
       continueReading: {
-        chapterNumber:
-          user.continueReading.chapterNumber,
-
-        shlokNumber:
-          user.continueReading.shlokNumber,
-
-        updatedAt:
-          user.continueReading.updatedAt,
+        chapterNumber: nextSequential.chapterNumber,
+        shlokNumber: nextSequential.shlokNumber,
+        isCompleted: nextSequential.isCompleted,
+        updatedAt: user.continueReading?.updatedAt || new Date(),
       },
     });
   } catch (error) {
