@@ -14,6 +14,8 @@ import {
   Share2,
   Trophy,
   Flame,
+  ChevronUp,
+  ChevronDown,
 } from "lucide-react";
 import "./Home.css";
 import ShareShlokaModal from "../components/ShareShlokaModal.jsx";
@@ -752,6 +754,63 @@ useEffect(() => {
   };
 
   // =====================================================
+  // STEPPERS FOR CHAPTER & SHLOKA (UP / DOWN)
+  // =====================================================
+
+  const stepChapter = (dir) => {
+    let current = chapterNumber ? Number(chapterNumber) : 0;
+    let next;
+    if (dir === "up") {
+      next = current ? Math.min(18, current + 1) : 1;
+    } else {
+      next = current ? Math.max(1, current - 1) : 1;
+    }
+
+    setChapterNumber(String(next));
+    setMessage("");
+    setResult(null);
+
+    const maxShloka = getChapterMaxShloka(next);
+
+    if (maxShloka === 0) {
+      setShlokaNumber("0");
+      return;
+    }
+
+    if (shlokaNumber) {
+      const curSh = Number(shlokaNumber);
+      if (curSh > maxShloka) {
+        setShlokaNumber(String(maxShloka));
+      } else if (curSh === 0) {
+        setShlokaNumber("");
+      }
+    }
+  };
+
+  const stepShloka = (dir) => {
+    const maxShloka = chapterNumber
+      ? getChapterMaxShloka(chapterNumber)
+      : getOverallMaxShloka();
+
+    if (chapterNumber && maxShloka === 0) {
+      setShlokaNumber("0");
+      return;
+    }
+
+    let current = shlokaNumber ? Number(shlokaNumber) : 0;
+    let next;
+    if (dir === "up") {
+      next = current ? Math.min(maxShloka, current + 1) : 1;
+    } else {
+      next = current ? Math.max(1, current - 1) : 1;
+    }
+
+    setShlokaNumber(String(next));
+    setMessage("");
+    setResult(null);
+  };
+
+  // =====================================================
   // TEXT CHANGE
   // =====================================================
 
@@ -1148,61 +1207,91 @@ useEffect(() => {
           <div className="search-fields">
 
             {/* CHAPTER */}
-
-            <input
-              type="number"
-              placeholder={txt("અધ્યાય નંબર", "अध्याय संख्या", "Chapter No.")}
-              value={chapterNumber}
-              onChange={
-                handleChapterChange
-              }
-              onKeyDown={
-                handleKeyDown
-              }
-              min="1"
-              max="18"
-            />
+            <div className="search-field-wrapper search-chapter-wrapper">
+              <input
+                type="number"
+                placeholder={txt("અધ્યાય નંબર", "अध्याय संख्या", "Chapter No.")}
+                value={chapterNumber}
+                onChange={handleChapterChange}
+                onKeyDown={handleKeyDown}
+                min="1"
+                max="18"
+              />
+              <div className="search-stepper">
+                <button
+                  type="button"
+                  tabIndex={-1}
+                  className="search-stepper-btn search-stepper-up"
+                  onClick={() => stepChapter("up")}
+                  title={txt("અધ્યાય વધારો", "अध्याय बढ़ाएं", "Increase Chapter")}
+                  aria-label="Increase chapter"
+                >
+                  <ChevronUp size={12} strokeWidth={2.8} />
+                </button>
+                <button
+                  type="button"
+                  tabIndex={-1}
+                  className="search-stepper-btn search-stepper-down"
+                  onClick={() => stepChapter("down")}
+                  title={txt("અધ્યાય ઘટાડો", "अध्याय घटाएं", "Decrease Chapter")}
+                  aria-label="Decrease chapter"
+                >
+                  <ChevronDown size={12} strokeWidth={2.8} />
+                </button>
+              </div>
+            </div>
 
             {/* SHLOKA */}
-
-            <input
-              type="number"
-              placeholder={
-                chapterNumber
-                  ? getChapterMaxShloka(
-                      chapterNumber
-                    ) === 0
-                    ? txt("શ્લોક નંબર (0)", "श्लोक संख्या (0)", "Shloka No. (0)")
-                    : txt(
-                        `શ્લોક નંબર (1-${getChapterMaxShloka(chapterNumber)})`,
-                        `श्लोक संख्या (1-${getChapterMaxShloka(chapterNumber)})`,
-                        `Shloka No. (1-${getChapterMaxShloka(chapterNumber)})`
-                      )
-                  : txt("શ્લોક નંબર (1-78)", "श्लोक संख्या (1-78)", "Shloka No. (1-78)")
-              }
-              value={shlokaNumber}
-              onChange={
-                handleShlokaChange
-              }
-              onKeyDown={
-                handleKeyDown
-              }
-              min={
-                chapterNumber &&
-                currentShlokaMax === 0
-                  ? "0"
-                  : "1"
-              }
-              max={
-                currentShlokaMax > 0
-                  ? currentShlokaMax
-                  : "0"
-              }
-              disabled={
-                !!chapterNumber &&
-                currentShlokaMax === 0
-              }
-            />
+            <div
+              className={`search-field-wrapper search-shloka-wrapper ${
+                !!chapterNumber && currentShlokaMax === 0 ? "disabled" : ""
+              }`}
+            >
+              <input
+                type="number"
+                placeholder={
+                  chapterNumber
+                    ? getChapterMaxShloka(chapterNumber) === 0
+                      ? txt("શ્લોક નંબર (0)", "श्लोक संख्या (0)", "Shloka No. (0)")
+                      : txt(
+                          `શ્લોક નંબર (1-${getChapterMaxShloka(chapterNumber)})`,
+                          `श्लोक संख्या (1-${getChapterMaxShloka(chapterNumber)})`,
+                          `Shloka No. (1-${getChapterMaxShloka(chapterNumber)})`
+                        )
+                    : txt("શ્લોક નંબર (1-78)", "श्लोक संख्या (1-78)", "Shloka No. (1-78)")
+                }
+                value={shlokaNumber}
+                onChange={handleShlokaChange}
+                onKeyDown={handleKeyDown}
+                min={chapterNumber && currentShlokaMax === 0 ? "0" : "1"}
+                max={currentShlokaMax > 0 ? currentShlokaMax : "0"}
+                disabled={!!chapterNumber && currentShlokaMax === 0}
+              />
+              <div className="search-stepper">
+                <button
+                  type="button"
+                  tabIndex={-1}
+                  disabled={!!chapterNumber && currentShlokaMax === 0}
+                  className="search-stepper-btn search-stepper-up"
+                  onClick={() => stepShloka("up")}
+                  title={txt("શ્લોક વધારો", "श्लोक बढ़ाएं", "Increase Shloka")}
+                  aria-label="Increase shloka"
+                >
+                  <ChevronUp size={12} strokeWidth={2.8} />
+                </button>
+                <button
+                  type="button"
+                  tabIndex={-1}
+                  disabled={!!chapterNumber && currentShlokaMax === 0}
+                  className="search-stepper-btn search-stepper-down"
+                  onClick={() => stepShloka("down")}
+                  title={txt("શ્લોક ઘટાડો", "श्लोक घटाएं", "Decrease Shloka")}
+                  aria-label="Decrease shloka"
+                >
+                  <ChevronDown size={12} strokeWidth={2.8} />
+                </button>
+              </div>
+            </div>
 
             {/* TEXT */}
 
