@@ -183,7 +183,57 @@ const precacheSingleShlokAudio = (shloka) => {
   });
 };
 
+/**
+ * Warm up an entire chapter's audio in the background on demand
+ */
+const warmupChapterAudios = async (req, res) => {
+  try {
+    const Shlok = require("../models/Shlok");
+    const chapterNumber = Number(req.params.chapterNumber);
+    if (!chapterNumber || chapterNumber < 1 || chapterNumber > 18) {
+      return res.status(400).json({ success: false, message: "Invalid chapter number." });
+    }
+
+    const shlokas = await Shlok.find({ chapterNumber }).sort({ shlokNumber: 1 });
+    if (!shlokas || shlokas.length === 0) {
+      return res.status(404).json({ success: false, message: "No shlokas found for this chapter." });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `અધ્યાય ${chapterNumber} ના ${shlokas.length} શ્લોકનો ઑડિયો સર્વર પર બેકગ્રાઉન્ડમાં તૈયાર થઈ રહ્યો છે.`,
+      totalShlokas: shlokas.length,
+    });
+
+    setImmediate(async () => {
+      for (const s of shlokas) {
+        try {
+          let plainSa = String(s.sanskrit || "")
+            .replace(/<[^>]*>/g, " ")
+            .replace(/[॥\|]\s*[\d\.\-०-९]+\s*[॥\|]/g, "।")
+            .trim();
+          if (!plainSa && (s.sanskritLine1 || s.sanskritLine2)) {
+            plainSa = [s.sanskritLine1, s.sanskritLine2].filter(Boolean).join("\n");
+          }
+          if (plainSa) await synthesizeBuffer(plainSa, "sa", "-22%");
+
+          let plainTr = String(s.translation || "").replace(/<[^>]*>/g, " ").trim();
+          if (plainTr) await synthesizeBuffer(plainTr, "gu", "-2%");
+
+          let plainMsg = String(s.message || "").replace(/<[^>]*>/g, " ").trim();
+          if (plainMsg) await synthesizeBuffer(plainMsg, "gu", "-2%");
+        } catch (e) {}
+      }
+    });
+  } catch (err) {
+    if (!res.headersSent) {
+      res.status(500).json({ success: false, message: "Warmup error" });
+    }
+  }
+};
+
 module.exports = {
   generateSpeech,
   precacheSingleShlokAudio,
+  warmupChapterAudios,
 };
