@@ -179,24 +179,6 @@ export async function clearAudioCache() {
   }
 }
 
-/**
- * Get count of cached audio clips in database
- */
-export async function getCachedAudioCount() {
-  try {
-    const db = await openDB();
-    return new Promise((resolve) => {
-      const tx = db.transaction(STORE_NAME, "readonly");
-      const store = tx.objectStore(STORE_NAME);
-      const countReq = store.count();
-      countReq.onsuccess = () => resolve(countReq.result || 0);
-      countReq.onerror = () => resolve(0);
-    });
-  } catch (e) {
-    return 0;
-  }
-}
-
 // =========================================================
 // NEURAL TTS FETCH & TEXT FORMATTING UTILITIES
 // =========================================================

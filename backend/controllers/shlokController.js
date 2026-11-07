@@ -1,4 +1,5 @@
 const Shlok = require("../models/Shlok");
+const { precacheSingleShlokAudio } = require("./ttsController");
 const {
   translateShlokToHindi,
   translateShlokToEnglish,
@@ -413,6 +414,11 @@ const addShlok = async (req, res) => {
 
     const savedShlok =
       await shlok.save();
+
+    // Silently pre-cache audio for new shloka in background for instant playback
+    try {
+      precacheSingleShlokAudio(savedShlok);
+    } catch (e) {}
 
     res.status(201).json({
       success: true,
@@ -931,6 +937,11 @@ const updateShlok = async (
           runValidators: true,
         }
       );
+
+    // Silently pre-cache audio for updated shloka in background for instant playback
+    try {
+      precacheSingleShlokAudio(updatedShlok);
+    } catch (e) {}
 
     res.status(200).json({
       success: true,

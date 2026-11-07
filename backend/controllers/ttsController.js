@@ -36,10 +36,86 @@ try {
 const audioCache = new Map();
 const MAX_CACHE_SIZE = 2000;
 
+/**
+ * Core synthesis helper with dual-layer caching (Memory + Disk)
+ */
+const synthesizeBuffer = async (text, lang = "gu", customRate = null) => {
+  if (!text || typeof text !== "string" || !text.trim()) return null;
+
+  let cleanText = text.trim();
+  cleanText = cleanText.replace(/<[^>]*>/g, " ");
+  cleanText = cleanText.replace(/&nbsp;/gi, " ");
+  cleanText = cleanText.replace(/&amp;/gi, " and ");
+  cleanText = cleanText.replace(/[&<>]/g, " ");
+  cleanText = cleanText.replace(/\s*[:：]\s*/g, ". ... ");
+  cleanText = cleanText.replace(/(\.\s*\.\.\.\s*)+/g, ". ... ");
+  cleanText = cleanText.replace(/\s+/g, " ").trim();
+
+  const voiceLang = VOICE_MAP[lang] ? lang : "gu";
+  const selectedVoice = VOICE_MAP[voiceLang].male;
+  const prosodyOptions = {
+    rate: customRate !== null ? customRate : (lang === "sa" ? "-22%" : "-2%"),
+    pitch: lang === "sa" ? "-2Hz" : "+0Hz",
+  };
+
+  const cacheKey = crypto
+    .createHash("md5")
+    .update(`${selectedVoice}:${prosodyOptions.rate}:${prosodyOptions.pitch}:${cleanText}`)
+    .digest("hex");
+
+  // 1. Check in-memory RAM cache (instant)
+  if (audioCache.has(cacheKey)) {
+    return audioCache.get(cacheKey);
+  }
+
+  // 2. Check disk cache (5ms)
+  const diskPath = path.join(CACHE_DIR, `${cacheKey}.mp3`);
+  if (fs.existsSync(diskPath)) {
+    try {
+      const diskBuffer = fs.readFileSync(diskPath);
+      if (diskBuffer && diskBuffer.length > 0) {
+        audioCache.set(cacheKey, diskBuffer);
+        return diskBuffer;
+      }
+    } catch (e) {}
+  }
+
+  // 3. Synthesize via MsEdgeTTS
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    try {
+      const tts = new MsEdgeTTS({ connectionTimeoutMs: 25000, synthesisTimeoutMs: 60000 });
+      await tts.setMetadata(selectedVoice, OUTPUT_FORMAT.AUDIO_24KHZ_48KBITRATE_MONO_MP3);
+      const { audioStream } = tts.toStream(cleanText, prosodyOptions);
+
+      const chunks = [];
+      await new Promise((resolve, reject) => {
+        audioStream.on("data", (chunk) => chunks.push(chunk));
+        audioStream.on("end", resolve);
+        audioStream.on("error", (err) => reject(err));
+      });
+
+      const audioBuffer = Buffer.concat(chunks);
+      if (audioBuffer && audioBuffer.length > 0) {
+        if (audioCache.size >= MAX_CACHE_SIZE) {
+          const oldestKey = audioCache.keys().next().value;
+          audioCache.delete(oldestKey);
+        }
+        audioCache.set(cacheKey, audioBuffer);
+        try {
+          fs.writeFileSync(diskPath, audioBuffer);
+        } catch (e) {}
+        return audioBuffer;
+      }
+    } catch (err) {
+      if (attempt < 3) await new Promise((r) => setTimeout(r, 600 * attempt));
+    }
+  }
+  return null;
+};
+
 const generateSpeech = async (req, res) => {
   try {
-    const { text, lang = "gu", voice = "male", rate, pitch } = req.body || {};
-
+    const { text, lang = "gu", rate } = req.body || {};
     if (!text || typeof text !== "string" || !text.trim()) {
       return res.status(400).json({
         success: false,
@@ -47,113 +123,12 @@ const generateSpeech = async (req, res) => {
       });
     }
 
-    let cleanText = text.trim();
-    // Strip HTML tags if any were passed
-    cleanText = cleanText.replace(/<[^>]*>/g, " ");
-    // Replace non-XML entities and characters that break Microsoft Edge TTS SSML
-    cleanText = cleanText.replace(/&nbsp;/gi, " ");
-    cleanText = cleanText.replace(/&amp;/gi, " and ");
-    cleanText = cleanText.replace(/[&<>]/g, " ");
-    // Ensure 1-second natural pause after speaker names / colons / point titles
-    cleanText = cleanText.replace(/\s*[:：]\s*/g, ". ... ");
-    cleanText = cleanText.replace(/(\.\s*\.\.\.\s*)+/g, ". ... ");
-    cleanText = cleanText.replace(/\s+/g, " ").trim();
-    const voiceLang = VOICE_MAP[lang] ? lang : "gu";
-    const selectedVoice = VOICE_MAP[voiceLang][voice] || VOICE_MAP[voiceLang].male;
-
-    // Prosody settings:
-    // For Sanskrit ('sa'), use a measured devotional cadence (-22% speed, -2Hz pitch)
-    // so every sacred word is clearly audible and recited with traditional shloka rag/meter.
-    const prosodyOptions = {
-      rate: rate !== undefined ? rate : (lang === "sa" ? "-22%" : "-2%"),
-      pitch: pitch !== undefined ? pitch : (lang === "sa" ? "-2Hz" : "+0Hz"),
-    };
-
-    // Check memory cache first
-    const cacheKey = crypto
-      .createHash("md5")
-      .update(`${selectedVoice}:${prosodyOptions.rate}:${prosodyOptions.pitch}:${cleanText}`)
-      .digest("hex");
-
-    if (audioCache.has(cacheKey)) {
-      const cachedBuffer = audioCache.get(cacheKey);
-      res.set({
-        "Content-Type": "audio/mpeg",
-        "Content-Length": cachedBuffer.length,
-        "Cache-Control": "public, max-age=86400",
-        "Accept-Ranges": "bytes",
-      });
-      return res.send(cachedBuffer);
-    }
-
-    // Check persistent disk cache (zero network latency)
-    const diskPath = path.join(CACHE_DIR, `${cacheKey}.mp3`);
-    if (fs.existsSync(diskPath)) {
-      try {
-        const diskBuffer = fs.readFileSync(diskPath);
-        if (diskBuffer && diskBuffer.length > 0) {
-          audioCache.set(cacheKey, diskBuffer);
-          res.set({
-            "Content-Type": "audio/mpeg",
-            "Content-Length": diskBuffer.length,
-            "Cache-Control": "public, max-age=86400",
-            "Accept-Ranges": "bytes",
-          });
-          return res.send(diskBuffer);
-        }
-      } catch (e) {}
-    }
-
-    // Resilient generation with retry (up to 3 attempts with fresh MsEdgeTTS instances)
-    let audioBuffer = null;
-    let lastError = null;
-
-    for (let attempt = 1; attempt <= 3; attempt++) {
-      try {
-        const tts = new MsEdgeTTS({ connectionTimeoutMs: 25000, synthesisTimeoutMs: 60000 });
-        await tts.setMetadata(selectedVoice, OUTPUT_FORMAT.AUDIO_24KHZ_48KBITRATE_MONO_MP3);
-        const { audioStream } = tts.toStream(cleanText, prosodyOptions);
-
-        const chunks = [];
-        await new Promise((resolve, reject) => {
-          audioStream.on("data", (chunk) => chunks.push(chunk));
-          audioStream.on("end", resolve);
-          audioStream.on("error", (err) => reject(err));
-        });
-
-        audioBuffer = Buffer.concat(chunks);
-        if (audioBuffer && audioBuffer.length > 0) {
-          break; // Success!
-        }
-      } catch (err) {
-        lastError = err;
-        console.warn(`[TTS] Attempt ${attempt} failed (${err.message}). Retrying...`);
-        if (attempt < 3) {
-          await new Promise((r) => setTimeout(r, 600 * attempt));
-        }
-      }
-    }
-
-    if (!audioBuffer || audioBuffer.length === 0) {
-      console.error("TTS Failed after 3 attempts:", lastError);
+    const audioBuffer = await synthesizeBuffer(text, lang, rate);
+    if (!audioBuffer) {
       return res.status(500).json({
         success: false,
         message: "Failed to generate speech after retries.",
       });
-    }
-
-    // Save to memory cache
-    if (audioCache.size >= MAX_CACHE_SIZE) {
-      const oldestKey = audioCache.keys().next().value;
-      audioCache.delete(oldestKey);
-    }
-    audioCache.set(cacheKey, audioBuffer);
-
-    // Save to disk cache
-    try {
-      fs.writeFileSync(diskPath, audioBuffer);
-    } catch (e) {
-      console.warn("Could not write audio to disk cache:", e);
     }
 
     res.set({
@@ -162,7 +137,6 @@ const generateSpeech = async (req, res) => {
       "Cache-Control": "public, max-age=86400",
       "Accept-Ranges": "bytes",
     });
-
     return res.send(audioBuffer);
   } catch (error) {
     console.error("TTS Controller Fatal Error:", error);
@@ -172,6 +146,44 @@ const generateSpeech = async (req, res) => {
   }
 };
 
+/**
+ * Automatically pre-caches audio when Admin adds or updates a shloka!
+ * Runs completely non-blocking in background so Admin panel stays instantaneous.
+ */
+const precacheSingleShlokAudio = (shloka) => {
+  if (!shloka) return;
+  setImmediate(async () => {
+    try {
+      // 1. Sanskrit
+      let plainSa = String(shloka.sanskrit || "")
+        .replace(/<[^>]*>/g, " ")
+        .replace(/[॥\|]\s*[\d\.\-०-९]+\s*[॥\|]/g, "।")
+        .trim();
+      if (!plainSa && (shloka.sanskritLine1 || shloka.sanskritLine2)) {
+        plainSa = [shloka.sanskritLine1, shloka.sanskritLine2].filter(Boolean).join("\n");
+      }
+      if (plainSa) await synthesizeBuffer(plainSa, "sa", "-22%");
+
+      // 2. Translation (gu)
+      let plainTr = String(shloka.translation || "")
+        .replace(/<[^>]*>/g, " ")
+        .replace(/&nbsp;/gi, " ")
+        .trim();
+      if (plainTr) await synthesizeBuffer(plainTr, "gu", "-2%");
+
+      // 3. Message (gu)
+      let plainMsg = String(shloka.message || "")
+        .replace(/<[^>]*>/g, " ")
+        .replace(/&nbsp;/gi, " ")
+        .trim();
+      if (plainMsg) await synthesizeBuffer(plainMsg, "gu", "-2%");
+    } catch (e) {
+      console.warn("[TTS] Automatic shloka precache error:", e.message);
+    }
+  });
+};
+
 module.exports = {
   generateSpeech,
+  precacheSingleShlokAudio,
 };
