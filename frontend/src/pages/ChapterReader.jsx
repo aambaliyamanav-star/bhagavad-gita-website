@@ -2508,7 +2508,7 @@ const prepareSanskritLines = () => {
             title={
               audioSyncProgress.done
                 ? txt("બધા શ્લોકનો ઑડિયો ઑફલાઇન તૈયાર છે", "सभी श्लोकों का ऑडियो ऑफ़लाइन तैयार है", "All audio cached offline")
-                : txt("ઑડિયો ઑફલાઇન સેવ થઈ રહ્યો છે", "ऑडियो ऑफ़लाइन सहेजा जा रहा है", "Saving audio offline")
+                : txt("ઑફલાઇન માટે ઑડિયો સેવ થઈ રહ્યો છે", "ऑफ़लाइन के लिए ऑडियो सहेजा जा रहा है", "Saving audio for offline")
             }
           >
             {audioSyncProgress.done ? (
@@ -2516,9 +2516,9 @@ const prepareSanskritLines = () => {
             ) : (
               <span>
                 {txt(
-                  `ઑડિયો સેવ થાય છે (${audioSyncProgress.current}/${audioSyncProgress.total})`,
-                  `ऑडियो सहेजा जा रहा है (${audioSyncProgress.current}/${audioSyncProgress.total})`,
-                  `Saving Audio (${audioSyncProgress.current}/${audioSyncProgress.total})`
+                  `ઑફલાઇન માટે ઑડિયો સેવ થાય છે (${audioSyncProgress.current}/${audioSyncProgress.total})`,
+                  `ऑफ़लाइन के लिए ऑडियो सहेजा जा रहा है (${audioSyncProgress.current}/${audioSyncProgress.total})`,
+                  `Saving Audio Offline (${audioSyncProgress.current}/${audioSyncProgress.total})`
                 )}
               </span>
             )}
