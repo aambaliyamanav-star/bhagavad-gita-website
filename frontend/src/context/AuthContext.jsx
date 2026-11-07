@@ -165,6 +165,7 @@ export function AuthProvider({ children }) {
       localStorage.removeItem(`gita_offline_ch_${ch}`);
     }
     localStorage.removeItem("gita_offline_catalog");
+    localStorage.removeItem("gita_18_chapters_downloaded");
     clearAudioCache();
 
     setUser(null);

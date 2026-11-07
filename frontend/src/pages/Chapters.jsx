@@ -84,6 +84,10 @@ function Chapters() {
   const [isStandaloneApp, setIsStandaloneApp] = useState(() =>
     typeof window !== "undefined" ? isRunningInStandaloneApp() : false
   );
+  const [isDownloaded, setIsDownloaded] = useState(() =>
+    typeof localStorage !== "undefined" &&
+    localStorage.getItem("gita_18_chapters_downloaded") === "true"
+  );
 
   useEffect(() => {
     setIsStandaloneApp(isRunningInStandaloneApp());
@@ -94,9 +98,9 @@ function Chapters() {
     if (!user || !token) {
       const redirectPath = "/chapters";
       const redirectMsg = txt(
-        "બધા ૧૮ અધ્યાય ઑફલાઇન ડાઉનલોડ કરવા માટે Login કરવું જરૂરી છે. કૃપા કરીને પહેલાં Login કરો.",
-        "सभी 18 अध्याय ऑफ़लाइन डाउनलोड करने के लिए Login करना आवश्यक है। कृपया पहले Login करें।",
-        "Login is required to download all 18 chapters offline. Please login first."
+        "બધા ૧૮ અધ્યાય ઑફલાઇન માટે ડાઉનલોડ કરવા માટે Login કરવું જરૂરી છે. કૃપા કરીને પહેલાં Login કરો.",
+        "सभी 18 अध्याय ऑफ़लाइन के लिए डाउनलोड करने के लिए Login करना आवश्यक है। कृपया पहले Login करें।",
+        "Login is required to download all 18 chapters for offline. Please login first."
       );
       sessionStorage.setItem(
         "authRedirect",
@@ -131,6 +135,10 @@ function Chapters() {
         setDownloadProgress(prog.percent);
       });
       if (res.success) {
+        try {
+          localStorage.setItem("gita_18_chapters_downloaded", "true");
+        } catch (e) {}
+        setIsDownloaded(true);
         const updated = getOfflineStatusSummary();
         setOfflineStatus({ ...updated, isFullyCached: true });
       } else if (res.requireLogin) {
@@ -218,7 +226,7 @@ function Chapters() {
           {txt("ભગવદ્ ગીતાના 18 અધ્યાય", "भगवद् गीता के 18 अध्याय", "18 Chapters of Bhagavad Gita")}
         </h1>
 
-        {isStandaloneApp && !offlineStatus.isFullyCached && (
+        {isStandaloneApp && !offlineStatus.isFullyCached && !isDownloaded && (
           <div className="offline-download-bar">
             {downloadingOffline ? (
               <div className="offline-downloading-box">
@@ -257,9 +265,9 @@ function Chapters() {
                 {!user ? <Lock size={15} /> : <Download size={15} />}
                 <span>
                   {txt(
-                    "બધા ૧૮ અધ્યાય ઑફલાઇન ડાઉનલોડ કરો",
-                    "सभी 18 अध्याय ऑफ़लाइन डाउनलोड करें",
-                    "Download All 18 Chapters Offline"
+                    "બધા ૧૮ અધ્યાય ઑફલાઇન માટે ડાઉનલોડ કરો",
+                    "सभी 18 अध्याय ऑफ़लाइन के लिए डाउनलोड करें",
+                    "Download All 18 Chapters for Offline"
                   )}
                   {!user && (
                     <span style={{ fontSize: "11px", opacity: 0.88, marginLeft: "6px" }}>

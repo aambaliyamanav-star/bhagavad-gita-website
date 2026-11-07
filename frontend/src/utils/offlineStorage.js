@@ -11,6 +11,39 @@ import { isRunningInStandaloneApp } from "./pwaManager.js";
 const API_BASE = "https://bhagavad-gita-backend-jy1a.onrender.com/api/shloks";
 
 /**
+ * Minify a shloka to essential fields to prevent localStorage QuotaExceededError
+ */
+function minifyShlokaForOffline(s) {
+  if (!s) return null;
+  return {
+    _id: s._id,
+    chapterNumber: Number(s.chapterNumber),
+    chapterName: s.chapterName,
+    chapterNameHi: s.chapterNameHi || "",
+    chapterNameEn: s.chapterNameEn || "",
+    shlokNumber: Number(s.shlokNumber),
+    speaker: s.speaker || "",
+    speakerHi: s.speakerHi || "",
+    speakerEn: s.speakerEn || "",
+    sanskrit: s.sanskrit || "",
+    wordMeanings: Array.isArray(s.wordMeanings)
+      ? s.wordMeanings.map((w) => ({
+          word: w.word || "",
+          meaning: w.meaning || "",
+          meaningHi: w.meaningHi || "",
+          meaningEn: w.meaningEn || "",
+        }))
+      : [],
+    translation: s.translation || "",
+    translationHi: s.translationHi || "",
+    translationEn: s.translationEn || "",
+    message: s.message || "",
+    messageHi: s.messageHi || "",
+    messageEn: s.messageEn || "",
+  };
+}
+
+/**
  * Save a single chapter and its shlokas to offline storage
  * NOTE: Only full chapters (shlokas with sanskrit) are saved.
  * Stripped shlokas from logged-out users are NOT saved offline.
@@ -41,17 +74,18 @@ export function saveChapterOffline(chapterNumber, shlokas, chapterName = "") {
       } catch (e) {}
     }
 
+    const cleanShlokas = shlokas.map(minifyShlokaForOffline).filter(Boolean);
     const payload = {
       chapterNumber: Number(chapterNumber),
       chapterName: chapterName || `અધ્યાય ${chapterNumber}`,
-      shlokas,
-      count: shlokas.length,
+      shlokas: cleanShlokas.length > 0 ? cleanShlokas : shlokas,
+      count: cleanShlokas.length || shlokas.length,
       savedAt: Date.now(),
     };
     localStorage.setItem(key, JSON.stringify(payload));
 
     // Update index catalog
-    updateOfflineCatalog(Number(chapterNumber), shlokas.length);
+    updateOfflineCatalog(Number(chapterNumber), cleanShlokas.length || shlokas.length);
     return true;
   } catch (err) {
     console.warn(`Could not save Chapter ${chapterNumber} offline:`, err);
@@ -122,6 +156,7 @@ export function clearAllOfflineChapters() {
       localStorage.removeItem(`gita_offline_ch_${ch}`);
     }
     localStorage.removeItem("gita_offline_catalog");
+    localStorage.removeItem("gita_18_chapters_downloaded");
   } catch (e) {}
 }
 
@@ -130,6 +165,10 @@ export function clearAllOfflineChapters() {
  */
 export function getOfflineStatusSummary() {
   try {
+    const isDownloadedFlag =
+      typeof localStorage !== "undefined" &&
+      localStorage.getItem("gita_18_chapters_downloaded") === "true";
+
     const cachedChapters = [];
     let totalShlokas = 0;
     for (let ch = 1; ch <= 18; ch++) {
@@ -140,17 +179,29 @@ export function getOfflineStatusSummary() {
       }
     }
 
+    const isFullyCached = isDownloadedFlag || cachedChapters.length >= 18;
+
+    // If all 18 chapters are detected, persist the flag
+    if (cachedChapters.length >= 18 && typeof localStorage !== "undefined") {
+      try {
+        localStorage.setItem("gita_18_chapters_downloaded", "true");
+      } catch (e) {}
+    }
+
     return {
       cachedChapters,
       cachedCount: cachedChapters.length,
-      isFullyCached: cachedChapters.length >= 18,
+      isFullyCached,
       totalShlokas,
     };
   } catch (e) {
+    const isDownloadedFlag =
+      typeof localStorage !== "undefined" &&
+      localStorage.getItem("gita_18_chapters_downloaded") === "true";
     return {
       cachedChapters: [],
       cachedCount: 0,
-      isFullyCached: false,
+      isFullyCached: Boolean(isDownloadedFlag),
       totalShlokas: 0,
     };
   }
@@ -209,6 +260,12 @@ export async function downloadAllChaptersOffline(onProgress = null) {
 
     // Small delay to prevent network congestion
     await new Promise((r) => setTimeout(r, 60));
+  }
+
+  if (results.length > 0) {
+    try {
+      localStorage.setItem("gita_18_chapters_downloaded", "true");
+    } catch (e) {}
   }
 
   // After saving shlokas text, automatically start background audio sync for Chapter 1 (in App only)
