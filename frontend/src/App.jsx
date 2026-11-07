@@ -327,8 +327,17 @@ function AnimatedRoutes() {
     const timer = setTimeout(() => {
       autoSyncOfflineChaptersQuietly();
     }, 3500);
-    return () => clearTimeout(timer);
-  }, []);
+
+    const handleOnline = () => {
+      autoSyncOfflineChaptersQuietly();
+    };
+    window.addEventListener("online", handleOnline);
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("online", handleOnline);
+    };
+  }, [user]);
 
   return (
     <>

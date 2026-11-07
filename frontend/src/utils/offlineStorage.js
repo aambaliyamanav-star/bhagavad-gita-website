@@ -289,6 +289,7 @@ export async function downloadAllChaptersOffline(onProgress = null) {
 
 /**
  * Quietly pre-cache missing chapters in background when online and idle
+ * Also silently refreshes chapters to pull new shlokas added by Admin!
  * ONLY runs for logged-in users
  */
 let isAutoSyncing = false;
@@ -304,7 +305,12 @@ export async function autoSyncOfflineChaptersQuietly() {
     const headers = { Authorization: `Bearer ${token}` };
 
     for (let ch = 1; ch <= 18; ch++) {
-      if (!isChapterOfflineAvailable(ch)) {
+      const cached = getChapterOffline(ch);
+      const isMissing = !isChapterOfflineAvailable(ch);
+      // Silently refresh if chapter is missing OR cached > 6 hours ago (to sync newly added shlokas!)
+      const isStale = Boolean(cached?.savedAt && Date.now() - cached.savedAt > 6 * 60 * 60 * 1000);
+
+      if (isMissing || isStale) {
         try {
           const res = await fetch(`${API_BASE}/chapter/${ch}`, { headers });
           if (res.ok) {
@@ -313,7 +319,10 @@ export async function autoSyncOfflineChaptersQuietly() {
             if (shlokas.length > 0) {
               shlokas.sort((a, b) => Number(a.shlokNumber) - Number(b.shlokNumber));
               const chapterName = shlokas[0]?.chapterName || `અધ્યાય ${ch}`;
-              saveChapterOffline(ch, shlokas, chapterName);
+              // Always save if missing, or update if server has equal or more shlokas
+              if (!cached || shlokas.length >= (cached.shlokas?.length || 0)) {
+                saveChapterOffline(ch, shlokas, chapterName);
+              }
             }
           }
         } catch (e) {
