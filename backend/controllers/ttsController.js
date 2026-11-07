@@ -1,5 +1,7 @@
 const { MsEdgeTTS, OUTPUT_FORMAT } = require("msedge-tts");
 const crypto = require("crypto");
+const fs = require("fs");
+const path = require("path");
 
 // Map language and preferred voice to Microsoft Neural voices
 const VOICE_MAP = {
@@ -21,9 +23,18 @@ const VOICE_MAP = {
   },
 };
 
-// In-memory audio buffer cache (stores up to 300 shloka audio clips for zero latency and zero repeated timeouts)
+const CACHE_DIR = path.join(__dirname, "../audio_cache");
+try {
+  if (!fs.existsSync(CACHE_DIR)) {
+    fs.mkdirSync(CACHE_DIR, { recursive: true });
+  }
+} catch (e) {
+  console.warn("Could not create audio_cache dir:", e);
+}
+
+// In-memory audio buffer cache (stores up to 2000 shloka audio clips for zero latency and zero repeated timeouts)
 const audioCache = new Map();
-const MAX_CACHE_SIZE = 300;
+const MAX_CACHE_SIZE = 2000;
 
 const generateSpeech = async (req, res) => {
   try {
@@ -75,6 +86,24 @@ const generateSpeech = async (req, res) => {
       return res.send(cachedBuffer);
     }
 
+    // Check persistent disk cache (zero network latency)
+    const diskPath = path.join(CACHE_DIR, `${cacheKey}.mp3`);
+    if (fs.existsSync(diskPath)) {
+      try {
+        const diskBuffer = fs.readFileSync(diskPath);
+        if (diskBuffer && diskBuffer.length > 0) {
+          audioCache.set(cacheKey, diskBuffer);
+          res.set({
+            "Content-Type": "audio/mpeg",
+            "Content-Length": diskBuffer.length,
+            "Cache-Control": "public, max-age=86400",
+            "Accept-Ranges": "bytes",
+          });
+          return res.send(diskBuffer);
+        }
+      } catch (e) {}
+    }
+
     // Resilient generation with retry (up to 3 attempts with fresh MsEdgeTTS instances)
     let audioBuffer = null;
     let lastError = null;
@@ -113,12 +142,19 @@ const generateSpeech = async (req, res) => {
       });
     }
 
-    // Save to cache
+    // Save to memory cache
     if (audioCache.size >= MAX_CACHE_SIZE) {
       const oldestKey = audioCache.keys().next().value;
       audioCache.delete(oldestKey);
     }
     audioCache.set(cacheKey, audioBuffer);
+
+    // Save to disk cache
+    try {
+      fs.writeFileSync(diskPath, audioBuffer);
+    } catch (e) {
+      console.warn("Could not write audio to disk cache:", e);
+    }
 
     res.set({
       "Content-Type": "audio/mpeg",

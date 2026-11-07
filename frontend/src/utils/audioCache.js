@@ -505,8 +505,8 @@ export async function autoSyncChapterAudios(
 
     if (completed >= len) return;
 
-    // Concurrency pool of 2 parallel workers for high speed without server overload
-    const CONCURRENCY = 2;
+    // Concurrency pool of 3 parallel workers for ultra high-speed download
+    const CONCURRENCY = 3;
     let poolIndex = 0;
 
     async function worker() {
@@ -533,7 +533,7 @@ export async function autoSyncChapterAudios(
         }
 
         // Tiny courteous delay
-        await new Promise((r) => setTimeout(r, 40));
+        await new Promise((r) => setTimeout(r, 20));
       }
     }
 
