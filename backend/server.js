@@ -90,29 +90,45 @@ app.get("/", (req, res) => {
 app.use(secureErrorHandler);
 
 // =====================================================
-// PUSH NOTIFICATION CRON JOBS (EVERY 3 HOURS THROUGHOUT THE DAY)
-// 06:00 AM, 09:00 AM, 12:00 PM, 03:00 PM, 06:00 PM, 09:00 PM IST
-// Sends to App subscribers only!
+// PUSH NOTIFICATION SCHEDULER (EVERY 2 HOURS THROUGHOUT THE DAY)
+// 06:00 AM, 08:00 AM, 10:00 AM, 12:00 PM, 02:00 PM, 04:00 PM, 06:00 PM, 08:00 PM, 10:00 PM IST
+// Sends to all subscribed devices on time!
 // =====================================================
-const reminderTimes = [
-  "0 6 * * *",   // 06:00 AM IST - પ્રભાત
-  "0 9 * * *",   // 09:00 AM IST - સવાર
-  "0 12 * * *",  // 12:00 PM IST - બપોર
-  "0 15 * * *",  // 03:00 PM IST - બપોર પછી
-  "0 18 * * *",  // 06:00 PM IST - સાંજ
-  "0 21 * * *",  // 09:00 PM IST - રાત્રિ
-];
+const twoHourCronExpression = "0 6,8,10,12,14,16,18,20,22 * * *";
 
-reminderTimes.forEach((scheduleTime) => {
-  cron.schedule(
-    scheduleTime,
-    async () => {
-      console.log(`⏰ [Cron ${scheduleTime}] Running 3-hour Gita reminder...`);
-      await notificationController.sendDailyReminder();
-    },
-    { timezone: "Asia/Kolkata" }
-  );
-});
+cron.schedule(
+  twoHourCronExpression,
+  async () => {
+    console.log("⏰ [Cron Every 2 Hours] Dispatching Gita push notification...");
+    await notificationController.sendEvery2HoursReminder();
+  },
+  { timezone: "Asia/Kolkata" }
+);
+
+// High-precision Watchdog (checks every 30 seconds to guarantee exact on-time delivery)
+let lastTriggeredSlot = null;
+setInterval(async () => {
+  try {
+    const now = new Date();
+    // IST Time (UTC + 5.5 hours)
+    const istTime = new Date(now.getTime() + 5.5 * 60 * 60 * 1000);
+    const hour = istTime.getUTCHours();
+    const minute = istTime.getUTCMinutes();
+    const targetHours = [6, 8, 10, 12, 14, 16, 18, 20, 22];
+
+    // Trigger at minute 0 (within first 2 minutes) if not already triggered
+    if (targetHours.includes(hour) && minute <= 1) {
+      const slotKey = `${istTime.getUTCFullYear()}-${istTime.getUTCMonth()}-${istTime.getUTCDate()}_${hour}`;
+      if (lastTriggeredSlot !== slotKey) {
+        lastTriggeredSlot = slotKey;
+        console.log(`🎯 [Watchdog Exact Time IST ${hour}:${minute.toString().padStart(2, '0')}] Firing 2-hour notification...`);
+        await notificationController.sendEvery2HoursReminder();
+      }
+    }
+  } catch (watchErr) {
+    console.error("Watchdog error:", watchErr.message);
+  }
+}, 30 * 1000);
 
 // Midnight reset (00:00 IST)
 cron.schedule(

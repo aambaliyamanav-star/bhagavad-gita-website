@@ -1,10 +1,8 @@
 /* =========================================================
-   BHAGAVAD GITA - APP-ONLY PUSH NOTIFICATION MANAGER
-   STRICT REQUIREMENT: ONLY RUNS INSIDE THE INSTALLED APP (PWA)
-   NEVER PROMPTS OR SENDS TO REGULAR WEB BROWSER VISITORS!
+   BHAGAVAD GITA - PUSH NOTIFICATION MANAGER
+   Reliable push notifications every 2 hours for all subscribed devices
    ========================================================= */
 
-import { checkIsInstalled } from "./pwaManager.js";
 import { trackAppInstallOrOpen, getOrCreateDeviceId } from "./appAnalytics.js";
 
 const FALLBACK_VAPID_PUBLIC =
@@ -32,25 +30,34 @@ function getApiBase() {
     : "https://bhagavad-gita-backend-jy1a.onrender.com";
 }
 
-// Check if push notifications are supported and running as App
+// Check if push notifications are supported on this device/browser
 export function isAppPushSupported() {
   if (typeof window === "undefined") return false;
-  // STRICT: Only true if running inside installed standalone app!
-  if (!checkIsInstalled()) return false;
-  return "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
+  return (
+    "serviceWorker" in navigator &&
+    "PushManager" in window &&
+    "Notification" in window
+  );
 }
 
-// Request permission and subscribe (App Only)
+// Check if notifications are currently enabled
+export function isAppNotificationEnabled() {
+  if (typeof window === "undefined" || !("Notification" in window)) return false;
+  if (localStorage.getItem("app_notif_disabled_by_user") === "true") return false;
+  return Notification.permission === "granted";
+}
+
+// Request permission and subscribe device to 2-hour push notifications
 export async function enableAppNotifications(user = null) {
   if (!isAppPushSupported()) {
-    console.log("App notifications skipped: not running inside installed app or not supported.");
-    return { success: false, reason: "not_app" };
+    console.warn("Push notifications are not supported on this device/browser.");
+    return { success: false, reason: "not_supported" };
   }
 
   try {
     const permission = await Notification.requestPermission();
     if (permission !== "granted") {
-      console.log("Notification permission not granted in app:", permission);
+      console.log("Notification permission was not granted:", permission);
       return { success: false, permission };
     }
 
@@ -59,19 +66,22 @@ export async function enableAppNotifications(user = null) {
       return { success: false, reason: "sw_not_ready" };
     }
 
-    // Fetch VAPID key
+    // Fetch VAPID public key from backend (with safe fallback)
     let publicKey = FALLBACK_VAPID_PUBLIC;
     try {
       const res = await fetch(`${getApiBase()}/api/notifications/public-key`);
-      const data = await res.json();
-      if (data?.publicKey) publicKey = data.publicKey;
+      if (res.ok) {
+        const data = await res.json();
+        if (data?.publicKey) publicKey = data.publicKey;
+      }
     } catch (e) {
-      // Use fallback
+      // Use fallback key
     }
 
     const convertedKey = urlBase64ToUint8Array(publicKey);
     let subscription = await registration.pushManager.getSubscription();
 
+    // If no existing subscription, create a new one
     if (!subscription) {
       subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
@@ -89,7 +99,7 @@ export async function enableAppNotifications(user = null) {
     const role = user?.role === "admin" ? "admin" : "user";
     const userId = user?._id || user?.id || null;
 
-    // Send subscription to backend tagged as isApp: true
+    // Send subscription to backend
     await fetch(`${getApiBase()}/api/notifications/subscribe`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -104,29 +114,29 @@ export async function enableAppNotifications(user = null) {
     });
 
     localStorage.setItem("app_push_endpoint", endpoint);
+    localStorage.setItem("app_push_notifications_enabled", "true");
     localStorage.removeItem("app_notif_disabled_by_user");
 
-    // Immediately record installation in app analytics
+    // Track analytics
     try {
       trackAppInstallOrOpen(true);
-    } catch (e) {
-      // ignore
-    }
+    } catch (e) {}
 
     if (typeof window !== "undefined") {
       window.dispatchEvent(
         new CustomEvent("app-notification-status-changed", { detail: { enabled: true } })
       );
     }
-    console.log("🔔 Bhagavad Gita App Push Notifications registered (Every 3 Hours)!");
+
+    console.log("🔔 Gita 2-Hour Push Notifications successfully enabled on this device!");
     return { success: true };
   } catch (err) {
-    console.error("Failed to enable app notifications:", err);
+    console.error("Failed to enable notifications:", err);
     return { success: false, error: err };
   }
 }
 
-// Auto-sync existing app subscription if permission already granted
+// Auto-sync existing subscription on page load if permission is already granted
 export async function syncAppSubscription(user = null) {
   if (!isAppPushSupported()) return;
   if (Notification.permission !== "granted") return;
@@ -164,12 +174,13 @@ export async function syncAppSubscription(user = null) {
     });
 
     localStorage.setItem("app_push_endpoint", endpoint);
+    localStorage.setItem("app_push_notifications_enabled", "true");
   } catch (err) {
-    console.debug("App push sync error:", err);
+    console.debug("Subscription sync:", err.message);
   }
 }
 
-// Record open in App
+// Record open
 export async function recordAppOpen(user = null) {
   if (!isAppPushSupported()) return;
 
@@ -188,11 +199,11 @@ export async function recordAppOpen(user = null) {
       sessionStorage.setItem(`app_open_recorded_${todayKey}`, "true");
     }
   } catch (err) {
-    console.debug("Record app open error:", err);
+    console.debug("Record open error:", err);
   }
 }
 
-// Record action in App (shlok_read, quiz_played)
+// Record action (shlok_read, quiz_played)
 export async function recordAppAction(action, user = null) {
   if (!isAppPushSupported()) return;
 
@@ -207,18 +218,11 @@ export async function recordAppAction(action, user = null) {
       });
     }
   } catch (err) {
-    console.debug("Record app action error:", err);
+    console.debug("Record action error:", err);
   }
 }
 
-// Check if notifications are currently enabled
-export function isAppNotificationEnabled() {
-  if (typeof window === "undefined" || !("Notification" in window)) return false;
-  if (localStorage.getItem("app_notif_disabled_by_user") === "true") return false;
-  return Notification.permission === "granted";
-}
-
-// Unsubscribe from app notifications
+// Unsubscribe from push notifications
 export async function unsubscribeAppNotifications() {
   try {
     const endpoint = localStorage.getItem("app_push_endpoint");
@@ -239,7 +243,9 @@ export async function unsubscribeAppNotifications() {
     }
 
     localStorage.removeItem("app_push_endpoint");
+    localStorage.removeItem("app_push_notifications_enabled");
     localStorage.setItem("app_notif_disabled_by_user", "true");
+
     if (typeof window !== "undefined") {
       window.dispatchEvent(
         new CustomEvent("app-notification-status-changed", { detail: { enabled: false } })
@@ -247,7 +253,7 @@ export async function unsubscribeAppNotifications() {
     }
     return { success: true };
   } catch (err) {
-    console.error("Failed to unsubscribe app notifications:", err);
+    console.error("Failed to unsubscribe:", err);
     return { success: false, error: err };
   }
 }
