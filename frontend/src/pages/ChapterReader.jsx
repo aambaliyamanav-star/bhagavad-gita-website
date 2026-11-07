@@ -1,6 +1,6 @@
 import { getValidToken } from "../utils/authHelper.js";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { BookOpen, Heart, Mic, Sparkles, AlertCircle, ChevronLeft, ChevronRight, Share2, Volume2, Square, Play, CheckCircle2, Loader2 } from "lucide-react";
+import { BookOpen, Heart, Mic, Sparkles, AlertCircle, ChevronLeft, ChevronRight, Share2, Volume2, Square, Play, CheckCircle2, Loader2, ChevronDown, Gauge } from "lucide-react";
 import "./ChapterReader.css";
 import ShareShlokaModal from "../components/ShareShlokaModal.jsx";
 import SudarshanShimmerLoader from "../components/SudarshanShimmerLoader.jsx";
@@ -88,6 +88,44 @@ const [sanskritFontSize, setSanskritFontSize] = useState(21);
   const pausedShlokaIndexRef = useRef(null);
   const [audioLoading, setAudioLoading] = useState(false);
   const audioPlayerRef = useRef(null);
+
+  // Playback speed state (0.75x, 1x, 1.25x, 1.5x, 1.75x, 2x)
+  const [audioSpeed, setAudioSpeed] = useState(() => {
+    if (typeof localStorage !== "undefined") {
+      const saved = localStorage.getItem("gita_audio_speed");
+      if (saved && !isNaN(Number(saved))) return Number(saved);
+    }
+    return 1.0;
+  });
+  const audioSpeedRef = useRef(audioSpeed);
+  const [speedDropdownOpen, setSpeedDropdownOpen] = useState(null); // 'sanskrit' | 'translation' | 'message' | null
+
+  useEffect(() => {
+    audioSpeedRef.current = audioSpeed;
+  }, [audioSpeed]);
+
+  const handleAudioSpeedChange = (newSpeed) => {
+    setAudioSpeed(newSpeed);
+    audioSpeedRef.current = newSpeed;
+    try {
+      localStorage.setItem("gita_audio_speed", String(newSpeed));
+    } catch (e) {}
+
+    // Instantly apply to active audio without stopping playback!
+    if (audioPlayerRef.current) {
+      audioPlayerRef.current.playbackRate = newSpeed;
+    }
+  };
+
+  // Close speed dropdown when clicking outside
+  useEffect(() => {
+    if (!speedDropdownOpen) return;
+    const handleDocumentClick = () => {
+      setSpeedDropdownOpen(null);
+    };
+    document.addEventListener("click", handleDocumentClick);
+    return () => document.removeEventListener("click", handleDocumentClick);
+  }, [speedDropdownOpen]);
   const autoPlayTimerRef = useRef(null);
   const isContinuousPlayRef = useRef(false);
   const autoPlayNextShlokaRef = useRef(false);
@@ -1316,7 +1354,7 @@ if (
             utterance.lang = lang === "sa" ? "hi-IN" : (isEnglish ? "en-IN" : isHindi ? "hi-IN" : "gu-IN");
           }
 
-          utterance.rate = type === "sanskrit" ? 0.82 : 0.95;
+          utterance.rate = (type === "sanskrit" ? 0.82 : 0.95) * audioSpeedRef.current;
 
           utterance.onstart = () => {
             setAudioLoading(false);
@@ -1453,6 +1491,9 @@ if (
     isContinuousPlayRef.current = true;
       scrollToSection(type);
       try {
+        if (audioPlayerRef.current) {
+          audioPlayerRef.current.playbackRate = audioSpeedRef.current;
+        }
         await audioPlayerRef.current.play();
       } catch (err) {
         console.error("Resume audio play error:", err);
@@ -1563,6 +1604,7 @@ if (
 
       const audioBlobUrl = URL.createObjectURL(blob);
       const audio = new Audio(audioBlobUrl);
+      audio.playbackRate = audioSpeedRef.current;
       audioPlayerRef.current = audio;
 
       // Word tracking and live font highlighting with smooth auto-scroll
@@ -2473,6 +2515,70 @@ const prepareSanskritLines = () => {
       );
     };
 
+  // Speed dropdown shown next to audio button when audio is active (speaking or paused)
+  const renderSpeedDropdown = (sectionType) => {
+    const isSectionActive =
+      speakingType === sectionType ||
+      (pausedType === sectionType && pausedShlokaIndexRef.current === currentShloka);
+
+    if (!isSectionActive) return null;
+
+    const isOpen = speedDropdownOpen === sectionType;
+    const speeds = [
+      { value: 0.75, label: "0.75x", desc: txt("ધીમી", "धीमी", "Slow") },
+      { value: 1.0, label: "1.0x", desc: txt("સામાન્ય", "सामान्य", "Normal") },
+      { value: 1.25, label: "1.25x", desc: txt("ઝડપી", "तेज़", "Fast") },
+      { value: 1.5, label: "1.5x", desc: txt("વધુ ઝડપી", "अधिक तेज़", "Faster") },
+      { value: 1.75, label: "1.75x", desc: txt("અતિ ઝડપી", "अति तेज़", "Very Fast") },
+      { value: 2.0, label: "2.0x", desc: txt("૨x ઝડપ", "2x गति", "2x Speed") },
+    ];
+
+    return (
+      <div className="cr-speed-dropdown-container">
+        <button
+          type="button"
+          className={`cr-speed-btn ${isOpen ? "active" : ""}`}
+          onClick={(e) => {
+            e.stopPropagation();
+            setSpeedDropdownOpen(isOpen ? null : sectionType);
+          }}
+          title={txt("ઑડિયો સ્પીડ બદલો", "ऑडियो स्पीड बदलें", "Change Audio Speed")}
+          aria-label="Change Audio Speed"
+        >
+          <Gauge size={13} className="cr-speed-gauge-icon" />
+          <span>{audioSpeed}x</span>
+          <ChevronDown size={12} className={`cr-speed-chevron ${isOpen ? "open" : ""}`} />
+        </button>
+
+        {isOpen && (
+          <div className="cr-speed-menu" onClick={(e) => e.stopPropagation()}>
+            <div className="cr-speed-menu-header">
+              {txt("ઑડિયો સ્પીડ", "ऑडियो गति", "Audio Speed")}
+            </div>
+            {speeds.map((s) => {
+              const isSelected = Math.abs(audioSpeed - s.value) < 0.01;
+              return (
+                <button
+                  key={s.value}
+                  type="button"
+                  className={`cr-speed-option ${isSelected ? "selected" : ""}`}
+                  onClick={() => {
+                    handleAudioSpeedChange(s.value);
+                    setSpeedDropdownOpen(null);
+                  }}
+                >
+                  <span className="cr-speed-value">{s.label}</span>
+                  <span className="cr-speed-desc">{s.desc}</span>
+                  {isSelected && <span className="cr-speed-check">✓</span>}
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    );
+  };
+
   // =====================================================
   // RENDER
   // =====================================================
@@ -2645,52 +2751,56 @@ const prepareSanskritLines = () => {
                 <Sparkles className="btn-icon" size={18} /> {txt("સંસ્કૃત શ્લોક", "संस्कृत श्लोक", "Sanskrit Shloka")}
               </h3>
 
-              <button
-                type="button"
-                className={`shloka-speech-btn ${
-                  speakingType === "sanskrit"
-                    ? "is-speaking"
-                    : pausedType === "sanskrit" && pausedShlokaIndexRef.current === currentShloka
-                    ? "is-paused"
-                    : ""
-                }`}
-                onClick={() => toggleSpeech("sanskrit")}
-                title={
-                  speakingType === "sanskrit"
-                    ? txt("ઓડિયો સ્ટોપ કરો", "ऑडियो स्टॉप करें", "Stop Audio")
-                    : pausedType === "sanskrit" && pausedShlokaIndexRef.current === currentShloka
-                    ? txt("ઓડિયો ફરી ચાલુ કરો", "ऑडियो फिर से शुरू करें", "Resume Audio")
-                    : txt("શ્લોક સાંભળો", "श्लोक सुनें", "Listen to Shloka")
-                }
-                aria-label={
-                  speakingType === "sanskrit"
-                    ? "Stop Audio"
-                    : pausedType === "sanskrit" && pausedShlokaIndexRef.current === currentShloka
-                    ? "Resume Audio"
-                    : "Listen to Sanskrit Shloka Audio"
-                }
-              >
-                {speakingType === "sanskrit" ? (
-                  audioLoading ? (
-                    <span>{txt("લોડ થાય છે...", "लोड हो रहा है...", "Loading...")}</span>
+              <div className="content-box-header-actions">
+                {renderSpeedDropdown("sanskrit")}
+
+                <button
+                  type="button"
+                  className={`shloka-speech-btn ${
+                    speakingType === "sanskrit"
+                      ? "is-speaking"
+                      : pausedType === "sanskrit" && pausedShlokaIndexRef.current === currentShloka
+                      ? "is-paused"
+                      : ""
+                  }`}
+                  onClick={() => toggleSpeech("sanskrit")}
+                  title={
+                    speakingType === "sanskrit"
+                      ? txt("ઓડિયો સ્ટોપ કરો", "ऑडियो स्टॉप करें", "Stop Audio")
+                      : pausedType === "sanskrit" && pausedShlokaIndexRef.current === currentShloka
+                      ? txt("ઓડિયો ફરી ચાલુ કરો", "ऑडियो फिर से शुरू करें", "Resume Audio")
+                      : txt("શ્લોક સાંભળો", "श्लोक सुनें", "Listen to Shloka")
+                  }
+                  aria-label={
+                    speakingType === "sanskrit"
+                      ? "Stop Audio"
+                      : pausedType === "sanskrit" && pausedShlokaIndexRef.current === currentShloka
+                      ? "Resume Audio"
+                      : "Listen to Sanskrit Shloka Audio"
+                  }
+                >
+                  {speakingType === "sanskrit" ? (
+                    audioLoading ? (
+                      <span>{txt("લોડ થાય છે...", "लोड हो रहा है...", "Loading...")}</span>
+                    ) : (
+                      <>
+                        <Square size={12} fill="currentColor" />
+                        <span>{txt("સ્ટોપ", "स्टॉप", "Stop")}</span>
+                      </>
+                    )
+                  ) : pausedType === "sanskrit" && pausedShlokaIndexRef.current === currentShloka ? (
+                    <>
+                      <Play size={13} fill="currentColor" />
+                      <span>{txt("ચાલુ કરો", "जारी रखें", "Resume")}</span>
+                    </>
                   ) : (
                     <>
-                      <Square size={12} fill="currentColor" />
-                      <span>{txt("સ્ટોપ", "स्टॉप", "Stop")}</span>
+                      <Volume2 size={15} />
+                      <span>{txt("સાંભળો", "सुनें", "Listen")}</span>
                     </>
-                  )
-                ) : pausedType === "sanskrit" && pausedShlokaIndexRef.current === currentShloka ? (
-                  <>
-                    <Play size={13} fill="currentColor" />
-                    <span>{txt("ચાલુ કરો", "जारी रखें", "Resume")}</span>
-                  </>
-                ) : (
-                  <>
-                    <Volume2 size={15} />
-                    <span>{txt("સાંભળો", "सुनें", "Listen")}</span>
-                  </>
-                )}
-              </button>
+                  )}
+                </button>
+              </div>
             </div>
 
             <div
@@ -2727,52 +2837,56 @@ const prepareSanskritLines = () => {
                 <BookOpen className="btn-icon" size={18} /> {txt("ગુજરાતી અનુવાદ", "हिन्दी अनुवाद", "English Translation")}
               </h3>
 
-              <button
-                type="button"
-                className={`shloka-speech-btn ${
-                  speakingType === "translation"
-                    ? "is-speaking"
-                    : pausedType === "translation" && pausedShlokaIndexRef.current === currentShloka
-                    ? "is-paused"
-                    : ""
-                }`}
-                onClick={() => toggleSpeech("translation")}
-                title={
-                  speakingType === "translation"
-                    ? txt("ઓડિયો સ્ટોપ કરો", "ऑडियो स्टॉप करें", "Stop Audio")
-                    : pausedType === "translation" && pausedShlokaIndexRef.current === currentShloka
-                    ? txt("ઓડિયો ફરી ચાલુ કરો", "ऑडियो फिर से शुरू करें", "Resume Audio")
-                    : txt("અનુવાદ સાંભળો", "अनुवाद सुनें", "Listen to Translation")
-                }
-                aria-label={
-                  speakingType === "translation"
-                    ? "Stop Audio"
-                    : pausedType === "translation" && pausedShlokaIndexRef.current === currentShloka
-                    ? "Resume Audio"
-                    : "Listen to Translation Audio"
-                }
-              >
-                {speakingType === "translation" ? (
-                  audioLoading ? (
-                    <span>{txt("લોડ થાય છે...", "लोड हो रहा है...", "Loading...")}</span>
+              <div className="content-box-header-actions">
+                {renderSpeedDropdown("translation")}
+
+                <button
+                  type="button"
+                  className={`shloka-speech-btn ${
+                    speakingType === "translation"
+                      ? "is-speaking"
+                      : pausedType === "translation" && pausedShlokaIndexRef.current === currentShloka
+                      ? "is-paused"
+                      : ""
+                  }`}
+                  onClick={() => toggleSpeech("translation")}
+                  title={
+                    speakingType === "translation"
+                      ? txt("ઓડિયો સ્ટોપ કરો", "ऑडियो स्टॉप करें", "Stop Audio")
+                      : pausedType === "translation" && pausedShlokaIndexRef.current === currentShloka
+                      ? txt("ઓડિયો ફરી ચાલુ કરો", "ऑडियो फिर से शुरू करें", "Resume Audio")
+                      : txt("અનુવાદ સાંભળો", "अनुवाद सुनें", "Listen to Translation")
+                  }
+                  aria-label={
+                    speakingType === "translation"
+                      ? "Stop Audio"
+                      : pausedType === "translation" && pausedShlokaIndexRef.current === currentShloka
+                      ? "Resume Audio"
+                      : "Listen to Translation Audio"
+                  }
+                >
+                  {speakingType === "translation" ? (
+                    audioLoading ? (
+                      <span>{txt("લોડ થાય છે...", "लोड हो रहा है...", "Loading...")}</span>
+                    ) : (
+                      <>
+                        <Square size={12} fill="currentColor" />
+                        <span>{txt("સ્ટોપ", "स्टॉप", "Stop")}</span>
+                      </>
+                    )
+                  ) : pausedType === "translation" && pausedShlokaIndexRef.current === currentShloka ? (
+                    <>
+                      <Play size={13} fill="currentColor" />
+                      <span>{txt("ચાલુ કરો", "जारी रखें", "Resume")}</span>
+                    </>
                   ) : (
                     <>
-                      <Square size={12} fill="currentColor" />
-                      <span>{txt("સ્ટોપ", "स्टॉप", "Stop")}</span>
+                      <Volume2 size={15} />
+                      <span>{txt("સાંભળો", "सुनें", "Listen")}</span>
                     </>
-                  )
-                ) : pausedType === "translation" && pausedShlokaIndexRef.current === currentShloka ? (
-                  <>
-                    <Play size={13} fill="currentColor" />
-                    <span>{txt("ચાલુ કરો", "जारी रखें", "Resume")}</span>
-                  </>
-                ) : (
-                  <>
-                    <Volume2 size={15} />
-                    <span>{txt("સાંભળો", "सुनें", "Listen")}</span>
-                  </>
-                )}
-              </button>
+                  )}
+                </button>
+              </div>
             </div>
 
             <div
@@ -2796,52 +2910,56 @@ const prepareSanskritLines = () => {
                 <Sparkles className="btn-icon" size={18} /> {txt("સંદેશ / સમજણ", "सन्देश / व्याख्या", "Message / Meaning")}
               </h3>
 
-              <button
-                type="button"
-                className={`shloka-speech-btn ${
-                  speakingType === "message"
-                    ? "is-speaking"
-                    : pausedType === "message" && pausedShlokaIndexRef.current === currentShloka
-                    ? "is-paused"
-                    : ""
-                }`}
-                onClick={() => toggleSpeech("message")}
-                title={
-                  speakingType === "message"
-                    ? txt("ઓડિયો સ્ટોપ કરો", "ऑडियो स्टॉप करें", "Stop Audio")
-                    : pausedType === "message" && pausedShlokaIndexRef.current === currentShloka
-                    ? txt("ઓડિયો ફરી ચાલુ કરો", "ऑडियो फिर से शुरू करें", "Resume Audio")
-                    : txt("સંદેશ સાંભળો", "सन्देश सुनें", "Listen to Message")
-                }
-                aria-label={
-                  speakingType === "message"
-                    ? "Stop Audio"
-                    : pausedType === "message" && pausedShlokaIndexRef.current === currentShloka
-                    ? "Resume Audio"
-                    : "Listen to Message Audio"
-                }
-              >
-                {speakingType === "message" ? (
-                  audioLoading ? (
-                    <span>{txt("લોડ થાય છે...", "लोड हो रहा है...", "Loading...")}</span>
+              <div className="content-box-header-actions">
+                {renderSpeedDropdown("message")}
+
+                <button
+                  type="button"
+                  className={`shloka-speech-btn ${
+                    speakingType === "message"
+                      ? "is-speaking"
+                      : pausedType === "message" && pausedShlokaIndexRef.current === currentShloka
+                      ? "is-paused"
+                      : ""
+                  }`}
+                  onClick={() => toggleSpeech("message")}
+                  title={
+                    speakingType === "message"
+                      ? txt("ઓડિયો સ્ટોપ કરો", "ऑडियो स्टॉप करें", "Stop Audio")
+                      : pausedType === "message" && pausedShlokaIndexRef.current === currentShloka
+                      ? txt("ઓડિયો ફરી ચાલુ કરો", "ऑडियो फिर से शुरू करें", "Resume Audio")
+                      : txt("સંદેશ સાંભળો", "सन्देश सुनें", "Listen to Message")
+                  }
+                  aria-label={
+                    speakingType === "message"
+                      ? "Stop Audio"
+                      : pausedType === "message" && pausedShlokaIndexRef.current === currentShloka
+                      ? "Resume Audio"
+                      : "Listen to Message Audio"
+                  }
+                >
+                  {speakingType === "message" ? (
+                    audioLoading ? (
+                      <span>{txt("લોડ થાય છે...", "लोड हो रहा है...", "Loading...")}</span>
+                    ) : (
+                      <>
+                        <Square size={12} fill="currentColor" />
+                        <span>{txt("સ્ટોપ", "स्टॉप", "Stop")}</span>
+                      </>
+                    )
+                  ) : pausedType === "message" && pausedShlokaIndexRef.current === currentShloka ? (
+                    <>
+                      <Play size={13} fill="currentColor" />
+                      <span>{txt("ચાલુ કરો", "जारी रखें", "Resume")}</span>
+                    </>
                   ) : (
                     <>
-                      <Square size={12} fill="currentColor" />
-                      <span>{txt("સ્ટોપ", "स्टॉप", "Stop")}</span>
+                      <Volume2 size={15} />
+                      <span>{txt("સાંભળો", "सुनें", "Listen")}</span>
                     </>
-                  )
-                ) : pausedType === "message" && pausedShlokaIndexRef.current === currentShloka ? (
-                  <>
-                    <Play size={13} fill="currentColor" />
-                    <span>{txt("ચાલુ કરો", "जारी रखें", "Resume")}</span>
-                  </>
-                ) : (
-                  <>
-                    <Volume2 size={15} />
-                    <span>{txt("સાંભળો", "सुनें", "Listen")}</span>
-                  </>
-                )}
-              </button>
+                  )}
+                </button>
+              </div>
             </div>
 
             <div

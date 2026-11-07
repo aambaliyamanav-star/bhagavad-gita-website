@@ -2832,6 +2832,211 @@ button:focus-visible {
   gap: 8px;
 }
 
+/* Container holding speed button & speech button */
+.content-box-header-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+/* Speed Dropdown Container */
+.cr-speed-dropdown-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Speed Toggle Button */
+.cr-speed-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 9px;
+  border-radius: 18px;
+  font-size: 12px;
+  font-weight: 700;
+  background: rgba(245, 158, 11, 0.12);
+  color: #d97706;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+  animation: crFadeInScale 0.25s ease-out;
+  line-height: 1.2;
+}
+
+.cr-speed-btn:hover,
+.cr-speed-btn.active {
+  background: rgba(245, 158, 11, 0.22);
+  border-color: rgba(245, 158, 11, 0.6);
+  transform: translateY(-1px);
+}
+
+.cr-speed-gauge-icon {
+  opacity: 0.85;
+}
+
+.cr-speed-chevron {
+  transition: transform 0.2s ease;
+}
+
+.cr-speed-chevron.open {
+  transform: rotate(180deg);
+}
+
+/* Floating Dropdown Menu */
+.cr-speed-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  right: 0;
+  min-width: 145px;
+  background: #ffffff;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.18), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  padding: 6px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  animation: crSlideDown 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cr-speed-menu-header {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #64748b;
+  padding: 4px 8px 6px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  margin-bottom: 2px;
+}
+
+.cr-speed-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #1e293b;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+  text-align: left;
+  width: 100%;
+}
+
+.cr-speed-option:hover {
+  background: rgba(245, 158, 11, 0.12);
+  color: #b45309;
+}
+
+.cr-speed-option.selected {
+  background: rgba(245, 158, 11, 0.2);
+  color: #b45309;
+  font-weight: 700;
+}
+
+.cr-speed-desc {
+  font-size: 11px;
+  color: #64748b;
+}
+
+.cr-speed-option.selected .cr-speed-desc {
+  color: #b45309;
+  font-weight: 600;
+}
+
+.cr-speed-check {
+  font-size: 13px;
+  color: #d97706;
+  font-weight: 800;
+}
+
+/* Dark mode */
+[data-theme="dark"] .cr-speed-btn,
+.dark .cr-speed-btn {
+  background: rgba(251, 191, 36, 0.15);
+  color: #fbbf24;
+  border-color: rgba(251, 191, 36, 0.35);
+}
+
+[data-theme="dark"] .cr-speed-btn:hover,
+.dark .cr-speed-btn:hover,
+[data-theme="dark"] .cr-speed-btn.active,
+.dark .cr-speed-btn.active {
+  background: rgba(251, 191, 36, 0.25);
+  border-color: rgba(251, 191, 36, 0.6);
+}
+
+[data-theme="dark"] .cr-speed-menu,
+.dark .cr-speed-menu {
+  background: #1e293b;
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="dark"] .cr-speed-menu-header,
+.dark .cr-speed-menu-header {
+  color: #94a3b8;
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .cr-speed-option,
+.dark .cr-speed-option {
+  color: #e2e8f0;
+}
+
+[data-theme="dark"] .cr-speed-option:hover,
+.dark .cr-speed-option:hover {
+  background: rgba(251, 191, 36, 0.18);
+  color: #fbbf24;
+}
+
+[data-theme="dark"] .cr-speed-option.selected,
+.dark .cr-speed-option.selected {
+  background: rgba(251, 191, 36, 0.25);
+  color: #fbbf24;
+}
+
+[data-theme="dark"] .cr-speed-desc,
+.dark .cr-speed-desc {
+  color: #94a3b8;
+}
+
+[data-theme="dark"] .cr-speed-option.selected .cr-speed-desc,
+.dark .cr-speed-option.selected .cr-speed-desc {
+  color: #fde68a;
+}
+
+@keyframes crFadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes crSlideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 .shloka-speech-btn {
   display: inline-flex;
   align-items: center;
