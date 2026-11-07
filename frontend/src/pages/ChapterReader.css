@@ -2126,48 +2126,62 @@
     justify-content: space-between !important;
     width: 100% !important;
     margin-bottom: 12px !important;
+    gap: 8px !important;
+  }
+
+  .content-box-header h3 {
+    margin: 0 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
   }
 
   .content-box.message-box .content-box-header {
     display: flex !important;
     align-items: center !important;
-    justify-content: center !important;
-    position: relative !important;
+    justify-content: space-between !important;
+    position: static !important;
     width: 100% !important;
-    margin-bottom: 16px !important;
-  }
-
-  .content-box.message-box .content-box-header h3 {
-    margin: 0 !important;
-    width: auto !important;
-  }
-
-  .content-box.message-box .content-box-header .shloka-speech-btn {
-    position: absolute !important;
-    right: 0 !important;
-  }
-
-  .shloka-speech-btn {
-    padding: 4px 10px !important;
-    font-size: 12px !important;
-  }
-
-  .content-box.message-box h3 {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    text-align: center !important;
+    margin-bottom: 12px !important;
     gap: 8px !important;
-    font-size: 16px !important;
-    font-weight: 800 !important;
+  }
+
+  .content-box.message-box .content-box-header h3,
+  .content-box.message-box h3 {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    gap: 8px !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
     color: var(--reader-primary) !important;
-    margin: 0 0 16px 0 !important;
+    margin: 0 !important;
     padding: 0 !important;
     background: none !important;
     border: none !important;
     border-radius: 0 !important;
     box-shadow: none !important;
-    width: 100% !important;
+    width: auto !important;
+  }
+
+  .content-box.message-box .content-box-header .shloka-speech-btn {
+    position: static !important;
+    right: auto !important;
+  }
+
+  .content-box-header-actions {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .shloka-speech-btn {
+    padding: 4px 10px !important;
+    font-size: 12px !important;
   }
 
   [data-theme="dark"] .content-box.message-box h3,
@@ -2349,6 +2363,12 @@
     padding: 0 !important;
     background: none !important;
     border: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    width: auto !important;
+    margin: 0 !important;
   }
 
   .message-text {
